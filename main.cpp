@@ -6,6 +6,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <map>
 #include <gettext-po.h>
 
 void xerror_handler(
@@ -62,6 +63,8 @@ std::pair<std::string, std::string> wrap_po_message(po_message_t message)
 		res1 += wrap_string(po_message_msgid_plural(message));
 	}
 
+	// FIXME: msgctxt should also be dumped!
+
 	std::string res2;
 	if (po_message_msgstr_plural(message, 0)) // message has plural forms
 		res2 = po_message_msgstr_plural(message, 0);
@@ -104,12 +107,37 @@ std::vector<std::pair<std::string, std::string> > dump_po_file_ids(const char *f
 	return res;
 }
 
+typedef std::map<std::string, std::vector<std::string> > msg_ids_map;
+
 int main()
 {
-	std::vector<std::pair<std::string, std::string> > dump = dump_po_file_ids("temp/dolphin.pot");
-	for (size_t i = 0; i < dump.size(); i ++)
+	std::vector<const char *> files;
+	files.push_back("temp/dolphin.pot");
+	files.push_back("temp/stable-dolphin.pot");
+
+	msg_ids_map msg_ids;
+	for (size_t d = 0; d < files.size(); d ++)
 	{
-		std::cout << dump[i].first << " " << dump[i].second << std::endl;
+		std::vector<std::pair<std::string, std::string> > dump = dump_po_file_ids(files[d]);
+		for (size_t i = 0; i < dump.size(); i ++)
+			msg_ids[dump[i].first].push_back(dump[i].second);
+	}
+
+	for (msg_ids_map::iterator iter = msg_ids.begin(); iter != msg_ids.end(); iter ++)
+	{
+		size_t n_ids = iter->second.size();
+		if (n_ids == 0)
+		{
+			assert(0);
+		}
+		else if (n_ids >= 2)
+		{
+			std::cout << iter->second[0];
+			for (size_t i = 1; i < n_ids; i ++)
+				std::cout << " " << iter->second[i];
+
+			std::cout << std::endl;
+		}
 	}
 
 	return 0;
