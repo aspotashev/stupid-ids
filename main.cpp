@@ -136,6 +136,8 @@ int main()
 		}
 		else if (n_ids >= 2)
 		{
+			assert(n_ids == 2);
+
 			std::cout << iter->second[0];
 			for (size_t i = 1; i < n_ids; i ++)
 				std::cout << " " << iter->second[i];
