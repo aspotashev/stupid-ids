@@ -59,11 +59,15 @@ std::pair<std::string, std::string> wrap_po_message(po_message_t message)
 	std::string res1 = wrap_string(po_message_msgid(message)); // msgid
 	if (po_message_msgid_plural(message))
 	{
-		res1 += "_";
+		res1 += "P"; // plural
 		res1 += wrap_string(po_message_msgid_plural(message));
 	}
 
-	// FIXME: msgctxt should also be dumped!
+	if (po_message_msgctxt(message)) // msgctxt
+	{
+		res1 += "T"; // context
+		res1 += wrap_string(po_message_msgctxt(message));
+	}
 
 	std::string res2;
 	if (po_message_msgstr_plural(message, 0)) // message has plural forms
