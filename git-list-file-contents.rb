@@ -10,9 +10,10 @@ def git_list_of_file_contents(dir)
     map {|x| [x[0], x[1].match(/(^|\/)([^\/]+)$/)[2]] }.
     uniq
 
-  if res.size != res.map {|x| x[0] }.uniq.size
-    raise "Files with the same SHA-1s have different names."
-  end
+## This is OK and often happens. For example, calligra/words.pot and koffice/kword.pot.
+#  if res.size != res.map {|x| x[0] }.uniq.size
+#    raise "Files with the same SHA-1s have different names."
+#  end
 
   res
 end
