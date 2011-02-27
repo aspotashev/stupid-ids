@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DIR=$1
+DIR="$1"
 
 if [ -z "$DIR" ]; then
 	echo "Usage: ./sif-init.sh <dir>"

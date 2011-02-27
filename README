@@ -6,3 +6,7 @@ sif -- stupid id filler
 	The Git hash can be calculated like this:
 		git-hash-object <.pot file>
 
+=== SCRIPTS ===
+./sif-init.sh ids
+./sif-add.sh ids/ ~/templates/messages/kdebase/dolphin.pot
+
