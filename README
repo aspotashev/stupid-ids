@@ -5,7 +5,8 @@ sif -- stupid id filler
 2. hash_map.txt: the list of pairs: (Git hash of .pot file, Git hash of .poids file)
 	The Git hash can be calculated like this:
 		git-hash-object <.pot file>
-3. .file.po: the last .pot file filled with IDs
+3. pot_names.txt: the list of pairs: (Git hash of .pot file, the names of .pot file without extension)
+4. .file.po: the last .pot file filled with IDs
 
 === SCRIPTS ===
 ./sif-init.sh ids
