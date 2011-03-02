@@ -35,10 +35,12 @@ else
 	echo "The .pot file already exists in this repository."
 fi
 
-if [ -z "$(grep --fixed-strings "$POT_HASH $POT_NAME" pot_names.txt | grep "^$POT_HASH $POT_NAME$" pot_names.txt)" ]; then
-	echo "$POT_HASH $POT_NAME" >> pot_names.txt
+POT_DATE=$(../get_pot_date.py "$POT")
+POT_NAMES_LINE="$POT_HASH $POT_NAME <$POT_DATE>"
+if [ -z "$(grep --fixed-strings "$POT_NAMES_LINE" pot_names.txt)" ]; then
+	echo "$POT_NAMES_LINE" >> pot_names.txt
 	git add pot_names.txt
 fi
 
-git commit -m "new .pot: $POT_NAME"
+git commit -m "new .pot: $POT_NAME ($POT_DATE)"
 
