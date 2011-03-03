@@ -40,5 +40,5 @@ if [ -z "$(grep --fixed-strings "$POT_NAMES_LINE" pot_names.txt)" ]; then
 	git add pot_names.txt
 fi
 
-git commit -m "new .pot: $POT_NAME ($POT_DATE)"
+git commit -m "add $POT_NAME ($POT_DATE)"
 
