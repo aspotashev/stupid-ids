@@ -21,9 +21,9 @@ cd "$DIR"
 POT_HASH=$(git-hash-object "$POT")
 
 if [ -z "$(grep --fixed-strings $POT_HASH hash_map.txt)" ]; then
-	NEXT_ID=`cat next_id.txt`
+	NEXT_ID=$(cat next_id.txt)
 	POT_LEN=$(../get_pot_length.py "$POT")
-	NEXT_ID2=`echo "$NEXT_ID + $POT_LEN" | bc`
+	NEXT_ID2=$(echo "$NEXT_ID + $POT_LEN" | bc)
 
 	echo "$POT_HASH $NEXT_ID" >> hash_map.txt
 	printf $NEXT_ID2 > next_id.txt
