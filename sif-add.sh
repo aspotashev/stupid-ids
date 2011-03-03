@@ -20,15 +20,15 @@ fi
 cd "$DIR"
 POT_HASH=$(git-hash-object "$POT")
 
-if [ -z "$(grep --fixed-strings $POT_HASH hash_map.txt)" ]; then
+if [ -z "$(grep --fixed-strings $POT_HASH first_ids.txt)" ]; then
 	NEXT_ID=$(cat next_id.txt)
 	POT_LEN=$(../get_pot_length.py "$POT")
 	NEXT_ID2=$(echo "$NEXT_ID + $POT_LEN" | bc)
 
-	echo "$POT_HASH $NEXT_ID" >> hash_map.txt
+	echo "$POT_HASH $NEXT_ID" >> first_ids.txt
 	printf $NEXT_ID2 > next_id.txt
 
-	git add hash_map.txt next_id.txt
+	git add first_ids.txt next_id.txt
 else
 	echo "The .pot file already exists in this repository."
 fi

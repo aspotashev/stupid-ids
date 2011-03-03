@@ -2,11 +2,10 @@ sif -- stupid id filler
 
 === FILES IN REPOSITORY ===
 1. next_id.txt: the ID for the next message in .pot file
-2. hash_map.txt: the list of pairs: (Git hash of .pot file, Git hash of .poids file)
+2. first_ids.txt: the list of pairs: (Git hash of .pot file, ID of the first message in .pot)
 	The Git hash can be calculated like this:
 		git-hash-object <.pot file>
 3. pot_names.txt: the list of lines: (Git hash of .pot file, the names of .pot file without extension, POT creation date)
-4. .file.po: the last .pot file filled with IDs
 
 === SCRIPTS ===
 ./sif-init.sh ids
