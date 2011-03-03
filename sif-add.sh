@@ -21,16 +21,14 @@ cd "$DIR"
 POT_HASH=$(git-hash-object "$POT")
 
 if [ -z "$(grep --fixed-strings $POT_HASH hash_map.txt)" ]; then
-	cp "$POT" "./.file.po"
-
 	NEXT_ID=`cat next_id.txt`
-	NEXT_ID2=$(posieve.py fill_xx_numbering ./.file.po -snext_id:$NEXT_ID --quiet)
-	POIDS_HASH=`git-hash-object .file.po`
+	POT_LEN=$(../get_pot_length.py "$POT")
+	NEXT_ID2=`echo "$NEXT_ID + $POT_LEN" | bc`
 
-	echo "$POT_HASH $POIDS_HASH" >> hash_map.txt
+	echo "$POT_HASH $NEXT_ID" >> hash_map.txt
 	printf $NEXT_ID2 > next_id.txt
 
-	git add .file.po hash_map.txt next_id.txt
+	git add hash_map.txt next_id.txt
 else
 	echo "The .pot file already exists in this repository."
 fi
