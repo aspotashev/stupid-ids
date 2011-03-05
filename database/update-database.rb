@@ -88,8 +88,8 @@ private
 	end
 end
 
-def git_diff_lines(ref1, ref2)
-	output = `cd "#{$DIR}" ; git diff -U0 -p #{ref1} #{ref2} -- pot_names.txt`.split("\n")
+def git_diff_lines(ref1, ref2, filename)
+	output = `cd "#{$DIR}" ; git diff -U0 -p #{ref1} #{ref2} -- "#{filename}"`.split("\n")
 	if output.empty?
 		return SetDiff.new # empty diff
 	end
@@ -107,7 +107,7 @@ def git_head_sha1
 end
 
 $NEW_SHA1 = git_head_sha1 # updating to this SHA-1
-set_diff = git_diff_lines(LastSha1.value, $NEW_SHA1)
+set_diff = git_diff_lines(LastSha1.value, $NEW_SHA1, 'pot_names.txt')
 
 set_diff.added.each do |x|
 	m = x.match(/^([0-9a-f]{40}) ([^ ]+) <(.+)>$/)
