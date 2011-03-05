@@ -18,17 +18,26 @@ class CreateDb < ActiveRecord::Migration
 		end
 		add_index NamedatePotsha.table_name, [:potdate, :potname]
 
+		create_table PotshaFirstId.table_name do |t|
+			t.string :potsha
+			t.string :first_id
+		end
+		add_index PotshaFirstId.table_name, [:potsha]
+
 		LastSha1.create(:id => 1, :value => 'init').save! # Git tag "init"
 	end
 
 	def self.down
-		[LastSha1, NamedatePotsha].each do |c|
+		[LastSha1, NamedatePotsha, PotshaFirstId].each do |c|
 			drop_table c.table_name if table_exists?(c.table_name)
 		end
 	end
 end
 
 class NamedatePotsha < ActiveRecord::Base
+end
+
+class PotshaFirstId < ActiveRecord::Base
 end
 
 # last_sha1.value = sha1 of the last processed Git commit (string)
@@ -113,8 +122,15 @@ git_diff_lines(LastSha1.value, $NEW_SHA1, 'pot_names.txt').added.each do |x|
 	NamedatePotsha.create(:potsha => m[1], :potname => m[2], :potdate => m[3])
 end
 
+git_diff_lines(LastSha1.value, $NEW_SHA1, 'first_ids.txt').added.each do |x|
+	m = x.match(/^([0-9a-f]{40}) ([^ ]+)$/) or raise "failed to parse"
+	PotshaFirstId.create(:potsha => m[1], :first_id => m[2])
+end
+
+
 LastSha1.value = $NEW_SHA1
 
 
 p NamedatePotsha.find(:all)
+p PotshaFirstId.find(:all)
 
