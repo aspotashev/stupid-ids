@@ -107,9 +107,8 @@ def git_head_sha1
 end
 
 $NEW_SHA1 = git_head_sha1 # updating to this SHA-1
-set_diff = git_diff_lines(LastSha1.value, $NEW_SHA1, 'pot_names.txt')
 
-set_diff.added.each do |x|
+git_diff_lines(LastSha1.value, $NEW_SHA1, 'pot_names.txt').added.each do |x|
 	m = x.match(/^([0-9a-f]{40}) ([^ ]+) <(.+)>$/)
 	NamedatePotsha.create(:potsha => m[1], :potname => m[2], :potdate => m[3])
 end
