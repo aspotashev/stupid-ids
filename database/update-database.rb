@@ -2,7 +2,7 @@
 
 require 'active_record'
 
-ActiveRecord::Base.establish_connection(YAML::load(File.open('database.yml')))
+ActiveRecord::Base.establish_connection(YAML::load(File.open('filler-database.yml')))
 
 class CreateDb < ActiveRecord::Migration
 	def self.up
