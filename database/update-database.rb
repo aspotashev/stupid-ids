@@ -67,8 +67,6 @@ if not LastSha1.table_exists?
 end
 
 $DIR = "../ids"
-#$PREV_SHA1 = LastSha1.value
-#LastSha1.value = LastSha1.value + '_xx'
 
 Array.class_eval do
 	def is_uniq
