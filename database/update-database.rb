@@ -8,8 +8,6 @@ ActiveRecord::Base.class_eval do
 	end
 end
 
-ActiveRecord::Base.establish_connection_filler
-
 class CreateDb < ActiveRecord::Migration
 	def self.up
 		create_table LastSha1.table_name do |t|
@@ -41,13 +39,17 @@ class CreateDb < ActiveRecord::Migration
 end
 
 class NamedatePotsha < ActiveRecord::Base
+	establish_connection_filler
 end
 
 class PotshaFirstId < ActiveRecord::Base
+	establish_connection_filler
 end
 
 # last_sha1.value = sha1 of the last processed Git commit (string)
 class LastSha1 < ActiveRecord::Base
+	establish_connection_filler
+
 	def self.value
 		find(:first).value
 	end
