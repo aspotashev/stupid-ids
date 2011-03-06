@@ -9,6 +9,10 @@ ActiveRecord::Base.class_eval do
 end
 
 class CreateDb < ActiveRecord::Migration
+	def self.connection
+		FillerBase.connection
+	end
+
 	def self.up
 		create_table FillerLastSha1.table_name do |t|
 			t.string :value
@@ -28,7 +32,7 @@ class CreateDb < ActiveRecord::Migration
 		end
 		add_index PotshaFirstId.table_name, [:potsha]
 
-		FillerLastSha1.create(:id => 1, :value => 'init').save! # Git tag "init"
+		FillerLastSha1.new(:id => 1, :value => 'init').save! # Git tag "init"
 	end
 
 	def self.down
@@ -38,18 +42,20 @@ class CreateDb < ActiveRecord::Migration
 	end
 end
 
-class NamedatePotsha < ActiveRecord::Base
+class FillerBase < ActiveRecord::Base
+	# http://pragdave.blogs.pragprog.com/pragdave/2006/01/sharing_externa.html
+	self.abstract_class = true
 	establish_connection_filler
 end
 
-class PotshaFirstId < ActiveRecord::Base
-	establish_connection_filler
+class NamedatePotsha < FillerBase
+end
+
+class PotshaFirstId < FillerBase
 end
 
 # last_sha1.value = sha1 of the last processed Git commit (string)
-class FillerLastSha1 < ActiveRecord::Base
-	establish_connection_filler
-
+class FillerLastSha1 < FillerBase
 	def self.value
 		find(:first).value
 	end
