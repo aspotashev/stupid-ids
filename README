@@ -1,0 +1,2 @@
+== dump-ids ==
+This program writes the list of pairs of IDs for identical messages in 2 .poids files.
