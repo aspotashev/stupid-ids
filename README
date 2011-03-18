@@ -1,0 +1,10 @@
+== dump-ids ==
+Writes a list of pairs of IDs in two .pot templates.
+
+== stupid-id-filler ==
+Chooses IDs for .pot templates. Maintains the map [pot_sha] -> [first ID in .pot].
+
+== successor-detector ==
+
+== stupid-id-merger ==
+
