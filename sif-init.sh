@@ -1,4 +1,6 @@
 #!/bin/sh
+#
+# Creates a Git repository for adding .pot files and info about IDs.
 
 DIR="$1"
 
