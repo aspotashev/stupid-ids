@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Prints the value of "POT-Creation-Date" of a .po/.pot file.
+# Prints the number of strings in a .po/.pot file.
 
 import sys
 
