@@ -61,7 +61,7 @@ def add_to_merger_repo(id_merger_repo, idmerge_content)
 	File.open(id_merger_repo + "/" + filename, 'w') do |f|
 		f.puts idmerge_content
 	end
-	`cd #{id_merger_repo} ; git add #{filename} ; git commit -m 'add #{filename}'`
+	`cd #{id_merger_repo} ; git add #{filename} ; git commit -m '[auto] add #{filename}'`
 end
 
 def git_commits(dir)
