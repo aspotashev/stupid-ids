@@ -1,3 +1,20 @@
+
+Assumptions:
+1. A pair {POT creation date; POT basename} can be used to identify a POT.
+2. The strings in 2 identical POTs (but with possibly different basenames) are always translated the same way.
+
+
+How to setup stupid-ids:
+1. Create and regularly update a Git repository with translation
+	templates (.pot file). In the following commands we will
+	assume the path the that Git repository to be "/path/to/git-templates".
+2.
+	cd stupid-id-filler
+	./sif-init.sh ids
+
+
+
+Components:
 == dump-ids ==
 Writes a list of pairs of IDs in two .pot templates.
 

@@ -6,6 +6,7 @@ $SRC_DIR = '~/kde-ru/xx-numbering/templates'
 $IDS_DIR = './ids'
 
 
+# List of SHA-1s from processed.txt
 def list_of_processed
 	f = begin
 		File.open($IDS_DIR + '/processed.txt', 'r')
@@ -22,12 +23,14 @@ def list_of_all_commits
 		split("\n").reverse
 end
 
+# Add SHA-1 to processed.txt
 def add_to_processed_list(commit_sha1)
 	File.open($IDS_DIR + '/processed.txt', 'a+') do |f|
 		f.puts commit_sha1
 	end
 end
 
+# List of changes in a Git commit
 def parse_commit_changes(commit_sha1)
 	`cd #{$SRC_DIR} ; git show --raw --no-abbrev #{commit_sha1}`.split("\n").
 		select {|line| line[0..0] == ':' }.
@@ -36,6 +39,7 @@ def parse_commit_changes(commit_sha1)
 		end
 end
 
+# List of pairs {SHA-1, basename} for new contents in a Git commit (for added or modified files)
 def contents_of_commit(commit_sha1)
 	parse_commit_changes(commit_sha1).
 		select {|x| x[4] != 'D' }.
