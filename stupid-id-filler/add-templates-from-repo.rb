@@ -2,8 +2,14 @@
 
 require './sif-lib.rb'
 
-$SRC_DIR = '~/kde-ru/xx-numbering/templates'
-$IDS_DIR = './ids'
+if ARGV.size != 2
+	puts "Usage: add-templates-from-repo.rb <path-to-git-repo-with-templates> <ids-dir>"
+	puts "Example: ./add-templates-from-repo.rb ~/kde-ru/xx-numbering/templates ./ids"
+	exit
+end
+
+$SRC_DIR = ARGV[0] # path to Git repository with translation templates
+$IDS_DIR = ARGV[1] # should be already initialized (i.e. run ./sif-init.sh first)
 
 
 # List of SHA-1s from processed.txt

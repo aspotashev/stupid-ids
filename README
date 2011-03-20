@@ -11,7 +11,7 @@ How to setup stupid-ids:
 2.
 	cd stupid-id-filler
 	./sif-init.sh ids
-
+	./add-templates-from-repo.rb ~/kde-ru/xx-numbering/templates ./ids
 
 
 Components:
