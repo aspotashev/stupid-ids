@@ -106,20 +106,34 @@ end
 
 $NEW_SHA1 = git_head_sha1 # updating to this SHA-1
 
+i = 1
+n = git_diff_lines(FillerLastSha1.value, $NEW_SHA1, 'pot_names.txt').added.size
 git_diff_lines(FillerLastSha1.value, $NEW_SHA1, 'pot_names.txt').added.each do |x|
 	m = x.match(/^([0-9a-f]{40}) ([^ ]+) <(.+)>$/) or raise "failed to parse"
 	NamedatePotsha.create(:potsha => m[1], :potname => m[2], :potdate => m[3])
-end
 
+	if i % 37 == 12 or i == n
+		print "\b"*20 + "Processing #{i}/#{n}"
+		STDOUT.flush
+	end
+	i += 1
+end
+puts "    done!"
+
+i = 1
+n = git_diff_lines(FillerLastSha1.value, $NEW_SHA1, 'first_ids.txt').added.size
 git_diff_lines(FillerLastSha1.value, $NEW_SHA1, 'first_ids.txt').added.each do |x|
 	m = x.match(/^([0-9a-f]{40}) ([^ ]+)$/) or raise "failed to parse"
 	PotshaFirstId.create(:potsha => m[1], :first_id => m[2])
+
+	if i % 37 == 12 or i == n
+		print "\b"*20 + "Processing #{i}/#{n}"
+		STDOUT.flush
+	end
+	i += 1
 end
+puts "    done!"
 
 
 FillerLastSha1.value = $NEW_SHA1
-
-
-p NamedatePotsha.find(:all)
-p PotshaFirstId.find(:all)
 
