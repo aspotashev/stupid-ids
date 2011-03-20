@@ -1,5 +1,9 @@
 #!/bin/sh
 #
+# THIS SCRIPT IS UNSUPPORTED!
+# Please, use sif-add.rb instead.
+#
+#
 # Adds to a Git repository:
 #  1. the given .pot file
 #  2. the first ID for that .pot file
@@ -10,15 +14,15 @@ POT="$2"
 POT_NAME="$3"
 
 if [ -z "$DIR" ]; then
-	echo "Usage: ./sif-init.sh <dir> <.pot> <.pot name>"
+	echo "Usage: ./sif-add.sh <dir> <.pot> <.pot name>"
 	exit
 fi
 if [ -z "$POT" ]; then
-	echo "Usage: ./sif-init.sh <dir> <.pot> <.pot name>"
+	echo "Usage: ./sif-add.sh <dir> <.pot> <.pot name>"
 	exit
 fi
 if [ -z "$POT_NAME" ]; then
-	echo "Usage: ./sif-init.sh <dir> <.pot> <.pot name>"
+	echo "Usage: ./sif-add.sh <dir> <.pot> <.pot name>"
 	exit
 fi
 
