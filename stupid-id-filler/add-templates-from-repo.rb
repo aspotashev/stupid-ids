@@ -68,7 +68,7 @@ commits_to_process.each do |commit_sha1|
 
 		p content
 		`cd #{$SRC_DIR} ; git show #{content[0]} > "#{tempfile_pot}"`
-		puts `./sif-add.sh "#{$IDS_DIR}" "#{tempfile_pot}" "#{basename}"`
+		puts `./sif-add.rb "#{$IDS_DIR}" "#{tempfile_pot}" "#{basename}"`
 #		sleep 1
 	end
 

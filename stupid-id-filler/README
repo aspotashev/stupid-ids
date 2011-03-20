@@ -13,5 +13,5 @@ Deletion of these files is not fatal, but may have negative effect on performanc
 
 === SCRIPTS ===
 ./sif-init.sh ids
-./sif-add.sh ids/ ~/templates/messages/kdebase/dolphin.pot dolphin
+./sif-add.rb ids/ ~/templates/messages/kdebase/dolphin.pot dolphin
 
