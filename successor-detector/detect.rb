@@ -1,6 +1,6 @@
 #!/usr/bin/ruby18
 
-$GIT_DIR = '../templates/'
+$SRC_DIR = '/home/sasha/kde-ru/xx-numbering/templates'
 $ID_MERGER_REPO = '../stupid-id-merger/id-merger-repo'
 
 class PotIdMerge < Struct.new(:git_dir, :name_a, :date_a, :name_b, :date_b)
@@ -76,10 +76,10 @@ def processed_git_commits
 	end
 end
 
-commits = git_commits($GIT_DIR) - processed_git_commits
+commits = git_commits($SRC_DIR) - processed_git_commits
 commits.each do |sha1|
 	puts "Processing #{sha1}..."
-	add_to_merger_repo($ID_MERGER_REPO, generate_idmerge($GIT_DIR, sha1))
+	add_to_merger_repo($ID_MERGER_REPO, generate_idmerge($SRC_DIR, sha1))
 
 	File.open('processed.txt', 'a+') do |f|
 		f.puts sha1
