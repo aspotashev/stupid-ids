@@ -70,6 +70,7 @@ class SetDiff < Struct.new(:added, :removed)
 			elsif line[0..0] == '-'
 				removed << line[1..-1]
 			else
+				p line
 				raise "unexpected character (should be + or -)"
 			end
 		end
@@ -95,7 +96,7 @@ def git_diff_lines(ref1, ref2, filename)
 	if output[0][0...5] != 'diff ' or output[1][0...6] != 'index ' or output[2][0...4] != '--- ' or output[3][0...4] != '+++ '
 		raise "wrong header in diff"
 	end
-	output = output[4..-1].select {|x| not x.match(/^@@ \-[0-9]+,[0-9]+ \+[0-9]+,[0-9]+ @@$/) }
+	output = output[4..-1].select {|x| not x.match(/^@@ \-[0-9]+,[0-9]+ \+[0-9]+,[0-9]+ @@ /) }
 
 	SetDiff.new(output)
 end
