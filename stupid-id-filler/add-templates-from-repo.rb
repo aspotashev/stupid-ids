@@ -1,5 +1,7 @@
 #!/usr/bin/ruby
 
+require './sif-lib.rb'
+
 $SRC_DIR = '~/kde-ru/xx-numbering/templates'
 $IDS_DIR = './ids'
 
@@ -58,6 +60,7 @@ end
 
 commits_to_process = list_of_all_commits - list_of_processed
 
+sif = Sif.new($IDS_DIR)
 tempfile_pot = `tempfile --suffix=.pot`.strip
 commits_to_process.each do |commit_sha1|
 	puts ">>> Processing commit #{commit_sha1}"
@@ -68,9 +71,10 @@ commits_to_process.each do |commit_sha1|
 
 		p content
 		`cd #{$SRC_DIR} ; git show #{content[0]} > "#{tempfile_pot}"`
-		puts `./sif-add.rb "#{$IDS_DIR}" "#{tempfile_pot}" "#{basename}"`
-#		sleep 1
+		sif.add(tempfile_pot, basename)
 	end
+
+	sif.commit
 
 	add_to_processed_list(commit_sha1)
 end
