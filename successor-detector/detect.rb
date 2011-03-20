@@ -50,8 +50,8 @@ def generate_idmerge(git_dir, ref)
 	res << " Subject: " + "Translation template changed in commit #{sha1} (detect_template_changes)" + "\n"
 	res << " Author: " + "successor detector" + "\n"
 	res << " Date: " + Time.now.to_s + "\n"
-	# TODO: check for duplicate .idmerges already existing in the repository
-	res << detect_template_changes(git_dir, sha1).map(&:to_s).join("\n") + "\n"
+	# TODO: check for duplicate .idmerges already existing in the repository (check by Git hash?)
+	res << detect_template_changes(git_dir, sha1).map(&:to_s).join("\n") + "\n" # TODO: do not commit empty .idmerge files (without merge lines)
 	res
 end
 

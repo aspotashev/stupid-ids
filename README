@@ -8,10 +8,16 @@ How to setup stupid-ids:
 1. Create and regularly update a Git repository with translation
 	templates (.pot file). In the following commands we will
 	assume the path the that Git repository to be "/path/to/git-templates".
-2.
-	cd stupid-id-filler
+
+2.	cd stupid-id-filler
 	./sif-init.sh ids
-	./add-templates-from-repo.rb ~/kde-ru/xx-numbering/templates ./ids
+	./add-templates-from-repo.rb $HOME/kde-ru/xx-numbering/templates ./ids
+
+3.	cd stupid-id-filler/database
+	./update-database.rb		# This will generate the database "filler-db.sqlite3"
+
+4.	cd successor-detector
+	./detect.rb			# This will generate .idmerge files in stupid-id-merger/id-merger-repo/successor-detector/
 
 
 Components:
