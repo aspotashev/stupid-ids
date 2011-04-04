@@ -45,11 +45,20 @@ def parse_commit_changes(commit_sha1)
 		end
 end
 
+def custom_basename(input)
+	s = (input + '/').match(/(([a-zA-Z0-9\-\_\.%{}]+\/){3})$/)
+	if s.nil? or s[1].nil?
+		raise "path is too short to determine the basename: #{input}"
+	end
+
+	s[1][0..-2]
+end
+
 # List of pairs {SHA-1, basename} for new contents in a Git commit (for added or modified files)
 def contents_of_commit(commit_sha1)
 	parse_commit_changes(commit_sha1).
 		select {|x| x[4] != 'D' }.
-		map {|x| [x[3], File.basename(x[5]).sub(/\.pot$/, '')] }
+		map {|x| [x[3], custom_basename(x[5]).sub(/\.pot$/, '')] }
 end
 
 commits_to_process = list_of_all_commits - list_of_processed
