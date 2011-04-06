@@ -52,7 +52,7 @@ std::pair<std::string, std::string> wrap_po_message(po_message_t message)
 
 	if (po_message_is_obsolete(message) || po_message_is_fuzzy(message))
 	{
-		printf("obsolete of fuzzy message found\n");
+		printf("obsolete or fuzzy message found\n");
 		assert(0);
 	}
 
