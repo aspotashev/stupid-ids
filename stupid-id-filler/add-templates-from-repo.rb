@@ -74,7 +74,9 @@ commits_to_process.each do |commit_sha1|
 
 		p content
 		`cd #{$SRC_DIR} ; git show #{content[0]} > "#{tempfile_pot}"`
-		sif.add(tempfile_pot, basename)
+		if is_virgin_pot(tempfile_pot)
+			sif.add(tempfile_pot, basename)
+		end
 	end
 
 	sif.commit
