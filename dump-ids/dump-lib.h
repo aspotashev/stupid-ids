@@ -1,7 +1,10 @@
 
-// Transform string into a string of characters [0-9a-f]
+// Transform string into a string of characters [0-9a-f] or "n" if str is NULL.
 std::string wrap_string_hex(const char *str)
 {
+	if (str == NULL)
+		return "n";
+
 	std::string res;
 
 	size_t len = strlen(str);
