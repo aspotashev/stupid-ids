@@ -1,0 +1,17 @@
+
+// Transform string into a string of characters [0-9a-f]
+std::string wrap_string_hex(const char *str)
+{
+	std::string res;
+
+	size_t len = strlen(str);
+	char hex[3];
+	for (size_t i = 0; i < len; i ++)
+	{
+		sprintf(hex, "%02x", str[i]);
+		res += hex;
+	}
+
+	return res;
+}
+

@@ -9,39 +9,8 @@
 #include <map>
 #include <gettext-po.h>
 
-void xerror_handler(
-	int severity,
-	po_message_t message, const char *filename, size_t lineno,
-	size_t column, int multiline_p, const char *message_text)
-{
-	printf("filename = %s, lineno = %lu, column = %lu\n", filename, lineno, column);
-	assert(0);
-}
-
-void xerror2_handler(
-	int severity,
-	po_message_t message1, const char *filename1, size_t lineno1,
-	size_t column1, int multiline_p1, const char *message_text1,
-	po_message_t message2, const char *filename2, size_t lineno2,
-	size_t column2, int multiline_p2, const char *message_text2)
-{
-	assert(0);
-}
-
-std::string wrap_string(const char *str)
-{
-	std::string res;
-
-	size_t len = strlen(str);
-	char hex[3];
-	for (size_t i = 0; i < len; i ++)
-	{
-		sprintf(hex, "%02x", str[i]);
-		res += hex;
-	}
-
-	return res;
-}
+#include "gettextpo-helper.h"
+#include "dump-lib.h"
 
 std::pair<std::string, std::string> wrap_po_message(po_message_t message)
 {
@@ -56,17 +25,17 @@ std::pair<std::string, std::string> wrap_po_message(po_message_t message)
 		assert(0);
 	}
 
-	std::string res1 = wrap_string(po_message_msgid(message)); // msgid
+	std::string res1 = wrap_string_hex(po_message_msgid(message)); // msgid
 	if (po_message_msgid_plural(message))
 	{
 		res1 += "P"; // plural
-		res1 += wrap_string(po_message_msgid_plural(message));
+		res1 += wrap_string_hex(po_message_msgid_plural(message));
 	}
 
 	if (po_message_msgctxt(message)) // msgctxt
 	{
 		res1 += "T"; // context
-		res1 += wrap_string(po_message_msgctxt(message));
+		res1 += wrap_string_hex(po_message_msgctxt(message));
 	}
 
 	std::string res2;
@@ -82,20 +51,7 @@ std::vector<std::pair<std::string, std::string> > dump_po_file_ids(const char *f
 {
 	std::vector<std::pair<std::string, std::string> > res;
 
-	struct po_xerror_handler xerror_handlers;
-	xerror_handlers.xerror = xerror_handler;
-	xerror_handlers.xerror2 = xerror2_handler;
-
-	po_file_t file = po_file_read(filename, &xerror_handlers);
-	if (file == NULL)
-	{
-		printf("Cannot read .po file: %s\n", filename);
-		assert(0);
-	}
-
-	const char * const *domains = po_file_domains(file);
-	assert(strcmp(domains[0], "messages") == 0);
-	assert(domains[1] == NULL);
+	po_file_t file = po_file_read(filename); // all checks and error reporting are done in po_file_read
 
 	// main cycle
 	po_message_iterator_t iterator = po_message_iterator(file, "messages");
