@@ -63,6 +63,8 @@ std::string dump_format_types(po_message_t message)
 {
 	std::string res;
 
+	// FIXME: "*-format" entries should probably be sorted alphabetically
+	// (because they might be reordered in other versions of "libgettext-po").
 	for (int i = 0; po_format_list()[i] != NULL; i ++)
 		if (po_message_is_format(message, po_format_list()[i]))
 		{
