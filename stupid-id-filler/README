@@ -2,10 +2,12 @@ sif -- stupid id filler
 
 === FILES IN REPOSITORY ===
 1. next_id.txt: the ID for the next message in .pot file
-2. first_ids.txt: the list of pairs: (Git hash of .pot file, ID of the first message in .pot)
-	The Git hash can be calculated like this:
-		git-hash-object <.pot file>
-3. pot_names.txt: the list of lines: (Git hash of .pot file, the names of .pot file without extension, POT creation date)
+2. first_ids.txt: the list of pairs: (hash of template-part, ID of the first message in .pot)
+	The hash of template-part can be calculated like this:
+		../dump-template/dump-template <.pot file>
+3. pot_origins.txt: the list of pairs: (Git hash of _original_ .pot file (i.e. not .po), hash of template-part)
+
+TODO: convert these files to binary files (sha1 = 20 bytes)
 
 === CACHE FILES IN REPOSITORY DIRECTORY (but not commited to repository) ===
 Deletion of these files is not fatal, but may have negative effect on performance.
@@ -13,5 +15,6 @@ Deletion of these files is not fatal, but may have negative effect on performanc
 
 === SCRIPTS ===
 ./sif-init.sh ids
-./sif-add.rb ids/ ~/templates/messages/kdebase/dolphin.pot dolphin
+./sif-add.rb ids/ ~/templates/messages/kdebase/dolphin.pot
+./add-templates-from-repo.rb ~/kde-ru/xx-numbering/templates ./ids
 

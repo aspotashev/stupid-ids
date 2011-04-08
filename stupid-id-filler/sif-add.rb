@@ -1,23 +1,21 @@
 #!/usr/bin/ruby
 #
 # Adds to a Git repository:
-#  1. the given .pot file
-#  2. the first ID for that .pot file
-#  3. map: [sha1 of .pot] <-> [name and date of .pot]
+#  1. the first ID for template-part hash of this .pot file
+#  2. map: [sha1 of .pot] <-> [template-part hash]
 
 require './sif-lib.rb'
 
 
 dir = ARGV[0]
 pot = ARGV[1]
-pot_name = ARGV[2]
 
-if dir.nil? or pot.nil? or pot_name.nil?
-	puts "Usage: ./sif-add.rb <dir> <.pot> <.pot name>"
+if dir.nil? or pot.nil?
+	puts "Usage: ./sif-add.rb <dir> <.pot>"
 	exit
 end
 
-sif = Sif.new('ids')
-sif.add(pot, pot_name)
+sif = Sif.new(dir)
+sif.add(pot)
 sif.commit
 

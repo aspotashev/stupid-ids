@@ -4,9 +4,9 @@ class Sif
 	@object_created = false
 	class << self; attr_accessor :object_created; end
 
-	def next_id_txt   ; @ids_dir + '/next_id.txt'   ; end
-	def first_ids_txt ; @ids_dir + '/first_ids.txt' ; end
-	def pot_names_txt ; @ids_dir + '/pot_names.txt' ; end
+	def next_id_txt     ; @ids_dir + '/next_id.txt'     ; end
+	def first_ids_txt   ; @ids_dir + '/first_ids.txt'   ; end
+	def pot_origins_txt ; @ids_dir + '/pot_origins.txt' ; end
 
 	def initialize(ids_dir)
 		if self.class.object_created
@@ -19,44 +19,45 @@ class Sif
 
 		`cd #{@ids_dir} ; git reset --hard` # reset not commited changes
 
-		@next_id = File.open(next_id_txt).read.strip.to_i
+		@next_id = IO.read(next_id_txt).strip.to_i
 
-		@commited_sha1s = File.open(first_ids_txt).read.split("\n").map {|x| x[0...40] }
-		@commited_potnames = File.open(pot_names_txt).read.split("\n")
+		@commited_tp_hashes = IO.read(first_ids_txt).split("\n").map {|x| x[0...40] }
+		@commited_sha1s = IO.read(pot_origins_txt).split("\n").map {|x| x[0...40] }
 
-		@new_firstids = [] # pairs: (sha1, first_id)
-		@new_potnames = [] # strings like in pot_names.txt: "$POT_HASH $POT_NAME <$POT_DATE>"
+		@new_firstids = [] # pairs: (tp_hash, first_id)
+		@new_origins  = [] # pairs: (sha1, tp_hash)
 	end
 
-	def add(pot_path, pot_name)
+	def add(pot_path)
 		pot_hash = `git-hash-object "#{pot_path}"`.strip # TODO: the caller code might already know the hash, no need to recalculate it then
-		pot_date = `python ./get_pot_date.py #{pot_path}`.strip
+		tp_hash = `../dump-template/dump-template #{pot_path}`.strip
 
-		new_potnames_line = "#{pot_hash} #{pot_name} <#{pot_date}>"
-		if @commited_potnames.include?(new_potnames_line) or @new_potnames.include?(new_potnames_line)
-			puts "This line already exists in pot_names.txt (or already scheduled for addition)"
+		# Prepare new data for pot_origins.txt
+		if @commited_sha1s.include?(pot_hash) or @new_origins.map(&:first).include?(pot_hash)
+			puts "This .pot hash already exists in pot_origins.txt (or already scheduled for addition)"
 		else
-			@new_potnames << new_potnames_line
-		end
+			@new_origins << [pot_hash, tp_hash]
 
-		if @commited_sha1s.include?(pot_hash) or @new_firstids.map(&:first).include?(pot_hash)
-			puts "This SHA-1 already exists in first_ids.txt (or already scheduled for addition)"
-		else
-			pot_len = `python ./get_pot_length.py "#{pot_path}"`.strip.to_i
+			# Prepare new data for first_ids.txt
+			if @commited_tp_hashes.include?(tp_hash) or @new_firstids.map(&:first).include?(tp_hash)
+				puts "This template-part hash already exists in first_ids.txt (or already scheduled for addition)"
+			else
+				pot_len = `python ./get_pot_length.py "#{pot_path}"`.strip.to_i
 
-			@new_firstids << [pot_hash, @next_id]
-			@next_id += pot_len
+				@new_firstids << [tp_hash, @next_id]
+				@next_id += pot_len
+			end
 		end
 	end
 
 	def commit
 		# write new data to files
-		File.open(pot_names_txt, 'a+') do |f|
-			f.puts @new_potnames
-		end
-
 		File.open(first_ids_txt, 'a+') do |f|
 			f.puts @new_firstids.map {|x| x.join(' ') }
+		end
+
+		File.open(pot_origins_txt, 'a+') do |f|
+			f.puts @new_origins.map {|x| x.join(' ') }
 		end
 
 		File.open(next_id_txt, 'w') do |f|
@@ -64,14 +65,14 @@ class Sif
 		end
 
 		# commit
-		puts `cd "#{@ids_dir}" ; git commit -m upd -- first_ids.txt next_id.txt pot_names.txt`
+		puts `cd "#{@ids_dir}" ; git commit -m upd -- first_ids.txt next_id.txt pot_origins.txt`
 
 		# data is already committed
-		@commited_sha1s.concat(@new_firstids.map(&:first))
+		@commited_tp_hashes.concat(@new_firstids.map(&:first))
 		@new_firstids = []
 
-		@commited_potnames.concat(@new_potnames)
-		@new_potnames = []
+		@commited_sha1s.concat(@new_origins.map(&:first))
+		@new_origins = []
 	end
 end
 

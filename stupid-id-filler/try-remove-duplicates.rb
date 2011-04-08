@@ -1,5 +1,10 @@
 #!/usr/bin/ruby
 
+# TODO:
+#  1. rewrite to remove broken POTs (POTs from PO Summit, POTs with translations).
+#  2. rename this script to "remove-broken-templates.rb"
+
+__END__
 require 'set'
 require './check-lib.rb'
 

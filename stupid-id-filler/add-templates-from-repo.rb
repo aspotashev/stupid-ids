@@ -55,11 +55,11 @@ def custom_basename(input)
 	s[1][0..-2]
 end
 
-# List of pairs {SHA-1, basename} for new contents in a Git commit (for added or modified files)
+# List of SHA-1 hashes of new contents in a Git commit (for added or modified files)
 def contents_of_commit(commit_sha1)
 	parse_commit_changes(commit_sha1).
 		select {|x| x[4] != 'D' }.
-		map {|x| [x[3], custom_basename(x[5]).sub(/\.pot$/, '')] }
+		map {|x| x[3] }
 end
 
 commits_to_process = list_of_all_commits - list_of_processed
@@ -69,14 +69,13 @@ tempfile_pot = `tempfile --suffix=.pot`.strip
 commits_to_process.each do |commit_sha1|
 	puts ">>> Processing commit #{commit_sha1}"
 	contents = contents_of_commit(commit_sha1)
-	contents.each do |content|
-		sha1 = content[0]     # e.g., 963a86ab2a7f24ba4400eace2e713c5bb8a5bad4 (sha1 of blob)
-		basename = content[1] # e.g., desktop_kdeaccessibility.pot
+	contents.each do |content_sha1|
+		# content_sha1 is the sha1 of blob (e.g. 963a86ab2a7f24ba4400eace2e713c5bb8a5bad4)
 
-		p content
-		`cd #{$SRC_DIR} ; git show #{content[0]} > "#{tempfile_pot}"`
+		p content_sha1
+		`cd #{$SRC_DIR} ; git show #{content_sha1} > "#{tempfile_pot}"`
 		if is_virgin_pot(tempfile_pot)
-			sif.add(tempfile_pot, basename)
+			sif.add(tempfile_pot)
 		end
 	end
 
