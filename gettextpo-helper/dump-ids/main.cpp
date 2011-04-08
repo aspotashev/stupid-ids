@@ -9,7 +9,7 @@
 #include <map>
 #include <gettext-po.h>
 
-#include "../gettextpo-helper/gettextpo-helper.h"
+#include "../include/gettextpo-helper.h"
 
 std::pair<std::string, std::string> wrap_po_message(po_message_t message)
 {

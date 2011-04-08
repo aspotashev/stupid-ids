@@ -12,7 +12,7 @@
 #include <cryptopp/filters.h> // CryptoPP::StringSource
 #include <cryptopp/hex.h> // CryptoPP::HexEncoder
 
-#include "../gettextpo-helper/gettextpo-helper.h"
+#include "../include/gettextpo-helper.h"
 
 std::string wrap_template_header(po_message_t message)
 {
