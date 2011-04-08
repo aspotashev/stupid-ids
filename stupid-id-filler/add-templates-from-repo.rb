@@ -1,6 +1,7 @@
 #!/usr/bin/ruby
 
 require './sif-lib.rb'
+require './check-lib.rb'
 
 if ARGV.size != 2
 	puts "Usage: add-templates-from-repo.rb <path-to-git-repo-with-templates> <ids-dir>"
