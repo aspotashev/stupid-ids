@@ -137,7 +137,10 @@ std::string dump_po_file_template(const char *filename)
 	res += wrap_template_header(message);
 
 	// ordinary .po messages (not header)
-	// FIXME: do PO editors change the order of messages? If yes, we should sort the messages alphabetically.
+	//
+	// Assuming that PO editors do not change the order of messages.
+	// Sorting messages in alphabetical order would be wrong, because for every template,
+	// we store only the ID of the first message. The IDs of other messages should be deterministic.
 	while (message = po_next_message(iterator))
 	{
 		std::string msg_dump = wrap_template_message(message);
