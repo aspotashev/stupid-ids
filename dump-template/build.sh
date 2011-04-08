@@ -1,2 +1,2 @@
 #!/bin/sh
-g++ main.cpp -lgettextpo -o dump-template
+g++ main.cpp -lgettextpo -lcryptopp -o dump-template

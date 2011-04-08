@@ -8,6 +8,9 @@
 #include <vector>
 #include <map>
 #include <gettext-po.h>
+#include <cryptopp/sha.h> // CryptoPP::SHA1
+#include <cryptopp/filters.h> // CryptoPP::StringSource
+#include <cryptopp/hex.h> // CryptoPP::HexEncoder
 
 #include "../dump-ids/gettextpo-helper.h"
 #include "../dump-ids/dump-lib.h"
@@ -149,6 +152,21 @@ std::string dump_po_file_template(const char *filename)
 	return res;
 }
 
+// http://www.xenoterracide.com/2009/09/quick-sha1sum-with-crypto.html
+// http://groups.google.com/group/cryptopp-users/browse_thread/thread/dfe40b4eed04f03d?pli=1
+std::string sha1_string(std::string input)
+{
+	std::string res;
+
+	CryptoPP::SHA1 hash;
+	CryptoPP::StringSink *string_sink = new CryptoPP::StringSink(res);
+	CryptoPP::HexEncoder *hex_encoder = new CryptoPP::HexEncoder(string_sink, false); // hex in lowercase
+	CryptoPP::HashFilter *hash_filter = new CryptoPP::HashFilter(hash, hex_encoder);
+	CryptoPP::StringSource(input, true, hash_filter);
+
+	return res;
+}
+
 int main(int argc, char *argv[])
 {
 	const char *filename = NULL;
@@ -161,7 +179,7 @@ int main(int argc, char *argv[])
 
 
 	std::string dump = dump_po_file_template(filename);
-	std::cout << dump;
+	std::cout << sha1_string(dump);
 
 	return 0;
 }
