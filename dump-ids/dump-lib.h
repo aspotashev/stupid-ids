@@ -11,7 +11,7 @@ std::string wrap_string_hex(const char *str)
 	char hex[3];
 	for (size_t i = 0; i < len; i ++)
 	{
-		sprintf(hex, "%02x", str[i]);
+		sprintf(hex, "%02x", (unsigned char)str[i]);
 		res += hex;
 	}
 
