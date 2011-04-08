@@ -117,6 +117,7 @@ std::string wrap_template_message(po_message_t message)
 	return res;
 }
 
+// Pass filename = "-" to read .po file from stdin.
 std::string dump_po_file_template(const char *filename)
 {
 	std::string res;
@@ -148,9 +149,18 @@ std::string dump_po_file_template(const char *filename)
 	return res;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
-	std::string dump = dump_po_file_template("temp/dolphin.pot");
+	const char *filename = NULL;
+	if (argc == 1)
+		filename = "-";
+	else if (argc == 2)
+		filename = argv[1];
+	else
+		assert(0); // too many arguments
+
+
+	std::string dump = dump_po_file_template(filename);
 	std::cout << dump;
 
 	return 0;
