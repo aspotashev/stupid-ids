@@ -35,6 +35,11 @@ VALUE wrap_calculate_tp_hash(VALUE self, VALUE filename)
 	return rb_str_new2(res.c_str());
 }
 
+VALUE wrap_get_pot_length(VALUE self, VALUE filename)
+{
+	return INT2FIX(get_pot_length(StringValuePtr(filename)));
+}
+
 extern "C" {
 
 /* Function called at module loading */
@@ -42,6 +47,7 @@ void Init_gettextpo_helper()
 {
 	VALUE GettextpoHelper = rb_define_module("GettextpoHelper");
 	rb_define_singleton_method(GettextpoHelper, "calculate_tp_hash", RUBY_METHOD_FUNC(wrap_calculate_tp_hash), 1);
+	rb_define_singleton_method(GettextpoHelper, "get_pot_length", RUBY_METHOD_FUNC(wrap_get_pot_length), 1);
 //	rb_define_singleton_method(GettextpoHelper, "find", RUBY_METHOD_FUNC(wrap_find_string_id), 2);
 }
 

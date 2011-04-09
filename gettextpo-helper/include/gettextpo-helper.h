@@ -233,3 +233,25 @@ std::string calculate_tp_hash(const char *filename)
 	return sha1_string(dump_po_file_template(filename));
 }
 
+// Returns the number of messages in .pot (excluding the header)
+int get_pot_length(const char *filename)
+{
+	po_file_t file = po_file_read(filename); // all checks and error reporting are done in po_file_read
+
+	po_message_iterator_t iterator = po_message_iterator(file, "messages");
+	po_message_t message; // in fact, this is a pointer
+
+	// processing header (header is the first message)
+	message = po_next_message(iterator);
+	assert(*po_message_msgid(message) == '\0'); // msgid of header must be empty
+
+	int length = 0;
+	// ordinary .po messages (not header)
+	while (message = po_next_message(iterator))
+		if (!po_message_is_obsolete(message)) // in fact, if we're processing a .pot, there can't be any obsolete messages
+			length ++;
+
+	po_file_free(file); // free memory
+	return length;
+}
+
