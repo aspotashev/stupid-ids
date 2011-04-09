@@ -5,10 +5,10 @@ class FillerBase < ActiveRecord::Base
 	establish_connection_filler
 end
 
-class NamedatePotsha < FillerBase
+class TphashPotsha < FillerBase
 end
 
-class PotshaFirstId < FillerBase
+class TphashFirstId < FillerBase
 end
 
 # last_sha1.value = sha1 of the last processed Git commit (string)

@@ -20,25 +20,23 @@ class CreateDb < ActiveRecord::Migration
 			t.string :value
 		end
 
-		create_table NamedatePotsha.table_name do |t|
-			t.string :potdate
-			t.string :potname
-
+		create_table TphashPotsha.table_name do |t|
+			t.string :tp_hash
 			t.string :potsha
 		end
-		add_index NamedatePotsha.table_name, [:potdate, :potname]
+		add_index TphashPotsha.table_name, [:tp_hash]
 
-		create_table PotshaFirstId.table_name do |t|
-			t.string :potsha
+		create_table TphashFirstId.table_name do |t|
+			t.string :tp_hash
 			t.string :first_id
 		end
-		add_index PotshaFirstId.table_name, [:potsha]
+		add_index TphashFirstId.table_name, [:tp_hash]
 
 		FillerLastSha1.new(:id => 1, :value => 'init').save! # Git tag "init"
 	end
 
 	def self.down
-		[FillerLastSha1, NamedatePotsha, PotshaFirstId].each do |c|
+		[FillerLastSha1, TphashPotsha, TphashFirstId].each do |c|
 			drop_table c.table_name if table_exists?(c.table_name)
 		end
 	end
@@ -108,11 +106,12 @@ end
 
 $NEW_SHA1 = git_head_sha1 # updating to this SHA-1
 
+# TODO: avoid duplicate code
 i = 1
-n = git_diff_lines(FillerLastSha1.value, $NEW_SHA1, 'pot_names.txt').added.size
-git_diff_lines(FillerLastSha1.value, $NEW_SHA1, 'pot_names.txt').added.each do |x|
-	m = x.match(/^([0-9a-f]{40}) ([^ ]+) <(.+)>$/) or raise "failed to parse"
-	NamedatePotsha.create(:potsha => m[1], :potname => m[2], :potdate => m[3])
+n = git_diff_lines(FillerLastSha1.value, $NEW_SHA1, 'pot_origins.txt').added.size # TODO: avoid duplicate calls to git_diff_lines
+git_diff_lines(FillerLastSha1.value, $NEW_SHA1, 'pot_origins.txt').added.each do |x|
+	m = x.match(/^([0-9a-f]{40}) ([0-9a-f]{40})$/) or raise "failed to parse"
+	TphashPotsha.create(:potsha => m[1], :tp_hash => m[2])
 
 	if i % 37 == 12 or i == n
 		print "\b"*30 + "Processing #{i}/#{n}"
@@ -123,10 +122,10 @@ end
 puts "    done!"
 
 i = 1
-n = git_diff_lines(FillerLastSha1.value, $NEW_SHA1, 'first_ids.txt').added.size
+n = git_diff_lines(FillerLastSha1.value, $NEW_SHA1, 'first_ids.txt').added.size # TODO: avoid duplicate calls to git_diff_lines
 git_diff_lines(FillerLastSha1.value, $NEW_SHA1, 'first_ids.txt').added.each do |x|
 	m = x.match(/^([0-9a-f]{40}) ([^ ]+)$/) or raise "failed to parse"
-	PotshaFirstId.create(:potsha => m[1], :first_id => m[2])
+	TphashFirstId.create(:tp_hash => m[1], :first_id => m[2])
 
 	if i % 37 == 12 or i == n
 		print "\b"*30 + "Processing #{i}/#{n}"
