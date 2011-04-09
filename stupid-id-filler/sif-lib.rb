@@ -1,4 +1,6 @@
 
+require '../gettextpo-helper/ruby-ext/gettextpo_helper'
+
 class Sif
 	# http://www.oreillynet.com/ruby/blog/2007/01/nubygems_dont_use_class_variab_1.html
 	@object_created = false
@@ -30,7 +32,7 @@ class Sif
 
 	def add(pot_path)
 		pot_hash = `git-hash-object "#{pot_path}"`.strip # TODO: the caller code might already know the hash, no need to recalculate it then
-		tp_hash = `../gettextpo-helper/dump-template/dump-template #{pot_path}`.strip
+		tp_hash = GettextpoHelper.calculate_tp_hash(pot_path)
 
 		# Prepare new data for pot_origins.txt
 		if @commited_sha1s.include?(pot_hash) or @new_origins.map(&:first).include?(pot_hash)
@@ -42,7 +44,7 @@ class Sif
 			if @commited_tp_hashes.include?(tp_hash) or @new_firstids.map(&:first).include?(tp_hash)
 				puts "This template-part hash already exists in first_ids.txt (or already scheduled for addition)"
 			else
-				pot_len = `python ./get_pot_length.py "#{pot_path}"`.strip.to_i
+				pot_len = GettextpoHelper.get_pot_length(pot_path)
 
 				@new_firstids << [tp_hash, @next_id]
 				@next_id += pot_len
