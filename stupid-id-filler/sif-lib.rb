@@ -30,7 +30,7 @@ class Sif
 
 	def add(pot_path)
 		pot_hash = `git-hash-object "#{pot_path}"`.strip # TODO: the caller code might already know the hash, no need to recalculate it then
-		tp_hash = `../dump-template/dump-template #{pot_path}`.strip
+		tp_hash = `../gettextpo-helper/dump-template/dump-template #{pot_path}`.strip
 
 		# Prepare new data for pot_origins.txt
 		if @commited_sha1s.include?(pot_hash) or @new_origins.map(&:first).include?(pot_hash)
