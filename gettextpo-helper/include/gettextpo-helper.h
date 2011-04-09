@@ -1,6 +1,10 @@
 
 // http://www.gnu.org/software/gettext/manual/gettext.html#libgettextpo
 
+#include <string>
+#include <assert.h>
+#include <gettext-po.h>
+
 void xerror_handler(
 	int severity,
 	po_message_t message, const char *filename, size_t lineno,

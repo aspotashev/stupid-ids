@@ -7,7 +7,6 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include <gettext-po.h>
 
 #include "../include/gettextpo-helper.h"
 
