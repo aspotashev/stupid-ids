@@ -1,1 +1,4 @@
 "gettextpo-helper" is a helper library for working with .po files written in C++.
+
+FIXME: the library leaks (problems with libgettextpo?)
+
