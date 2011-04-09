@@ -57,6 +57,7 @@ Array.class_eval do
 	end
 end
 
+# Differences between two sets
 class SetDiff < Struct.new(:added, :removed)
 	def initialize(diff_lines = nil)
 		super([], [])
@@ -96,7 +97,7 @@ def git_diff_lines(ref1, ref2, filename)
 	if output[0][0...5] != 'diff ' or output[1][0...6] != 'index ' or output[2][0...4] != '--- ' or output[3][0...4] != '+++ '
 		raise "wrong header in diff"
 	end
-	output = output[4..-1].select {|x| not x.match(/^@@ \-[0-9]+,[0-9]+ \+[0-9]+,[0-9]+ @@ /) }
+	output = output[4..-1].select {|x| not x.match(/^@@ \-[0-9]+,[0-9]+ \+[0-9]+,[0-9]+ @@/) }
 
 	SetDiff.new(output)
 end
@@ -114,7 +115,7 @@ git_diff_lines(FillerLastSha1.value, $NEW_SHA1, 'pot_names.txt').added.each do |
 	NamedatePotsha.create(:potsha => m[1], :potname => m[2], :potdate => m[3])
 
 	if i % 37 == 12 or i == n
-		print "\b"*20 + "Processing #{i}/#{n}"
+		print "\b"*30 + "Processing #{i}/#{n}"
 		STDOUT.flush
 	end
 	i += 1
@@ -128,7 +129,7 @@ git_diff_lines(FillerLastSha1.value, $NEW_SHA1, 'first_ids.txt').added.each do |
 	PotshaFirstId.create(:potsha => m[1], :first_id => m[2])
 
 	if i % 37 == 12 or i == n
-		print "\b"*20 + "Processing #{i}/#{n}"
+		print "\b"*30 + "Processing #{i}/#{n}"
 		STDOUT.flush
 	end
 	i += 1
