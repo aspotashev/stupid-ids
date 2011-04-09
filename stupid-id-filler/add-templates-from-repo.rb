@@ -58,7 +58,7 @@ end
 # List of SHA-1 hashes of new contents in a Git commit (for added or modified files)
 def contents_of_commit(commit_sha1)
 	parse_commit_changes(commit_sha1).
-		select {|x| x[4] != 'D' }.
+		select {|x| x[4] != 'D' and x[5].match(/\.pot$/) }.
 		map {|x| x[3] }
 end
 
