@@ -136,7 +136,8 @@ std::string dump_format_types(po_message_t message)
 	return res;
 }
 
-std::string wrap_template_message(po_message_t message)
+// include_non_id: include 'extracted comments', 'filepos entries', 'format types', 'range'
+std::string wrap_template_message(po_message_t message, bool include_non_id)
 {
 	assert(*po_message_msgid(message) != '\0'); // header was processed separately
 
@@ -155,6 +156,10 @@ std::string wrap_template_message(po_message_t message)
 	res += "P"; // "P". May be NULL.
 	res += wrap_string_hex(po_message_msgid_plural(message));
 
+	if (!include_non_id)
+		return res; // short dump used by "dump-ids"
+
+	// additional fields (for calculation of "template-part hash")
 	res += "C"; // "C". Cannot be NULL, may be empty.
 	res += wrap_string_hex(po_message_extracted_comments(message));
 
@@ -201,7 +206,7 @@ std::string dump_po_file_template(const char *filename)
 	// we store only the ID of the first message. The IDs of other messages should be deterministic.
 	while (message = po_next_message(iterator))
 	{
-		std::string msg_dump = wrap_template_message(message);
+		std::string msg_dump = wrap_template_message(message, true);
 		if (msg_dump.length() > 0) // non-obsolete
 		{
 			res += "/";

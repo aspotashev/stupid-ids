@@ -25,7 +25,7 @@ std::vector<std::pair<std::string, int> > dump_po_file_ids(const char *filename,
 
 	for (int index = 0; message = po_next_message(iterator); index ++)
 	{
-		std::string msg_dump = wrap_template_message(message);
+		std::string msg_dump = wrap_template_message(message, false);
 		if (msg_dump.length() > 0)
 			res.push_back(make_pair(msg_dump, first_id + index));
 	}
