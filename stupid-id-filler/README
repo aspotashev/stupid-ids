@@ -18,5 +18,5 @@ Deletion of these files is not fatal, but may have negative effect on performanc
 ./sif-add.rb ids/ ~/templates/messages/kdebase/dolphin.pot
 ./add-templates-from-repo.rb ~/kde-ru/xx-numbering/templates ./ids
 
-FIXME: duplicate message definition in http://websvn.kde.org/?view=revision&revision=738538 ; Is it a bug? Will this happen again in the future?
+TODO: investigate how tp_hash is calculated when there are duplicate message definitions (e.g. http://websvn.kde.org/?view=revision&revision=738538 )
 

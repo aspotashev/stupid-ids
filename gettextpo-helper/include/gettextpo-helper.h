@@ -139,7 +139,8 @@ std::string dump_format_types(po_message_t message)
 // include_non_id: include 'extracted comments', 'filepos entries', 'format types', 'range'
 std::string wrap_template_message(po_message_t message, bool include_non_id)
 {
-	assert(*po_message_msgid(message) != '\0'); // header was processed separately
+	// header should be processed separately
+	assert(*po_message_msgid(message) != '\0' || po_message_msgctxt(message) != NULL);
 
 	if (po_message_is_obsolete(message)) // obsolete messages should not affect the dump
 		return std::string();
