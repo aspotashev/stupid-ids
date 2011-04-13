@@ -66,14 +66,14 @@ def generate_idmerge(git_dir, git_ref)
 		:subject => "Translation template(s) changed in commit #{sha1} (detect_template_changes)",
 		:author  => "successor detector",
 		:date    => Time.now.to_s,
-		:pairs   => detect_template_changes(git_dir, sha1)).to_s
+		:pairs   => detect_template_changes(git_dir, sha1))
 end
 
-def add_to_merger_repo(id_merger_repo, idmerge_content)
+def add_to_merger_repo(id_merger_repo, idmerge)
 	`cd #{id_merger_repo} ; mkdir -p successor-detector`
 	filename = "successor-detector/#{Time.now.to_f}.idmerge"
 	File.open(id_merger_repo + "/" + filename, 'w') do |f|
-		f.puts idmerge_content
+		f.puts idmerge.to_s
 	end
 	`cd #{id_merger_repo} ; git add #{filename} ; git commit -m '[auto] add #{filename}'`
 end
