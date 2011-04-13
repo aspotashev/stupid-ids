@@ -11,7 +11,7 @@ void xerror_handler(
 	size_t column, int multiline_p, const char *message_text)
 {
 	printf("filename = %s, lineno = %lu, column = %lu\n", filename, lineno, column);
-	assert(0);
+//	assert(0);
 }
 
 void xerror2_handler(
@@ -21,7 +21,9 @@ void xerror2_handler(
 	po_message_t message2, const char *filename2, size_t lineno2,
 	size_t column2, int multiline_p2, const char *message_text2)
 {
-	assert(0);
+	printf("filename1 = %s, lineno1 = %lu, column1 = %lu, message_text1 = %s\n", filename1, lineno1, column1, message_text1);
+	printf("filename2 = %s, lineno2 = %lu, column2 = %lu, message_text2 = %s\n", filename2, lineno2, column2, message_text2);
+//	assert(0);
 }
 
 // overloaded function, without 'xerror_handlers' argument
