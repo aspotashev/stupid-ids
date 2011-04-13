@@ -3,22 +3,22 @@
 $SRC_DIR = '/home/sasha/kde-ru/xx-numbering/templates'
 $ID_MERGER_REPO = '../stupid-id-merger/id-merger-repo'
 
-class PotIdMerge < Struct.new(:git_dir, :name_a, :date_a, :name_b, :date_b)
-	def self.from_sha1s_and_name(git_dir, sha1_a, sha1_b, basename)
+class PotIdMerge < Struct.new(:git_dir, :tp_hash_a, :tp_hash_b)
+	def self.from_sha1s_and_name(git_dir, sha1_a, sha1_b)
 		PotIdMerge.new(git_dir,
-			basename, sha1_to_date(git_dir, sha1_a),
-			basename, sha1_to_date(git_dir, sha1_b))
+			sha1_to_tp_hash(git_dir, sha1_a),
+			sha1_to_tp_hash(git_dir, sha1_b))
 	end
 
 	def to_s
-		"#{name_a} <#{date_a}> -- #{name_b} <#{date_b}>"
+		"#{tp_hash_a} #{tp_hash_b}"
 	end
 
 private
-	def self.sha1_to_date(git_dir, sha1)
+	def self.sha1_to_tp_hash(git_dir, sha1)
 #		tempfile_pot = `tempfile -s .pot`.strip
 #		`cd "#{git_dir}" ; git show #{sha1} > #{tempfile_pot} ; ../stupid-id-filler/get_pot_date.py #{tempfile_pot} ; rm #{tempfile_pot}`.rstrip
-		`cd "#{git_dir}" ; git show #{sha1} | grep '^"POT-Creation-Date: '`.match(/^"POT-Creation-Date: (.*)\\n"\n$/)[1]
+		`cd "#{git_dir}" ; git show #{sha1} | ~/stupid-ids/gettextpo-helper/dump-template/dump-template`
 	end
 end
 
@@ -40,7 +40,7 @@ def detect_template_changes(git_dir, ref)
 		end
 	end
 
-	lines.map {|m| PotIdMerge.from_sha1s_and_name(git_dir, m[1], m[2], File.basename(m[4]).sub(/\.pot$/, '')) }
+	lines.map {|m| PotIdMerge.from_sha1s_and_name(git_dir, m[1], m[2]) }
 end
 
 def generate_idmerge(git_dir, ref)
@@ -76,6 +76,7 @@ def processed_git_commits
 	end
 end
 
+puts "Collecting unprocessed commits..."
 commits = git_commits($SRC_DIR) - processed_git_commits
 commits.each do |sha1|
 	puts "Processing #{sha1}..."
