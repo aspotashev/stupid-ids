@@ -33,8 +33,12 @@ class PotIdMerge
 		res << " Author: " + @options[:author] + "\n"
 		res << " Date: " + @options[:date] + "\n"
 		# TODO: check for duplicate .idmerges already existing in the repository (check by Git hash?)
-		res << @options[:pairs].map(&:to_s).join("\n") + "\n" # TODO: do not commit empty .idmerge files (without merge lines)
+		res << @options[:pairs].map(&:to_s).join("\n") + "\n"
 		res
+	end
+
+	def empty? # TODO: use metaprogramming for delegation
+		@options[:pairs].empty?
 	end
 end
 
@@ -70,12 +74,14 @@ def generate_idmerge(git_dir, git_ref)
 end
 
 def add_to_merger_repo(id_merger_repo, idmerge)
-	`cd #{id_merger_repo} ; mkdir -p successor-detector`
-	filename = "successor-detector/#{Time.now.to_f}.idmerge"
-	File.open(id_merger_repo + "/" + filename, 'w') do |f|
-		f.puts idmerge.to_s
+	if not idmerge.empty?
+		`cd #{id_merger_repo} ; mkdir -p successor-detector`
+		filename = "successor-detector/#{Time.now.to_f}.idmerge"
+		File.open(id_merger_repo + "/" + filename, 'w') do |f|
+			f.puts idmerge.to_s
+		end
+		`cd #{id_merger_repo} ; git add #{filename} ; git commit -m '[auto] add #{filename}'`
 	end
-	`cd #{id_merger_repo} ; git add #{filename} ; git commit -m '[auto] add #{filename}'`
 end
 
 def git_commits(dir)
