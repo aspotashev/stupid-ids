@@ -20,8 +20,8 @@ private
 	end
 end
 
-def detect_template_changes(git_dir, ref)
-	output = `cd "#{git_dir}" ; git show #{ref} --raw --no-abbrev`
+def detect_template_changes(git_dir, git_ref)
+	output = `cd "#{git_dir}" ; git show #{git_ref} --raw --no-abbrev`
 	output = output.split("\n").select {|x| x[0..0] == ':' }
 
 	lines = output.
@@ -41,8 +41,8 @@ def detect_template_changes(git_dir, ref)
 	lines.map {|m| PotIdMergePair.from_sha1s(git_dir, m[1], m[2]) }
 end
 
-def generate_idmerge(git_dir, ref)
-	sha1 = `cd #{git_dir} ; git log --format=format:%H -1 #{ref}`.strip
+def generate_idmerge(git_dir, git_ref)
+	sha1 = `cd #{git_dir} ; git log --format=format:%H -1 #{git_ref}`.strip
 
 	res = ''
 	res << " Subject: " + "Translation template(s) changed in commit #{sha1} (detect_template_changes)" + "\n"
