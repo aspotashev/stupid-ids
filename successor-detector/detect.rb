@@ -3,9 +3,9 @@
 $SRC_DIR = '/home/sasha/kde-ru/xx-numbering/templates'
 $ID_MERGER_REPO = '../stupid-id-merger/id-merger-repo'
 
-class PotIdMerge < Struct.new(:git_dir, :tp_hash_a, :tp_hash_b)
-	def self.from_sha1s_and_name(git_dir, sha1_a, sha1_b)
-		PotIdMerge.new(git_dir,
+class PotIdMergePair < Struct.new(:git_dir, :tp_hash_a, :tp_hash_b)
+	def self.from_sha1s(git_dir, sha1_a, sha1_b)
+		PotIdMergePair.new(git_dir,
 			sha1_to_tp_hash(git_dir, sha1_a),
 			sha1_to_tp_hash(git_dir, sha1_b))
 	end
@@ -16,8 +16,6 @@ class PotIdMerge < Struct.new(:git_dir, :tp_hash_a, :tp_hash_b)
 
 private
 	def self.sha1_to_tp_hash(git_dir, sha1)
-#		tempfile_pot = `tempfile -s .pot`.strip
-#		`cd "#{git_dir}" ; git show #{sha1} > #{tempfile_pot} ; ../stupid-id-filler/get_pot_date.py #{tempfile_pot} ; rm #{tempfile_pot}`.rstrip
 		`cd "#{git_dir}" ; git show #{sha1} | ~/stupid-ids/gettextpo-helper/dump-template/dump-template`
 	end
 end
@@ -40,14 +38,14 @@ def detect_template_changes(git_dir, ref)
 		end
 	end
 
-	lines.map {|m| PotIdMerge.from_sha1s_and_name(git_dir, m[1], m[2]) }
+	lines.map {|m| PotIdMergePair.from_sha1s(git_dir, m[1], m[2]) }
 end
 
 def generate_idmerge(git_dir, ref)
 	sha1 = `cd #{git_dir} ; git log --format=format:%H -1 #{ref}`.strip
 
 	res = ''
-	res << " Subject: " + "Translation template changed in commit #{sha1} (detect_template_changes)" + "\n"
+	res << " Subject: " + "Translation template(s) changed in commit #{sha1} (detect_template_changes)" + "\n"
 	res << " Author: " + "successor detector" + "\n"
 	res << " Date: " + Time.now.to_s + "\n"
 	# TODO: check for duplicate .idmerges already existing in the repository (check by Git hash?)
