@@ -20,6 +20,24 @@ private
 	end
 end
 
+class PotIdMerge
+	def initialize(options)
+		raise if not options[:subject] or not options[:author] or not options[:date] or not options[:pairs]
+
+		@options = options
+	end
+
+	def to_s
+		res = ''
+		res << " Subject: " + @options[:subject] + "\n"
+		res << " Author: " + @options[:author] + "\n"
+		res << " Date: " + @options[:date] + "\n"
+		# TODO: check for duplicate .idmerges already existing in the repository (check by Git hash?)
+		res << @options[:pairs].map(&:to_s).join("\n") + "\n" # TODO: do not commit empty .idmerge files (without merge lines)
+		res
+	end
+end
+
 def detect_template_changes(git_dir, git_ref)
 	output = `cd "#{git_dir}" ; git show #{git_ref} --raw --no-abbrev`
 	output = output.split("\n").select {|x| x[0..0] == ':' }
@@ -44,13 +62,11 @@ end
 def generate_idmerge(git_dir, git_ref)
 	sha1 = `cd #{git_dir} ; git log --format=format:%H -1 #{git_ref}`.strip
 
-	res = ''
-	res << " Subject: " + "Translation template(s) changed in commit #{sha1} (detect_template_changes)" + "\n"
-	res << " Author: " + "successor detector" + "\n"
-	res << " Date: " + Time.now.to_s + "\n"
-	# TODO: check for duplicate .idmerges already existing in the repository (check by Git hash?)
-	res << detect_template_changes(git_dir, sha1).map(&:to_s).join("\n") + "\n" # TODO: do not commit empty .idmerge files (without merge lines)
-	res
+	PotIdMerge.new(
+		:subject => "Translation template(s) changed in commit #{sha1} (detect_template_changes)",
+		:author  => "successor detector",
+		:date    => Time.now.to_s,
+		:pairs   => detect_template_changes(git_dir, sha1)).to_s
 end
 
 def add_to_merger_repo(id_merger_repo, idmerge_content)
