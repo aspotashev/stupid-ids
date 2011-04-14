@@ -1,4 +1,5 @@
-#!/usr/bin/ruby18
+#!/usr/bin/ruby19
+# Ruby 1.9 required for "Dir.exists?(path)"
 
 $SRC_DIR = '/home/sasha/kde-ru/xx-numbering/templates'
 $ID_MERGER_REPO = '../stupid-id-merger/id-merger-repo'
@@ -75,6 +76,17 @@ end
 
 def add_to_merger_repo(id_merger_repo, idmerge)
 	if not idmerge.empty?
+		if not Dir.exists?(id_merger_repo + '/.git')
+			puts "Creating new Git repository for idmerges..."
+			puts `mkdir -p "#{id_merger_repo}" && \
+				cd "#{id_merger_repo}" && \
+				git init && \
+				touch .gitignore && \
+				git add .gitignore && \
+				git commit -m init && \
+				git tag init`
+		end
+
 		`cd #{id_merger_repo} ; mkdir -p successor-detector`
 		filename = "successor-detector/#{Time.now.to_f}.idmerge"
 		File.open(id_merger_repo + "/" + filename, 'w') do |f|
