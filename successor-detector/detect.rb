@@ -84,7 +84,7 @@ def add_to_merger_repo(id_merger_repo, idmerge)
 				touch .gitignore && \
 				git add .gitignore && \
 				git commit -m init && \
-				git tag init`
+				git tag init` # tag 'init' is required for software that reads the repository incrementally
 		end
 
 		`cd #{id_merger_repo} ; mkdir -p successor-detector`
