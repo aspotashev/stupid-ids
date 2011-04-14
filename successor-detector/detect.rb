@@ -2,7 +2,7 @@
 # Ruby 1.9 required for "Dir.exists?(path)"
 
 $SRC_DIR = '/home/sasha/kde-ru/xx-numbering/templates'
-$ID_MERGER_REPO = '../stupid-id-merger/id-merger-repo'
+$ID_MERGER_REPO = './idmerges'
 
 class PotIdMergePair < Struct.new(:git_dir, :tp_hash_a, :tp_hash_b)
 	def self.from_sha1s(git_dir, sha1_a, sha1_b)
