@@ -32,12 +32,12 @@ class Sif
 
 	def add(pot_path)
 		pot_hash = `git-hash-object "#{pot_path}"`.strip # TODO: the caller code might already know the hash, no need to recalculate it then
-		tp_hash = GettextpoHelper.calculate_tp_hash(pot_path)
 
 		# Prepare new data for pot_origins.txt
 		if @commited_sha1s.include?(pot_hash) or @new_origins.map(&:first).include?(pot_hash)
 			puts "This .pot hash already exists in pot_origins.txt (or already scheduled for addition)"
 		else
+			tp_hash = GettextpoHelper.calculate_tp_hash(pot_path)
 			@new_origins << [pot_hash, tp_hash]
 
 			# Prepare new data for first_ids.txt
