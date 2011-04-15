@@ -110,6 +110,7 @@ end
 
 puts "Collecting unprocessed commits..."
 commits = git_commits($SRC_DIR) - processed_git_commits
+puts "#{commits.size} commits left to process"
 commits.each do |sha1|
 	puts "Processing #{sha1}..."
 	add_to_merger_repo($ID_MERGER_REPO, generate_idmerge($SRC_DIR, sha1))
