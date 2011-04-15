@@ -27,7 +27,7 @@ How to setup stupid-ids:
 	./update-database.rb		# This will generate the database "filler-db.sqlite3"
 
 4.	cd successor-detector
-	./detect.rb			# This will generate .idmerge files in stupid-id-merger/id-merger-repo/successor-detector/
+	./detect.rb			# This will generate .idmerge files in successor-detector/idmerges/successor-detector/
 
 
 Components:
@@ -35,9 +35,11 @@ Components:
 Writes a list of pairs of IDs in two .pot templates.
 
 == stupid-id-filler ==
-Chooses IDs for .pot templates. Maintains the map [pot_sha] -> [first ID in .pot].
+Chooses IDs for .pot templates. Maintains the map [tp_hash] -> [first ID in .pot].
+
+== stupid-id-filler/database ==
 
 == successor-detector ==
 
-== stupid-id-merger ==
+== successor-detector/database ==
 
