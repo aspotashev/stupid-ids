@@ -39,7 +39,7 @@ class Sif
 		if @commited_sha1s.include?(pot_hash) or @new_origins.map(&:first).include?(pot_hash)
 			puts "This .pot hash already exists in pot_origins.txt (or already scheduled for addition)"
 		else
-			@dirty = true
+			@dirty = true # there are now changes to commit
 
 			tp_hash = GettextpoHelper.calculate_tp_hash(pot_path)
 			@new_origins << [pot_hash, tp_hash]
@@ -57,7 +57,7 @@ class Sif
 	end
 
 	def commit
-		return if @dirty == false # nothing has changed
+		return if @dirty == false # nothing has changed, nothing to commit
 
 		# write new data to files
 		File.open(first_ids_txt, 'a+') do |f|
