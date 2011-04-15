@@ -263,3 +263,62 @@ int get_pot_length(const char *filename)
 	return length;
 }
 
+//-------- Coupling IDs of equal messages in different .po/.pot files -------
+
+std::vector<std::pair<std::string, int> > dump_po_file_ids(const char *filename, int first_id)
+{
+	std::vector<std::pair<std::string, int> > res;
+
+	po_file_t file = po_file_read(filename); // all checks and error reporting are done in po_file_read
+
+	// main cycle
+	po_message_iterator_t iterator = po_message_iterator(file, "messages");
+	po_message_t message; // in fact, this is a pointer
+
+	// skipping header
+	message = po_next_message(iterator);
+
+	for (int index = 0; message = po_next_message(iterator); index ++)
+	{
+		std::string msg_dump = wrap_template_message(message, false);
+		if (msg_dump.length() > 0)
+			res.push_back(make_pair(msg_dump, first_id + index));
+	}
+
+	po_file_free(file); // free memory
+	return res;
+}
+
+std::vector<std::vector<int> > list_equal_messages_ids(std::vector<std::pair<const char *, int> > files)
+{
+	std::vector<std::vector<int> > list;
+
+	typedef std::map<std::string, std::vector<int> > msg_ids_map_t;
+	msg_ids_map_t msg_ids;
+	for (size_t d = 0; d < files.size(); d ++)
+	{
+		std::vector<std::pair<std::string, int> > dump = dump_po_file_ids(files[d].first, files[d].second);
+		for (size_t i = 0; i < dump.size(); i ++)
+			msg_ids[dump[i].first].push_back(dump[i].second);
+	}
+
+	for (msg_ids_map_t::iterator iter = msg_ids.begin(); iter != msg_ids.end(); iter ++)
+	{
+		size_t n_ids = iter->second.size();
+		if (n_ids == 0) // impossible
+		{
+			assert(0);
+		}
+		else if (n_ids >= 2)
+		{
+			// This 'assert' can be removed if files.size() > 2 (not doing this now,
+			// because I do not know where a 3-way dump-ids may be applied).
+			assert(n_ids == 2);
+
+			list.push_back(iter->second); // adding a vector of all IDs of this message
+		}
+	}
+
+	return list;
+}
+
