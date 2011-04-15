@@ -124,6 +124,7 @@ commits.each do |sha1|
 	puts "Processing #{sha1}..."
 	add_to_merger_repo($ID_MERGER_REPO, generate_idmerge($SRC_DIR, sha1))
 
+	`mkdir -p "#{$ID_MERGER_REPO}"`
 	File.open($ID_MERGER_REPO + '/processed.txt', 'a+') do |f|
 		f.puts sha1
 	end
