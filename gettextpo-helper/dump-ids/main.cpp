@@ -34,7 +34,7 @@ std::vector<std::pair<std::string, int> > dump_po_file_ids(const char *filename,
 	return res;
 }
 
-typedef std::map<std::string, std::vector<int> > msg_ids_map;
+typedef std::map<std::string, std::vector<int> > msg_ids_map_t;
 
 int main(int argc, char *argv[])
 {
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 	files.push_back(std::pair<const char *, int>(argv[1], atoi(argv[2])));
 	files.push_back(std::pair<const char *, int>(argv[3], atoi(argv[4])));
 
-	msg_ids_map msg_ids;
+	msg_ids_map_t msg_ids;
 	for (size_t d = 0; d < files.size(); d ++)
 	{
 		std::vector<std::pair<std::string, int> > dump = dump_po_file_ids(files[d].first, files[d].second);
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 			msg_ids[dump[i].first].push_back(dump[i].second);
 	}
 
-	for (msg_ids_map::iterator iter = msg_ids.begin(); iter != msg_ids.end(); iter ++)
+	for (msg_ids_map_t::iterator iter = msg_ids.begin(); iter != msg_ids.end(); iter ++)
 	{
 		size_t n_ids = iter->second.size();
 		if (n_ids == 0)
