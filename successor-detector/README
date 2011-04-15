@@ -1,0 +1,6 @@
+
+What should be merged:
+1. on .pot modification: old version <-> new version
+2. .pot files with the same names in 'trunk' and 'stable' after every scripty's template update (makes stupid-ids al least not worse than Lokalize's parallel branches)
+3. ...
+
