@@ -28,6 +28,8 @@ class Sif
 
 		@new_firstids = [] # pairs: (tp_hash, first_id)
 		@new_origins  = [] # pairs: (sha1, tp_hash)
+
+		@dirty = false
 	end
 
 	def add(pot_path, options = {})
@@ -37,6 +39,8 @@ class Sif
 		if @commited_sha1s.include?(pot_hash) or @new_origins.map(&:first).include?(pot_hash)
 			puts "This .pot hash already exists in pot_origins.txt (or already scheduled for addition)"
 		else
+			@dirty = true
+
 			tp_hash = GettextpoHelper.calculate_tp_hash(pot_path)
 			@new_origins << [pot_hash, tp_hash]
 
@@ -53,6 +57,8 @@ class Sif
 	end
 
 	def commit
+		return if @dirty == false # nothing has changed
+
 		# write new data to files
 		File.open(first_ids_txt, 'a+') do |f|
 			f.puts @new_firstids.map {|x| x.join(' ') }
@@ -75,6 +81,8 @@ class Sif
 
 		@commited_sha1s.concat(@new_origins.map(&:first))
 		@new_origins = []
+
+		@dirty = false
 	end
 end
 
