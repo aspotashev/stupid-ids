@@ -322,3 +322,23 @@ std::vector<std::vector<int> > list_equal_messages_ids(std::vector<std::pair<con
 	return list;
 }
 
+std::vector<std::pair<int, int> > list_equal_messages_ids_2(const char *filename_a, int first_id_a, const char *filename_b, int first_id_b)
+{
+	std::vector<std::pair<const char *, int> > files;
+	files.push_back(std::pair<const char *, int>(filename_a, first_id_a));
+	files.push_back(std::pair<const char *, int>(filename_b, first_id_b));
+
+	std::vector<std::vector<int> > list = list_equal_messages_ids(files);
+
+	std::vector<std::pair<int, int> > res;
+	for (std::vector<std::vector<int> >::iterator iter = list.begin(); iter != list.end(); iter ++)
+	{
+		// No more than 2 IDs denoting the same message can exists in 2 files
+		assert(iter->size() == 2);
+
+		res.push_back(std::pair<int, int>((*iter)[0], (*iter)[1]));
+	}
+
+	return res;
+}
+

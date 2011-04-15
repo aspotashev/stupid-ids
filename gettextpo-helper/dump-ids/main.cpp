@@ -12,23 +12,11 @@
 
 int main(int argc, char *argv[])
 {
-	std::vector<std::pair<const char *, int> > files;
-
 	assert(argc == 5); // 4 arguments
-	files.push_back(std::pair<const char *, int>(argv[1], atoi(argv[2])));
-	files.push_back(std::pair<const char *, int>(argv[3], atoi(argv[4])));
 
-	std::vector<std::vector<int> > list = list_equal_messages_ids(files);
-
+	std::vector<std::pair<int, int> > list = list_equal_messages_ids_2(argv[1], atoi(argv[2]), argv[3], atoi(argv[4]));
 	for (size_t i = 0; i < list.size(); i ++)
-	{
-		std::vector<int> ids = list[i];
-
-		std::cout << ids[0];
-		for (size_t j = 1; j < ids.size(); j ++)
-			std::cout << " " << ids[j];
-		std::cout << std::endl;
-	}
+		std::cout << list[i].first << " " << list[i].second << std::endl;
 
 	return 0;
 }
