@@ -102,7 +102,7 @@ end
 
 def processed_git_commits
 	begin
-		File.open('processed.txt').read.split("\n")
+		File.open($ID_MERGER_REPO + '/processed.txt').read.split("\n")
 	rescue
 		[]
 	end
@@ -115,7 +115,7 @@ commits.each do |sha1|
 	puts "Processing #{sha1}..."
 	add_to_merger_repo($ID_MERGER_REPO, generate_idmerge($SRC_DIR, sha1))
 
-	File.open('processed.txt', 'a+') do |f|
+	File.open($ID_MERGER_REPO + '/processed.txt', 'a+') do |f|
 		f.puts sha1
 	end
 end
