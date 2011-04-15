@@ -1,6 +1,8 @@
 #!/usr/bin/ruby19
 # Ruby 1.9 required for "Dir.exists?(path)"
 
+require '../gettextpo-helper/ruby-ext/gettextpo_helper'
+
 $SRC_DIR = '/home/sasha/kde-ru/xx-numbering/templates'
 $ID_MERGER_REPO = './idmerges'
 
@@ -17,7 +19,14 @@ class PotIdMergePair < Struct.new(:git_dir, :tp_hash_a, :tp_hash_b)
 
 private
 	def self.sha1_to_tp_hash(git_dir, sha1)
-		`cd "#{git_dir}" ; git show #{sha1} | ~/stupid-ids/gettextpo-helper/dump-template/dump-template`
+		tempfile_pot = `tempfile --suffix=.pot`.strip
+		`cd "#{git_dir}" ; git show #{sha1} > "#{tempfile_pot}"`
+
+		# TODO: GettextpoHelper.calculate_tp_hash should be able to read .pot from buffer (not only from a file)
+		res = GettextpoHelper.calculate_tp_hash(tempfile_pot)
+
+		`rm -f "#{tempfile_pot}"`
+		res
 	end
 end
 
