@@ -40,6 +40,25 @@ VALUE wrap_get_pot_length(VALUE self, VALUE filename)
 	return INT2FIX(get_pot_length(StringValuePtr(filename)));
 }
 
+VALUE wrap_list_equal_messages_ids_2(VALUE self, VALUE filename_a, VALUE first_id_a, VALUE filename_b, VALUE first_id_b)
+{
+	std::vector<std::pair<int, int> > list = list_equal_messages_ids_2(
+		StringValuePtr(filename_a), FIX2INT(first_id_a),
+		StringValuePtr(filename_b), FIX2INT(first_id_b));
+
+	VALUE res = rb_ary_new(); // create array
+	for (std::vector<std::pair<int, int> >::iterator iter = list.begin(); iter != list.end(); iter ++)
+	{
+		VALUE pair = rb_ary_new(); // create array for next pair
+		rb_ary_push(pair, INT2FIX(iter->first));
+		rb_ary_push(pair, INT2FIX(iter->second));
+
+		rb_ary_push(res, pair);
+	}
+
+	return res;
+}
+
 extern "C" {
 
 /* Function called at module loading */
@@ -48,6 +67,7 @@ void Init_gettextpo_helper()
 	VALUE GettextpoHelper = rb_define_module("GettextpoHelper");
 	rb_define_singleton_method(GettextpoHelper, "calculate_tp_hash", RUBY_METHOD_FUNC(wrap_calculate_tp_hash), 1);
 	rb_define_singleton_method(GettextpoHelper, "get_pot_length", RUBY_METHOD_FUNC(wrap_get_pot_length), 1);
+	rb_define_singleton_method(GettextpoHelper, "list_equal_messages_ids_2", RUBY_METHOD_FUNC(wrap_list_equal_messages_ids_2), 4);
 //	rb_define_singleton_method(GettextpoHelper, "find", RUBY_METHOD_FUNC(wrap_find_string_id), 2);
 }
 
