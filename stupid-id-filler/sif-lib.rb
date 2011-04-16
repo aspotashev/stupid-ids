@@ -26,7 +26,7 @@ class Sif
 		@commited_tp_hashes = IO.read(first_ids_txt).split("\n").map {|x| x[0...40] }
 		@commited_sha1s = IO.read(pot_origins_txt).split("\n").map {|x| x[0...40] }
 
-		@new_firstids = [] # groups: (tp_hash, first_id, id_count)
+		@new_firstids = [] # pairs: (tp_hash, first_id)
 		@new_origins  = [] # pairs: (sha1, tp_hash)
 
 		@dirty = false
@@ -50,7 +50,7 @@ class Sif
 			else
 				pot_len = GettextpoHelper.get_pot_length(pot_path)
 
-				@new_firstids << [tp_hash, @next_id, pot_len]
+				@new_firstids << [tp_hash, @next_id]
 				@next_id += pot_len
 			end
 		end

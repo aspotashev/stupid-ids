@@ -2,7 +2,7 @@ sif -- stupid id filler
 
 === FILES IN REPOSITORY ===
 1. next_id.txt: the ID for the next message in .pot file
-2. first_ids.txt: the list of groups: (hash of template-part, ID of the first message in .pot, number of messages in .pot)
+2. first_ids.txt: the list of pairs: (hash of template-part, ID of the first message in .pot)
 	The hash of template-part can be calculated like this:
 		../dump-template/dump-template <.pot file>
 3. pot_origins.txt: the list of pairs: (Git hash of _original_ .pot file (i.e. not .po), hash of template-part)
