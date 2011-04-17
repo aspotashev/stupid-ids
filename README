@@ -21,13 +21,16 @@ How to setup stupid-ids:
 
 2.	cd stupid-id-filler
 	./sif-init.sh ids
-	./add-templates-from-repo.rb $HOME/kde-ru/xx-numbering/templates ./ids
+	./add-templates-from-repo.rb /path/to/git-templates ./ids
 
 3.	cd stupid-id-filler/database
 	./update-database.rb		# This will generate the database "filler-db.sqlite3"
 
 4.	cd successor-detector
 	./detect.rb			# This will generate .idmerge files in successor-detector/idmerges/successor-detector/
+
+5.	cd successor-detector/database
+	./update-database.rb		# This will generate databases "merger-db.sqlite3" and "idmap.mmapdb"
 
 
 Components:
