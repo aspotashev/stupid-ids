@@ -1,0 +1,5 @@
+== iddiff ==
+This program generates a list of differences between 2 .po files.
+The .po files should be based on the same .pot (even the order
+of messages should be the same).
+Obsolete messages should go after all other messages.
