@@ -1,4 +1,4 @@
-#!/usr/bin/ruby18
+#!/usr/bin/ruby19
 
 require 'active_record'
 
@@ -15,7 +15,7 @@ end
 require 'open3'
 require '../../gettextpo-helper/ruby-ext/gettextpo_helper'
 require '../../stupid-id-filler/database/filler-models.rb'
-require 'merger-models.rb'
+require './merger-models.rb'
 
 class CreateMergerDb < ActiveRecord::Migration
 	def self.connection
