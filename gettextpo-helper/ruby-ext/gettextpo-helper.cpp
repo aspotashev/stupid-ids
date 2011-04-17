@@ -55,11 +55,18 @@ VALUE cIdMapDb_new(VALUE klass, VALUE filename)
 	return Data_Wrap_Struct(cIdMapDb, NULL, free_cIdMapDb, mapped_file);
 }
 
-VALUE cIdMapDb_create(VALUE self, VALUE ary)
+MappedFileIdMapDb *rb_get_mapped_file(VALUE self)
 {
 	MappedFileIdMapDb *mapped_file;
 	Data_Get_Struct(self, MappedFileIdMapDb, mapped_file);
 	assert(mapped_file);
+
+	return mapped_file;
+}
+
+VALUE cIdMapDb_create(VALUE self, VALUE ary)
+{
+	MappedFileIdMapDb *mapped_file = rb_get_mapped_file(self);
 
 	long len = RARRAY_LEN(ary);
 	for (long offset = 0; offset < len ; offset ++)
