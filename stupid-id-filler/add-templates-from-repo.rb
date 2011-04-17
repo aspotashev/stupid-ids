@@ -66,7 +66,7 @@ commits_to_process = list_of_all_commits - list_of_processed
 
 sif = Sif.new($IDS_DIR)
 tempfile_pot = `tempfile --suffix=.pot`.strip
-commits_to_process.each do |commit_sha1|
+commits_to_process.each_with_index do |commit_sha1, index|
 	puts ">>> Processing commit #{commit_sha1}"
 	contents = contents_of_commit(commit_sha1)
 	contents.each do |content_sha1|
@@ -82,6 +82,10 @@ commits_to_process.each do |commit_sha1|
 	sif.commit
 
 	add_to_processed_list(commit_sha1)
+
+	if index % 30 == 0
+		`cd #{$IDS_DIR} ; git gc`
+	end
 end
 
 `rm -f "#{tempfile_pot}"`
