@@ -212,6 +212,8 @@ new_idmerges.each_with_index do |sha1, index|
 
 end
 
+id_map_db.normalize_database
+
 
 MergerLastSha1.value = $NEW_SHA1
 
