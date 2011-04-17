@@ -8,9 +8,9 @@ end
 # [   int] msg_id
 # [   int] min_id
 # [   int] merge_pair_id
-class IdMap < MergerBase
-	validates_uniqueness_of :msg_id
-end
+#class IdMap < MergerBase
+#	validates_uniqueness_of :msg_id
+#end
 
 # [   int] id (ActiveRecord creates it automatically)
 # [string] tp_hash_a

@@ -28,12 +28,12 @@ class CreateMergerDb < ActiveRecord::Migration
 		end
 		MergerLastSha1.new(:id => 1, :value => 'init').save! # Git tag "init"
 
-		create_table IdMap.table_name do |t| # TODO: remove hidden attribute 'id'
-			t.integer :msg_id
-			t.integer :min_id
-			t.integer :merge_pair_id
-		end
-		add_index IdMap.table_name, [:msg_id]
+#		create_table IdMap.table_name do |t| # TODO: remove hidden attribute 'id'
+#			t.integer :msg_id
+#			t.integer :min_id
+#			t.integer :merge_pair_id
+#		end
+#		add_index IdMap.table_name, [:msg_id]
 
 		create_table MergePair.table_name do |t|
 			t.string :tp_hash_a
@@ -49,7 +49,7 @@ class CreateMergerDb < ActiveRecord::Migration
 	end
 
 	def self.down
-		[MergerLastSha1, IdMap, MergePair, MergeFile].each do |c|
+		[MergerLastSha1, MergePair, MergeFile].each do |c|
 			drop_table c.table_name if table_exists?(c.table_name)
 		end
 	end
@@ -162,6 +162,8 @@ end
 
 $NEW_SHA1 = git_head_sha1 # updating to this SHA-1
 
+id_map_db = GettextpoHelper::IdMapDb.new('idmap.mmapdb')
+
 new_idmerges = list_new_idmerges(MergerLastSha1.value, $NEW_SHA1)
 new_idmerges.each do |sha1|
 	puts "Processing merge file #{sha1}..."
@@ -200,10 +202,13 @@ new_idmerges.each do |sha1|
 
 		puts "#{tp_hash_a} <-> #{tp_hash_b}: #{id_map_list.size} pairs of IDs"
 
-		id_map_list.each {|id_pair| id_pair.sort! }
-		id_map_list.each do |id_pair|
-			IdMap.create(:msg_id => id_pair[1], :min_id => id_pair[0], :merge_pair_id => merge_pair.id)
-		end
+		id_map_list = id_map_list.
+			map {|id_pair| id_pair.sort }.
+			map {|id_pair| [id_pair[1], id_pair[0], merge_pair.id] }
+
+		raise if id_map_list.nil?
+		raise if id_map_db.nil?
+		id_map_db.create(id_map_list)
 
 		puts "done"
 	end
