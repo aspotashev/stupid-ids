@@ -131,7 +131,6 @@ def get_pot_first_id(tp_hash)
 end
 
 def try_extract_pot_to_file(git_dir, git_hash, filename)
-	p [git_dir, git_hash, filename]
 	Open3.popen3("cd \"#{git_dir}\" ; git show #{git_hash} --") do |stdin, stdout, stderr|
 		stdout_data = stdout.read # reading in this order to avoid blocking
 		stderr_data = stderr.read
@@ -209,8 +208,6 @@ new_idmerges.each do |sha1|
 		raise if id_map_list.nil?
 		raise if id_map_db.nil?
 		id_map_db.create(id_map_list)
-
-		puts "done"
 	end
 
 end

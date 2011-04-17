@@ -10,26 +10,6 @@ const char *find_string_id_by_str_multiple(char *s, int n);
 
 //-------------------------------
 
-/*VALUE wrap_init_search(VALUE self, VALUE dump, VALUE index, VALUE map)
-{
-	init_search(StringValuePtr(dump), StringValuePtr(index), StringValuePtr(map));
-	return Qnil;
-}
-
-VALUE wrap_find_string_id(VALUE self, VALUE str, VALUE num)
-{
-	int n = FIX2INT(num);
-
-	VALUE res = rb_ary_new(); // create array
-	for (int index = get_internal_index_by_string(StringValuePtr(str)) - 3, i = 0; // HACK
-		i < n; index ++, i ++)
-	{
-		// append to array
-		rb_ary_push(res, rb_str_new2(get_msg_id_by_internal_index(index)));
-	}
-	return res;
-}*/
-
 VALUE wrap_calculate_tp_hash(VALUE self, VALUE filename)
 {
 	std::string res = calculate_tp_hash(StringValuePtr(filename));
@@ -59,6 +39,8 @@ VALUE wrap_list_equal_messages_ids_2(VALUE self, VALUE filename_a, VALUE first_i
 
 	return res;
 }
+
+//------- class GettextpoHelper::IdMapDb -------
 
 void free_cIdMapDb(void *mapped_file)
 {
@@ -103,7 +85,6 @@ void Init_gettextpo_helper()
 	rb_define_singleton_method(GettextpoHelper, "calculate_tp_hash", RUBY_METHOD_FUNC(wrap_calculate_tp_hash), 1);
 	rb_define_singleton_method(GettextpoHelper, "get_pot_length", RUBY_METHOD_FUNC(wrap_get_pot_length), 1);
 	rb_define_singleton_method(GettextpoHelper, "list_equal_messages_ids_2", RUBY_METHOD_FUNC(wrap_list_equal_messages_ids_2), 4);
-//	rb_define_singleton_method(GettextpoHelper, "find", RUBY_METHOD_FUNC(wrap_find_string_id), 2);
 
 	cIdMapDb = rb_define_class_under(GettextpoHelper, "IdMapDb", rb_cObject);
 	rb_define_singleton_method(cIdMapDb, "new", RUBY_METHOD_FUNC(cIdMapDb_new), 1);
