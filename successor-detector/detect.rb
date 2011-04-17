@@ -119,9 +119,8 @@ end
 
 puts "Collecting unprocessed commits..."
 commits = git_commits($SRC_DIR) - processed_git_commits
-puts "#{commits.size} commits left to process"
-commits.each do |sha1|
-	puts "Processing #{sha1}..."
+commits.each_with_index do |sha1, index|
+	puts "Processing #{sha1} (#{index + 1}/#{commits.size})"
 	add_to_merger_repo($ID_MERGER_REPO, generate_idmerge($SRC_DIR, sha1))
 
 	`mkdir -p "#{$ID_MERGER_REPO}"`
