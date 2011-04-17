@@ -164,7 +164,7 @@ $NEW_SHA1 = git_head_sha1 # updating to this SHA-1
 
 new_idmerges = list_new_idmerges(MergerLastSha1.value, $NEW_SHA1)
 new_idmerges.each do |sha1|
-	puts "Processing commit #{sha1}..."
+	puts "Processing merge file #{sha1}..."
 
 	content = `cd "#{$GIT_DIR}" ; git show #{sha1}`.split("\n")
 	raise if not subject = content[0].match(/^ Subject: (.*)$/)[1]
@@ -178,7 +178,12 @@ new_idmerges.each do |sha1|
 		tp_hash_a = m[1]
 		tp_hash_b = m[2]
 
-		merge_pair = MergePair.create(:merge_file_id => merge_file.id, :tp_hash_a => tp_hash_a, :tp_hash_b => tp_hash_b)
+		merge_pair_data = { :merge_file_id => merge_file.id, :tp_hash_a => tp_hash_a, :tp_hash_b => tp_hash_b }
+		merge_pair = MergePair.find(:first, :conditions => merge_pair_data)
+		if merge_pair.nil?
+			merge_pair = MergePair.create(merge_pair_data)
+			merge_pair.save
+		end
 
 		tempfile_pot_a = `tempfile --suffix=.pot`.strip
 		tempfile_pot_b = `tempfile --suffix=.pot`.strip
