@@ -22,6 +22,9 @@ public:
 	void *ptr(size_t offset, size_t len);
 
 protected:
+	size_t fileLength();
+
+private:
 	void detectFileSize(); // initializes m_fileLength
 	void mapFile();
 	void unmapFile();
@@ -126,6 +129,11 @@ void *MappedFile::ptr(size_t offset, size_t len)
 	return (char *)data + offset; // sizeof(char) == 1
 }
 
+size_t MappedFile::fileLength()
+{
+	return m_fileLength;
+}
+
 /*
 int main()
 {
@@ -162,6 +170,9 @@ public:
 
 	void addRow(int msg_id, int min_id, int merge_pair_id);
 	int getRecursiveMinId(int msg_id);
+
+	// put globally minimum IDs into 'min_id'
+	void normalizeDatabase();
 };
 
 MappedFileIdMapDb::MappedFileIdMapDb(const char *filename):
@@ -206,5 +217,27 @@ void MappedFileIdMapDb::writeRow(int msg_id, int min_id, int merge_pair_id)
 	IdMapDb_row *row = getRow(msg_id);
 	row->min_id = min_id;
 	row->merge_pair_id = merge_pair_id;
+}
+
+// put globally minimum IDs into 'min_id'
+void MappedFileIdMapDb::normalizeDatabase()
+{
+	// This is not the exact number of rows
+	int row_count = (int)(fileLength() / sizeof(IdMapDb_row));
+
+	int changed_count = 0;
+	for (int msg_id = 100; msg_id < row_count; msg_id ++)
+	{
+		IdMapDb_row *row = getRow(msg_id);
+
+		int recurs_min_id = getRecursiveMinId(msg_id);
+		if (row->min_id != 0 && row->min_id != recurs_min_id)
+		{
+			row->min_id = recurs_min_id;
+			changed_count ++;
+		}
+	}
+
+	printf("normalizeDatabase: %d changes\n", changed_count);
 }
 

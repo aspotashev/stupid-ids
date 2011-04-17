@@ -83,6 +83,20 @@ VALUE cIdMapDb_create(VALUE self, VALUE ary)
 	return Qnil;
 }
 
+VALUE cIdMapDb_normalize_database(VALUE self)
+{
+	MappedFileIdMapDb *mapped_file = rb_get_mapped_file(self);
+	mapped_file->normalizeDatabase();
+
+	return Qnil;
+}
+
+VALUE cIdMapDb_get_min_id(VALUE self, VALUE msg_id)
+{
+	MappedFileIdMapDb *mapped_file = rb_get_mapped_file(self);
+	return INT2FIX(mapped_file->getRecursiveMinId(FIX2INT(msg_id)));
+}
+
 extern "C" {
 
 /* Function called at module loading */
@@ -96,6 +110,8 @@ void Init_gettextpo_helper()
 	cIdMapDb = rb_define_class_under(GettextpoHelper, "IdMapDb", rb_cObject);
 	rb_define_singleton_method(cIdMapDb, "new", RUBY_METHOD_FUNC(cIdMapDb_new), 1);
 	rb_define_method(cIdMapDb, "create", RUBY_METHOD_FUNC(cIdMapDb_create), 1);
+	rb_define_method(cIdMapDb, "normalize_database", RUBY_METHOD_FUNC(cIdMapDb_normalize_database), 0);
+	rb_define_method(cIdMapDb, "get_min_id", RUBY_METHOD_FUNC(cIdMapDb_get_min_id), 1);
 }
 
 }
