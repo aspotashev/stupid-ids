@@ -67,7 +67,7 @@ commits_to_process = list_of_all_commits - list_of_processed
 sif = Sif.new($IDS_DIR)
 tempfile_pot = `tempfile --suffix=.pot`.strip
 commits_to_process.each_with_index do |commit_sha1, index|
-	puts ">>> Processing commit #{commit_sha1}"
+	puts ">>> Processing commit #{commit_sha1} (#{index + 1}/#{commits_to_process.size})"
 	contents = contents_of_commit(commit_sha1)
 	contents.each do |content_sha1|
 		# content_sha1 is the sha1 of blob (e.g. 963a86ab2a7f24ba4400eace2e713c5bb8a5bad4)
