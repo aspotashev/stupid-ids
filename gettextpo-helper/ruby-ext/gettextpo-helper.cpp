@@ -97,6 +97,18 @@ VALUE cIdMapDb_get_min_id(VALUE self, VALUE msg_id)
 	return INT2FIX(mapped_file->getRecursiveMinId(FIX2INT(msg_id)));
 }
 
+VALUE cIdMapDb_get_min_id_array(VALUE self, VALUE first_msg_id, VALUE num)
+{
+	MappedFileIdMapDb *mapped_file = rb_get_mapped_file(self);
+	std::vector<int> res_int = mapped_file->getMinIdArray(FIX2INT(first_msg_id), FIX2INT(num));
+
+	VALUE res = rb_ary_new();
+	for (int i = 0; i < FIX2INT(num); i ++)
+		rb_ary_push(res, INT2FIX(res_int[i]));
+
+	return res;
+}
+
 extern "C" {
 
 /* Function called at module loading */
@@ -112,6 +124,7 @@ void Init_gettextpo_helper()
 	rb_define_method(cIdMapDb, "create", RUBY_METHOD_FUNC(cIdMapDb_create), 1);
 	rb_define_method(cIdMapDb, "normalize_database", RUBY_METHOD_FUNC(cIdMapDb_normalize_database), 0);
 	rb_define_method(cIdMapDb, "get_min_id", RUBY_METHOD_FUNC(cIdMapDb_get_min_id), 1);
+	rb_define_method(cIdMapDb, "get_min_id_array", RUBY_METHOD_FUNC(cIdMapDb_get_min_id_array), 2);
 }
 
 }

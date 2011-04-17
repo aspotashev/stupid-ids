@@ -12,3 +12,6 @@ p id_map_db.get_min_id(50000)
 p id_map_db.get_min_id(12345)
 id_map_db.normalize_database
 
+id_map_db = GettextpoHelper::IdMapDb.new('../../successor-detector/database/idmap.mmapdb')
+p id_map_db.get_min_id_array(50000, 100)
+

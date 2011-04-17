@@ -173,6 +173,8 @@ public:
 
 	// put globally minimum IDs into 'min_id'
 	void normalizeDatabase();
+
+	std::vector<int> getMinIdArray(int first_msg_id, int num);
 };
 
 MappedFileIdMapDb::MappedFileIdMapDb(const char *filename):
@@ -239,5 +241,17 @@ void MappedFileIdMapDb::normalizeDatabase()
 	}
 
 	printf("normalizeDatabase: %d changes\n", changed_count);
+}
+
+std::vector<int> MappedFileIdMapDb::getMinIdArray(int first_msg_id, int num)
+{
+	assert(num > 0);
+	assert(first_msg_id >= 100);
+
+	std::vector<int> res(num);
+	for (int i = 0; i < num; i ++)
+		res[i] = getRecursiveMinId(first_msg_id + i);
+
+	return res;
 }
 
