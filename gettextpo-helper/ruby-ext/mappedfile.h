@@ -178,7 +178,8 @@ MappedFileIdMapDb::IdMapDb_row *MappedFileIdMapDb::getRow(int msg_id)
 int MappedFileIdMapDb::getRecursiveMinId(int msg_id)
 {
 	int prev_id;
-	while (msg_id = getRow(prev_id = msg_id)->min_id);
+	while (msg_id = getRow(prev_id = msg_id)->min_id)
+		assert(msg_id < prev_id); // avoiding infinite loop
 
 	return prev_id;
 }
