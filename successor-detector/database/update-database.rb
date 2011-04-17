@@ -164,8 +164,8 @@ $NEW_SHA1 = git_head_sha1 # updating to this SHA-1
 id_map_db = GettextpoHelper::IdMapDb.new('idmap.mmapdb')
 
 new_idmerges = list_new_idmerges(MergerLastSha1.value, $NEW_SHA1)
-new_idmerges.each do |sha1|
-	puts "Processing merge file #{sha1}..."
+new_idmerges.each_with_index do |sha1, index|
+	puts "Processing merge file #{sha1} (#{index + 1}/#{new_idmerges.size})..."
 
 	content = `cd "#{$GIT_DIR}" ; git show #{sha1}`.split("\n")
 	raise if not subject = content[0].match(/^ Subject: (.*)$/)[1]
