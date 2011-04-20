@@ -29,6 +29,7 @@ class CreateDb < ActiveRecord::Migration
 		create_table TphashFirstId.table_name do |t|
 			t.string :tp_hash
 			t.string :first_id
+			# TODO: first_id: string -> integer
 		end
 		add_index TphashFirstId.table_name, [:tp_hash]
 

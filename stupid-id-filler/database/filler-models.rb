@@ -5,9 +5,13 @@ class FillerBase < ActiveRecord::Base
 	establish_connection_filler
 end
 
+# [string] tp_hash <index> (template-part hash of a .pot)
+# [string] potsha (Git hash of the .pot)
 class TphashPotsha < FillerBase
 end
 
+# [string] tp_hash <index> (template-part hash of a .pot)
+# [string] first_id (ID of the first message in the .pot)
 class TphashFirstId < FillerBase
 end
 
