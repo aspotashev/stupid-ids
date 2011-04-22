@@ -2,6 +2,8 @@
 // http://www.gnu.org/software/gettext/manual/gettext.html#libgettextpo
 
 #include <string>
+#include <vector>
+#include <map>
 #include <assert.h>
 #include <gettext-po.h>
 
@@ -71,9 +73,46 @@ std::string wrap_string_hex(const char *str)
 
 //----------------------- Calculation of template-part hash ------------------------
 
+#if !defined (QT_VERSION)
+	#define SHA1_USING_CRYPTOPP
+#endif
+
+#if defined (SHA1_USING_CRYPTOPP)
+
 #include <cryptopp/sha.h> // CryptoPP::SHA1
 #include <cryptopp/filters.h> // CryptoPP::StringSource
 #include <cryptopp/hex.h> // CryptoPP::HexEncoder
+
+// http://www.xenoterracide.com/2009/09/quick-sha1sum-with-crypto.html
+// http://groups.google.com/group/cryptopp-users/browse_thread/thread/dfe40b4eed04f03d?pli=1
+std::string sha1_string(std::string input)
+{
+	std::string res;
+
+	CryptoPP::SHA1 hash;
+	CryptoPP::StringSink *string_sink = new CryptoPP::StringSink(res);
+	CryptoPP::HexEncoder *hex_encoder = new CryptoPP::HexEncoder(string_sink, false); // hex in lowercase
+	CryptoPP::HashFilter *hash_filter = new CryptoPP::HashFilter(hash, hex_encoder);
+	CryptoPP::StringSource(input, true, hash_filter);
+
+	return res;
+}
+
+#else
+
+#include <QCryptographicHash>
+
+// sha1 using Qt
+// http://www.qtcentre.org/threads/16846-How-to-get-sha1-hash
+
+std::string sha1_string(std::string input)
+{
+	QCryptographicHash hash(QCryptographicHash::Sha1);
+	hash.addData(input.c_str(), (int)input.length());
+	return std::string(hash.result().toHex().data());
+}
+
+#endif
 
 std::string wrap_template_header(po_message_t message)
 {
@@ -218,21 +257,6 @@ std::string dump_po_file_template(const char *filename)
 	}
 
 	po_file_free(file); // free memory
-	return res;
-}
-
-// http://www.xenoterracide.com/2009/09/quick-sha1sum-with-crypto.html
-// http://groups.google.com/group/cryptopp-users/browse_thread/thread/dfe40b4eed04f03d?pli=1
-std::string sha1_string(std::string input)
-{
-	std::string res;
-
-	CryptoPP::SHA1 hash;
-	CryptoPP::StringSink *string_sink = new CryptoPP::StringSink(res);
-	CryptoPP::HexEncoder *hex_encoder = new CryptoPP::HexEncoder(string_sink, false); // hex in lowercase
-	CryptoPP::HashFilter *hash_filter = new CryptoPP::HashFilter(hash, hex_encoder);
-	CryptoPP::StringSource(input, true, hash_filter);
-
 	return res;
 }
 
