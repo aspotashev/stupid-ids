@@ -68,8 +68,11 @@ class SetDiff < Struct.new(:added, :removed)
 				added << line[1..-1]
 			elsif line[0..0] == '-'
 				removed << line[1..-1]
+			elsif line.match(/^@@ /)
+				# ok
 			else
 				p line
+				p diff_lines
 				raise "unexpected character (should be + or -)"
 			end
 		end
@@ -102,14 +105,34 @@ end
 
 def git_head_sha1
 	`cd "#{$DIR}" ; git log --format=format:%H -1`.strip
+	# TODO: use git_ref_sha1
+end
+
+def git_ref_sha1(ref)
+	`cd "#{$DIR}" ; git log --format=format:%H -1 #{ref}`.strip
+end
+
+# ref1 must be in the "git log #{ref2}" (i.e. ref1 is earlier than ref2)
+def git_commits_between(ref1, ref2)
+	ref1 = git_ref_sha1(ref1)
+	ref2 = git_ref_sha1(ref2)
+
+	log = `cd "#{$DIR}" ; git log --format=format:%H #{ref2}`.split("\n")
+	index = log.index(ref1)
+
+	raise if index.nil?
+
+	log[0...index].reverse
 end
 
 $NEW_SHA1 = git_head_sha1 # updating to this SHA-1
 
+def update_database_to_git_commit(ref)
+
 # TODO: avoid duplicate code
 i = 1
-n = git_diff_lines(FillerLastSha1.value, $NEW_SHA1, 'pot_origins.txt').added.size # TODO: avoid duplicate calls to git_diff_lines
-git_diff_lines(FillerLastSha1.value, $NEW_SHA1, 'pot_origins.txt').added.each do |x|
+n = git_diff_lines(FillerLastSha1.value, ref, 'pot_origins.txt').added.size # TODO: avoid duplicate calls to git_diff_lines
+git_diff_lines(FillerLastSha1.value, ref, 'pot_origins.txt').added.each do |x|
 	m = x.match(/^([0-9a-f]{40}) ([0-9a-f]{40})$/) or raise "failed to parse"
 	TphashPotsha.create(:potsha => m[1], :tp_hash => m[2])
 
@@ -122,8 +145,8 @@ end
 puts "    done!"
 
 i = 1
-n = git_diff_lines(FillerLastSha1.value, $NEW_SHA1, 'first_ids.txt').added.size # TODO: avoid duplicate calls to git_diff_lines
-git_diff_lines(FillerLastSha1.value, $NEW_SHA1, 'first_ids.txt').added.each do |x|
+n = git_diff_lines(FillerLastSha1.value, ref, 'first_ids.txt').added.size # TODO: avoid duplicate calls to git_diff_lines
+git_diff_lines(FillerLastSha1.value, ref, 'first_ids.txt').added.each do |x|
 	m = x.match(/^([0-9a-f]{40}) ([0-9]+)$/) or raise "failed to parse"
 	TphashFirstId.create(:tp_hash => m[1], :first_id => m[2].to_i)
 
@@ -136,5 +159,12 @@ end
 puts "    done!"
 
 
-FillerLastSha1.value = $NEW_SHA1
+FillerLastSha1.value = ref
+
+end
+
+git_commits_between(FillerLastSha1.value, $NEW_SHA1).each do |ref|
+	update_database_to_git_commit(ref)
+end
+
 
