@@ -138,9 +138,6 @@ def get_id_count(tp_hash)
 	id_count
 end
 
-
-$NEW_SHA1 = git_head_sha1 # updating to this SHA-1
-
 def update_database_to_git_commit(ref)
 	# TODO: avoid duplicate code
 	i = 1
@@ -175,8 +172,10 @@ def update_database_to_git_commit(ref)
 	FillerLastSha1.value = ref
 end
 
+
+$NEW_SHA1 = git_head_sha1 # updating to this SHA-1
+
 git_commits_between(FillerLastSha1.value, $NEW_SHA1).each do |ref|
 	update_database_to_git_commit(ref)
 end
-
 
