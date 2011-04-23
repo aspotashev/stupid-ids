@@ -117,7 +117,7 @@ end
 
 $NEW_SHA1 = git_head_sha1 # updating to this SHA-1
 
-id_map_db = GettextpoHelper::IdMapDb.new('idmap.mmapdb')
+$id_map_db = GettextpoHelper::IdMapDb.new('idmap.mmapdb')
 
 new_idmerges = list_new_idmerges(MergerLastSha1.value, $NEW_SHA1)
 new_idmerges.each_with_index do |sha1, index|
@@ -162,13 +162,13 @@ new_idmerges.each_with_index do |sha1, index|
 			map {|id_pair| [id_pair[1], id_pair[0], merge_pair.id] }
 
 		raise if id_map_list.nil?
-		raise if id_map_db.nil?
-		id_map_db.create(id_map_list)
+		raise if $id_map_db.nil?
+		$id_map_db.create(id_map_list)
 	end
 
 end
 
-id_map_db.normalize_database
+$id_map_db.normalize_database
 
 
 MergerLastSha1.value = $NEW_SHA1
