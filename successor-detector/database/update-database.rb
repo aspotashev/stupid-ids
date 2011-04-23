@@ -97,10 +97,6 @@ private
 	end
 end
 
-def git_head_sha1
-	`cd "#{$GIT_DIR}" ; git log --format=format:%H -1`.strip
-end
-
 def list_new_idmerges(ref1, ref2)
 	output = `cd "#{$GIT_DIR}" ; git diff #{ref1} #{ref2} --raw --no-abbrev`.split("\n")
 	lines = output.map {|x| x.match(/^:0{6} [0-9]{6} 0{40} ([0-9a-f]{40}) A\t.+\.idmerge$/) }
@@ -115,11 +111,11 @@ def get_pot_first_id(tp_hash)
 	TphashFirstId.find(:first, :conditions => {:tp_hash => tp_hash}).first_id
 end
 
-$NEW_SHA1 = git_head_sha1 # updating to this SHA-1
-
 $id_map_db = GettextpoHelper::IdMapDb.new('idmap.mmapdb')
 
-new_idmerges = list_new_idmerges(MergerLastSha1.value, $NEW_SHA1)
+def update_database_to_git_commit(ref)
+
+new_idmerges = list_new_idmerges(MergerLastSha1.value, ref)
 new_idmerges.each_with_index do |sha1, index|
 	puts "Processing merge file #{sha1} (#{index + 1}/#{new_idmerges.size})..."
 
@@ -168,8 +164,17 @@ new_idmerges.each_with_index do |sha1, index|
 
 end
 
+MergerLastSha1.value = ref
+
+end
+
+$NEW_SHA1 = git_head_sha1($GIT_DIR) # updating to this SHA-1
+
+git_commits = git_commits_between($GIT_DIR, MergerLastSha1.value, $NEW_SHA1)
+git_commits.each_with_index do |ref, index|
+	puts "(#{index + 1}/#{git_commits.size})"
+	update_database_to_git_commit(ref)
+end
+
 $id_map_db.normalize_database
-
-
-MergerLastSha1.value = $NEW_SHA1
 
