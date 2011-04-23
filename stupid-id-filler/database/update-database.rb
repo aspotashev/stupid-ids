@@ -9,6 +9,8 @@ ActiveRecord::Base.class_eval do
 end
 
 require 'filler-models.rb'
+require '../../gettextpo-helper/ruby-ext/gettextpo_helper'
+require '../../gettextpo-helper/ruby-helpers/ruby-helpers'
 
 class CreateDb < ActiveRecord::Migration
 	def self.connection
@@ -29,6 +31,7 @@ class CreateDb < ActiveRecord::Migration
 		create_table TphashFirstId.table_name do |t|
 			t.string :tp_hash
 			t.integer :first_id
+			t.integer :id_count
 		end
 		add_index TphashFirstId.table_name, [:tp_hash]
 
@@ -124,6 +127,18 @@ def git_commits_between(ref1, ref2)
 	log[0...index].reverse
 end
 
+def get_id_count(tp_hash)
+	tempfile_pot = `tempfile --suffix=.pot`.strip
+	extract_pot_to_file(tp_hash, tempfile_pot)
+
+	id_count = GettextpoHelper.get_pot_length(tempfile_pot)
+
+	`rm -f "#{tempfile_pot}"`
+
+	id_count
+end
+
+
 $NEW_SHA1 = git_head_sha1 # updating to this SHA-1
 
 def update_database_to_git_commit(ref)
@@ -146,7 +161,7 @@ def update_database_to_git_commit(ref)
 	n = git_diff_lines(FillerLastSha1.value, ref, 'first_ids.txt').added.size # TODO: avoid duplicate calls to git_diff_lines
 	git_diff_lines(FillerLastSha1.value, ref, 'first_ids.txt').added.each do |x|
 		m = x.match(/^([0-9a-f]{40}) ([0-9]+)$/) or raise "failed to parse"
-		TphashFirstId.create(:tp_hash => m[1], :first_id => m[2].to_i)
+		TphashFirstId.create(:tp_hash => m[1], :first_id => m[2].to_i, :id_count => get_id_count(m[1]))
 
 		if i % 37 == 12 or i == n
 			print "\b"*30 + "Processing #{i}/#{n}"
