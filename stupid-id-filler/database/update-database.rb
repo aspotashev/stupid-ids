@@ -128,39 +128,37 @@ end
 $NEW_SHA1 = git_head_sha1 # updating to this SHA-1
 
 def update_database_to_git_commit(ref)
+	# TODO: avoid duplicate code
+	i = 1
+	n = git_diff_lines(FillerLastSha1.value, ref, 'pot_origins.txt').added.size # TODO: avoid duplicate calls to git_diff_lines
+	git_diff_lines(FillerLastSha1.value, ref, 'pot_origins.txt').added.each do |x|
+		m = x.match(/^([0-9a-f]{40}) ([0-9a-f]{40})$/) or raise "failed to parse"
+		TphashPotsha.create(:potsha => m[1], :tp_hash => m[2])
 
-# TODO: avoid duplicate code
-i = 1
-n = git_diff_lines(FillerLastSha1.value, ref, 'pot_origins.txt').added.size # TODO: avoid duplicate calls to git_diff_lines
-git_diff_lines(FillerLastSha1.value, ref, 'pot_origins.txt').added.each do |x|
-	m = x.match(/^([0-9a-f]{40}) ([0-9a-f]{40})$/) or raise "failed to parse"
-	TphashPotsha.create(:potsha => m[1], :tp_hash => m[2])
-
-	if i % 37 == 12 or i == n
-		print "\b"*30 + "Processing #{i}/#{n}"
-		STDOUT.flush
+		if i % 37 == 12 or i == n
+			print "\b"*30 + "Processing #{i}/#{n}"
+			STDOUT.flush
+		end
+		i += 1
 	end
-	i += 1
-end
-puts "    done!"
+	puts "    done!"
 
-i = 1
-n = git_diff_lines(FillerLastSha1.value, ref, 'first_ids.txt').added.size # TODO: avoid duplicate calls to git_diff_lines
-git_diff_lines(FillerLastSha1.value, ref, 'first_ids.txt').added.each do |x|
-	m = x.match(/^([0-9a-f]{40}) ([0-9]+)$/) or raise "failed to parse"
-	TphashFirstId.create(:tp_hash => m[1], :first_id => m[2].to_i)
+	i = 1
+	n = git_diff_lines(FillerLastSha1.value, ref, 'first_ids.txt').added.size # TODO: avoid duplicate calls to git_diff_lines
+	git_diff_lines(FillerLastSha1.value, ref, 'first_ids.txt').added.each do |x|
+		m = x.match(/^([0-9a-f]{40}) ([0-9]+)$/) or raise "failed to parse"
+		TphashFirstId.create(:tp_hash => m[1], :first_id => m[2].to_i)
 
-	if i % 37 == 12 or i == n
-		print "\b"*30 + "Processing #{i}/#{n}"
-		STDOUT.flush
+		if i % 37 == 12 or i == n
+			print "\b"*30 + "Processing #{i}/#{n}"
+			STDOUT.flush
+		end
+		i += 1
 	end
-	i += 1
-end
-puts "    done!"
+	puts "    done!"
 
 
-FillerLastSha1.value = ref
-
+	FillerLastSha1.value = ref
 end
 
 git_commits_between(FillerLastSha1.value, $NEW_SHA1).each do |ref|
