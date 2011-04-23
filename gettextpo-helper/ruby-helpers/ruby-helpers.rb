@@ -45,3 +45,26 @@ def extract_pot_to_file(tp_hash, filename)
 	end
 end
 
+#-------------- Git -----------------
+
+def git_head_sha1(git_dir)
+	git_ref_sha1(git_dir, 'HEAD')
+end
+
+def git_ref_sha1(git_dir, ref)
+	`cd "#{git_dir}" ; git log --format=format:%H -1 #{ref}`.strip
+end
+
+# ref1 must be in the "git log #{ref2}" (i.e. ref1 is earlier than ref2)
+def git_commits_between(git_dir, ref1, ref2)
+	ref1 = git_ref_sha1(git_dir, ref1)
+	ref2 = git_ref_sha1(git_dir, ref2)
+
+	log = `cd "#{git_dir}" ; git log --format=format:%H #{ref2} --`.split("\n")
+	index = log.index(ref1)
+
+	raise if index.nil?
+
+	log[0...index].reverse
+end
+
