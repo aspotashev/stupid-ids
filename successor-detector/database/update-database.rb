@@ -12,7 +12,6 @@ ActiveRecord::Base.class_eval do
 	end
 end
 
-require 'open3'
 require '../../gettextpo-helper/ruby-ext/gettextpo_helper'
 require '../../gettextpo-helper/ruby-helpers/ruby-helpers'
 require '../../stupid-id-filler/database/filler-models.rb'
@@ -110,21 +109,6 @@ def list_new_idmerges(ref1, ref2)
 	end
 
 	lines.map {|m| m[1] }
-end
-
-# Returns the Git hash of a .pot file by its tp_hash.
-def get_pot_git_hash(tp_hash)
-	# perform checks
-	all_rows = TphashPotsha.find(:all, :conditions => {:tp_hash => tp_hash})
-	if all_rows.size > 1
-		p all_rows
-		raise "There should not be more than one .pot file with the same tp_hash"
-	elsif all_rows.size == 0
-		raise "tp_hash not found: tp_hash = #{tp_hash}"
-	end
-
-	# simply do the job
-	TphashPotsha.find(:first, :conditions => {:tp_hash => tp_hash}).potsha
 end
 
 def get_pot_first_id(tp_hash)
