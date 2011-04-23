@@ -175,7 +175,9 @@ end
 
 $NEW_SHA1 = git_head_sha1 # updating to this SHA-1
 
-git_commits_between(FillerLastSha1.value, $NEW_SHA1).each do |ref|
+git_commits = git_commits_between(FillerLastSha1.value, $NEW_SHA1)
+git_commits.each_with_index do |ref, index|
+	puts "(#{index + 1}/#{git_commits.size})"
 	update_database_to_git_commit(ref)
 end
 
