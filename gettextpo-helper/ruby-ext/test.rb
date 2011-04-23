@@ -1,4 +1,5 @@
 #!/usr/bin/ruby19
+# Ruby 1.9 is required for gettextpo_helper Ruby extension
 
 require './gettextpo_helper'
 
