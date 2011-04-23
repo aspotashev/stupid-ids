@@ -106,18 +106,18 @@ def git_diff_lines(ref1, ref2, filename)
 	SetDiff.new(output)
 end
 
-def git_head_sha1
-	git_ref_sha1('HEAD')
+def git_head_sha1(git_dir)
+	git_ref_sha1(git_dir, 'HEAD')
 end
 
-def git_ref_sha1(ref)
+def git_ref_sha1(git_dir, ref)
 	`cd "#{$DIR}" ; git log --format=format:%H -1 #{ref}`.strip
 end
 
 # ref1 must be in the "git log #{ref2}" (i.e. ref1 is earlier than ref2)
-def git_commits_between(ref1, ref2)
-	ref1 = git_ref_sha1(ref1)
-	ref2 = git_ref_sha1(ref2)
+def git_commits_between(git_dir, ref1, ref2)
+	ref1 = git_ref_sha1(git_dir, ref1)
+	ref2 = git_ref_sha1(git_dir, ref2)
 
 	log = `cd "#{$DIR}" ; git log --format=format:%H #{ref2}`.split("\n")
 	index = log.index(ref1)
@@ -173,9 +173,9 @@ def update_database_to_git_commit(ref)
 end
 
 
-$NEW_SHA1 = git_head_sha1 # updating to this SHA-1
+$NEW_SHA1 = git_head_sha1($DIR) # updating to this SHA-1
 
-git_commits = git_commits_between(FillerLastSha1.value, $NEW_SHA1)
+git_commits = git_commits_between($DIR, FillerLastSha1.value, $NEW_SHA1)
 git_commits.each_with_index do |ref, index|
 	puts "(#{index + 1}/#{git_commits.size})"
 	update_database_to_git_commit(ref)
