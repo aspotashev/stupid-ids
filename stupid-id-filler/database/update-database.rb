@@ -104,8 +104,7 @@ def git_diff_lines(ref1, ref2, filename)
 end
 
 def git_head_sha1
-	`cd "#{$DIR}" ; git log --format=format:%H -1`.strip
-	# TODO: use git_ref_sha1
+	git_ref_sha1('HEAD')
 end
 
 def git_ref_sha1(ref)
