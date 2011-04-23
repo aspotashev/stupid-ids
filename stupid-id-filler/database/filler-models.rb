@@ -3,6 +3,13 @@ class FillerBase < ActiveRecord::Base
 	# http://pragdave.blogs.pragprog.com/pragdave/2006/01/sharing_externa.html
 	self.abstract_class = true
 	establish_connection_filler
+
+	# 'data' should be a Hash
+	def self.find_or_create(data)
+		if find(:first, :conditions => data).nil?
+			create(data)
+		end
+	end
 end
 
 # [string] tp_hash <index> (template-part hash of a .pot)
