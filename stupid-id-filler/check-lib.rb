@@ -5,6 +5,9 @@ Array.class_eval do
 	end
 end
 
+# Interesting cases: (TODO: think it out)
+#    1. http://websvn.kde.org/?view=revision&revision=1207849 -- almost normal .pot, but the header is not fuzzy
+#
 def is_virgin_pot_content(content)
 	lines = content.split("\n")
 
