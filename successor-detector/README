@@ -4,3 +4,7 @@ What should be merged:
 2. .pot files with the same names in 'trunk' and 'stable' after every scripty's template update (makes stupid-ids al least not worse than Lokalize's parallel branches)
 3. ...
 
+
+How to remove an .idmerge from 'idmerges' Git repository if 'update-database.rb' breaks on it:
+	git filter-branch --tree-filter 'rm -f successor-detector/1303074445.1494331.idmerge' HEAD
+
