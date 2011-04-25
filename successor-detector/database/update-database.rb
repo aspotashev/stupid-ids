@@ -130,6 +130,7 @@ new_idmerges.each_with_index do |sha1, index|
 	merges.each do |m|
 		tp_hash_a = m[1]
 		tp_hash_b = m[2]
+		raise if tp_hash_a == tp_hash_b
 
 		merge_pair_data = { :merge_file_id => merge_file.id, :tp_hash_a => tp_hash_a, :tp_hash_b => tp_hash_b }
 		merge_pair = MergePair.find(:first, :conditions => merge_pair_data)
