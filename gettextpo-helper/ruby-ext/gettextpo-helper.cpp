@@ -69,7 +69,7 @@ VALUE cIdMapDb_create(VALUE self, VALUE ary)
 	MappedFileIdMapDb *mapped_file = rb_get_mapped_file(self);
 
 	long len = RARRAY_LEN(ary);
-	for (long offset = 0; offset < len ; offset ++)
+	for (long offset = 0; offset < len; offset ++)
 	{
 		VALUE item = rb_ary_entry(ary, offset);
 
