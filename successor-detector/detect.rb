@@ -116,7 +116,7 @@ def add_to_merger_repo(id_merger_repo, idmerge)
 end
 
 def git_commits(dir)
-	`cd "#{dir}" ; git log --format=format:%H`.split("\n")
+	`cd "#{dir}" ; git log --format=format:%H`.split("\n").reverse
 end
 
 def processed_git_commits
