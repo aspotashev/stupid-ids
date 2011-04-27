@@ -12,21 +12,24 @@ def is_virgin_pot_content(content)
 	lines = content.split("\n")
 
 	if lines.any? {|line| line.match(/^#\. \+> /) }
-		return false # files from PO Summit ( see http://techbase.kde.org/Localization/Workflows/PO_Summit )
+		puts "POT file from PO Summit"
+		return :po_summit # files from PO Summit ( see http://techbase.kde.org/Localization/Workflows/PO_Summit )
 	end
 
 	if lines[lines.find_index("msgid \"\"") - 1] != "#, fuzzy"
-		return false # header of .POT should be fuzzy
+		puts "Header of POT is not fuzzy"
+		return :non_fuzzy_header # header of .POT should be fuzzy
 	end
 
 	if (lines + ['']).neighbor_pairs.
 		select {|pair| pair[0].match(/^msgstr(\[[0-9]+\])? /) }[1..-1].
-		any? {|pair| pair[0].sub(/^msgstr(\[[0-9]+\])? /, '') != "\"\"" or (pair[1] != "" and not pair[1].match(/^msgstr/)) }
+		any? {|pair| pair[0].sub(/^msgstr(\[[0-9]+\])? /, '') != "\"\"" or pair[1].match(/^\"/) }
 
-		return false # .POT contains translations in 'msgstr' fields
+		puts "POT contains translated messages"
+		return :has_translations # .POT contains translations in 'msgstr' fields
 	end
 
-	true # All tests passed
+	:ok # All tests passed
 end
 
 def is_virgin_pot(filename)

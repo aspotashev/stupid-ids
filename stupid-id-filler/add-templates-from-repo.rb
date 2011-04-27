@@ -74,8 +74,15 @@ commits_to_process.each_with_index do |commit_sha1, index|
 
 		p content_sha1
 		`cd #{$SRC_DIR} ; git show #{content_sha1} > "#{tempfile_pot}"`
-		if is_virgin_pot(tempfile_pot)
+		if is_virgin_pot(tempfile_pot) == :ok
 			sif.add(tempfile_pot, :pot_hash => content_sha1)
+		else
+			white_list = [
+			]
+
+			if is_virgin_pot(tempfile_pot) != :po_summit and not white_list.include?(content_sha1)
+				raise "Broken .pot (content sha1: #{content_sha1})"
+			end
 		end
 	end
 
