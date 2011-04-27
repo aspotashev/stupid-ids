@@ -19,7 +19,7 @@ class Sif
 
 		@ids_dir = ids_dir
 
-		`cd #{@ids_dir} ; git reset --hard` # reset not commited changes
+		`cd #{@ids_dir} && git reset --hard` # reset not commited changes
 
 		@next_id = IO.read(next_id_txt).strip.to_i
 
