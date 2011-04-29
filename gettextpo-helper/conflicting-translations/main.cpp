@@ -72,8 +72,8 @@ public:
 
 private:
 //	bool m_plural;
-//	char *m_msgstr;
-//	char *m_msgstrPlural;
+//	char *m_msgid;
+//	char *m_msgidPlural;
 //
 //	bool fuzzy;
 
