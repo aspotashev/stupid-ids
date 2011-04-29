@@ -1,0 +1,2 @@
+== conflicting-translations ==
+This program finds messages with the same IDs and different translations (with should not ideally happen).
