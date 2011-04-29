@@ -366,3 +366,52 @@ std::vector<std::pair<int, int> > list_equal_messages_ids_2(const char *filename
 	return res;
 }
 
+//------ For diff'ing tools ------
+
+// Returns 'true' when msgstr (or all msgstr[i]) are empty.
+bool po_message_is_untranslated(po_message_t message)
+{
+	if (po_message_msgstr_plural(message, 0)) // message with plurals
+	{
+		for (int i = 0; po_message_msgstr_plural(message, i); i ++)
+			if (po_message_msgstr_plural(message, i)[0] != '\0') // non-empty string found
+				return false; // not untranslated (i.e. translated or fuzzy)
+
+		return true; // all strings are empty
+	}
+	else // message without plurals
+	{
+		return po_message_msgstr(message)[0] == '\0';
+	}
+}
+
+// Returns 0 when the message does not use plural forms (i.e. no "msgid_plural")
+int po_message_n_plurals(po_message_t message)
+{
+	int i;
+	for (i = 0; po_message_msgstr_plural(message, i); i ++);
+
+	return i;
+}
+
+// Returns 0 when msgstr (or all msgstr[i]) are the same in two messages.
+int compare_po_message_msgstr(po_message_t message_a, po_message_t message_b)
+{
+	int n_plurals = po_message_n_plurals(message_a);
+	assert(n_plurals == po_message_n_plurals(message_b));
+
+	if (n_plurals > 0) // messages with plurals
+	{
+		for (int i = 0; i < n_plurals; i ++)
+			if (strcmp(
+				po_message_msgstr_plural(message_a, i),
+				po_message_msgstr_plural(message_b, i)))
+				return 1; // differences found
+
+		return 0; // all strings are equal
+	}
+	else // message without plurals
+	{
+		return strcmp(po_message_msgstr(message_a), po_message_msgstr(message_b));
+	}
+}
