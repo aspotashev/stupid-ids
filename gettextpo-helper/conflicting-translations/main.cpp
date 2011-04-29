@@ -31,6 +31,7 @@ bool po_message_is_untranslated(po_message_t message)
 	}
 }
 
+// Returns 0 when the message does not use plural forms (i.e. no "msgid_plural")
 int po_message_n_plurals(po_message_t message)
 {
 	int i;
@@ -69,13 +70,46 @@ public:
 
 	int index() const;
 	const char *filename() const;
+	bool equalTranslations(const Message *o) const;
+
+	bool isFuzzy() const
+	{
+		return m_fuzzy;
+	}
+
+	bool isPlural() const
+	{
+		return m_plural;
+	}
+
+	int numPlurals() const
+	{
+		return m_numPlurals;
+	}
+
+	const char *msgstr(int plural_form) const
+	{
+		assert(plural_form >= 0 && plural_form < m_numPlurals);
+
+		return m_msgstr[plural_form];
+	}
+
+	const char *msgcomments() const
+	{
+		return m_msgcomments;
+	}
 
 private:
-//	bool m_plural;
 //	char *m_msgid;
 //	char *m_msgidPlural;
-//
-//	bool fuzzy;
+
+	const static int MAX_PLURAL_FORMS = 4; // increase this if you need more plural forms
+
+	bool m_plural; // =true if message uses plural forms
+	int m_numPlurals; // =1 if the message does not use plural forms
+	char *m_msgstr[MAX_PLURAL_FORMS];
+	char *m_msgcomments;
+	bool m_fuzzy;
 
 	int m_index;
 	const char *m_filename;
@@ -85,6 +119,43 @@ Message::Message(po_message_t message, int index, const char *filename):
 	m_index(index),
 	m_filename(filename)
 {
+	m_numPlurals = po_message_n_plurals(message);
+	if (m_numPlurals == 0) // message does not use plural forms
+	{
+		m_numPlurals = 1;
+		m_plural = false;
+	}
+	else
+	{
+		m_plural = true;
+	}
+
+	assert(m_numPlurals <= MAX_PLURAL_FORMS); // limited by the size of m_msgstr
+
+	for (int i = 0; i < m_numPlurals; i ++)
+	{
+		const char *tmp;
+		if (m_plural)
+		{
+			tmp = po_message_msgstr_plural(message, i);
+		}
+		else
+		{
+			assert(i == 0); // there can be only one form if 'm_plural' is false
+
+			tmp = po_message_msgstr(message);
+		}
+
+		m_msgstr[i] = new char[strlen(tmp) + 1];
+		strcpy(m_msgstr[i], tmp);
+	}
+
+	m_fuzzy = po_message_is_fuzzy(message);
+
+	// translators' comments
+	const char *tmp = po_message_comments(message);
+	m_msgcomments = new char[strlen(tmp) + 1];
+	strcpy(m_msgcomments, tmp);
 }
 
 Message::~Message()
@@ -101,6 +172,20 @@ const char *Message::filename() const
 	return m_filename;
 }
 
+// Returns whether msgstr[*] and translator's comments are equal in two messages.
+// States of 'fuzzy' flag should also be the same.
+bool Message::equalTranslations(const Message *o) const
+{
+	assert(m_plural == o->isPlural());
+	assert(m_numPlurals == o->numPlurals());
+
+	for (int i = 0; i < m_numPlurals; i ++)
+		if (strcmp(m_msgstr[i], o->msgstr(i)))
+			return false;
+
+	return m_fuzzy == o->isFuzzy() && !strcmp(m_msgcomments, o->msgcomments());
+}
+
 class StupIdTranslationCollector
 {
 public:
@@ -109,7 +194,16 @@ public:
 
 	void insertPo(const char *filename);
 
+	// Cannot be 'const', because there is no const 'std::map::operator []'.
+	std::vector<int> listConflicting();
+
+protected:
+	// Cannot be 'const', because there is no const 'std::map::operator []'.
+	bool conflictingTrans(int min_id);
+
 private:
+	// int -- min_id
+	// std::vector<Message *> -- array of messages that belong to this 'min_id'
 	std::map<int, std::vector<Message *> > m_trans;
 };
 
@@ -259,11 +353,46 @@ void StupIdTranslationCollector::insertPo(const char *filename)
 	po_file_free(file);
 }
 
+// Cannot be 'const', because there is no const 'std::map::operator []'.
+bool StupIdTranslationCollector::conflictingTrans(int min_id)
+{
+	assert(m_trans[min_id].size() > 0);
+
+	Message *msg = m_trans[min_id][0];
+	for (size_t i = 1; i < m_trans[min_id].size(); i ++)
+		if (!msg->equalTranslations(m_trans[min_id][i]))
+			return true;
+
+	return false;
+}
+
+// Returns an array of 'min_id's.
+//
+// Cannot be 'const', because there is no const 'std::map::operator []'.
+std::vector<int> StupIdTranslationCollector::listConflicting()
+{
+	std::vector<int> res;
+
+	for (std::map<int, std::vector<Message *> >::iterator iter = m_trans.begin();
+		iter != m_trans.end();
+		iter ++)
+	{
+		if (conflictingTrans(iter->first))
+			res.push_back(iter->first);
+	}
+
+	return res;
+}
+
 int main(int argc, char *argv[])
 {
 	StupIdTranslationCollector collector;
 	collector.insertPo("a1.po");
 	collector.insertPo("a2.po");
+
+	std::vector<int> list = collector.listConflicting();
+	for (int i = 0; i < (int)list.size(); i ++)
+		printf("%d\n", list[i]);
 
 	return 0;
 }
