@@ -64,8 +64,11 @@ int compare_po_message_msgstr(po_message_t message_a, po_message_t message_b)
 class Message
 {
 public:
-	Message(po_message_t message);
+	Message(po_message_t message, int index, const char *filename);
 	~Message();
+
+	int index() const;
+	const char *filename() const;
 
 private:
 //	bool m_plural;
@@ -73,14 +76,29 @@ private:
 //	char *m_msgstrPlural;
 //
 //	bool fuzzy;
+
+	int m_index;
+	const char *m_filename;
 };
 
-Message::Message(po_message_t message)
+Message::Message(po_message_t message, int index, const char *filename):
+	m_index(index),
+	m_filename(filename)
 {
 }
 
 Message::~Message()
 {
+}
+
+int Message::index() const
+{
+	return m_index;
+}
+
+const char *Message::filename() const
+{
+	return m_filename;
 }
 
 class StupIdTranslationCollector
@@ -232,7 +250,7 @@ void StupIdTranslationCollector::insertPo(const char *filename)
 		}
 
 		// fuzzy and untranslated messages will be also added
-		m_trans[min_ids[index]].push_back(new Message(message));
+		m_trans[min_ids[index]].push_back(new Message(message, index, filename));
 	}
 
 	assert(index == (int)min_ids.size());
