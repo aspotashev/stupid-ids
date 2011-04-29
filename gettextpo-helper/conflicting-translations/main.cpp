@@ -243,7 +243,7 @@ void StupIdTranslationCollector::insertPo(const char *filename)
 		if (m_trans.find(min_ids[index]) == m_trans.end())
 		{
 			std::pair<int, std::vector<Message *> > new_pair;
-			new_pair.first = 0;//min_ids[index];
+			new_pair.first = min_ids[index];
 			new_pair.second = std::vector<Message *>();
 
 			m_trans.insert(new_pair);
