@@ -38,8 +38,15 @@ def add_to_processed_list(commit_sha1)
 end
 
 # List of changes in a Git commit
-def parse_commit_changes(commit_sha1)
-	`cd #{$SRC_DIR} ; git show --raw --no-abbrev #{commit_sha1}`.split("\n").
+#
+# result[i][0] -- A mode
+# result[i][1] -- B mode
+# result[i][2] -- A sha1
+# result[i][3] -- B sha1
+# result[i][4] -- operation
+# result[i][5] -- filename
+def parse_commit_changes(git_dir, commit_sha1)
+	`cd #{git_dir} ; git show --raw --no-abbrev #{commit_sha1}`.split("\n").
 		select {|line| line[0..0] == ':' }.
 		map do |line|
 			line =~ /^:([0-9]{6}) ([0-9]{6}) ([0-9a-f]{40}) ([0-9a-f]{40}) ([AMD])\t(.+)$/ && $~.captures
@@ -57,7 +64,7 @@ end
 
 # List of SHA-1 hashes of new contents in a Git commit (for added or modified files)
 def contents_of_commit(commit_sha1)
-	parse_commit_changes(commit_sha1).
+	parse_commit_changes($SRC_DIR, commit_sha1).
 		select {|x| x[4] != 'D' and x[5].match(/\.pot$/) }.
 		map {|x| x[3] }
 end

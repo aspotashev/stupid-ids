@@ -84,7 +84,7 @@ def detect_template_changes(git_dir, git_ref)
 end
 
 def generate_idmerge(git_dir, git_ref)
-	sha1 = `cd #{git_dir} ; git log --format=format:%H -1 #{git_ref}`.strip
+	sha1 = git_ref_sha1(git_dir, git_ref)
 
 	PotIdMerge.new(
 		:subject => "Translation template(s) changed in commit #{sha1} (detect_template_changes)",
