@@ -2,6 +2,7 @@
 # Ruby 1.9 required for "Dir.exists?(path)"
 
 require '../gettextpo-helper/ruby-ext/gettextpo_helper'
+require '../gettextpo-helper/ruby-helpers/ruby-helpers.rb'
 require '../stupid-id-filler/check-lib.rb'
 
 $SRC_DIR = '/home/sasha/kde-ru/xx-numbering/templates'
