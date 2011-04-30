@@ -20,9 +20,10 @@ public:
 	// offset -- offset in file
 	// len -- number of bytes that should be accessible after the given offset
 	void *ptr(size_t offset, size_t len);
+	const void *ptrConst(size_t offset, size_t len) const;
 
 protected:
-	size_t fileLength();
+	size_t fileLength() const;
 
 private:
 	void detectFileSize(); // initializes m_fileLength
@@ -129,7 +130,18 @@ void *MappedFile::ptr(size_t offset, size_t len)
 	return (char *)data + offset; // sizeof(char) == 1
 }
 
-size_t MappedFile::fileLength()
+const void *MappedFile::ptrConst(size_t offset, size_t len) const
+{
+	assert(len >= 1);
+
+	// The last required byte should be accessible,
+	// because we cannot expand the file in a const function.
+	assert(offset + len - 1 < m_fileLength);
+
+	return (const char *)data + offset; // sizeof(char) == 1
+}
+
+size_t MappedFile::fileLength() const
 {
 	return m_fileLength;
 }
@@ -164,12 +176,13 @@ class MappedFileIdMapDb : public MappedFile
 protected:
 	void writeRow(int msg_id, int min_id, int merge_pair_id);
 	IdMapDb_row *getRow(int msg_id);
+	const IdMapDb_row *getRowConst(int msg_id) const;
 
 public:
 	MappedFileIdMapDb(const char *filename);
 
 	void addRow(int msg_id, int min_id, int merge_pair_id);
-	int getRecursiveMinId(int msg_id);
+	int getRecursiveMinId(int msg_id) const;
 
 	// put globally minimum IDs into 'min_id'
 	void normalizeDatabase();
@@ -187,11 +200,21 @@ MappedFileIdMapDb::IdMapDb_row *MappedFileIdMapDb::getRow(int msg_id)
 	return (MappedFileIdMapDb::IdMapDb_row *)ptr(sizeof(IdMapDb_row) * msg_id, sizeof(IdMapDb_row));
 }
 
+const MappedFileIdMapDb::IdMapDb_row *MappedFileIdMapDb::getRowConst(int msg_id) const
+{
+	const static IdMapDb_row zeroRow = {0, 0};
+
+	if (sizeof(IdMapDb_row) * msg_id >= fileLength())
+		return &zeroRow;
+	else
+		return (const MappedFileIdMapDb::IdMapDb_row *)ptrConst(sizeof(IdMapDb_row) * msg_id, sizeof(IdMapDb_row));
+}
+
 // Find the minimum ID from those that are collapsed with 'msg_id'.
-int MappedFileIdMapDb::getRecursiveMinId(int msg_id)
+int MappedFileIdMapDb::getRecursiveMinId(int msg_id) const
 {
 	int prev_id;
-	while (msg_id = getRow(prev_id = msg_id)->min_id)
+	while (msg_id = getRowConst(prev_id = msg_id)->min_id)
 		assert(msg_id < prev_id); // avoiding infinite loop
 
 	return prev_id;
