@@ -64,16 +64,12 @@ class PotIdMerge
 end
 
 def detect_template_changes(git_dir, git_ref)
-	output = `cd "#{git_dir}" ; git show #{git_ref} --raw --no-abbrev`
-	output = output.split("\n").select {|x| x[0..0] == ':' }
-
-	lines = output.
-		map {|x| x.match(/^:[0-9]{6} [0-9]{6} ([0-9a-f]{40}) ([0-9a-f]{40}) (.)\t(.+)$/) }.
-		select {|m| m[3] == 'M' }
-	lines.each do |m|
-		if m[4].match(/\.pot$/)
+	lines = parse_commit_changes(git_dir, git_ref).
+		select {|x| x[4] == 'M' }
+	lines.each do |x|
+		if x[5].match(/\.pot$/)
 			# OK, we have a translation template
-		elsif m[4].match(/\.po$/)
+		elsif x[5].match(/\.po$/)
 			# translation file -- this is a mistake, it will not be processed
 			puts "WARNING: .po file in templates/"
 		else
@@ -81,7 +77,7 @@ def detect_template_changes(git_dir, git_ref)
 		end
 	end
 
-	lines.map {|m| PotIdMergePair.from_sha1s(git_dir, m[1], m[2]) }
+	lines.map {|m| PotIdMergePair.from_sha1s(git_dir, m[2], m[3]) }
 end
 
 def generate_idmerge(git_dir, git_ref)
