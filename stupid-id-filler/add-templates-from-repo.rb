@@ -37,22 +37,6 @@ def add_to_processed_list(commit_sha1)
 	end
 end
 
-# List of changes in a Git commit
-#
-# result[i][0] -- A mode
-# result[i][1] -- B mode
-# result[i][2] -- A sha1
-# result[i][3] -- B sha1
-# result[i][4] -- operation
-# result[i][5] -- filename
-def parse_commit_changes(git_dir, commit_sha1)
-	`cd #{git_dir} ; git show --raw --no-abbrev #{commit_sha1}`.split("\n").
-		select {|line| line[0..0] == ':' }.
-		map do |line|
-			line =~ /^:([0-9]{6}) ([0-9]{6}) ([0-9a-f]{40}) ([0-9a-f]{40}) ([AMD])\t(.+)$/ && $~.captures
-		end
-end
-
 def custom_basename(input)
 	s = (input + '/').match(/(([a-zA-Z0-9\-\_\.%{}]+\/){3})$/)
 	if s.nil? or s[1].nil?
