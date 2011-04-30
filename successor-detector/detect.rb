@@ -15,10 +15,10 @@ class PotIdMergePair < Struct.new(:git_dir, :tp_hash_a, :tp_hash_b)
 	end
 
 	def to_s
-		raise if tp_hash_a == tp_hash_b
-
 		if tp_hash_a.nil? or tp_hash_b.nil?
 			nil
+		elsif tp_hash_a == tp_hash_b # not nil and equal
+			raise
 		else
 			"#{tp_hash_a} #{tp_hash_b}"
 		end
