@@ -50,6 +50,50 @@ po_file_t po_file_read(const char *filename)
 	return file;
 }
 
+po_file_t po_buffer_read(const char *buffer, size_t length)
+{
+	// Child process writes the contents of the buffer to a pipe.
+	// The read end of the pipe is connected to 'stdin' (for 'po_file_read').
+
+	int pipe_fd[2];
+	assert(pipe(pipe_fd) == 0);
+
+	int stdin_fd = dup(0); // preserve 'stdin'
+	assert(stdin_fd >= 0);
+	close(0);
+
+	assert(dup2(pipe_fd[0], 0) >= 0); // connect pipe's read end to stdin
+	close(pipe_fd[0]);
+
+	// pipe_fd[1] -- write end
+	// fd=0 -- read end
+	pid_t pid = fork();
+	if (pid < 0) // fork failed
+	{
+		assert(0);
+	}
+	else if (pid == 0) // child process
+	{
+		close(0);
+
+		// TODO: report errors from "write()" to the parent process (using a buffer + semaphore?)
+		write(pipe_fd[1], buffer, length);
+
+		exit(0); // terminate child process
+	}
+
+	// In parent process now
+
+	close(pipe_fd[1]);
+	po_file_t file = po_file_read("-"); // read from stdin
+
+	// Restore 'stdin'
+	close(0);
+	assert(dup2(stdin_fd, 0) >= 0);
+
+	return file;
+}
+
 //----------------------- Dumping translation files ------------------------
 
 // Transform string into a string of characters [0-9a-f] or "n" if str is NULL.
