@@ -2,6 +2,7 @@
 
 require './sif-lib.rb'
 require './check-lib.rb'
+require '../gettextpo-helper/ruby-helpers/ruby-helpers.rb'
 
 if ARGV.size != 2
 	puts "Usage: add-templates-from-repo.rb <path-to-git-repo-with-templates> <ids-dir>"
@@ -22,12 +23,6 @@ def list_of_processed
 	end
 
 	f ? f.read.split("\n") : []
-end
-
-# List of all commits in $SRC_DIR, from the oldest to the newest
-def list_of_all_commits
-	`cd #{$SRC_DIR} ; git log --format=format:%H`. # commit hash
-		split("\n").reverse
 end
 
 # Add SHA-1 to processed.txt
@@ -53,7 +48,7 @@ def contents_of_commit(commit_sha1)
 		map {|x| x[3] }
 end
 
-commits_to_process = list_of_all_commits - list_of_processed
+commits_to_process = git_commits($SRC_DIR) - list_of_processed
 
 sif = Sif.new($IDS_DIR)
 tempfile_pot = `tempfile --suffix=.pot`.strip

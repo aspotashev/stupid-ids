@@ -84,3 +84,8 @@ def parse_commit_changes(git_dir, git_ref)
 		end
 end
 
+# List of all commits in git_dir, from the oldest to the newest
+def git_commits(git_dir)
+	`cd "#{git_dir}" ; git log --format=format:%H`.split("\n").reverse
+end
+

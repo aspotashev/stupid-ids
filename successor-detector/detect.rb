@@ -112,10 +112,6 @@ def add_to_merger_repo(id_merger_repo, idmerge)
 	end
 end
 
-def git_commits(dir)
-	`cd "#{dir}" ; git log --format=format:%H`.split("\n").reverse
-end
-
 def processed_git_commits
 	begin
 		File.open($ID_MERGER_REPO + '/processed.txt').read.split("\n")
