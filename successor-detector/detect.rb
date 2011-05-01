@@ -54,7 +54,7 @@ class PotIdMerge
 		res << " Author: " + @options[:author] + "\n"
 		res << " Date: " + @options[:date] + "\n"
 		# TODO: check for duplicate .idmerges already existing in the repository (check by Git hash?)
-		res << @options[:pairs].map(&:to_s).join("\n") + "\n"
+		res << @options[:pairs].map(&:to_s).compact.join("\n") + "\n"
 		res
 	end
 
