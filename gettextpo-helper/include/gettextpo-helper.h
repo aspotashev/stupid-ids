@@ -459,3 +459,130 @@ int compare_po_message_msgstr(po_message_t message_a, po_message_t message_b)
 		return strcmp(po_message_msgstr(message_a), po_message_msgstr(message_b));
 	}
 }
+
+//------ C++ wrapper library for 'libgettextpo' with some extra features -------
+
+class Message // TODO: Ruby bindings
+{
+public:
+	Message(po_message_t message, int index, const char *filename);
+	~Message();
+
+	int index() const;
+	const char *filename() const;
+	bool equalTranslations(const Message *o) const;
+
+	bool isFuzzy() const
+	{
+		return m_fuzzy;
+	}
+
+	bool isPlural() const
+	{
+		return m_plural;
+	}
+
+	int numPlurals() const
+	{
+		return m_numPlurals;
+	}
+
+	const char *msgstr(int plural_form) const
+	{
+		assert(plural_form >= 0 && plural_form < m_numPlurals);
+
+		return m_msgstr[plural_form];
+	}
+
+	const char *msgcomments() const
+	{
+		return m_msgcomments;
+	}
+
+private:
+//	char *m_msgid;
+//	char *m_msgidPlural;
+
+	const static int MAX_PLURAL_FORMS = 4; // increase this if you need more plural forms
+
+	bool m_plural; // =true if message uses plural forms
+	int m_numPlurals; // =1 if the message does not use plural forms
+	char *m_msgstr[MAX_PLURAL_FORMS];
+	char *m_msgcomments;
+	bool m_fuzzy;
+
+	int m_index;
+	const char *m_filename;
+};
+
+Message::Message(po_message_t message, int index, const char *filename):
+	m_index(index),
+	m_filename(filename)
+{
+	m_numPlurals = po_message_n_plurals(message);
+	if (m_numPlurals == 0) // message does not use plural forms
+	{
+		m_numPlurals = 1;
+		m_plural = false;
+	}
+	else
+	{
+		m_plural = true;
+	}
+
+	assert(m_numPlurals <= MAX_PLURAL_FORMS); // limited by the size of m_msgstr
+
+	for (int i = 0; i < m_numPlurals; i ++)
+	{
+		const char *tmp;
+		if (m_plural)
+		{
+			tmp = po_message_msgstr_plural(message, i);
+		}
+		else
+		{
+			assert(i == 0); // there can be only one form if 'm_plural' is false
+
+			tmp = po_message_msgstr(message);
+		}
+
+		m_msgstr[i] = new char[strlen(tmp) + 1];
+		strcpy(m_msgstr[i], tmp);
+	}
+
+	m_fuzzy = po_message_is_fuzzy(message);
+
+	// translators' comments
+	const char *tmp = po_message_comments(message);
+	m_msgcomments = new char[strlen(tmp) + 1];
+	strcpy(m_msgcomments, tmp);
+}
+
+Message::~Message()
+{
+}
+
+int Message::index() const
+{
+	return m_index;
+}
+
+const char *Message::filename() const
+{
+	return m_filename;
+}
+
+// Returns whether msgstr[*] and translator's comments are equal in two messages.
+// States of 'fuzzy' flag should also be the same.
+bool Message::equalTranslations(const Message *o) const
+{
+	assert(m_plural == o->isPlural());
+	assert(m_numPlurals == o->numPlurals());
+
+	for (int i = 0; i < m_numPlurals; i ++)
+		if (strcmp(m_msgstr[i], o->msgstr(i)))
+			return false;
+
+	return m_fuzzy == o->isFuzzy() && !strcmp(m_msgcomments, o->msgcomments());
+}
+
