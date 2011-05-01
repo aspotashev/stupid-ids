@@ -30,7 +30,9 @@ def contents_of_commit(commit_sha1)
 		map {|x| x[3] }
 end
 
-commits_to_process = git_commits($SRC_DIR) - processed_git_commits($IDS_DIR)
+#commits_to_process = git_commits($SRC_DIR) - processed_git_commits($IDS_DIR)
+inc_proc = IncrementalCommitProcessing.new($SRC_DIR, $IDS_DIR)
+commits_to_process = inc_proc.commits_to_process
 
 sif = Sif.new($IDS_DIR)
 tempfile_pot = `tempfile --suffix=.pot`.strip
@@ -74,7 +76,7 @@ commits_to_process.each_with_index do |commit_sha1, index|
 
 	sif.commit
 
-	add_to_processed_list($IDS_DIR, commit_sha1)
+	inc_proc.add_to_processed_list(commit_sha1)
 
 	if index % 30 == 0
 		`cd #{$IDS_DIR} ; git gc`

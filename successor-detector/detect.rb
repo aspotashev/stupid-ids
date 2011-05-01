@@ -113,11 +113,13 @@ def add_to_merger_repo(id_merger_repo, idmerge)
 end
 
 puts "Collecting unprocessed commits..."
-commits = git_commits($SRC_DIR) - processed_git_commits($ID_MERGER_REPO)
+#commits = git_commits($SRC_DIR) - processed_git_commits($ID_MERGER_REPO)
+inc_proc = IncrementalCommitProcessing.new($SRC_DIR, $ID_MERGER_REPO)
+commits = inc_proc.commits_to_process
 commits.each_with_index do |sha1, index|
 	puts "Processing #{sha1} (#{index + 1}/#{commits.size})"
 	add_to_merger_repo($ID_MERGER_REPO, generate_idmerge($SRC_DIR, sha1))
 
-	add_to_processed_list($ID_MERGER_REPO, sha1)
+	inc_proc.add_to_processed_list(sha1)
 end
 

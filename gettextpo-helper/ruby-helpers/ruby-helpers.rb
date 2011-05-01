@@ -84,28 +84,42 @@ def parse_commit_changes(git_dir, git_ref)
 		end
 end
 
-# List of all commits in git_dir, from the oldest to the newest
-def git_commits(git_dir)
-	`cd "#{git_dir}" ; git log --format=format:%H`.split("\n").reverse
-end
+class IncrementalCommitProcessing < Struct.new(:git_dir, :proc_git_dir)
+	# git_dir -- repo from where the commits are taken
+	# proc_git_dir -- directory where 'processed.txt' resides
 
-# List of SHA-1s from processed.txt
-def processed_git_commits(git_dir)
-	begin
-		File.open(git_dir + '/processed.txt').read.split("\n")
-	rescue Errno::ENOENT => e
-		[]
-	end
-end
-
-# Add SHA-1 to processed.txt
-def add_to_processed_list(git_dir, commit_sha1)
-	if not File.exists?(git_dir)
-		`mkdir -p "#{git_dir}"`
+	def commits_to_process
+		_git_commits(git_dir) - _processed_git_commits(proc_git_dir)
 	end
 
-	File.open(git_dir + '/processed.txt', 'a+') do |f|
-		f.puts commit_sha1
+	def add_to_processed_list(commit_sha1)
+		_add_to_processed_list(proc_git_dir, commit_sha1)
+	end
+
+private
+	# List of all commits in git_dir, from the oldest to the newest
+	def _git_commits(git_dir)
+		`cd "#{git_dir}" ; git log --format=format:%H`.split("\n").reverse
+	end
+
+	# List of SHA-1s from processed.txt
+	def _processed_git_commits(git_dir)
+		begin
+			File.open(git_dir + '/processed.txt').read.split("\n")
+		rescue Errno::ENOENT => e
+			[]
+		end
+	end
+
+	# Add SHA-1 to processed.txt
+	def _add_to_processed_list(git_dir, commit_sha1)
+		if not File.exists?(git_dir)
+			`mkdir -p "#{git_dir}"`
+		end
+
+		File.open(git_dir + '/processed.txt', 'a+') do |f|
+			f.puts commit_sha1
+		end
 	end
 end
 
