@@ -89,3 +89,12 @@ def git_commits(git_dir)
 	`cd "#{git_dir}" ; git log --format=format:%H`.split("\n").reverse
 end
 
+# List of SHA-1s from processed.txt
+def processed_git_commits(git_dir)
+	begin
+		File.open(git_dir + '/processed.txt').read.split("\n")
+	rescue Errno::ENOENT => e
+		[]
+	end
+end
+

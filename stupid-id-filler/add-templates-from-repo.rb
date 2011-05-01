@@ -14,17 +14,6 @@ $SRC_DIR = ARGV[0] # path to Git repository with translation templates
 $IDS_DIR = ARGV[1] # should be already initialized (i.e. run ./sif-init.sh first)
 
 
-# List of SHA-1s from processed.txt
-def list_of_processed
-	f = begin
-		File.open($IDS_DIR + '/processed.txt', 'r')
-	rescue Errno::ENOENT => e
-		nil
-	end
-
-	f ? f.read.split("\n") : []
-end
-
 # Add SHA-1 to processed.txt
 def add_to_processed_list(commit_sha1)
 	File.open($IDS_DIR + '/processed.txt', 'a+') do |f|
@@ -48,7 +37,7 @@ def contents_of_commit(commit_sha1)
 		map {|x| x[3] }
 end
 
-commits_to_process = git_commits($SRC_DIR) - list_of_processed
+commits_to_process = git_commits($SRC_DIR) - processed_git_commits($IDS_DIR)
 
 sif = Sif.new($IDS_DIR)
 tempfile_pot = `tempfile --suffix=.pot`.strip

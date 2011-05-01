@@ -112,16 +112,8 @@ def add_to_merger_repo(id_merger_repo, idmerge)
 	end
 end
 
-def processed_git_commits
-	begin
-		File.open($ID_MERGER_REPO + '/processed.txt').read.split("\n")
-	rescue
-		[]
-	end
-end
-
 puts "Collecting unprocessed commits..."
-commits = git_commits($SRC_DIR) - processed_git_commits
+commits = git_commits($SRC_DIR) - processed_git_commits($ID_MERGER_REPO)
 commits.each_with_index do |sha1, index|
 	puts "Processing #{sha1} (#{index + 1}/#{commits.size})"
 	add_to_merger_repo($ID_MERGER_REPO, generate_idmerge($SRC_DIR, sha1))
