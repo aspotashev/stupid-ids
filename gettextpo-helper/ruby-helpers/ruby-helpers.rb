@@ -98,3 +98,14 @@ def processed_git_commits(git_dir)
 	end
 end
 
+# Add SHA-1 to processed.txt
+def add_to_processed_list(git_dir, commit_sha1)
+	if not File.exists?(git_dir)
+		`mkdir -p "#{git_dir}"`
+	end
+
+	File.open(git_dir + '/processed.txt', 'a+') do |f|
+		f.puts commit_sha1
+	end
+end
+

@@ -118,9 +118,6 @@ commits.each_with_index do |sha1, index|
 	puts "Processing #{sha1} (#{index + 1}/#{commits.size})"
 	add_to_merger_repo($ID_MERGER_REPO, generate_idmerge($SRC_DIR, sha1))
 
-	`mkdir -p "#{$ID_MERGER_REPO}"`
-	File.open($ID_MERGER_REPO + '/processed.txt', 'a+') do |f|
-		f.puts sha1
-	end
+	add_to_processed_list($ID_MERGER_REPO, sha1)
 end
 

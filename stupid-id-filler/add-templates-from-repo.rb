@@ -14,13 +14,6 @@ $SRC_DIR = ARGV[0] # path to Git repository with translation templates
 $IDS_DIR = ARGV[1] # should be already initialized (i.e. run ./sif-init.sh first)
 
 
-# Add SHA-1 to processed.txt
-def add_to_processed_list(commit_sha1)
-	File.open($IDS_DIR + '/processed.txt', 'a+') do |f|
-		f.puts commit_sha1
-	end
-end
-
 def custom_basename(input)
 	s = (input + '/').match(/(([a-zA-Z0-9\-\_\.%{}]+\/){3})$/)
 	if s.nil? or s[1].nil?
@@ -81,7 +74,7 @@ commits_to_process.each_with_index do |commit_sha1, index|
 
 	sif.commit
 
-	add_to_processed_list(commit_sha1)
+	add_to_processed_list($IDS_DIR, commit_sha1)
 
 	if index % 30 == 0
 		`cd #{$IDS_DIR} ; git gc`
