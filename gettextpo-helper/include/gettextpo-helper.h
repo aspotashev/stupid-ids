@@ -514,6 +514,7 @@ private:
 	char *m_msgstr[MAX_PLURAL_FORMS];
 	char *m_msgcomments;
 	bool m_fuzzy;
+	bool m_obsolete;
 
 	int m_index;
 	const char *m_filename;
@@ -554,7 +555,8 @@ Message::Message(po_message_t message, int index, const char *filename):
 		strcpy(m_msgstr[i], tmp);
 	}
 
-	m_fuzzy = po_message_is_fuzzy(message);
+	m_fuzzy = po_message_is_fuzzy(message) != 0;
+	m_obsolete = po_message_is_obsolete(message) != 0;
 
 	// translators' comments
 	const char *tmp = po_message_comments(message);
