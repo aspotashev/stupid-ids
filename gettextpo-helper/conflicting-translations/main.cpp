@@ -84,7 +84,7 @@ int fd_read_integer_from_line(int fd)
 	return res;
 }
 
-void get_min_ids_by_tp_hash(const char *tp_hash, std::vector<int> &res)
+std::vector<int> get_min_ids_by_tp_hash(const char *tp_hash)
 {
 	// initialize connection
 	struct sockaddr_in servaddr;
@@ -129,19 +129,17 @@ void get_min_ids_by_tp_hash(const char *tp_hash, std::vector<int> &res)
 	int id_count = atoi(id_count_str);
 	delete [] id_count_str;
 
-//	std::vector<int> res; // TODO: reserve memory for 'id_count' elements
-
+	std::vector<int> res; // TODO: reserve memory for 'id_count' elements
 	for (int i = 0; i < id_count; i ++)
 		res.push_back(fd_read_integer_from_line(sockfd));
 
-//	return res;
+	return res;
 }
 
 void StupIdTranslationCollector::insertPo(const char *filename)
 {
 	std::string tp_hash = calculate_tp_hash(filename);
-	std::vector<int> min_ids;
-	get_min_ids_by_tp_hash(tp_hash.c_str(), min_ids);
+	std::vector<int> min_ids = get_min_ids_by_tp_hash(tp_hash.c_str());
 
 	//--------------------- insert messages --------------------
 	po_file_t file = po_file_read(filename);
