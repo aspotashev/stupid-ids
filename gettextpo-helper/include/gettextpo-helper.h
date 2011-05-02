@@ -590,7 +590,11 @@ const char *Message::filename() const
 bool Message::equalTranslations(const Message *o) const
 {
 	assert(m_plural == o->isPlural());
-	assert(m_numPlurals == o->numPlurals());
+
+	// This happens, see messages/kdebase/plasma_applet_trash.po
+	// from http://websvn.kde.org/?view=revision&revision=825044
+	if (m_numPlurals != o->numPlurals())
+		return false;
 
 	for (int i = 0; i < m_numPlurals; i ++)
 		if (strcmp(m_msgstr[i], o->msgstr(i)))
