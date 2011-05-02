@@ -47,12 +47,14 @@ StupIdTranslationCollector::~StupIdTranslationCollector()
 
 char *fd_read_line(int fd)
 {
-	static char buf[256];
+	const int BUFFER_SIZE = 256;
+	static char buf[BUFFER_SIZE];
 	char c = '\0';
 
 	int i;
-	for (i = 0; i < 256; i ++)
+	for (i = 0; i < BUFFER_SIZE; i ++)
 	{
+		// TODO: read in bulk to reduce number of syscalls.
 		assert(read(fd, &c, 1) == 1);
 
 		if (c == '\n')
@@ -66,6 +68,7 @@ char *fd_read_line(int fd)
 		}
 	}
 	// i == string length (without '\0')
+	assert(i < BUFFER_SIZE); // buffer size was not enough for the line
 
 	assert(buf[i] == '\0');
 
