@@ -586,3 +586,99 @@ bool Message::equalTranslations(const Message *o) const
 	return m_fuzzy == o->isFuzzy() && !strcmp(m_msgcomments, o->msgcomments());
 }
 
+//-------- Working with stupids-server.rb over TCP/IP --------
+
+char *fd_read_line(int fd)
+{
+	const int BUFFER_SIZE = 256;
+	static char buf[BUFFER_SIZE];
+	char c = '\0';
+
+	int i;
+	for (i = 0; i < BUFFER_SIZE; i ++)
+	{
+		// TODO: read in bulk to reduce number of syscalls.
+		assert(read(fd, &c, 1) == 1);
+
+		if (c == '\n')
+		{
+			buf[i] = '\0'; // remove '\n'
+			break;
+		}
+		else
+		{
+			buf[i] = c;
+		}
+	}
+	// i == string length (without '\0')
+	assert(i < BUFFER_SIZE); // buffer size was not enough for the line
+
+	assert(buf[i] == '\0');
+
+	char *res = new char [i + 1];
+	memcpy(res, buf, i + 1);
+	return res;
+}
+
+// This function assumes that there is only one integer number on the line.
+int fd_read_integer_from_line(int fd)
+{
+	char *str = fd_read_line(fd);
+	int res = atoi(str);
+	delete [] str;
+
+	return res;
+}
+
+std::vector<int> get_min_ids_by_tp_hash(const char *tp_hash)
+{
+	// initialize connection
+	struct sockaddr_in servaddr;
+	int sockfd;
+
+	// SOCK_NONBLOCK requires Linux 2.6.27
+	if ((sockfd = socket(PF_INET, SOCK_STREAM, 0)) < 0)
+	{
+		assert(0);
+	}
+
+	memset(&servaddr, 0, sizeof(servaddr));
+	servaddr.sin_family = AF_INET;
+	servaddr.sin_port = htons(1234);
+	inet_aton("127.0.0.1", &servaddr.sin_addr);
+
+	if (connect(sockfd, (struct sockaddr*) &servaddr, sizeof(servaddr)) < 0)
+	{
+		close(sockfd);
+
+		printf("Could not connect to stupids-server\n");
+		assert(0);
+	};
+
+	// send command
+	const char get_min_ids_cmd[] = "get_min_id_array ";
+	const char newline[] = "\n";
+	assert(strlen(tp_hash) == 40); // sha-1 is 20 bytes long
+
+	write(sockfd, get_min_ids_cmd, strlen(get_min_ids_cmd));
+	write(sockfd, tp_hash, 40);
+	write(sockfd, newline, strlen(newline));
+
+	// read results
+	char *id_count_str = fd_read_line(sockfd);
+	if (!strcmp(id_count_str, "NOTFOUND"))
+	{
+		printf("tp_hash not found (%s)\n", tp_hash);
+		assert(0);
+	}
+
+	int id_count = atoi(id_count_str);
+	delete [] id_count_str;
+
+	std::vector<int> res; // TODO: reserve memory for 'id_count' elements
+	for (int i = 0; i < id_count; i ++)
+		res.push_back(fd_read_integer_from_line(sockfd));
+
+	return res;
+}
+
