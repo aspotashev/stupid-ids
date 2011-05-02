@@ -18,18 +18,6 @@ require 'gserver'
 
 $id_map_db = GettextpoHelper::IdMapDb.new('../../successor-detector/database/idmap.mmapdb')
 
-def get_pot_first_id(tp_hash)
-  db_rows = TphashFirstId.find(:all, :conditions => {:tp_hash => tp_hash})
-
-  if db_rows.size != 1
-    # tp_hash not found in TphashFirstId (or duplicate rows)
-    return nil
-  end
-  db_row = db_rows[0]
-
-  [db_row.first_id, db_row.id_count]
-end
-
 # http://www.rubyinside.com/advent2006/10-gserver.html
 # http://www.ruby-doc.org/stdlib/libdoc/gserver/rdoc/index.html
 class StupidsServer < GServer
@@ -46,7 +34,7 @@ class StupidsServer < GServer
           return
         end
 
-        first_ids = get_pot_first_id(args)
+        first_ids = TphashFirstId.get_pot_first_id(args)
         if first_ids.nil?
           io.puts "NOTFOUND" # tp_hash not found in TphashFirstId (or duplicate rows)
           return

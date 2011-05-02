@@ -21,6 +21,17 @@ end
 # [   int] first_id (ID of the first message in the .pot)
 # [   int] id_count (number of messages in the .pot)
 class TphashFirstId < FillerBase
+  def self.get_pot_first_id(tp_hash)
+    db_rows = find(:all, :conditions => {:tp_hash => tp_hash})
+
+    if db_rows.size != 1
+      # tp_hash not found in TphashFirstId (or duplicate rows)
+      return nil
+    end
+    db_row = db_rows[0]
+
+    [db_row.first_id, db_row.id_count]
+  end
 end
 
 # last_sha1.value = sha1 of the last processed Git commit (string)
