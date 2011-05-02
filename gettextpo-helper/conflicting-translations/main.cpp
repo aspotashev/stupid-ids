@@ -41,29 +41,50 @@ StupIdTranslationCollector::~StupIdTranslationCollector()
 {
 }
 
+std::vector<Message *> read_po_file_messages(const char *filename, bool loadObsolete)
+{
+	po_file_t file = po_file_read(filename);
+	po_message_iterator_t iterator = po_message_iterator(file, "messages");
+
+	// skipping header
+	po_message_t message = po_next_message(iterator);
+
+	std::vector<Message *> res;
+	int index = 0;
+	while (message = po_next_message(iterator))
+	{
+		// Checking that obsolete messages go after all normal messages
+		assert(index == (int)res.size());
+
+		if (loadObsolete || !po_message_is_obsolete(message))
+			res.push_back(new Message(
+				message,
+				po_message_is_obsolete(message) ? -1 : index,
+				filename));
+		if (!po_message_is_obsolete(message))
+			index ++;
+	}
+
+	// free memory
+	po_file_free(file);
+
+	return res;
+}
+
 void StupIdTranslationCollector::insertPo(const char *filename)
 {
 	std::string tp_hash = calculate_tp_hash(filename);
 	std::vector<int> min_ids = get_min_ids_by_tp_hash(tp_hash.c_str());
 
 	//--------------------- insert messages --------------------
-	po_file_t file = po_file_read(filename);
-
-	po_message_iterator_t iterator = po_message_iterator(file, "messages");
-
-	// skipping header
-	po_message_t message = po_next_message(iterator);
+	std::vector<Message *> messages = read_po_file_messages(filename, false);
 
 	printf("id_count = %d\n", (int)min_ids.size());
+	assert(messages.size() == min_ids.size());
 
 	int index; // outside of the loop in order to calculate message count
-	for (index = 0;
-		(message = po_next_message(iterator)) &&
-		!po_message_is_obsolete(message);
-		index ++)
+	for (int index = 0; index < (int)messages.size(); index ++)
 	{
-		assert(index < (int)min_ids.size()); // for safety
-
 		printf("min_ids[%d] = %d\n", index, min_ids[index]);
 
 		if (m_trans.find(min_ids[index]) == m_trans.end())
@@ -76,13 +97,8 @@ void StupIdTranslationCollector::insertPo(const char *filename)
 		}
 
 		// fuzzy and untranslated messages will be also added
-		m_trans[min_ids[index]].push_back(new Message(message, index, filename));
+		m_trans[min_ids[index]].push_back(messages[index]);
 	}
-
-	assert(index == (int)min_ids.size());
-
-	// free memory
-	po_file_free(file);
 }
 
 // Cannot be 'const', because there is no const 'std::map::operator []'.
