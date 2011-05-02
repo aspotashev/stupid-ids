@@ -138,6 +138,11 @@ VALUE cMessage_num_plurals(VALUE self)
 	return INT2FIX(message->numPlurals());
 }
 
+VALUE cMessage_equal_translations(VALUE self, VALUE other)
+{
+	return rb_get_message(self)->equalTranslations(rb_get_message(other)) ? Qtrue : Qfalse;
+}
+
 //------- read_po_file_messages --------
 
 // TODO: provide options[:load_obsolete] option
@@ -173,6 +178,7 @@ void Init_gettextpo_helper()
 
 	cMessage = rb_define_class_under(GettextpoHelper, "Message", rb_cObject);
 	rb_define_method(cMessage, "num_plurals", RUBY_METHOD_FUNC(cMessage_num_plurals), 0);
+	rb_define_method(cMessage, "equal_translations", RUBY_METHOD_FUNC(cMessage_equal_translations), 1);
 }
 
 }
