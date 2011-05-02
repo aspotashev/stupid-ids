@@ -66,6 +66,8 @@ class StupidsServer < GServer
 
         io.puts id_array.size
         io.puts id_array
+      elsif command == 'exit'
+        return
       else
         io.puts "Unknown command: " + [command, args].inspect
       end

@@ -726,6 +726,10 @@ std::vector<int> get_min_ids_by_tp_hash(const char *tp_hash)
 	for (int i = 0; i < id_count; i ++)
 		res.push_back(fd_read_integer_from_line(sockfd));
 
+	const char exit_cmd[] = "exit\n";
+	assert(write(sockfd, exit_cmd, strlen(exit_cmd)) == strlen(exit_cmd));
+	close(sockfd);
+
 	return res;
 }
 
