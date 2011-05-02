@@ -109,6 +109,49 @@ VALUE cIdMapDb_get_min_id_array(VALUE self, VALUE first_msg_id, VALUE num)
 	return res;
 }
 
+//------- class GettextpoHelper::Message -------
+
+void free_cMessage(void *message)
+{
+	delete (Message *)message;
+}
+
+VALUE cMessage;
+
+VALUE cMessage_wrap(Message *message)
+{
+	return Data_Wrap_Struct(cMessage, NULL, free_cMessage, message);
+}
+
+Message *rb_get_message(VALUE self)
+{
+	Message *message;
+	Data_Get_Struct(self, Message, message);
+	assert(message);
+
+	return message;
+}
+
+VALUE cMessage_num_plurals(VALUE self)
+{
+	Message *message = rb_get_message(self);
+	return INT2FIX(message->numPlurals());
+}
+
+//------- read_po_file_messages --------
+
+// TODO: provide options[:load_obsolete] option
+VALUE wrap_read_po_file_messages(VALUE self, VALUE filename)
+{
+	std::vector<Message *> messages = read_po_file_messages(StringValuePtr(filename), false);
+
+	VALUE res = rb_ary_new();
+	for (size_t i = 0; i < messages.size(); i ++)
+		rb_ary_push(res, cMessage_wrap(messages[i]));
+
+	return res;
+}
+
 extern "C" {
 
 /* Function called at module loading */
@@ -125,6 +168,11 @@ void Init_gettextpo_helper()
 	rb_define_method(cIdMapDb, "normalize_database", RUBY_METHOD_FUNC(cIdMapDb_normalize_database), 0);
 	rb_define_method(cIdMapDb, "get_min_id", RUBY_METHOD_FUNC(cIdMapDb_get_min_id), 1);
 	rb_define_method(cIdMapDb, "get_min_id_array", RUBY_METHOD_FUNC(cIdMapDb_get_min_id_array), 2);
+
+	rb_define_singleton_method(GettextpoHelper, "read_po_file_messages", RUBY_METHOD_FUNC(wrap_read_po_file_messages), 1);
+
+	cMessage = rb_define_class_under(GettextpoHelper, "Message", rb_cObject);
+	rb_define_method(cMessage, "num_plurals", RUBY_METHOD_FUNC(cMessage_num_plurals), 0);
 }
 
 }

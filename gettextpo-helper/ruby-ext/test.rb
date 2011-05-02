@@ -16,3 +16,6 @@ id_map_db.normalize_database
 id_map_db = GettextpoHelper::IdMapDb.new('../../successor-detector/database/idmap.mmapdb')
 p id_map_db.get_min_id_array(50000, 100)
 
+# Test bindings for class 'Message'
+p GettextpoHelper.read_po_file_messages(File.expand_path("~/messages/kdebase/dolphin.po")).map {|m| m.num_plurals }
+
