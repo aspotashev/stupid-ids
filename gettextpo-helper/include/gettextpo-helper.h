@@ -592,6 +592,36 @@ bool Message::equalTranslations(const Message *o) const
 	return m_fuzzy == o->isFuzzy() && !strcmp(m_msgcomments, o->msgcomments());
 }
 
+std::vector<Message *> read_po_file_messages(const char *filename, bool loadObsolete)
+{
+	po_file_t file = po_file_read(filename);
+	po_message_iterator_t iterator = po_message_iterator(file, "messages");
+
+	// skipping header
+	po_message_t message = po_next_message(iterator);
+
+	std::vector<Message *> res;
+	int index = 0;
+	while (message = po_next_message(iterator))
+	{
+		// Checking that obsolete messages go after all normal messages
+		assert(index == (int)res.size());
+
+		if (loadObsolete || !po_message_is_obsolete(message))
+			res.push_back(new Message(
+				message,
+				po_message_is_obsolete(message) ? -1 : index,
+				filename));
+		if (!po_message_is_obsolete(message))
+			index ++;
+	}
+
+	// free memory
+	po_file_free(file);
+
+	return res;
+}
+
 //-------- Working with stupids-server.rb over TCP/IP --------
 
 char *fd_read_line(int fd)
