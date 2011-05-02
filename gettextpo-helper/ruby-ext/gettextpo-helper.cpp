@@ -40,6 +40,26 @@ VALUE wrap_list_equal_messages_ids_2(VALUE self, VALUE filename_a, VALUE first_i
 	return res;
 }
 
+VALUE wrap_get_min_ids_by_tp_hash(VALUE self, VALUE tp_hash)
+{
+	std::vector<int> vector_res;
+
+	try
+	{
+		vector_res = get_min_ids_by_tp_hash(StringValuePtr(tp_hash));
+	}
+	catch (TpHashNotFoundException &e)
+	{
+		return Qnil;
+	}
+
+	VALUE res = rb_ary_new();
+	for (size_t i = 0; i < vector_res.size(); i ++)
+		rb_ary_push(res, INT2FIX(vector_res[i]));
+
+	return res;
+}
+
 //------- class GettextpoHelper::IdMapDb -------
 
 void free_cIdMapDb(void *mapped_file)
@@ -166,6 +186,7 @@ void Init_gettextpo_helper()
 	rb_define_singleton_method(GettextpoHelper, "calculate_tp_hash", RUBY_METHOD_FUNC(wrap_calculate_tp_hash), 1);
 	rb_define_singleton_method(GettextpoHelper, "get_pot_length", RUBY_METHOD_FUNC(wrap_get_pot_length), 1);
 	rb_define_singleton_method(GettextpoHelper, "list_equal_messages_ids_2", RUBY_METHOD_FUNC(wrap_list_equal_messages_ids_2), 4);
+	rb_define_singleton_method(GettextpoHelper, "get_min_ids_by_tp_hash", RUBY_METHOD_FUNC(wrap_get_min_ids_by_tp_hash), 1);
 
 	cIdMapDb = rb_define_class_under(GettextpoHelper, "IdMapDb", rb_cObject);
 	rb_define_singleton_method(cIdMapDb, "new", RUBY_METHOD_FUNC(cIdMapDb_new), 1);

@@ -677,6 +677,14 @@ int fd_read_integer_from_line(int fd)
 	return res;
 }
 
+class TpHashNotFoundException : public std::exception
+{
+	virtual const char *what() const throw()
+	{
+		return "tp_hash was not found in database";
+	}
+};
+
 std::vector<int> get_min_ids_by_tp_hash(const char *tp_hash)
 {
 	// initialize connection
@@ -716,7 +724,7 @@ std::vector<int> get_min_ids_by_tp_hash(const char *tp_hash)
 	if (!strcmp(id_count_str, "NOTFOUND"))
 	{
 		printf("tp_hash not found (%s)\n", tp_hash);
-		assert(0);
+		throw TpHashNotFoundException();
 	}
 
 	int id_count = atoi(id_count_str);
