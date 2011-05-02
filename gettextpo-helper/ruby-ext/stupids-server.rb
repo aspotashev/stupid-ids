@@ -21,7 +21,7 @@ $id_map_db = GettextpoHelper::IdMapDb.new('../../successor-detector/database/idm
 # http://www.rubyinside.com/advent2006/10-gserver.html
 # http://www.ruby-doc.org/stdlib/libdoc/gserver/rdoc/index.html
 class StupidsServer < GServer
-	def serve(io)
+	def do_serve(io)
 		loop do
 			line = io.readline.strip
 
@@ -63,6 +63,14 @@ class StupidsServer < GServer
 				io.puts "Unknown command: " + [command, args].inspect
 			end
 		end
+	end
+
+	def serve(io)
+		start_time = Time.now
+		do_serve(io)
+
+		# TODO: how to write to stdout from GServer?
+		#f.puts "Request processed in #{Time.now - start_time} seconds"
 	end
 end
 
