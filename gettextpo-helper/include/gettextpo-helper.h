@@ -11,6 +11,8 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
+#include <sys/wait.h> // for waitpid
+
 void xerror_handler(
 	int severity,
 	po_message_t message, const char *filename, size_t lineno,
@@ -81,7 +83,7 @@ po_file_t po_buffer_read(const char *buffer, size_t length)
 		close(0);
 
 		// TODO: report errors from "write()" to the parent process (using a buffer + semaphore?)
-		write(pipe_fd[1], buffer, length);
+		assert(write(pipe_fd[1], buffer, length) == length);
 
 		exit(0); // terminate child process
 	}
@@ -94,6 +96,11 @@ po_file_t po_buffer_read(const char *buffer, size_t length)
 	// Restore 'stdin'
 	close(0);
 	assert(dup2(stdin_fd, 0) >= 0);
+
+	// Kill zombie child process, check exit status
+	int status = -1;
+	assert(waitpid(pid, &status, 0) == pid);
+	assert(status == 0);
 
 	return file;
 }
@@ -696,9 +703,9 @@ std::vector<int> get_min_ids_by_tp_hash(const char *tp_hash)
 	const char newline[] = "\n";
 	assert(strlen(tp_hash) == 40); // sha-1 is 20 bytes long
 
-	write(sockfd, get_min_ids_cmd, strlen(get_min_ids_cmd));
-	write(sockfd, tp_hash, 40);
-	write(sockfd, newline, strlen(newline));
+	assert(write(sockfd, get_min_ids_cmd, strlen(get_min_ids_cmd)) == strlen(get_min_ids_cmd));
+	assert(write(sockfd, tp_hash, 40) == 40);
+	assert(write(sockfd, newline, strlen(newline)) == strlen(newline));
 
 	// read results
 	char *id_count_str = fd_read_line(sockfd);
