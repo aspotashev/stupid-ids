@@ -8,10 +8,6 @@
 #include <vector>
 #include <map>
 
-// for working with stupids-server
-#include <arpa/inet.h>
-#include <sys/socket.h>
-
 #include "../include/gettextpo-helper.h"
 
 

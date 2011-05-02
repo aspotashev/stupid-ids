@@ -7,6 +7,10 @@
 #include <assert.h>
 #include <gettext-po.h>
 
+// for working with stupids-server
+#include <arpa/inet.h>
+#include <sys/socket.h>
+
 void xerror_handler(
 	int severity,
 	po_message_t message, const char *filename, size_t lineno,
