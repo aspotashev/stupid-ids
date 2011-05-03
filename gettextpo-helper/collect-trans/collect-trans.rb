@@ -56,7 +56,11 @@ end
 
 GettextpoHelper::Message.class_eval do
   def to_s
-    "msgstr \"#{msgstr(0)}\""
+    if is_plural
+      (0...num_plurals).map {|i| "msgstr[#{i}] \"#{msgstr(i)}\"" }.join(' ')
+    else
+      "msgstr \"#{msgstr(0)}\""
+    end
   end
 end
 
