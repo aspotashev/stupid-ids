@@ -123,7 +123,9 @@ commits.each_with_index do |sha1, index|
       #min_ids = GettextpoHelper.get_min_ids_by_tp_hash(tp_hash_b) # this use stupids-server.rb TCP/IP server
       min_ids = get_min_ids_by_tp_hash(tp_hash_b)
 
-      process_new_tr_file(min_ids, messages_b)
+      if not min_ids.nil?
+        process_new_tr_file(min_ids, messages_b)
+      end
     elsif x[4] == 'M'
       messages_a = read_po_sha1_messages($TRANS_DIR, x[2])
       messages_b = read_po_sha1_messages($TRANS_DIR, x[3])
