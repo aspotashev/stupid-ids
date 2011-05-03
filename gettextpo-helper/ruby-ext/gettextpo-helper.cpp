@@ -173,6 +173,11 @@ VALUE cMessage_is_plural(VALUE self)
 	return rb_get_message(self)->isPlural() ? Qtrue : Qfalse;
 }
 
+VALUE cMessage_is_untranslated(VALUE self)
+{
+	return rb_get_message(self)->isUntranslated() ? Qtrue : Qfalse;
+}
+
 VALUE cMessage_msgstr(VALUE self, VALUE plural_form)
 {
 	return rb_str_new2(rb_get_message(self)->msgstr(FIX2INT(plural_form)));
@@ -222,6 +227,7 @@ void Init_gettextpo_helper()
 	rb_define_method(cMessage, "equal_translations", RUBY_METHOD_FUNC(cMessage_equal_translations), 1);
 	rb_define_method(cMessage, "is_fuzzy", RUBY_METHOD_FUNC(cMessage_is_fuzzy), 0);
 	rb_define_method(cMessage, "is_plural", RUBY_METHOD_FUNC(cMessage_is_plural), 0);
+	rb_define_method(cMessage, "is_untranslated", RUBY_METHOD_FUNC(cMessage_is_untranslated), 0);
 	rb_define_method(cMessage, "msgstr", RUBY_METHOD_FUNC(cMessage_msgstr), 1);
 	rb_define_method(cMessage, "msgcomments", RUBY_METHOD_FUNC(cMessage_msgcomments), 0);
 }

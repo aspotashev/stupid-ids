@@ -493,6 +493,11 @@ public:
 		return m_plural;
 	}
 
+	bool isUntranslated() const
+	{
+		return m_untranslated;
+	}
+
 	int numPlurals() const
 	{
 		return m_numPlurals;
@@ -522,6 +527,7 @@ private:
 	char *m_msgcomments;
 	bool m_fuzzy;
 	bool m_obsolete;
+	bool m_untranslated;
 
 	int m_index;
 	const char *m_filename;
@@ -564,6 +570,7 @@ Message::Message(po_message_t message, int index, const char *filename):
 
 	m_fuzzy = po_message_is_fuzzy(message) != 0;
 	m_obsolete = po_message_is_obsolete(message) != 0;
+	m_untranslated = po_message_is_untranslated(message);
 
 	// translators' comments
 	const char *tmp = po_message_comments(message);

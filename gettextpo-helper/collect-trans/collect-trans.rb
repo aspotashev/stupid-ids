@@ -79,6 +79,8 @@ def process_new_tr_file(min_ids, messages)
   $msg_count += messages.size
 
   messages.each_with_index do |message, index|
+    next if message.is_untranslated
+
 #    ($trans[min_ids[index]] ||= []) << message
     puts min_ids[index].to_s.rjust(10) + ' ' + messages[index].to_s
   end
