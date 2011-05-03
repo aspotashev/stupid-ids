@@ -73,7 +73,9 @@ inc_proc = IncrementalCommitProcessing.new($TRANS_DIR, $DATABASE_DIR)
 commits = inc_proc.commits_to_process
 commits.each_with_index do |sha1, index|
   puts "Processing #{sha1} (#{index + 1}/#{commits.size})"
-  if git_commit_author($TRANS_DIR, sha1) == 'scripty' # scripty should not add new translations
+  # TODO: we _probably_ shouldn't ignore changes by 'scripty', because if a human translator makes
+  # a screwed up commit which is not readable, 'scripty' will then reveal the newly translated strings.
+  if git_commit_author($TRANS_DIR, sha1) == 'scripty'
     inc_proc.add_to_processed_list(sha1)
     next
   end
