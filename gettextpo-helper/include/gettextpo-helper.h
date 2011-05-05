@@ -473,7 +473,7 @@ int compare_po_message_msgstr(po_message_t message_a, po_message_t message_b)
 
 //------ C++ wrapper library for 'libgettextpo' with some extra features -------
 
-class Message // TODO: Ruby bindings
+class Message
 {
 public:
 	Message(po_message_t message, int index, const char *filename);
