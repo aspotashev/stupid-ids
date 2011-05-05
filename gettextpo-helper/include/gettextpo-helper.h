@@ -477,6 +477,8 @@ class Message
 {
 public:
 	Message(po_message_t message, int index, const char *filename);
+	Message(bool fuzzy, const char *msgcomment, const char *msgstr0, int n_plurals = 0);
+//	Message(bool fuzzy, const char *msgcomment, const char *msgstr0, const char *msgstr1, const char *msgstr2, const char *msgstr3);
 	~Message();
 
 	int index() const;
@@ -514,6 +516,10 @@ public:
 	{
 		return m_msgcomments;
 	}
+
+protected:
+	void setMsgcomments(const char *str);
+	void setMsgstr(int index, const char *str);
 
 private:
 //	char *m_msgid;
@@ -564,22 +570,49 @@ Message::Message(po_message_t message, int index, const char *filename):
 			tmp = po_message_msgstr(message);
 		}
 
-		m_msgstr[i] = new char[strlen(tmp) + 1];
-		strcpy(m_msgstr[i], tmp);
+		setMsgstr(i, tmp);
 	}
 
 	m_fuzzy = po_message_is_fuzzy(message) != 0;
 	m_obsolete = po_message_is_obsolete(message) != 0;
 	m_untranslated = po_message_is_untranslated(message);
 
-	// translators' comments
-	const char *tmp = po_message_comments(message);
-	m_msgcomments = new char[strlen(tmp) + 1];
-	strcpy(m_msgcomments, tmp);
+	setMsgcomments(po_message_comments(message));
+}
+
+// translators' comments
+void Message::setMsgcomments(const char *str)
+{
+	assert(m_msgcomments == 0);
+
+	m_msgcomments = new char[strlen(str) + 1];
+	strcpy(m_msgcomments, str);
+}
+
+void Message::setMsgstr(int index, const char *str)
+{
+	assert(m_msgstr[index] == 0);
+
+	m_msgstr[index] = new char[strlen(str) + 1];
+	strcpy(m_msgstr[index], str);
+}
+
+Message::Message(bool fuzzy, const char *msgcomment, const char *msgstr0, int n_plurals)
+{
+	m_fuzzy = fuzzy;
+	setMsgcomments(msgcomment);
+
+	// n_plurals=1 means that there is only msgstr[0]
+	// n_plurals=0 means that there is only msgstr (and the message is not pluralized)
+	assert(n_plurals == 0 || n_plurals == 1);
+
+	m_plural = (n_plurals == 1);
+	setMsgstr(0, msgstr0);
 }
 
 Message::~Message()
 {
+	// TODO: free memory
 }
 
 int Message::index() const
