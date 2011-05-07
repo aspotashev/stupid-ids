@@ -39,15 +39,15 @@ private:
 	char *m_author;
 	time_t m_date;
 
-	bool written_to_db;
-	trdb_offset db_offset;
+	bool m_writtenToDb;
+	trdb_offset m_dbOffset;
 };
 
 CommitInfo::CommitInfo(const char *commit_id, const char *author, time_t date)
 {
 	assert(sizeof(m_date) == 8); // 64-bit
 
-	written_to_db = false;
+	m_writtenToDb = false;
 
 	m_author = xstrdup(author);
 	m_commitId = xstrdup(commit_id);
@@ -178,17 +178,17 @@ void TrDb::appendString(const char *str)
 
 void CommitInfo::write(TrDb *tr_db)
 {
-	db_offset = tr_db->currentOffset();
+	m_dbOffset = tr_db->currentOffset();
 	tr_db->appendData(&m_date, sizeof(m_date));
 	tr_db->appendString(m_author);
 	tr_db->appendString(m_commitId);
 
-	written_to_db = true;
+	m_writtenToDb = true;
 }
 
 trdb_offset CommitInfo::dbOffset() const
 {
-	return db_offset;
+	return m_dbOffset;
 }
 
 int main(int argc, char *argv[])
