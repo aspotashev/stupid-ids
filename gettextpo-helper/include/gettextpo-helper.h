@@ -599,6 +599,7 @@ void Message::setMsgstr(int index, const char *str)
 	strcpy(m_msgstr[index], str);
 }
 
+// TODO: make sure that all instance (m_*) variables are initialized
 Message::Message(bool fuzzy, const char *msgcomment, const char *msgstr0, int n_plurals)
 {
 	m_obsolete = false;
