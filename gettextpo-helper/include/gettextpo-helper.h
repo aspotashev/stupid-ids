@@ -523,6 +523,8 @@ public:
 protected:
 	void setMsgcomments(const char *str);
 
+	void clear();
+
 private:
 //	char *m_msgid;
 //	char *m_msgidPlural;
@@ -621,13 +623,17 @@ Message::Message(bool fuzzy, const char *msgcomment, const char *msgstr0, int n_
 	setMsgstr(0, msgstr0);
 }
 
-// TODO: make sure that all instance (m_*) variables are initialized
-Message::Message(bool fuzzy, int n_plurals, const char *msgcomment)
+void Message::clear()
 {
-	// TODO: move initialization to a function
 	m_msgcomments = 0;
 	for (int i = 0; i < MAX_PLURAL_FORMS; i ++)
 		m_msgstr[i] = 0;
+}
+
+// TODO: make sure that all instance (m_*) variables are initialized
+Message::Message(bool fuzzy, int n_plurals, const char *msgcomment)
+{
+	clear();
 
 	m_fuzzy = fuzzy;
 
