@@ -13,23 +13,42 @@
 
 typedef long long int trdb_offset; // 64-bit
 
+char *xstrdup(const char *str)
+{
+	size_t len = strlen(str);
+	char *dup = new char [len + 1];
+	strcpy(dup, str);
+
+	return dup;
+}
+
 //------------- CommitInfo ---------------
+class TrDb;
+
 class CommitInfo
 {
 public:
-	CommitInfo(const char *author, time_t date);
+	CommitInfo(const char *commit_id, const char *author, time_t date);
 	~CommitInfo();
 
+	trdb_offset write(TrDb *tr_db);
+
 private:
+	char *m_commitId;
 	char *m_author;
 	time_t m_date;
+
+	bool written_to_db;
 };
 
-CommitInfo::CommitInfo(const char *author, time_t date)
+CommitInfo::CommitInfo(const char *commit_id, const char *author, time_t date)
 {
-	size_t author_len = strlen(author);
-	m_author = new char [author_len + 1];
-	strcpy(m_author, author);
+	assert(sizeof(m_date) == 8); // 64-bit
+
+	written_to_db = false;
+
+	m_author = xstrdup(author);
+	m_commitId = xstrdup(commit_id);
 
 	m_date = date;
 }
@@ -37,6 +56,7 @@ CommitInfo::CommitInfo(const char *author, time_t date)
 CommitInfo::~CommitInfo()
 {
 	delete [] m_author;
+	delete [] m_commitId;
 }
 
 //------------- TrDbOffsets ---------------
@@ -71,6 +91,9 @@ class TrDbStrings : public MappedFile
 public:
 	TrDbStrings(const char *filename);
 
+	trdb_offset actualLength() const;
+	void appendData(const void *data, size_t len);
+
 private:
 	trdb_offset &refActualLength()
 	{
@@ -85,12 +108,29 @@ TrDbStrings::TrDbStrings(const char *filename):
 	refActualLength() = sizeof(trdb_offset);
 }
 
+// TODO: cache this?
+trdb_offset TrDbStrings::actualLength() const
+{
+	return *(trdb_offset *)ptrConst(0, sizeof(trdb_offset));
+}
+
+void TrDbStrings::appendData(const void *data, size_t len)
+{
+	// Mapping limits the maximum size to 4 GB on 32-bit systems.
+	void *data_dest = ptr((size_t)actualLength(), len);
+	memcpy(data_dest, data, len);
+}
+
 //------------- TrDb ---------------
 class TrDb
 {
 public:
 	TrDb(const char *db_dir);
 	~TrDb();
+
+	trdb_offset currentOffset() const;
+	void appendData(const void *data, size_t len);
+	void appendString(const char *str);
 
 private:
 	TrDbOffsets *m_offsets;
@@ -117,13 +157,40 @@ TrDb::~TrDb()
 {
 }
 
+trdb_offset TrDb::currentOffset() const
+{
+	return m_strings->actualLength();
+}
+
+void TrDb::appendData(const void *data, size_t len)
+{
+	m_strings->appendData(data, len);
+}
+
+void TrDb::appendString(const char *str)
+{
+	appendData(str, strlen(str) + 1);
+}
+
 //-----------------------------------------
+
+trdb_offset CommitInfo::write(TrDb *tr_db)
+{
+	trdb_offset offset = tr_db->currentOffset();
+	tr_db->appendData(&m_date, sizeof(m_date));
+	tr_db->appendString(m_author);
+	tr_db->appendString(m_commitId);
+
+	written_to_db = true;
+}
 
 int main(int argc, char *argv[])
 {
 	TrDb *tr_db = new TrDb(".");
 
-	CommitInfo *commit_info = new CommitInfo("me", (time_t)-1);
+	CommitInfo *commit_info = new CommitInfo("SVN r123", "me", (time_t)-1);
+	commit_info->write(tr_db);
+
 	Message *message;
 
 	message = new Message(false, "translators'-comments-for-message", "translation-of-message");
