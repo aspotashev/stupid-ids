@@ -479,6 +479,7 @@ public:
 	Message(po_message_t message, int index, const char *filename);
 	Message(bool fuzzy, const char *msgcomment, const char *msgstr0, int n_plurals = 0);
 //	Message(bool fuzzy, const char *msgcomment, const char *msgstr0, const char *msgstr1, const char *msgstr2, const char *msgstr3);
+	Message(bool fuzzy, int n_plurals, const char *msgcomment);
 	~Message();
 
 	int index() const;
@@ -517,9 +518,10 @@ public:
 		return m_msgcomments;
 	}
 
+	void setMsgstr(int index, const char *str);
+
 protected:
 	void setMsgcomments(const char *str);
-	void setMsgstr(int index, const char *str);
 
 private:
 //	char *m_msgid;
@@ -543,6 +545,7 @@ Message::Message(po_message_t message, int index, const char *filename):
 	m_index(index),
 	m_filename(filename)
 {
+	// TODO: create and use function 'setNPluralsPacked'
 	m_numPlurals = po_message_n_plurals(message);
 	if (m_numPlurals == 0) // message does not use plural forms
 	{
@@ -587,6 +590,7 @@ void Message::setMsgcomments(const char *str)
 {
 	assert(m_msgcomments == 0);
 
+	// TODO: use xstrdup
 	m_msgcomments = new char[strlen(str) + 1];
 	strcpy(m_msgcomments, str);
 }
@@ -595,6 +599,7 @@ void Message::setMsgstr(int index, const char *str)
 {
 	assert(m_msgstr[index] == 0);
 
+	// TODO: use xstrdup
 	m_msgstr[index] = new char[strlen(str) + 1];
 	strcpy(m_msgstr[index], str);
 }
@@ -614,6 +619,28 @@ Message::Message(bool fuzzy, const char *msgcomment, const char *msgstr0, int n_
 	m_numPlurals = 1;
 	m_plural = (n_plurals == 1);
 	setMsgstr(0, msgstr0);
+}
+
+// TODO: make sure that all instance (m_*) variables are initialized
+Message::Message(bool fuzzy, int n_plurals, const char *msgcomment)
+{
+	m_fuzzy = fuzzy;
+
+	// TODO: create and use function 'setNPluralsPacked'
+	m_numPlurals = n_plurals;
+	if (m_numPlurals == 0) // message does not use plural forms
+	{
+		m_numPlurals = 1;
+		m_plural = false;
+	}
+	else
+	{
+		m_plural = true;
+	}
+
+	assert(m_numPlurals <= MAX_PLURAL_FORMS); // limited by the size of m_msgstr
+
+	setMsgcomments(msgcomment);
 }
 
 Message::~Message()

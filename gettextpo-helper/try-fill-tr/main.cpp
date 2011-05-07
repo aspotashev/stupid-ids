@@ -82,6 +82,7 @@ public:
 	void appendString(const char *str);
 
 	void addIdMessage(int msg_id, CommitInfo *commit_info, Message *message);
+	std::vector<Message *> getMessages(int msg_id);
 
 protected:
 	trdb_offset writeMessage(CommitInfo *commit_info, Message *message);
@@ -280,6 +281,34 @@ void TrDb::addIdMessage(int msg_id, CommitInfo *commit_info, Message *message)
 	}
 }
 
+std::vector<Message *> TrDb::getMessages(int msg_id)
+{
+	std::vector<Message *> res;
+	for (trdb_offset offset = m_offsets->readOffset(msg_id); offset != 0; offset = listNext(offset))
+	{
+		bool fuzzy = (*(const char *)m_strings->ptrConst(
+			offset + 2 * sizeof(trdb_offset),
+			sizeof(char)) == 1);
+		int n_plurals = (int)*(const char *)m_strings->ptrConst(
+			offset + 2 * sizeof(trdb_offset) + sizeof(char),
+			sizeof(char));
+
+		// We cannot know the lengths of strings before reading them, so just passing length=1 to ptr()
+		const char *str = (const char *)m_strings->ptr(offset + 2 * sizeof(trdb_offset) + 2 * sizeof(char), 1);
+
+		Message *msg = new Message(fuzzy, n_plurals, str); // str = msgcomment
+		for (int i = 0; i < msg->numPlurals(); i ++)
+		{
+			str += strlen(str) + 1;
+			msg->setMsgstr(i, str);
+		}
+
+		res.push_back(msg);
+	}
+
+	return res;
+}
+
 //-----------------------------------------
 
 int main(int argc, char *argv[])
@@ -291,11 +320,19 @@ int main(int argc, char *argv[])
 
 	Message *message;
 
-	message = new Message(false, "translators'-comments-for-message", "translation-of-message");
+	message = new Message(true, "translators'-comments-for-message", "translation-of-message");
 	tr_db->addIdMessage(100, commit_info, message);
 
 	message = new Message(false, "translators'-comments-for-message", "translation-of-message", 1);
 	tr_db->addIdMessage(100, commit_info, message);
+
+	std::vector<Message *> list = tr_db->getMessages(100);
+	for (size_t i = 0; i < list.size(); i ++)
+	{
+		printf("%s\n", list[i]->msgcomments());
+		printf("%s\n", list[i]->msgstr(0));
+		printf("%s\n", list[i]->isFuzzy() ? "fuzzy" : "not fuzzy");
+	}
 
 	return 0;
 }
