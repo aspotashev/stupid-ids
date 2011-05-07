@@ -121,6 +121,8 @@ void TrDbStrings::appendData(const void *data, size_t len)
 	// Mapping limits the maximum size to 4 GB on 32-bit systems.
 	void *data_dest = ptr((size_t)actualLength(), len);
 	memcpy(data_dest, data, len);
+
+	refActualLength() += len;
 }
 
 //------------- TrDb ---------------
@@ -133,6 +135,8 @@ public:
 	trdb_offset currentOffset() const;
 	void appendData(const void *data, size_t len);
 	void appendString(const char *str);
+
+	void writeMessage(CommitInfo *commit_info, Message *message);
 
 private:
 	TrDbOffsets *m_offsets;
@@ -174,14 +178,33 @@ void TrDb::appendString(const char *str)
 	appendData(str, strlen(str) + 1);
 }
 
+// TODO: make this private, use listAppendMessage instead later
+void TrDb::writeMessage(CommitInfo *commit_info, Message *message)
+{
+	trdb_offset next_offset = 0; // yes, it's just zero (i.e. last message in the list)
+	trdb_offset commit_info_offset = commit_info->dbOffset();
+	char fuzzy = message->isFuzzy() ? 1 : 0;
+	char num_plurals = message->isPlural() ? message->numPlurals() : 0;
+
+	appendData(&next_offset, sizeof(next_offset));
+	appendData(&commit_info_offset, sizeof(commit_info_offset));
+	appendData(&fuzzy, sizeof(fuzzy));
+	appendData(&num_plurals, sizeof(num_plurals));
+
+	appendString(message->msgcomments());
+	printf("numPlurals = %d\n", message->numPlurals());
+	for (int i = 0; i < message->numPlurals(); i ++)
+		appendString(message->msgstr(i));
+}
+
 //-----------------------------------------
 
 void CommitInfo::write(TrDb *tr_db)
 {
 	m_dbOffset = tr_db->currentOffset();
 	tr_db->appendData(&m_date, sizeof(m_date));
-	tr_db->appendString(m_author);
 	tr_db->appendString(m_commitId);
+	tr_db->appendString(m_author);
 
 	m_writtenToDb = true;
 }
@@ -201,8 +224,10 @@ int main(int argc, char *argv[])
 	Message *message;
 
 	message = new Message(false, "translators'-comments-for-message", "translation-of-message");
+	tr_db->writeMessage(commit_info, message);
 
 	message = new Message(false, "translators'-comments-for-message", "translation-of-message", 1);
+	tr_db->writeMessage(commit_info, message);
 
 	return 0;
 }
