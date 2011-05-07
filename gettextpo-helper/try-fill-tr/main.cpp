@@ -43,6 +43,70 @@ private:
 	trdb_offset m_dbOffset;
 };
 
+//------------- TrDbOffsets ---------------
+class TrDbOffsets : public MappedFile
+{
+public:
+	TrDbOffsets(const char *filename);
+
+	void writeOffset(int msg_id, trdb_offset offset);
+	trdb_offset readOffset(int msg_id) const;
+};
+
+//------------- TrDbStrings ---------------
+class TrDbStrings : public MappedFile
+{
+public:
+	TrDbStrings(const char *filename);
+
+	trdb_offset actualLength() const;
+	void appendData(const void *data, size_t len);
+
+private:
+	trdb_offset &refActualLength()
+	{
+		return *(trdb_offset *)ptr(0, sizeof(trdb_offset));
+	}
+};
+
+//------------- TrDb ---------------
+class TrDb
+{
+public:
+	TrDb(const char *db_dir);
+	~TrDb();
+
+	trdb_offset currentOffset() const;
+	void appendData(const void *data, size_t len);
+	template<class T> void appendData(const T &data);
+	void appendString(const char *str);
+
+	trdb_offset writeMessage(CommitInfo *commit_info, Message *message);
+	trdb_offset listNext(trdb_offset offset) const;
+	trdb_offset listLast(trdb_offset offset) const;
+	void listAppendMessage(trdb_offset offset, CommitInfo *commit_info, Message *message);
+
+private:
+	TrDbOffsets *m_offsets;
+	TrDbStrings *m_strings;
+};
+
+//------------- CommitInfo (implementation) ---------------
+void CommitInfo::write(TrDb *tr_db)
+{
+	m_dbOffset = tr_db->currentOffset();
+	tr_db->appendData(m_date);
+	tr_db->appendString(m_commitId);
+	tr_db->appendString(m_author);
+
+	m_writtenToDb = true;
+}
+
+trdb_offset CommitInfo::dbOffset() const
+{
+	return m_dbOffset;
+}
+
 CommitInfo::CommitInfo(const char *commit_id, const char *author, time_t date)
 {
 	assert(sizeof(m_date) == 8); // 64-bit
@@ -61,15 +125,7 @@ CommitInfo::~CommitInfo()
 	delete [] m_commitId;
 }
 
-//------------- TrDbOffsets ---------------
-class TrDbOffsets : public MappedFile
-{
-public:
-	TrDbOffsets(const char *filename);
-
-	void writeOffset(int msg_id, trdb_offset offset);
-	trdb_offset readOffset(int msg_id) const;
-};
+//------------- TrDbOffsets (implementation) ---------------
 
 TrDbOffsets::TrDbOffsets(const char *filename):
 	MappedFile(filename)
@@ -87,21 +143,7 @@ trdb_offset TrDbOffsets::readOffset(int msg_id) const
 	return *(const trdb_offset *)ptrConst(sizeof(trdb_offset) * msg_id, sizeof(trdb_offset));
 }
 
-//------------- TrDbOffsets ---------------
-class TrDbStrings : public MappedFile
-{
-public:
-	TrDbStrings(const char *filename);
-
-	trdb_offset actualLength() const;
-	void appendData(const void *data, size_t len);
-
-private:
-	trdb_offset &refActualLength()
-	{
-		return *(trdb_offset *)ptr(0, sizeof(trdb_offset));
-	}
-};
+//------------- TrDbStrings (implementation) ---------------
 
 TrDbStrings::TrDbStrings(const char *filename):
 	MappedFile(filename)
@@ -125,27 +167,7 @@ void TrDbStrings::appendData(const void *data, size_t len)
 	refActualLength() += len;
 }
 
-//------------- TrDb ---------------
-class TrDb
-{
-public:
-	TrDb(const char *db_dir);
-	~TrDb();
-
-	trdb_offset currentOffset() const;
-	void appendData(const void *data, size_t len);
-	template<class T> void appendData(const T &data);
-	void appendString(const char *str);
-
-	trdb_offset writeMessage(CommitInfo *commit_info, Message *message);
-	trdb_offset listNext(trdb_offset offset) const;
-	trdb_offset listLast(trdb_offset offset) const;
-	void listAppendMessage(trdb_offset offset, CommitInfo *commit_info, Message *message);
-
-private:
-	TrDbOffsets *m_offsets;
-	TrDbStrings *m_strings;
-};
+//------------- TrDb (implementation) ---------------
 
 TrDb::TrDb(const char *db_dir)
 {
@@ -239,21 +261,6 @@ void TrDb::listAppendMessage(trdb_offset offset, CommitInfo *commit_info, Messag
 }
 
 //-----------------------------------------
-
-void CommitInfo::write(TrDb *tr_db)
-{
-	m_dbOffset = tr_db->currentOffset();
-	tr_db->appendData(m_date);
-	tr_db->appendString(m_commitId);
-	tr_db->appendString(m_author);
-
-	m_writtenToDb = true;
-}
-
-trdb_offset CommitInfo::dbOffset() const
-{
-	return m_dbOffset;
-}
 
 int main(int argc, char *argv[])
 {
