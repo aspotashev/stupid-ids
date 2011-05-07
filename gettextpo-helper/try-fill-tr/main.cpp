@@ -137,7 +137,10 @@ public:
 	template<class T> void appendData(const T &data);
 	void appendString(const char *str);
 
-	void writeMessage(CommitInfo *commit_info, Message *message);
+	trdb_offset writeMessage(CommitInfo *commit_info, Message *message);
+	trdb_offset listNext(trdb_offset offset) const;
+	trdb_offset listLast(trdb_offset offset) const;
+	void listAppendMessage(trdb_offset offset, CommitInfo *commit_info, Message *message);
 
 private:
 	TrDbOffsets *m_offsets;
@@ -184,9 +187,11 @@ void TrDb::appendString(const char *str)
 	appendData(str, strlen(str) + 1);
 }
 
-// TODO: make this private, use listAppendMessage instead later
-void TrDb::writeMessage(CommitInfo *commit_info, Message *message)
+// Use this instead of TrDb::listAppendMessage only when initializing a new list of messages
+trdb_offset TrDb::writeMessage(CommitInfo *commit_info, Message *message)
 {
+	trdb_offset offset = currentOffset();
+
 	trdb_offset next_offset = 0; // yes, it's just zero (i.e. last message in the list)
 	trdb_offset commit_info_offset = commit_info->dbOffset();
 	char fuzzy = message->isFuzzy() ? 1 : 0;
@@ -201,6 +206,36 @@ void TrDb::writeMessage(CommitInfo *commit_info, Message *message)
 	printf("numPlurals = %d\n", message->numPlurals());
 	for (int i = 0; i < message->numPlurals(); i ++)
 		appendString(message->msgstr(i));
+
+	return offset;
+}
+
+// offset -- offset of the message
+//
+// Returns the offset of the next message.
+trdb_offset TrDb::listNext(trdb_offset offset) const
+{
+	return *(trdb_offset *)m_strings->ptrConst((size_t)offset, sizeof(trdb_offset));
+}
+
+trdb_offset TrDb::listLast(trdb_offset offset) const
+{
+	while (listNext(offset) != 0)
+		offset = listNext(offset);
+
+	return offset;
+}
+
+// Write the message to strings.mmapdb and link it to the
+// message list that begins (or continues, i.e. the offset
+// may point to a message in the middle of the list) at the given offset.
+void TrDb::listAppendMessage(trdb_offset offset, CommitInfo *commit_info, Message *message)
+{
+	trdb_offset offset_new = writeMessage(commit_info, message);
+	trdb_offset offset_last = listLast(offset);
+
+	// link the new message to the last message
+	*(trdb_offset *)m_strings->ptr((size_t)offset_last, sizeof(trdb_offset)) = offset_new;
 }
 
 //-----------------------------------------
@@ -230,10 +265,10 @@ int main(int argc, char *argv[])
 	Message *message;
 
 	message = new Message(false, "translators'-comments-for-message", "translation-of-message");
-	tr_db->writeMessage(commit_info, message);
+	trdb_offset list_begin = tr_db->writeMessage(commit_info, message);
 
 	message = new Message(false, "translators'-comments-for-message", "translation-of-message", 1);
-	tr_db->writeMessage(commit_info, message);
+	tr_db->listAppendMessage(list_begin, commit_info, message);
 
 	return 0;
 }
