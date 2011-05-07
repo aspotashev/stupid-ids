@@ -81,6 +81,9 @@ public:
 	template<class T> void appendData(const T &data);
 	void appendString(const char *str);
 
+	void addIdMessage(int msg_id, CommitInfo *commit_info, Message *message);
+
+protected:
 	trdb_offset writeMessage(CommitInfo *commit_info, Message *message);
 	trdb_offset listNext(trdb_offset offset) const;
 	trdb_offset listLast(trdb_offset offset) const;
@@ -140,7 +143,10 @@ void TrDbOffsets::writeOffset(int msg_id, trdb_offset offset)
 
 trdb_offset TrDbOffsets::readOffset(int msg_id) const
 {
-	return *(const trdb_offset *)ptrConst(sizeof(trdb_offset) * msg_id, sizeof(trdb_offset));
+	if (sizeof(trdb_offset) * (msg_id + 1) > fileLength())
+		return 0;
+	else
+		return *(const trdb_offset *)ptrConst(sizeof(trdb_offset) * msg_id, sizeof(trdb_offset));
 }
 
 //------------- TrDbStrings (implementation) ---------------
@@ -260,6 +266,20 @@ void TrDb::listAppendMessage(trdb_offset offset, CommitInfo *commit_info, Messag
 	*(trdb_offset *)m_strings->ptr((size_t)offset_last, sizeof(trdb_offset)) = offset_new;
 }
 
+void TrDb::addIdMessage(int msg_id, CommitInfo *commit_info, Message *message)
+{
+	trdb_offset offset = m_offsets->readOffset(msg_id);
+	if (offset == 0) // a new list needs to be created
+	{
+		offset = writeMessage(commit_info, message);
+		m_offsets->writeOffset(msg_id, offset);
+	}
+	else
+	{
+		listAppendMessage(offset, commit_info, message);
+	}
+}
+
 //-----------------------------------------
 
 int main(int argc, char *argv[])
@@ -272,10 +292,10 @@ int main(int argc, char *argv[])
 	Message *message;
 
 	message = new Message(false, "translators'-comments-for-message", "translation-of-message");
-	trdb_offset list_begin = tr_db->writeMessage(commit_info, message);
+	tr_db->addIdMessage(100, commit_info, message);
 
 	message = new Message(false, "translators'-comments-for-message", "translation-of-message", 1);
-	tr_db->listAppendMessage(list_begin, commit_info, message);
+	tr_db->addIdMessage(100, commit_info, message);
 
 	return 0;
 }
