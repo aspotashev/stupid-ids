@@ -522,8 +522,8 @@ public:
 
 protected:
 	void setMsgcomments(const char *str);
-
 	void clear();
+	void setNPluralsPacked(int n_plurals);
 
 private:
 //	char *m_msgid;
@@ -543,12 +543,12 @@ private:
 	const char *m_filename;
 };
 
-Message::Message(po_message_t message, int index, const char *filename):
-	m_index(index),
-	m_filename(filename)
+// "packed" means that 'n_plurals' contains more information than m_numPlurals:
+// 	1. whether the message uses plural forms (n_plurals=0 means that message does not use plural forms)
+// 	2. the number of plural forms
+void Message::setNPluralsPacked(int n_plurals)
 {
-	// TODO: create and use function 'setNPluralsPacked'
-	m_numPlurals = po_message_n_plurals(message);
+	m_numPlurals = n_plurals;
 	if (m_numPlurals == 0) // message does not use plural forms
 	{
 		m_numPlurals = 1;
@@ -560,6 +560,13 @@ Message::Message(po_message_t message, int index, const char *filename):
 	}
 
 	assert(m_numPlurals <= MAX_PLURAL_FORMS); // limited by the size of m_msgstr
+}
+
+Message::Message(po_message_t message, int index, const char *filename):
+	m_index(index),
+	m_filename(filename)
+{
+	setNPluralsPacked(po_message_n_plurals(message));
 
 	for (int i = 0; i < m_numPlurals; i ++)
 	{
@@ -636,21 +643,7 @@ Message::Message(bool fuzzy, int n_plurals, const char *msgcomment)
 	clear();
 
 	m_fuzzy = fuzzy;
-
-	// TODO: create and use function 'setNPluralsPacked'
-	m_numPlurals = n_plurals;
-	if (m_numPlurals == 0) // message does not use plural forms
-	{
-		m_numPlurals = 1;
-		m_plural = false;
-	}
-	else
-	{
-		m_plural = true;
-	}
-
-	assert(m_numPlurals <= MAX_PLURAL_FORMS); // limited by the size of m_msgstr
-
+	setNPluralsPacked(n_plurals);
 	setMsgcomments(msgcomment);
 }
 
