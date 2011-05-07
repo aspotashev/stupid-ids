@@ -156,7 +156,8 @@ TrDbStrings::TrDbStrings(const char *filename):
 	MappedFile(filename)
 {
 	// Always store at least the actual length
-	refActualLength() = sizeof(trdb_offset);
+	if (refActualLength() == 0)
+		refActualLength() = sizeof(trdb_offset);
 }
 
 // TODO: cache this?
