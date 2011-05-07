@@ -13,6 +13,19 @@
 
 #include <sys/wait.h> // for waitpid
 
+//------------------------------
+
+char *xstrdup(const char *str)
+{
+	size_t len = strlen(str);
+	char *dup = new char [len + 1];
+	strcpy(dup, str);
+
+	return dup;
+}
+
+//------------------------------
+
 void xerror_handler(
 	int severity,
 	po_message_t message, const char *filename, size_t lineno,
@@ -599,18 +612,14 @@ void Message::setMsgcomments(const char *str)
 {
 	assert(m_msgcomments == 0);
 
-	// TODO: use xstrdup
-	m_msgcomments = new char[strlen(str) + 1];
-	strcpy(m_msgcomments, str);
+	m_msgcomments = xstrdup(str);
 }
 
 void Message::setMsgstr(int index, const char *str)
 {
 	assert(m_msgstr[index] == 0);
 
-	// TODO: use xstrdup
-	m_msgstr[index] = new char[strlen(str) + 1];
-	strcpy(m_msgstr[index], str);
+	m_msgstr[index] = xstrdup(str);
 }
 
 // TODO: make sure that all instance (m_*) variables are initialized
@@ -739,9 +748,7 @@ char *fd_read_line(int fd)
 
 	assert(buf[i] == '\0');
 
-	char *res = new char [i + 1];
-	memcpy(res, buf, i + 1);
-	return res;
+	return xstrdup(buf);
 }
 
 // This function assumes that there is only one integer number on the line.

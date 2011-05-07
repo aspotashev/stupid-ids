@@ -13,15 +13,6 @@
 
 typedef long long int trdb_offset; // 64-bit
 
-char *xstrdup(const char *str)
-{
-	size_t len = strlen(str);
-	char *dup = new char [len + 1];
-	strcpy(dup, str);
-
-	return dup;
-}
-
 //------------- CommitInfo ---------------
 class TrDb;
 
