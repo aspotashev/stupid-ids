@@ -134,6 +134,7 @@ public:
 
 	trdb_offset currentOffset() const;
 	void appendData(const void *data, size_t len);
+	template<class T> void appendData(const T &data);
 	void appendString(const char *str);
 
 	void writeMessage(CommitInfo *commit_info, Message *message);
@@ -173,6 +174,11 @@ void TrDb::appendData(const void *data, size_t len)
 	m_strings->appendData(data, len);
 }
 
+template<class T> void TrDb::appendData(const T &data)
+{
+	appendData(&data, sizeof(T));
+}
+
 void TrDb::appendString(const char *str)
 {
 	appendData(str, strlen(str) + 1);
@@ -186,10 +192,10 @@ void TrDb::writeMessage(CommitInfo *commit_info, Message *message)
 	char fuzzy = message->isFuzzy() ? 1 : 0;
 	char num_plurals = message->isPlural() ? message->numPlurals() : 0;
 
-	appendData(&next_offset, sizeof(next_offset));
-	appendData(&commit_info_offset, sizeof(commit_info_offset));
-	appendData(&fuzzy, sizeof(fuzzy));
-	appendData(&num_plurals, sizeof(num_plurals));
+	appendData(next_offset);
+	appendData(commit_info_offset);
+	appendData(fuzzy);
+	appendData(num_plurals);
 
 	appendString(message->msgcomments());
 	printf("numPlurals = %d\n", message->numPlurals());
@@ -202,7 +208,7 @@ void TrDb::writeMessage(CommitInfo *commit_info, Message *message)
 void CommitInfo::write(TrDb *tr_db)
 {
 	m_dbOffset = tr_db->currentOffset();
-	tr_db->appendData(&m_date, sizeof(m_date));
+	tr_db->appendData(m_date);
 	tr_db->appendString(m_commitId);
 	tr_db->appendString(m_author);
 
