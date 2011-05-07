@@ -624,6 +624,11 @@ Message::Message(bool fuzzy, const char *msgcomment, const char *msgstr0, int n_
 // TODO: make sure that all instance (m_*) variables are initialized
 Message::Message(bool fuzzy, int n_plurals, const char *msgcomment)
 {
+	// TODO: move initialization to a function
+	m_msgcomments = 0;
+	for (int i = 0; i < MAX_PLURAL_FORMS; i ++)
+		m_msgstr[i] = 0;
+
 	m_fuzzy = fuzzy;
 
 	// TODO: create and use function 'setNPluralsPacked'
