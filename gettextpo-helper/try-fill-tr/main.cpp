@@ -96,21 +96,6 @@ private:
 };
 
 //------------- CommitInfo (implementation) ---------------
-void CommitInfo::write(TrDb *tr_db)
-{
-	m_dbOffset = tr_db->currentOffset();
-	tr_db->appendData(m_date);
-	tr_db->appendString(m_commitId);
-	tr_db->appendString(m_author);
-
-	m_writtenToDb = true;
-}
-
-trdb_offset CommitInfo::dbOffset() const
-{
-	return m_dbOffset;
-}
-
 CommitInfo::CommitInfo(const char *commit_id, const char *author, time_t date)
 {
 	assert(sizeof(m_date) == 8); // 64-bit
@@ -127,6 +112,21 @@ CommitInfo::~CommitInfo()
 {
 	delete [] m_author;
 	delete [] m_commitId;
+}
+
+void CommitInfo::write(TrDb *tr_db)
+{
+	m_dbOffset = tr_db->currentOffset();
+	tr_db->appendData(m_date);
+	tr_db->appendString(m_commitId);
+	tr_db->appendString(m_author);
+
+	m_writtenToDb = true;
+}
+
+trdb_offset CommitInfo::dbOffset() const
+{
+	return m_dbOffset;
 }
 
 //------------- TrDbOffsets (implementation) ---------------
