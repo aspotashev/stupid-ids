@@ -11,7 +11,33 @@
 #include "../include/gettextpo-helper.h"
 #include "../ruby-ext/mappedfile.h"
 
-typedef long long int trdb_offset;
+typedef long long int trdb_offset; // 64-bit
+
+//------------- CommitInfo ---------------
+class CommitInfo
+{
+public:
+	CommitInfo(const char *author, time_t date);
+	~CommitInfo();
+
+private:
+	char *m_author;
+	time_t m_date;
+};
+
+CommitInfo::CommitInfo(const char *author, time_t date)
+{
+	size_t author_len = strlen(author);
+	m_author = new char [author_len + 1];
+	strcpy(m_author, author);
+
+	m_date = date;
+}
+
+CommitInfo::~CommitInfo()
+{
+	delete [] m_author;
+}
 
 //------------- TrDbOffsets ---------------
 class TrDbOffsets : public MappedFile
@@ -59,12 +85,50 @@ TrDbStrings::TrDbStrings(const char *filename):
 	refActualLength() = sizeof(trdb_offset);
 }
 
+//------------- TrDb ---------------
+class TrDb
+{
+public:
+	TrDb(const char *db_dir);
+	~TrDb();
+
+private:
+	TrDbOffsets *m_offsets;
+	TrDbStrings *m_strings;
+};
+
+TrDb::TrDb(const char *db_dir)
+{
+	char *offsets_fn = new char [200]; // TODO: fix memory leak
+	strcpy(offsets_fn, db_dir);
+	strcat(offsets_fn, "/offsets.mmapdb");
+
+	m_offsets = new TrDbOffsets(offsets_fn);
+
+
+	char *strings_fn = new char [200]; // TODO: fix memory leak
+	strcpy(strings_fn, db_dir);
+	strcat(strings_fn, "/strings.mmapdb");
+
+	m_strings = new TrDbStrings(strings_fn);
+}
+
+TrDb::~TrDb()
+{
+}
+
 //-----------------------------------------
 
 int main(int argc, char *argv[])
 {
-	TrDbOffsets *db_offsets = new TrDbOffsets("./offsets.mmapdb");
-	TrDbStrings *db_strings = new TrDbStrings("./strings.mmapdb");
+	TrDb *tr_db = new TrDb(".");
+
+	CommitInfo *commit_info = new CommitInfo("me", (time_t)-1);
+	Message *message;
+
+	message = new Message(false, "translators'-comments-for-message", "translation-of-message");
+
+	message = new Message(false, "translators'-comments-for-message", "translation-of-message", 1);
 
 	return 0;
 }
