@@ -575,6 +575,8 @@ Message::Message(po_message_t message, int index, const char *filename):
 
 	m_fuzzy = po_message_is_fuzzy(message) != 0;
 	m_obsolete = po_message_is_obsolete(message) != 0;
+
+	// TODO: write and use another Message:: function for this (should not use 'po_message_t message')
 	m_untranslated = po_message_is_untranslated(message);
 
 	setMsgcomments(po_message_comments(message));
@@ -599,6 +601,8 @@ void Message::setMsgstr(int index, const char *str)
 
 Message::Message(bool fuzzy, const char *msgcomment, const char *msgstr0, int n_plurals)
 {
+	m_obsolete = false;
+
 	m_fuzzy = fuzzy;
 	setMsgcomments(msgcomment);
 
@@ -606,6 +610,7 @@ Message::Message(bool fuzzy, const char *msgcomment, const char *msgstr0, int n_
 	// n_plurals=0 means that there is only msgstr (and the message is not pluralized)
 	assert(n_plurals == 0 || n_plurals == 1);
 
+	m_numPlurals = 1;
 	m_plural = (n_plurals == 1);
 	setMsgstr(0, msgstr0);
 }
