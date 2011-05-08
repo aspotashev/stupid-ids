@@ -3,3 +3,6 @@ This program writes the content of translation template
 (but not in the .pot format) the given .po file was created
 from. The template content can be used as identifier of .pot
 (much better than {pot_path, pot_creation_date}!)
+
+== TESTING ==
+./dump-template ~/messages/kdepimlibs/libkcalutils.po
