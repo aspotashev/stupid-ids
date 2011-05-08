@@ -5,8 +5,12 @@ require '../gettextpo-helper/ruby-ext/gettextpo_helper'
 require '../gettextpo-helper/ruby-helpers/ruby-helpers.rb'
 require '../stupid-id-filler/check-lib.rb'
 
-$SRC_DIR = '/home/sasha/kde-ru/xx-numbering/templates'
+raise if ARGV.size != 1 # the SRC_DIR should be given
+
+$SRC_DIR = ARGV[0]
 $ID_MERGER_REPO = './idmerges'
+
+raise if not Dir.exists?($SRC_DIR + '/.git')
 
 class PotIdMergePair < Struct.new(:git_dir, :tp_hash_a, :tp_hash_b)
 	def self.from_sha1s(git_dir, sha1_a, sha1_b)
