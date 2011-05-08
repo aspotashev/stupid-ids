@@ -21,6 +21,7 @@ public:
 
 	// Cannot be 'const', because there is no const 'std::map::operator []'.
 	std::vector<int> listConflicting();
+	std::vector<Message *> listVariants(int min_id);
 
 protected:
 	// Cannot be 'const', because there is no const 'std::map::operator []'.
@@ -55,8 +56,6 @@ void StupIdTranslationCollector::insertPo(const char *filename)
 	int index; // outside of the loop in order to calculate message count
 	for (int index = 0; index < (int)messages.size(); index ++)
 	{
-		printf("min_ids[%d] = %d\n", index, min_ids[index]);
-
 		if (m_trans.find(min_ids[index]) == m_trans.end())
 		{
 			std::pair<int, std::vector<Message *> > new_pair;
@@ -71,6 +70,8 @@ void StupIdTranslationCollector::insertPo(const char *filename)
 	}
 }
 
+// Returns 'true' if there are different translations of the message.
+//
 // Cannot be 'const', because there is no const 'std::map::operator []'.
 bool StupIdTranslationCollector::conflictingTrans(int min_id)
 {
@@ -102,6 +103,13 @@ std::vector<int> StupIdTranslationCollector::listConflicting()
 	return res;
 }
 
+std::vector<Message *> StupIdTranslationCollector::listVariants(int min_id)
+{
+	assert (m_trans.find(min_id) != m_trans.end());
+
+	return m_trans[min_id];
+}
+
 int main(int argc, char *argv[])
 {
 	StupIdTranslationCollector collector;
@@ -110,7 +118,22 @@ int main(int argc, char *argv[])
 
 	std::vector<int> list = collector.listConflicting();
 	for (int i = 0; i < (int)list.size(); i ++)
+	{
 		printf("%d\n", list[i]);
+		std::vector<Message *> variants = collector.listVariants(list[i]);
+
+		for (size_t i = 0; i < variants.size(); i ++)
+		{
+			Message *msg = variants[i];
+			printf("Variant %d:\n", (int)i + 1);
+			if (msg->isFuzzy())
+				printf("\tfuzzy\n");
+			printf("\tmsgctxt: %s\n", msg->msgcomments());
+			printf("\tmsgstr: %s\n", msg->msgstr(0));
+		}
+
+		printf("----------------\n");
+	}
 
 	return 0;
 }
