@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 		for (size_t i = 0; i < variants.size(); i ++)
 		{
 			Message *msg = variants[i];
-			printf("Variant %d:\n", (int)i + 1);
+			printf("Variant %d: (from %s, #%d)\n", (int)i + 1, msg->filename(), msg->index() + 1);
 			if (msg->isFuzzy())
 				printf("\tfuzzy\n");
 			printf("\tmsgctxt: %s\n", msg->msgcomments());
