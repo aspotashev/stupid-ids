@@ -579,6 +579,7 @@ Message::Message(po_message_t message, int index, const char *filename):
 	m_index(index),
 	m_filename(filename)
 {
+	clear();
 	setNPluralsPacked(po_message_n_plurals(message));
 
 	for (int i = 0; i < m_numPlurals; i ++)
