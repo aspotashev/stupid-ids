@@ -1,0 +1,2 @@
+1. Eliminate usage of temporary files in the whole 'stupid-ids' project. (use "grep tempfile")
+
