@@ -1,4 +1,4 @@
-#!/usr/bin/ruby18
+#!/usr/bin/ruby19
 
 require 'active_record'
 
@@ -8,7 +8,7 @@ ActiveRecord::Base.class_eval do
 	end
 end
 
-require 'filler-models.rb'
+require './filler-models.rb'
 require '../../gettextpo-helper/ruby-ext/gettextpo_helper'
 require '../../gettextpo-helper/ruby-helpers/ruby-helpers'
 
