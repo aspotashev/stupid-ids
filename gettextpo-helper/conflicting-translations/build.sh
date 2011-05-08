@@ -1,2 +1,2 @@
 #!/bin/sh
-g++ main.cpp -ggdb -lgettextpo -lcryptopp -o conflicting-translations
+g++ main.cpp -ggdb -lgettextpo_helper -o conflicting-translations

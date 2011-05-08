@@ -2,7 +2,7 @@
 
 #include "ruby.h"
 
-#include "../include/gettextpo-helper.h"
+#include <gettextpo-helper.h>
 #include "mappedfile.h"
 
 void init_search(const char *f_dump, const char *f_index, const char *f_map);

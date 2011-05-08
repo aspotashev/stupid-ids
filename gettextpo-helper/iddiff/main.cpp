@@ -8,7 +8,7 @@
 #include <vector>
 #include <map>
 
-#include "../include/gettextpo-helper.h"
+#include <gettextpo-helper.h>
 
 // escape quotes (" -> \") and put in quotes
 std::string iddiff_format_string(const char *str)

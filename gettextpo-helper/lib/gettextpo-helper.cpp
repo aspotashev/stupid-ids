@@ -1,19 +1,8 @@
 
-// http://www.gnu.org/software/gettext/manual/gettext.html#libgettextpo
+#include <stdio.h>
+#include <string.h>
 
-#include <string>
-#include <vector>
-#include <map>
-#include <assert.h>
-#include <gettext-po.h>
-
-// for working with stupids-server
-#include <arpa/inet.h>
-#include <sys/socket.h>
-
-#include <sys/wait.h> // for waitpid
-
-//------------------------------
+#include "gettextpo-helper.h"
 
 char *xstrdup(const char *str)
 {
@@ -26,7 +15,7 @@ char *xstrdup(const char *str)
 
 //------------------------------
 
-void xerror_handler(
+static void xerror_handler(
 	int severity,
 	po_message_t message, const char *filename, size_t lineno,
 	size_t column, int multiline_p, const char *message_text)
@@ -35,7 +24,7 @@ void xerror_handler(
 //	assert(0);
 }
 
-void xerror2_handler(
+static void xerror2_handler(
 	int severity,
 	po_message_t message1, const char *filename1, size_t lineno1,
 	size_t column1, int multiline_p1, const char *message_text1,
@@ -486,76 +475,6 @@ int compare_po_message_msgstr(po_message_t message_a, po_message_t message_b)
 
 //------ C++ wrapper library for 'libgettextpo' with some extra features -------
 
-class Message
-{
-public:
-	Message(po_message_t message, int index, const char *filename);
-	Message(bool fuzzy, const char *msgcomment, const char *msgstr0, int n_plurals = 0);
-//	Message(bool fuzzy, const char *msgcomment, const char *msgstr0, const char *msgstr1, const char *msgstr2, const char *msgstr3);
-	Message(bool fuzzy, int n_plurals, const char *msgcomment);
-	~Message();
-
-	int index() const;
-	const char *filename() const;
-	bool equalTranslations(const Message *o) const;
-
-	bool isFuzzy() const
-	{
-		return m_fuzzy;
-	}
-
-	bool isPlural() const
-	{
-		return m_plural;
-	}
-
-	bool isUntranslated() const
-	{
-		return m_untranslated;
-	}
-
-	int numPlurals() const
-	{
-		return m_numPlurals;
-	}
-
-	const char *msgstr(int plural_form) const
-	{
-		assert(plural_form >= 0 && plural_form < m_numPlurals);
-
-		return m_msgstr[plural_form];
-	}
-
-	const char *msgcomments() const
-	{
-		return m_msgcomments;
-	}
-
-	void setMsgstr(int index, const char *str);
-
-protected:
-	void setMsgcomments(const char *str);
-	void clear();
-	void setNPluralsPacked(int n_plurals);
-
-private:
-//	char *m_msgid;
-//	char *m_msgidPlural;
-
-	const static int MAX_PLURAL_FORMS = 4; // increase this if you need more plural forms
-
-	bool m_plural; // =true if message uses plural forms
-	int m_numPlurals; // =1 if the message does not use plural forms
-	char *m_msgstr[MAX_PLURAL_FORMS];
-	char *m_msgcomments;
-	bool m_fuzzy;
-	bool m_obsolete;
-	bool m_untranslated;
-
-	int m_index;
-	const char *m_filename;
-};
-
 // "packed" means that 'n_plurals' contains more information than m_numPlurals:
 // 	1. whether the message uses plural forms (n_plurals=0 means that message does not use plural forms)
 // 	2. the number of plural forms
@@ -672,6 +591,38 @@ const char *Message::filename() const
 	return m_filename;
 }
 
+bool Message::isFuzzy() const
+{
+	return m_fuzzy;
+}
+
+bool Message::isPlural() const
+{
+	return m_plural;
+}
+
+bool Message::isUntranslated() const
+{
+	return m_untranslated;
+}
+
+int Message::numPlurals() const
+{
+	return m_numPlurals;
+}
+
+const char *Message::msgstr(int plural_form) const
+{
+	assert(plural_form >= 0 && plural_form < m_numPlurals);
+
+	return m_msgstr[plural_form];
+}
+
+const char *Message::msgcomments() const
+{
+	return m_msgcomments;
+}
+
 // Returns whether msgstr[*] and translator's comments are equal in two messages.
 // States of 'fuzzy' flag should also be the same.
 bool Message::equalTranslations(const Message *o) const
@@ -762,13 +713,10 @@ int fd_read_integer_from_line(int fd)
 	return res;
 }
 
-class TpHashNotFoundException : public std::exception
+const char *TpHashNotFoundException::what() const throw()
 {
-	virtual const char *what() const throw()
-	{
-		return "tp_hash was not found in database";
-	}
-};
+	return "tp_hash was not found in database";
+}
 
 std::vector<int> get_min_ids_by_tp_hash(const char *tp_hash)
 {

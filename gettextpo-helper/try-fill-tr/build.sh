@@ -1,2 +1,2 @@
 #!/bin/sh
-g++ main.cpp -lgettextpo -lcryptopp -o try-fill-tr
+g++ main.cpp -lgettextpo_helper -o try-fill-tr

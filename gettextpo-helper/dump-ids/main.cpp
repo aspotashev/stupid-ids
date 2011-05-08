@@ -8,7 +8,7 @@
 #include <vector>
 #include <map>
 
-#include "../include/gettextpo-helper.h"
+#include <gettextpo-helper.h>
 
 int main(int argc, char *argv[])
 {

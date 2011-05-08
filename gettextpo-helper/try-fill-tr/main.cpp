@@ -8,7 +8,7 @@
 #include <vector>
 #include <map>
 
-#include "../include/gettextpo-helper.h"
+#include <gettextpo-helper.h>
 #include "../ruby-ext/mappedfile.h"
 
 typedef long long int trdb_offset; // 64-bit
