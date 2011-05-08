@@ -61,6 +61,8 @@ commits_to_process.each_with_index do |commit_sha1, index|
 				'66767c4cfc5e349d78da99c9fa4fb88d9edd0a79',
 				'39794651da0335a6017f6b8d94a3e292fce106a5',
 				'f59b8f79171b52986d8b44e98117b398fafa8384',
+                                '58d344f95f01276192dcf6e0390065f0d519724e',
+                                'ea4e2e0fe3a0b99b31a957406ffb83f04b688f5d',
 
 				'24c554289355b4b805ab1654fbe5c52ebe02f905', # header is not clean
 				'62e7afe093409b51fb688484e1f44ad3d6dfc336',
