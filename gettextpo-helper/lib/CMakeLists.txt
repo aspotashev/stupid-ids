@@ -28,3 +28,5 @@ set(INSTALL_TARGETS_DEFAULT_ARGS
 	LIBRARY DESTINATION lib)
 install(TARGETS gettextpo_helper ${INSTALL_TARGETS_DEFAULT_ARGS})
 
+set_target_properties (gettextpo_helper PROPERTIES COMPILE_FLAGS "-ggdb")
+

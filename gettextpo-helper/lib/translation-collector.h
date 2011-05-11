@@ -16,6 +16,9 @@ public:
 	std::vector<int> listConflicting();
 	std::vector<Message *> listVariants(int min_id);
 
+	int numSharedIds() const;
+	int numIds() const;
+
 protected:
 	// Cannot be 'const', because there is no const 'std::map::operator []'.
 	bool conflictingTrans(int min_id);
