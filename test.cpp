@@ -199,7 +199,7 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 	// This should have been checked earlier
 	if (tree1 != NULL && tree2 != NULL && git_oid_cmp(git_tree_id(tree1), git_tree_id(tree2)) == 0)
 	{
-		printf("Empty commit!\n");
+//		printf("Empty commit!\n");
 		return;
 	}
 
@@ -250,7 +250,7 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 				CommitFileChange *change = new CommitFileChange(
 					git_tree_entry_id(entry1), NULL, path, name, CommitFileChange::DEL);
 				m_currentCommit->addChange(change);
-				change->print();
+//				change->print();
 			}
 
 			next1 = true;
@@ -272,7 +272,7 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 				CommitFileChange *change = new CommitFileChange(
 					NULL, git_tree_entry_id(entry2), path, name, CommitFileChange::ADD);
 				m_currentCommit->addChange(change);
-				change->print();
+//				change->print();
 			}
 
 			next2 = true;
@@ -304,7 +304,7 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 					CommitFileChange *change = new CommitFileChange(
 						git_tree_entry_id(entry1), git_tree_entry_id(entry2), path, name, CommitFileChange::MOD);
 					m_currentCommit->addChange(change);
-					change->print();
+//					change->print();
 				}
 			}
 
@@ -366,7 +366,7 @@ void Repository::readRepository(const char *git_dir)
 	{
 		char oid_string[GIT_OID_HEXSZ + 1];
 		git_oid_to_string(oid_string, GIT_OID_HEXSZ + 1, git_commit_id(commit));
-		printf("Current commit's oid: %s\n", oid_string);
+//		printf("Current commit's oid: %s\n", oid_string);
 
 		// Moving to parent
 		unsigned int parentcount = git_commit_parentcount(commit);
