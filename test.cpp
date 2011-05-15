@@ -151,7 +151,7 @@ public:
 
 	void diffTree(git_tree *tree1, git_tree *tree2, const char *path);
 	void diffCommit(git_commit *commit1, git_commit *commit2);
-	void run();
+	void readRepository(const char *git_dir);
 
 protected:
 	git_tree *git_tree_entry_subtree(const git_tree_entry *entry);
@@ -166,18 +166,13 @@ private:
 
 Repository::Repository(const char *git_dir)
 {
-	assert(git_repository_open(&repo, git_dir) == 0);
-
-	git_reference *ref_master;
-	assert(git_reference_lookup(&ref_master, repo, "refs/heads/master") == 0);
-
-	oid_master = git_reference_oid(ref_master);
-	assert(oid_master != NULL);
+	readRepository(git_dir);
 }
 
 Repository::~Repository()
 {
-	git_repository_free(repo);
+	for (size_t i = 0; i < m_commits.size(); i ++)
+		delete m_commits[i];
 }
 
 git_tree *Repository::git_tree_entry_subtree(const git_tree_entry *entry)
@@ -351,8 +346,18 @@ void Repository::diffCommit(git_commit *commit1, git_commit *commit2)
 		git_tree_close(tree2);
 }
 
-void Repository::run()
+void Repository::readRepository(const char *git_dir)
 {
+	// Open repository
+	assert(git_repository_open(&repo, git_dir) == 0);
+
+	git_reference *ref_master;
+	assert(git_reference_lookup(&ref_master, repo, "refs/heads/master") == 0);
+
+	oid_master = git_reference_oid(ref_master);
+	assert(oid_master != NULL);
+
+	// Read repository
 	git_commit *commit;
 	git_commit *parent;
 	assert(git_commit_lookup(&commit, repo, oid_master) == 0);
@@ -378,6 +383,11 @@ void Repository::run()
 		git_commit_close(commit);
 		commit = parent;
 	}
+
+	// Close repository
+	git_repository_free(repo);
+	repo = NULL;
+	oid_master = NULL;
 }
 
 //--------------------------------
@@ -385,10 +395,14 @@ void Repository::run()
 int main()
 {
 	Repository *repo = new Repository("/home/sasha/kde-ru/xx-numbering/templates/.git/");
-	repo->run();
-	delete repo;
+	Repository *repo_stable = new Repository("/home/sasha/kde-ru/xx-numbering/stable-templates/.git/");
 
-	while(1);
+	// ...
+	// ... run detectors ...
+	// ...
+
+	delete repo;
+	delete repo_stable;
 
 	return 0;
 }
