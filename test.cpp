@@ -215,6 +215,7 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 
 				diffTree(subtree1, NULL, subtree_path);
 				delete [] subtree_path;
+				git_tree_close(subtree1);
 			}
 			else
 			{
@@ -235,6 +236,7 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 
 				diffTree(NULL, subtree2, subtree_path);
 				delete [] subtree_path;
+				git_tree_close(subtree2);
 			}
 			else
 			{
@@ -264,6 +266,8 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 
 					diffTree(subtree1, subtree2, subtree_path);
 					delete [] subtree_path;
+					git_tree_close(subtree1);
+					git_tree_close(subtree2);
 				}
 				else // blob
 				{
@@ -357,6 +361,7 @@ void Repository::run()
 		// Calculate changes made by this commit
 		diffCommit(parent, commit);
 
+		git_commit_close(commit);
 		commit = parent;
 	}
 }
