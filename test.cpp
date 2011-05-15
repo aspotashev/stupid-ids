@@ -23,6 +23,76 @@ int git_tree_entry_namecmp(const git_tree_entry *entry1, const git_tree_entry *e
 //	return strcmp(git_tree_entry_name(entry1), git_tree_entry_name(entry2));
 }
 
+// TODO: use common code with gettextpo-helper/lib/gettextpo-helper.cpp
+char *xstrdup(const char *str)
+{
+	size_t len = strlen(str);
+	char *dup = new char [len + 1];
+	strcpy(dup, str);
+
+	return dup;
+}
+
+class CommitFileChange
+{
+public:
+	CommitFileChange(
+		const git_oid *oid1, const git_oid *oid2,
+		const char *path, const char *name, int type);
+	~CommitFileChange();
+
+public:
+	git_oid m_oid1;
+	git_oid m_oid2;
+	char *m_path;
+	char *m_name;
+	int m_type;
+
+	enum
+	{
+		ADD = 1,
+		DEL = 2,
+		MOD = 3
+	};
+};
+
+CommitFileChange::CommitFileChange(
+	const git_oid *oid1, const git_oid *oid2,
+	const char *path, const char *name, int type)
+{
+	switch (type)
+	{
+		case ADD:
+			assert(oid1 == NULL);
+			assert(oid2 != NULL);
+			break;
+		case DEL:
+			assert(oid1 != NULL);
+			assert(oid2 == NULL);
+			break;
+		case MOD:
+			assert(oid1 != NULL);
+			assert(oid2 != NULL);
+			break;
+		default:
+			assert(0);
+	}
+
+	if (oid1)
+		git_oid_cpy(&m_oid1, oid1);
+	if (oid2)
+		git_oid_cpy(&m_oid2, oid2);
+	m_path = xstrdup(path);
+	m_name = xstrdup(name);
+	m_type = type;
+}
+
+CommitFileChange::~CommitFileChange()
+{
+	delete [] m_path;
+	delete [] m_name;
+}
+
 class Repository
 {
 public:
@@ -36,7 +106,7 @@ public:
 protected:
 	git_tree *git_tree_entry_subtree(const git_tree_entry *entry);
 
-protected:
+private:
 	git_repository *repo;
 	const git_oid *oid_master;
 };
@@ -128,6 +198,8 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 			}
 			else
 			{
+				CommitFileChange *change = new CommitFileChange(
+					git_tree_entry_id(entry1), NULL, path, name, CommitFileChange::DEL);
 				printf("D    (%s) %s\n", path, name); // a file was removed
 			}
 
@@ -146,6 +218,8 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 			}
 			else
 			{
+				CommitFileChange *change = new CommitFileChange(
+					NULL, git_tree_entry_id(entry2), path, name, CommitFileChange::ADD);
 				printf("A    (%s) %s\n", path, name); // a file was added
 			}
 
@@ -173,6 +247,8 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 				}
 				else // blob
 				{
+					CommitFileChange *change = new CommitFileChange(
+						git_tree_entry_id(entry1), git_tree_entry_id(entry2), path, name, CommitFileChange::MOD);
 					printf("M    (%s) %s\n", path, name); // a file was modified
 				}
 			}
@@ -272,6 +348,8 @@ int main()
 	Repository *repo = new Repository("/home/sasha/kde-ru/xx-numbering/templates/.git/");
 	repo->run();
 	delete repo;
+
+	while(1);
 
 	return 0;
 }
