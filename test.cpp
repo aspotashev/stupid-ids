@@ -176,20 +176,6 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2)
 	}
 
 
-//	printf("count1 = %d, count2 = %d\n", (int)count1, (int)count2);
-
-/*		const git_tree_entry *entry = git_tree_entry_byindex(tree1, 0);
-		unsigned int attr = git_tree_entry_attributes(entry);
-		printf("\t[%s], %o\n",
-			git_tree_entry_name(entry),
-			attr);
-
-		git_object *entry_object;
-		git_tree_entry_2object(&entry_object, repo, entry);
-		const git_oid *entry_id = git_tree_entry_id(entry);
-
-
-	assert(0);*/
 /*	for (;;)
 	{
 		const git_tree_entry *entry = git_tree_entry_byindex(tree, i);
