@@ -29,7 +29,7 @@ public:
 	Repository(const char *git_dir);
 	~Repository();
 
-	void diffTree(git_tree *tree1, git_tree *tree2);
+	void diffTree(git_tree *tree1, git_tree *tree2, const char *path);
 	void diffCommit(git_commit *commit1, git_commit *commit2);
 	void run();
 
@@ -66,7 +66,17 @@ git_tree *Repository::git_tree_entry_subtree(const git_tree_entry *entry)
 	return subtree;
 }
 
-void Repository::diffTree(git_tree *tree1, git_tree *tree2)
+char *concat_path(const char *path, const char *name)
+{
+	char *res = new char [strlen(path) + strlen(name) + 2];
+	strcpy(res, path);
+	strcat(res, "/");
+	strcat(res, name);
+
+	return res;
+}
+
+void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 {
 	// This should have been checked earlier
 	if (tree1 != NULL && tree2 != NULL && git_oid_cmp(git_tree_id(tree1), git_tree_id(tree2)) == 0)
@@ -107,28 +117,36 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2)
 
 		if (idx2 >= count2 || cmp < 0) // entry1 goes first, i.e. the entry is being removed in this commit
 		{
+			const char *name = git_tree_entry_name(entry1);
 			if (git_tree_entry_attributes(entry1) & REPO_MODE_DIR)
 			{
 				git_tree *subtree1 = git_tree_entry_subtree(entry1);
-				diffTree(subtree1, NULL);
+				char *subtree_path = concat_path(path, name);
+
+				diffTree(subtree1, NULL, subtree_path);
+				delete [] subtree_path;
 			}
 			else
 			{
-				printf("D    %s\n", git_tree_entry_name(entry1)); // a file was removed
+				printf("D    (%s) %s\n", path, name); // a file was removed
 			}
 
 			next1 = true;
 		}
 		else if (idx1 >= count1 || cmp > 0) // entry2 goes first, i.e. the entry is being added in this commit
 		{
+			const char *name = git_tree_entry_name(entry2);
 			if (git_tree_entry_attributes(entry2) & REPO_MODE_DIR)
 			{
 				git_tree *subtree2 = git_tree_entry_subtree(entry2);
-				diffTree(NULL, subtree2);
+				char *subtree_path = concat_path(path, name);
+
+				diffTree(NULL, subtree2, subtree_path);
+				delete [] subtree_path;
 			}
 			else
 			{
-				printf("A    %s\n", git_tree_entry_name(entry2)); // a file was added
+				printf("A    (%s) %s\n", path, name); // a file was added
 			}
 
 			next2 = true;
@@ -143,18 +161,19 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2)
 			{
 				assert(git_tree_entry_attributes(entry1) == git_tree_entry_attributes(entry2));
 
-				unsigned int attr = git_tree_entry_attributes(entry1);
-				if (attr & REPO_MODE_DIR) // tree
+				const char *name = git_tree_entry_name(entry1);
+				if (git_tree_entry_attributes(entry1) & REPO_MODE_DIR) // tree
 				{
 					git_tree *subtree1 = git_tree_entry_subtree(entry1);
 					git_tree *subtree2 = git_tree_entry_subtree(entry2);
+					char *subtree_path = concat_path(path, name);
 
-					// Run 'diffTree' recursively
-					diffTree(subtree1, subtree2);
+					diffTree(subtree1, subtree2, subtree_path);
+					delete [] subtree_path;
 				}
 				else // blob
 				{
-//					printf("M    %s\n", git_tree_entry_name(entry1)); // a file was modified
+					printf("M    (%s) %s\n", path, name); // a file was modified
 				}
 			}
 
@@ -215,7 +234,7 @@ void Repository::diffCommit(git_commit *commit1, git_commit *commit2)
 	if (commit2)
 		assert(git_commit_tree(&tree2, commit2) == 0);
 
-	diffTree(tree1, tree2);
+	diffTree(tree1, tree2, "");
 }
 
 void Repository::run()
