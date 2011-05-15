@@ -62,20 +62,20 @@ CommitFileChange::CommitFileChange(
 {
 	switch (type)
 	{
-		case ADD:
-			assert(oid1 == NULL);
-			assert(oid2 != NULL);
-			break;
-		case DEL:
-			assert(oid1 != NULL);
-			assert(oid2 == NULL);
-			break;
-		case MOD:
-			assert(oid1 != NULL);
-			assert(oid2 != NULL);
-			break;
-		default:
-			assert(0);
+	case ADD:
+		assert(oid1 == NULL);
+		assert(oid2 != NULL);
+		break;
+	case DEL:
+		assert(oid1 != NULL);
+		assert(oid2 == NULL);
+		break;
+	case MOD:
+		assert(oid1 != NULL);
+		assert(oid2 != NULL);
+		break;
+	default:
+		assert(0);
 	}
 
 	if (oid1)
