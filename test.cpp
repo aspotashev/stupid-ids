@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <vector>
 
 #include <git2.h>
 
@@ -33,6 +34,20 @@ char *xstrdup(const char *str)
 	return dup;
 }
 
+class CommitFileChange;
+
+class Commit
+{
+public:
+	Commit();
+	~Commit();
+
+	void addChange(CommitFileChange *change);
+
+public:
+	std::vector<CommitFileChange *> m_changes;
+};
+
 class CommitFileChange
 {
 public:
@@ -57,6 +72,21 @@ public:
 		MOD = 3
 	};
 };
+
+Commit::Commit()
+{
+}
+
+Commit::~Commit()
+{
+	for (size_t i = 0; i < m_changes.size(); i ++)
+		delete m_changes[i];
+}
+
+void Commit::addChange(CommitFileChange *change)
+{
+	m_changes.push_back(change);
+}
 
 CommitFileChange::CommitFileChange(
 	const git_oid *oid1, const git_oid *oid2,
@@ -129,6 +159,9 @@ protected:
 private:
 	git_repository *repo;
 	const git_oid *oid_master;
+
+	Commit *m_currentCommit;
+	std::vector<Commit *> m_commits;
 };
 
 Repository::Repository(const char *git_dir)
@@ -221,6 +254,7 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 			{
 				CommitFileChange *change = new CommitFileChange(
 					git_tree_entry_id(entry1), NULL, path, name, CommitFileChange::DEL);
+				m_currentCommit->addChange(change);
 				change->print();
 			}
 
@@ -242,6 +276,7 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 			{
 				CommitFileChange *change = new CommitFileChange(
 					NULL, git_tree_entry_id(entry2), path, name, CommitFileChange::ADD);
+				m_currentCommit->addChange(change);
 				change->print();
 			}
 
@@ -273,6 +308,7 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 				{
 					CommitFileChange *change = new CommitFileChange(
 						git_tree_entry_id(entry1), git_tree_entry_id(entry2), path, name, CommitFileChange::MOD);
+					m_currentCommit->addChange(change);
 					change->print();
 				}
 			}
@@ -303,7 +339,11 @@ void Repository::diffCommit(git_commit *commit1, git_commit *commit2)
 	if (commit2)
 		assert(git_commit_tree(&tree2, commit2) == 0);
 
+	m_currentCommit = new Commit();
+
 	diffTree(tree1, tree2, "");
+
+	m_commits.push_back(m_currentCommit);
 
 	if (tree1)
 		git_tree_close(tree1);
