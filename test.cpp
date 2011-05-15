@@ -304,6 +304,11 @@ void Repository::diffCommit(git_commit *commit1, git_commit *commit2)
 		assert(git_commit_tree(&tree2, commit2) == 0);
 
 	diffTree(tree1, tree2, "");
+
+	if (tree1)
+		git_tree_close(tree1);
+	if (tree2)
+		git_tree_close(tree2);
 }
 
 void Repository::run()
