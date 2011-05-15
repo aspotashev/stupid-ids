@@ -41,6 +41,8 @@ public:
 		const char *path, const char *name, int type);
 	~CommitFileChange();
 
+	void print();
+
 public:
 	git_oid m_oid1;
 	git_oid m_oid2;
@@ -91,6 +93,24 @@ CommitFileChange::~CommitFileChange()
 {
 	delete [] m_path;
 	delete [] m_name;
+}
+
+void CommitFileChange::print()
+{
+	switch (m_type)
+	{
+	case ADD:
+		printf("A    (%s) %s\n", m_path, m_name); // a file was added
+		break;
+	case DEL:
+		printf("D    (%s) %s\n", m_path, m_name); // a file was removed
+		break;
+	case MOD:
+		printf("M    (%s) %s\n", m_path, m_name); // a file was modified
+		break;
+	default:
+		assert(0);
+	}
 }
 
 class Repository
@@ -200,7 +220,7 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 			{
 				CommitFileChange *change = new CommitFileChange(
 					git_tree_entry_id(entry1), NULL, path, name, CommitFileChange::DEL);
-				printf("D    (%s) %s\n", path, name); // a file was removed
+				change->print();
 			}
 
 			next1 = true;
@@ -220,7 +240,7 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 			{
 				CommitFileChange *change = new CommitFileChange(
 					NULL, git_tree_entry_id(entry2), path, name, CommitFileChange::ADD);
-				printf("A    (%s) %s\n", path, name); // a file was added
+				change->print();
 			}
 
 			next2 = true;
@@ -249,7 +269,7 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 				{
 					CommitFileChange *change = new CommitFileChange(
 						git_tree_entry_id(entry1), git_tree_entry_id(entry2), path, name, CommitFileChange::MOD);
-					printf("M    (%s) %s\n", path, name); // a file was modified
+					change->print();
 				}
 			}
 
