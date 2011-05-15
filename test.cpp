@@ -3,6 +3,7 @@
 #include <string.h>
 #include <assert.h>
 #include <vector>
+#include <algorithm>
 
 #include <git2.h>
 
@@ -44,6 +45,9 @@ public:
 
 	void addChange(CommitFileChange *change);
 
+	int nChanges() const;
+	const CommitFileChange *change(int index) const;
+
 public:
 	std::vector<CommitFileChange *> m_changes;
 };
@@ -57,6 +61,7 @@ public:
 	~CommitFileChange();
 
 	void print();
+	int type() const;
 
 public:
 	git_oid m_oid1;
@@ -86,6 +91,23 @@ Commit::~Commit()
 void Commit::addChange(CommitFileChange *change)
 {
 	m_changes.push_back(change);
+}
+
+int Commit::nChanges() const
+{
+	return (int)m_changes.size();
+}
+
+const CommitFileChange *Commit::change(int index) const
+{
+	assert(index >= 0 && index < nChanges());
+
+	return m_changes[index];
+}
+
+int CommitFileChange::type() const
+{
+	return m_type;
 }
 
 CommitFileChange::CommitFileChange(
@@ -152,6 +174,9 @@ public:
 	void diffTree(git_tree *tree1, git_tree *tree2, const char *path);
 	void diffCommit(git_commit *commit1, git_commit *commit2);
 	void readRepository(const char *git_dir);
+
+	int nCommits() const;
+	const Commit *commit(int index) const;
 
 protected:
 	git_tree *git_tree_entry_subtree(const git_tree_entry *entry);
@@ -388,18 +413,92 @@ void Repository::readRepository(const char *git_dir)
 	git_repository_free(repo);
 	repo = NULL;
 	oid_master = NULL;
+
+	// Reverse commit list (to set the order from root to HEAD)
+	reverse(m_commits.begin(), m_commits.end());
+}
+
+int Repository::nCommits() const
+{
+	return (int)m_commits.size();
+}
+
+const Commit *Repository::commit(int index) const
+{
+	assert(index >= 0 && index < nCommits());
+
+	return m_commits[index];
 }
 
 //--------------------------------
+
+class DetectorBase
+{
+public:
+	DetectorBase();
+	~DetectorBase();
+};
+
+DetectorBase::DetectorBase()
+{
+}
+
+DetectorBase::~DetectorBase()
+{
+}
+
+class DetectorSuccessors : public DetectorBase
+{
+public:
+	DetectorSuccessors(Repository *repo);
+	~DetectorSuccessors();
+
+	void detect();
+
+private:
+	Repository *m_repo;
+};
+
+DetectorSuccessors::DetectorSuccessors(Repository *repo):
+	m_repo(repo)
+{
+}
+
+DetectorSuccessors::~DetectorSuccessors()
+{
+}
+
+void DetectorSuccessors::detect()
+{
+	for (int i = 0; i < m_repo->nCommits(); i ++)
+	{
+		const Commit *commit = m_repo->commit(i);
+		for (int j = 0; j < commit->nChanges(); j ++)
+		{
+			const CommitFileChange *change = commit->change(j);
+			switch (change->type())
+			{
+			case CommitFileChange::MOD:
+				break;
+			case CommitFileChange::DEL:
+				break;
+			case CommitFileChange::ADD:
+				break;
+			default:
+				assert(0);
+			}
+		}
+	}
+}
 
 int main()
 {
 	Repository *repo = new Repository("/home/sasha/kde-ru/xx-numbering/templates/.git/");
 	Repository *repo_stable = new Repository("/home/sasha/kde-ru/xx-numbering/stable-templates/.git/");
 
-	// ...
-	// ... run detectors ...
-	// ...
+	// Run detectors
+	DetectorSuccessors d_succ(repo);
+	d_succ.detect();
 
 	delete repo;
 	delete repo_stable;
