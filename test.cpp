@@ -293,37 +293,6 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 				entry2 = git_tree_entry_byindex(tree2, idx2);
 		}
 	}
-
-
-/*	for (;;)
-	{
-		const git_tree_entry *entry = git_tree_entry_byindex(tree, i);
-		unsigned int attr = git_tree_entry_attributes(entry);
-		printf("\t[%s], %o\n",
-			git_tree_entry_name(entry),
-			attr);
-
-		git_object *entry_object;
-		git_tree_entry_2object(&entry_object, repo, entry);
-
-		if (attr & REPO_MODE_DIR)
-		{
-			assert(git_object_type(entry_object) == GIT_OBJ_TREE);
-
-			const git_oid *subtree_oid = git_object_id(entry_object);
-			git_tree *subtree;
-			assert(git_tree_lookup(&subtree, repo, subtree_oid) == 0);
-
-			runTree(subtree);
-		}
-		else
-		{
-			printf("Attr: %o\n", attr);
-			printf("Git object type: %d\n", git_object_type(entry_object));
-			assert(git_object_type(entry_object) == GIT_OBJ_BLOB);
-			assert(0);
-		}
-	}*/
 }
 
 void Repository::diffCommit(git_commit *commit1, git_commit *commit2)
