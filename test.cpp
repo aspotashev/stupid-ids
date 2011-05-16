@@ -40,8 +40,10 @@ class CommitFileChange;
 class Commit
 {
 public:
-	Commit();
+	Commit(git_commit *commit);
 	~Commit();
+
+	git_time_t time() const;
 
 	void addChange(CommitFileChange *change);
 
@@ -51,6 +53,8 @@ public:
 	const git_oid *findRemovalOid(const char *name, const char *path) const;
 
 public:
+	git_time_t m_time;
+
 	std::vector<CommitFileChange *> m_changes;
 };
 
@@ -85,8 +89,10 @@ private:
 	int m_type;
 };
 
-Commit::Commit()
+Commit::Commit(git_commit *commit)
 {
+	// TODO: how to handle git_commit_time_offset?
+	m_time = git_commit_time(commit);
 }
 
 Commit::~Commit()
@@ -110,6 +116,11 @@ const CommitFileChange *Commit::change(int index) const
 	assert(index >= 0 && index < nChanges());
 
 	return m_changes[index];
+}
+
+git_time_t Commit::time() const
+{
+	return m_time;
 }
 
 int CommitFileChange::type() const
@@ -396,6 +407,8 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 	}
 }
 
+// commit1 -- parent commit
+// commit2 -- current commit
 void Repository::diffCommit(git_commit *commit1, git_commit *commit2)
 {
 	git_tree *tree1 = NULL, *tree2 = NULL;
@@ -404,7 +417,7 @@ void Repository::diffCommit(git_commit *commit1, git_commit *commit2)
 	if (commit2)
 		assert(git_commit_tree(&tree2, commit2) == 0);
 
-	m_currentCommit = new Commit();
+	m_currentCommit = new Commit(commit2);
 
 	diffTree(tree1, tree2, "");
 
