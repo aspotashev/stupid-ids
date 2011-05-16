@@ -48,6 +48,8 @@ public:
 	int nChanges() const;
 	const CommitFileChange *change(int index) const;
 
+	const git_oid *findRemovalOid(const char *name, const char *path) const;
+
 public:
 	std::vector<CommitFileChange *> m_changes;
 };
@@ -61,17 +63,12 @@ public:
 	~CommitFileChange();
 
 	void print() const;
-	int type() const;
 
 	const git_oid *oid1() const;
 	const git_oid *oid2() const;
-
-public:
-	git_oid m_oid1;
-	git_oid m_oid2;
-	char *m_path;
-	char *m_name;
-	int m_type;
+	const char *path() const;
+	const char *name() const;
+	int type() const;
 
 	enum
 	{
@@ -79,6 +76,13 @@ public:
 		DEL = 2,
 		MOD = 3
 	};
+
+private:
+	git_oid m_oid1;
+	git_oid m_oid2;
+	char *m_path;
+	char *m_name;
+	int m_type;
 };
 
 Commit::Commit()
@@ -152,12 +156,26 @@ CommitFileChange::~CommitFileChange()
 
 const git_oid *CommitFileChange::oid1() const
 {
+	assert(m_type == DEL || m_type == MOD);
+
 	return &m_oid1;
 }
 
 const git_oid *CommitFileChange::oid2() const
 {
+	assert(m_type == ADD || m_type == MOD);
+
 	return &m_oid2;
+}
+
+const char *CommitFileChange::path() const
+{
+	return m_path;
+}
+
+const char *CommitFileChange::name() const
+{
+	return m_name;
 }
 
 void CommitFileChange::print() const
@@ -178,6 +196,18 @@ void CommitFileChange::print() const
 	}
 }
 
+const git_oid *Commit::findRemovalOid(const char *name, const char *path) const
+{
+	// TODO: use binary search (the items of m_changes is sorted by path+'/'+name)
+	for (int i = 0; i < nChanges(); i ++)
+		if (change(i)->type() == CommitFileChange::DEL &&
+			!strcmp(change(i)->name(), name) &&
+			!strcmp(change(i)->path(), path))
+			return change(i)->oid1();
+
+	return NULL;
+}
+
 class Repository
 {
 public:
@@ -190,6 +220,8 @@ public:
 
 	int nCommits() const;
 	const Commit *commit(int index) const;
+
+	const git_oid *findLastRemovalOid(int from_commit, const char *name, const char *path) const;
 
 protected:
 	git_tree *git_tree_entry_subtree(const git_tree_entry *entry);
@@ -443,6 +475,19 @@ const Commit *Repository::commit(int index) const
 	return m_commits[index];
 }
 
+const git_oid *Repository::findLastRemovalOid(int from_commit, const char *name, const char *path) const
+{
+	// Reverse search in all commits older than from_commit
+	for (int i = from_commit; i >= 0; i --)
+	{
+		const git_oid *oid = commit(i)->findRemovalOid(name, path);
+		if (oid)
+			return oid;
+	}
+
+	return NULL;
+}
+
 //--------------------------------
 
 class GitOidPair
@@ -529,7 +574,7 @@ void DetectorBase::addOidPair(const git_oid *oid1, const git_oid *oid2)
 	else
 	{
 		// Strange, we are identifying a file with itself
-		assert(0);
+//		assert(0);
 	}
 }
 
@@ -569,14 +614,20 @@ DetectorSuccessors::~DetectorSuccessors()
 
 void DetectorSuccessors::processChange(int commit_index, int change_index, const CommitFileChange *change)
 {
+	const git_oid *oid1;
+
 	switch (change->type())
 	{
 	case CommitFileChange::MOD:
 		addOidPair(change->oid1(), change->oid2());
 		break;
 	case CommitFileChange::DEL:
+		// Do nothing
 		break;
 	case CommitFileChange::ADD:
+		oid1 = m_repo->findLastRemovalOid(commit_index - 1, change->name(), change->path());
+		if (oid1)
+			addOidPair(oid1, change->oid2());
 		break;
 	default:
 		assert(0);
