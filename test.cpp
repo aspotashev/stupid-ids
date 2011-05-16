@@ -60,8 +60,11 @@ public:
 		const char *path, const char *name, int type);
 	~CommitFileChange();
 
-	void print();
+	void print() const;
 	int type() const;
+
+	const git_oid *oid1() const;
+	const git_oid *oid2() const;
 
 public:
 	git_oid m_oid1;
@@ -147,7 +150,17 @@ CommitFileChange::~CommitFileChange()
 	delete [] m_name;
 }
 
-void CommitFileChange::print()
+const git_oid *CommitFileChange::oid1() const
+{
+	return &m_oid1;
+}
+
+const git_oid *CommitFileChange::oid2() const
+{
+	return &m_oid2;
+}
+
+void CommitFileChange::print() const
 {
 	switch (m_type)
 	{
@@ -432,19 +445,103 @@ const Commit *Repository::commit(int index) const
 
 //--------------------------------
 
+class GitOidPair
+{
+public:
+	GitOidPair(const git_oid *oid1, const git_oid *oid2);
+	~GitOidPair();
+
+	void setPair(const git_oid *oid1, const git_oid *oid2);
+
+//	GitOidPair &operator=(const GitOidPair &o);
+
+private:
+	git_oid m_oid1;
+	git_oid m_oid2;
+};
+
+GitOidPair::GitOidPair(const git_oid *oid1, const git_oid *oid2)
+{
+	setPair(oid1, oid2);
+}
+
+GitOidPair::~GitOidPair()
+{
+}
+
+void GitOidPair::setPair(const git_oid *oid1, const git_oid *oid2)
+{
+	git_oid_cpy(&m_oid1, oid1);
+	git_oid_cpy(&m_oid2, oid2);
+}
+
+//GitOidPair &GitOidPair::operator=(const GitOidPair &o)
+//{
+//      ...
+//}
+
 class DetectorBase
 {
 public:
 	DetectorBase();
 	~DetectorBase();
+
+	void detect();
+
+	int nPairs() const;
+
+protected:
+	void addOidPair(const git_oid *oid1, const git_oid *oid2);
+	virtual void doDetect() = 0;
+
+private:
+	GitOidPair *m_oidPairs;
+	int m_maxPairs;
+	int m_nPairs;
 };
 
 DetectorBase::DetectorBase()
 {
+	m_nPairs = 0;
+
+	m_maxPairs = 20000;
+	m_oidPairs = (GitOidPair *)malloc(sizeof(GitOidPair) * m_maxPairs);
 }
 
 DetectorBase::~DetectorBase()
 {
+	free(m_oidPairs);
+}
+
+void DetectorBase::addOidPair(const git_oid *oid1, const git_oid *oid2)
+{
+	if (m_nPairs == m_maxPairs)
+	{
+		m_maxPairs += 20000;
+		m_oidPairs = (GitOidPair *)realloc(m_oidPairs, sizeof(GitOidPair) * m_maxPairs);
+	}
+
+	int cmp = git_oid_cmp(oid1, oid2);
+	if (cmp < 0)
+		m_oidPairs[m_nPairs ++].setPair(oid1, oid2);
+	else if (cmp > 0)
+		m_oidPairs[m_nPairs ++].setPair(oid2, oid1);
+	else
+	{
+		// Strange, we are identifying a file with itself
+		assert(0);
+	}
+}
+
+void DetectorBase::detect()
+{
+	// TODO: benchmarking
+	doDetect();
+}
+
+int DetectorBase::nPairs() const
+{
+	return m_nPairs;
 }
 
 class DetectorSuccessors : public DetectorBase
@@ -453,7 +550,9 @@ public:
 	DetectorSuccessors(Repository *repo);
 	~DetectorSuccessors();
 
-	void detect();
+protected:
+	void processChange(int commit_index, int change_index, const CommitFileChange *change);
+	virtual void doDetect();
 
 private:
 	Repository *m_repo;
@@ -468,26 +567,29 @@ DetectorSuccessors::~DetectorSuccessors()
 {
 }
 
-void DetectorSuccessors::detect()
+void DetectorSuccessors::processChange(int commit_index, int change_index, const CommitFileChange *change)
+{
+	switch (change->type())
+	{
+	case CommitFileChange::MOD:
+		addOidPair(change->oid1(), change->oid2());
+		break;
+	case CommitFileChange::DEL:
+		break;
+	case CommitFileChange::ADD:
+		break;
+	default:
+		assert(0);
+	}
+}
+
+void DetectorSuccessors::doDetect()
 {
 	for (int i = 0; i < m_repo->nCommits(); i ++)
 	{
 		const Commit *commit = m_repo->commit(i);
 		for (int j = 0; j < commit->nChanges(); j ++)
-		{
-			const CommitFileChange *change = commit->change(j);
-			switch (change->type())
-			{
-			case CommitFileChange::MOD:
-				break;
-			case CommitFileChange::DEL:
-				break;
-			case CommitFileChange::ADD:
-				break;
-			default:
-				assert(0);
-			}
-		}
+			processChange(i, j, commit->change(j));
 	}
 }
 
@@ -499,6 +601,7 @@ int main()
 	// Run detectors
 	DetectorSuccessors d_succ(repo);
 	d_succ.detect();
+	printf("Detected pairs: %d\n", d_succ.nPairs());
 
 	delete repo;
 	delete repo_stable;
