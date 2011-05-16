@@ -478,7 +478,7 @@ const Commit *Repository::commit(int index) const
 const git_oid *Repository::findLastRemovalOid(int from_commit, const char *name, const char *path) const
 {
 	// Reverse search in all commits older than from_commit
-	for (int i = from_commit; i >= 0; i --)
+	for (int i = from_commit; i >= 0 && i >= from_commit - 10; i --) // FIXME: remove "&& i >= from_commit - 10" when findRemovalOid becomes fast
 	{
 		const git_oid *oid = commit(i)->findRemovalOid(name, path);
 		if (oid)
