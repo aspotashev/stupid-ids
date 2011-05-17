@@ -1,2 +1,2 @@
 #!/bin/sh
-g++ test.cpp -lgit2 -ggdb -o test
+g++ test.cpp detectorbase.cpp gitloader.cpp -lgit2 -ggdb -o test
