@@ -259,7 +259,7 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 
 		int cmp = 0;
 		if (idx1 < count1 && idx2 < count2) // compare only if there are entries to compare
-			cmp = strcmp(git_tree_entry_name(entry1), git_tree_entry_name(entry2));
+			cmp = git_tree_entry_namecmp(entry1, entry2);
 
 		if (idx2 >= count2 || cmp < 0) // entry1 goes first, i.e. the entry is being removed in this commit
 		{
