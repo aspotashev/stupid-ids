@@ -22,6 +22,7 @@ public:
 	const CommitFileChange *change(int index) const;
 
 	const git_oid *findRemovalOid(const char *name, const char *path) const;
+	const git_oid *findUpdateOid(const char *name, const char *path) const;
 
 public:
 	git_time_t m_time;
@@ -74,6 +75,9 @@ public:
 	const Commit *commit(int index) const;
 
 	const git_oid *findLastRemovalOid(int from_commit, const char *name, const char *path) const;
+
+	int lastCommitByTime(git_time_t time) const;
+	const git_oid *findFileOidByTime(git_time_t time, const char *name, const char *path) const;
 
 protected:
 	git_tree *git_tree_entry_subtree(const git_tree_entry *entry);

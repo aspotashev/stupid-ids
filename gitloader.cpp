@@ -171,6 +171,20 @@ const git_oid *Commit::findRemovalOid(const char *name, const char *path) const
 	return NULL;
 }
 
+// Finds addition or modification
+const git_oid *Commit::findUpdateOid(const char *name, const char *path) const
+{
+	// TODO: use binary search (the items of m_changes is sorted by path+'/'+name)
+	for (int i = 0; i < nChanges(); i ++)
+		if ((change(i)->type() == CommitFileChange::ADD ||
+			change(i)->type() == CommitFileChange::MOD) &&
+			!strcmp(change(i)->name(), name) &&
+			!strcmp(change(i)->path(), path))
+			return change(i)->oid2();
+
+	return NULL;
+}
+
 //---------------------------------------
 
 Repository::Repository(const char *git_dir)
@@ -442,10 +456,58 @@ const Commit *Repository::commit(int index) const
 
 const git_oid *Repository::findLastRemovalOid(int from_commit, const char *name, const char *path) const
 {
+	// If from_commit < 0, this functios gratefully returns NULL
+	assert(from_commit < nCommits());
+
 	// Reverse search in all commits older than from_commit
 	for (int i = from_commit; i >= 0 && i >= from_commit - 10; i --) // FIXME: remove "&& i >= from_commit - 10" when findRemovalOid becomes fast
 	{
 		const git_oid *oid = commit(i)->findRemovalOid(name, path);
+		if (oid)
+			return oid;
+	}
+
+	return NULL;
+}
+
+// Return the latest commit done before the given time.
+int Repository::lastCommitByTime(git_time_t time) const
+{
+	if (nCommits() == 0 || time < commit(0)->time())
+		return -1; // No such commit
+
+	int l = 0;
+	int r = nCommits() - 1;
+
+	// Using "loose" binary search, because commits
+	// are not strictly sorted by time.
+	while (r - l > 2)
+	{
+		int m = (l + r) / 2;
+		if (time < commit(m)->time())
+			r = m;
+		else
+			l = m;
+	}
+
+	for (; r >= l; r --)
+		if (time >= commit(r)->time())
+			return r;
+
+	assert(0); // Could not find the commit, but it must be between 'l' and 'r'
+	return -1;
+}
+
+// Returns the OID of the file if it exists at the given time.
+const git_oid *Repository::findFileOidByTime(git_time_t time, const char *name, const char *path) const
+{
+	int commit_index = lastCommitByTime(time);
+	if (commit_index == -1)
+		return NULL;
+
+	for (; commit_index >= 0; commit_index --)
+	{
+		const git_oid *oid = commit(commit_index)->findUpdateOid(name, path);
 		if (oid)
 			return oid;
 	}
