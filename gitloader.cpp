@@ -159,12 +159,37 @@ void CommitFileChange::print() const
 	}
 }
 
+void build_pathname(char *dest, const char *path, const char *name)
+{
+	strcpy(dest, path);
+	strcat(dest, "/");
+	strcat(dest, name);
+}
+
 const CommitFileChange *Commit::findChange(const char *name, const char *path) const
 {
-	// TODO: use binary search (the items of m_changes is sorted by path+'/'+name)
-	for (int i = 0; i < nChanges(); i ++)
-		if (!strcmp(change(i)->name(), name) && !strcmp(change(i)->path(), path))
-			return change(i);
+	// Using binary search (the items of m_changes are sorted by path+'/'+name)
+	int left = 0;
+	int right = nChanges() - 1;
+
+	static char pattern_fullname[5000];
+	static char fullname[5000];
+
+	build_pathname(pattern_fullname, path, name);
+	while (left <= right)
+	{
+		int mid = (left + right) / 2;
+		const CommitFileChange *change = this->change(mid);
+		build_pathname(fullname, change->path(), change->name());
+
+		int cmp = strcmp(pattern_fullname, fullname);
+		if (cmp > 0)
+			left = mid + 1;
+		else if (cmp < 0)
+			right = mid - 1;
+		else
+			return change;
+	}
 
 	return NULL;
 }
