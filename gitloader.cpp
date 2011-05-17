@@ -402,6 +402,30 @@ void Repository::readRepository(const char *git_dir)
 
 	// Reverse commit list (to set the order from root to HEAD)
 	reverse(m_commits.begin(), m_commits.end());
+
+	for (size_t i = 0; i < m_commits.size() - 1; i ++)
+		if (m_commits[i]->time() > m_commits[i + 1]->time() + 394)
+		{
+			// WARNING: it turns out that commits do no
+			// always have increasing time.
+
+			// There was something strange with the following commits:
+			//   http://websvn.kde.org/?view=revision&revision=1137453
+			//   http://websvn.kde.org/?view=revision&revision=1137452
+
+			printf("m_commits[i]->time = %lld, m_commits[i + 1]->time = %lld, i = %d\n",
+				(long long int)m_commits[i]->time(),
+				(long long int)m_commits[i + 1]->time(),
+				(int)i);
+			assert(0);
+		}
+
+	// Going to the past of two commits is too much ;)
+	// (if there wouldn't be such a limit, the binary
+	// search by time may _completely_ fail)
+	for (size_t i = 0; i < m_commits.size() - 2; i ++)
+		if (m_commits[i]->time() >= m_commits[i + 2]->time())
+			assert(0);
 }
 
 int Repository::nCommits() const
