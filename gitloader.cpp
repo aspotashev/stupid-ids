@@ -159,30 +159,35 @@ void CommitFileChange::print() const
 	}
 }
 
-const git_oid *Commit::findRemovalOid(const char *name, const char *path) const
+const CommitFileChange *Commit::findChange(const char *name, const char *path) const
 {
 	// TODO: use binary search (the items of m_changes is sorted by path+'/'+name)
 	for (int i = 0; i < nChanges(); i ++)
-		if (change(i)->type() == CommitFileChange::DEL &&
-			!strcmp(change(i)->name(), name) &&
-			!strcmp(change(i)->path(), path))
-			return change(i)->oid1();
+		if (!strcmp(change(i)->name(), name) && !strcmp(change(i)->path(), path))
+			return change(i);
 
 	return NULL;
+}
+
+const git_oid *Commit::findRemovalOid(const char *name, const char *path) const
+{
+	const CommitFileChange *change = findChange(name, path);
+	if (change && change->type() == CommitFileChange::DEL)
+		return change->oid1();
+	else
+		return NULL;
 }
 
 // Finds addition or modification
 const git_oid *Commit::findUpdateOid(const char *name, const char *path) const
 {
-	// TODO: use binary search (the items of m_changes is sorted by path+'/'+name)
-	for (int i = 0; i < nChanges(); i ++)
-		if ((change(i)->type() == CommitFileChange::ADD ||
-			change(i)->type() == CommitFileChange::MOD) &&
-			!strcmp(change(i)->name(), name) &&
-			!strcmp(change(i)->path(), path))
-			return change(i)->oid2();
-
-	return NULL;
+	const CommitFileChange *change = findChange(name, path);
+	if (change &&
+		(change->type() == CommitFileChange::ADD ||
+		change->type() == CommitFileChange::MOD))
+		return change->oid2();
+	else
+		return NULL;
 }
 
 //---------------------------------------

@@ -21,6 +21,7 @@ public:
 	int nChanges() const;
 	const CommitFileChange *change(int index) const;
 
+	const CommitFileChange *findChange(const char *name, const char *path) const;
 	const git_oid *findRemovalOid(const char *name, const char *path) const;
 	const git_oid *findUpdateOid(const char *name, const char *path) const;
 
