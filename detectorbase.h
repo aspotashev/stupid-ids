@@ -6,6 +6,22 @@
 
 #include <git2.h>
 
+class GitOid
+{
+public:
+	GitOid();
+	GitOid(const git_oid *oid);
+	~GitOid();
+
+	void setOid(const git_oid *oid);
+
+	bool operator<(const GitOid &o) const;
+	bool operator==(const GitOid &o) const;
+
+private:
+	git_oid m_oid;
+};
+
 class GitOidPair
 {
 public:

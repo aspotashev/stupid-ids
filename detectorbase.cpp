@@ -3,6 +3,39 @@
 
 #include "detectorbase.h"
 
+GitOid::GitOid()
+{
+	const static unsigned char zero_oid_raw[GIT_OID_RAWSZ] = {0};
+
+	git_oid_mkraw(&m_oid, zero_oid_raw);
+}
+
+GitOid::GitOid(const git_oid *oid)
+{
+	setOid(oid);
+}
+
+GitOid::~GitOid()
+{
+}
+
+void GitOid::setOid(const git_oid *oid)
+{
+	git_oid_cpy(&m_oid, oid);
+}
+
+bool GitOid::operator<(const GitOid &o) const
+{
+	return git_oid_cmp(&m_oid, &o.m_oid) < 0;
+}
+
+bool GitOid::operator==(const GitOid &o) const
+{
+	return git_oid_cmp(&m_oid, &o.m_oid) == 0;
+}
+
+//----------------------------------------
+
 GitOidPair::GitOidPair()
 {
 	const static unsigned char zero_oid_raw[GIT_OID_RAWSZ] = {0};

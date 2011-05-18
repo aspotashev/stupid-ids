@@ -122,6 +122,22 @@ const git_oid *CommitFileChange::oid2() const
 	return &m_oid2;
 }
 
+const git_oid *CommitFileChange::tryOid1() const
+{
+	if (m_type == DEL || m_type == MOD)
+		return &m_oid1;
+	else
+		return NULL;
+}
+
+const git_oid *CommitFileChange::tryOid2() const
+{
+	if (m_type == ADD || m_type == MOD)
+		return &m_oid2;
+	else
+		return NULL;
+}
+
 const char *CommitFileChange::path() const
 {
 	return m_path;
@@ -534,5 +550,22 @@ const git_oid *Repository::findFileOidByTime(git_time_t time, const char *name, 
 	}
 
 	return NULL;
+}
+
+void Repository::dumpOids(std::vector<GitOid> &dest) const
+{
+	for (int i = 0; i < nCommits(); i ++)
+		for (int j = 0; j < commit(i)->nChanges(); j ++)
+		{
+			const CommitFileChange *change = commit(i)->change(j);
+
+			const git_oid *oid;
+			oid = change->tryOid1();
+			if (oid)
+				dest.push_back(GitOid(oid));
+			oid = change->tryOid2();
+			if (oid)
+				dest.push_back(GitOid(oid));
+		}
 }
 

@@ -6,6 +6,8 @@
 
 #include <git2.h>
 
+#include "detectorbase.h"
+
 class CommitFileChange;
 
 class Commit
@@ -47,6 +49,9 @@ public:
 	const char *name() const;
 	int type() const;
 
+	const git_oid *tryOid1() const;
+	const git_oid *tryOid2() const;
+
 	enum
 	{
 		ADD = 1,
@@ -79,6 +84,8 @@ public:
 
 	int lastCommitByTime(git_time_t time) const;
 	const git_oid *findFileOidByTime(git_time_t time, const char *name, const char *path) const;
+
+	void dumpOids(std::vector<GitOid> &dest) const;
 
 protected:
 	git_tree *git_tree_entry_subtree(const git_tree_entry *entry);
