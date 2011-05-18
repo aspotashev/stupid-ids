@@ -8,6 +8,7 @@
 #include <git2.h>
 
 #include "gitloader.h"
+#include "xstrdup.h"
 
 #define REPO_MODE_DIR 040000
 
@@ -25,16 +26,6 @@ int git_tree_entry_namecmp(const git_tree_entry *entry1, const git_tree_entry *e
 
 	return strcmp(name1, name2);
 //	return strcmp(git_tree_entry_name(entry1), git_tree_entry_name(entry2));
-}
-
-// TODO: use common code with gettextpo-helper/lib/gettextpo-helper.cpp
-char *xstrdup(const char *str)
-{
-	size_t len = strlen(str);
-	char *dup = new char [len + 1];
-	strcpy(dup, str);
-
-	return dup;
 }
 
 //----------------------------------------
