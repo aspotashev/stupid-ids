@@ -5,11 +5,12 @@
 
 #include "gitloader.h"
 #include "detectorbase.h"
+#include "processorphans.h"
 
 class DetectorSuccessors : public DetectorBase
 {
 public:
-	DetectorSuccessors(Repository *repo);
+	DetectorSuccessors(Repository *repo, ProcessOrphansTxt *transitions);
 	~DetectorSuccessors();
 
 protected:
@@ -18,10 +19,11 @@ protected:
 
 private:
 	Repository *m_repo;
+	ProcessOrphansTxt *m_transitions;
 };
 
-DetectorSuccessors::DetectorSuccessors(Repository *repo):
-	m_repo(repo)
+DetectorSuccessors::DetectorSuccessors(Repository *repo, ProcessOrphansTxt *transitions = NULL):
+	m_repo(repo), m_transitions(transitions)
 {
 }
 
@@ -36,12 +38,14 @@ void DetectorSuccessors::processChange(int commit_index, int change_index, const
 	switch (change->type())
 	{
 	case CommitFileChange::MOD:
+		// TODO: Try to apply data from ProcessOrphansTxt here
 		addOidPair(change->oid1(), change->oid2());
 		break;
 	case CommitFileChange::DEL:
 		// Do nothing
 		break;
 	case CommitFileChange::ADD:
+		// TODO: Try to apply data from ProcessOrphansTxt here
 		oid1 = m_repo->findLastRemovalOid(commit_index - 1, change->name(), change->path());
 		if (oid1)
 			addOidPair(oid1, change->oid2());
@@ -139,11 +143,12 @@ int main()
 {
 	Repository *repo = new Repository("/home/sasha/kde-ru/xx-numbering/templates/.git/");
 	Repository *repo_stable = new Repository("/home/sasha/kde-ru/xx-numbering/stable-templates/.git/");
+	ProcessOrphansTxt transitions("/home/sasha/l10n-kde4/scripts/process_orphans.txt");
 
 	// Run detectors
 	std::vector<DetectorBase *> detectors;
-	detectors.push_back(new DetectorSuccessors(repo));
-	detectors.push_back(new DetectorSuccessors(repo_stable));
+	detectors.push_back(new DetectorSuccessors(repo, &transitions));
+	detectors.push_back(new DetectorSuccessors(repo_stable, &transitions));
 	detectors.push_back(new DetectorInterBranch(repo, repo_stable));
 
 	std::vector<GitOidPair> allPairs;
