@@ -143,6 +143,7 @@ int main()
 	// Run detectors
 	std::vector<DetectorBase *> detectors;
 	detectors.push_back(new DetectorSuccessors(repo));
+	detectors.push_back(new DetectorSuccessors(repo_stable));
 	detectors.push_back(new DetectorInterBranch(repo, repo_stable));
 
 	std::vector<GitOidPair> allPairs;
