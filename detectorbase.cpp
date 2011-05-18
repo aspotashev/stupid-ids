@@ -1,5 +1,15 @@
 
+#include <assert.h>
+
 #include "detectorbase.h"
+
+GitOidPair::GitOidPair()
+{
+	const static unsigned char zero_oid_raw[GIT_OID_RAWSZ] = {0};
+
+	git_oid_mkraw(&m_oid1, zero_oid_raw);
+	git_oid_mkraw(&m_oid2, zero_oid_raw);
+}
 
 GitOidPair::GitOidPair(const git_oid *oid1, const git_oid *oid2)
 {
@@ -20,6 +30,26 @@ void GitOidPair::setPair(const git_oid *oid1, const git_oid *oid2)
 //{
 //      ...
 //}
+
+bool GitOidPair::operator<(const GitOidPair &o) const
+{
+	assert(git_oid_cmp(&m_oid1, &m_oid2) < 0);
+
+	int cmp1 = git_oid_cmp(&m_oid1, &o.m_oid1);
+	if (cmp1 < 0)
+		return true;
+	else if (cmp1 > 0)
+		return false;
+	else
+		return git_oid_cmp(&m_oid2, &o.m_oid2) < 0;
+}
+
+bool GitOidPair::operator==(const GitOidPair &o) const
+{
+	assert(git_oid_cmp(&m_oid1, &m_oid2) < 0);
+
+	return git_oid_cmp(&m_oid1, &o.m_oid1) == 0 && git_oid_cmp(&m_oid2, &o.m_oid2) == 0;
+}
 
 //----------------------------------------
 
@@ -65,5 +95,11 @@ void DetectorBase::detect()
 int DetectorBase::nPairs() const
 {
 	return m_nPairs;
+}
+
+void DetectorBase::dumpPairs(std::vector<GitOidPair> &dest) const
+{
+	for (int i = 0; i < m_nPairs; i ++)
+		dest.push_back(m_oidPairs[i]);
 }
 

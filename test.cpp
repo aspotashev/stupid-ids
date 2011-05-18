@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include <assert.h>
+#include <algorithm>
 
 #include "gitloader.h"
 #include "detectorbase.h"
@@ -144,12 +145,20 @@ int main()
 	detectors.push_back(new DetectorSuccessors(repo));
 	detectors.push_back(new DetectorInterBranch(repo, repo_stable));
 
+	std::vector<GitOidPair> allPairs;
 	for (size_t i = 0; i < detectors.size(); i ++)
 	{
 		DetectorBase *detector = detectors[i];
 		detector->detect();
 		printf("Detected pairs: %d\n", detector->nPairs());
+
+		detector->dumpPairs(allPairs);
 	}
+
+	printf("\nTotal pairs: %d\n", (int)allPairs.size());
+	sort(allPairs.begin(), allPairs.end());
+	allPairs.resize(unique(allPairs.begin(), allPairs.end()) - allPairs.begin());
+	printf("Number of unique pairs: %d\n", (int)allPairs.size());
 
 	delete repo;
 	delete repo_stable;

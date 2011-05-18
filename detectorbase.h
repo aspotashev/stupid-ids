@@ -2,17 +2,22 @@
 #ifndef DETECTORBASE_H
 #define DETECTORBASE_H
 
+#include <vector>
+
 #include <git2.h>
 
 class GitOidPair
 {
 public:
+	GitOidPair();
 	GitOidPair(const git_oid *oid1, const git_oid *oid2);
 	~GitOidPair();
 
 	void setPair(const git_oid *oid1, const git_oid *oid2);
 
 //	GitOidPair &operator=(const GitOidPair &o);
+	bool operator<(const GitOidPair &o) const;
+	bool operator==(const GitOidPair &o) const;
 
 private:
 	git_oid m_oid1;
@@ -28,6 +33,8 @@ public:
 	void detect();
 
 	int nPairs() const;
+
+	void dumpPairs(std::vector<GitOidPair> &dest) const;
 
 protected:
 	void addOidPair(const git_oid *oid1, const git_oid *oid2);
