@@ -22,6 +22,23 @@ private:
 	git_oid m_oid;
 };
 
+class CommitFileChange;
+
+class GitOid2Change : public GitOid
+{
+public:
+	GitOid2Change();
+	GitOid2Change(const git_oid *oid, const CommitFileChange *change);
+	~GitOid2Change();
+
+	const CommitFileChange *change() const;
+
+private:
+	const CommitFileChange *m_change;
+};
+
+//----------------------------------------
+
 class GitOidPair
 {
 public:
@@ -35,10 +52,15 @@ public:
 	bool operator<(const GitOidPair &o) const;
 	bool operator==(const GitOidPair &o) const;
 
+	const git_oid *oid1() const;
+	const git_oid *oid2() const;
+
 private:
 	git_oid m_oid1;
 	git_oid m_oid2;
 };
+
+//----------------------------------------
 
 class DetectorBase
 {

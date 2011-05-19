@@ -36,6 +36,27 @@ bool GitOid::operator==(const GitOid &o) const
 
 //----------------------------------------
 
+GitOid2Change::GitOid2Change():
+	m_change(NULL)
+{
+}
+
+GitOid2Change::GitOid2Change(const git_oid *oid, const CommitFileChange *change):
+	GitOid(oid), m_change(change)
+{
+}
+
+GitOid2Change::~GitOid2Change()
+{
+}
+
+const CommitFileChange *GitOid2Change::change() const
+{
+	return m_change;
+}
+
+//----------------------------------------
+
 GitOidPair::GitOidPair()
 {
 	const static unsigned char zero_oid_raw[GIT_OID_RAWSZ] = {0};
@@ -82,6 +103,16 @@ bool GitOidPair::operator==(const GitOidPair &o) const
 	assert(git_oid_cmp(&m_oid1, &m_oid2) < 0);
 
 	return git_oid_cmp(&m_oid1, &o.m_oid1) == 0 && git_oid_cmp(&m_oid2, &o.m_oid2) == 0;
+}
+
+const git_oid *GitOidPair::oid1() const
+{
+	return &m_oid1;
+}
+
+const git_oid *GitOidPair::oid2() const
+{
+	return &m_oid2;
 }
 
 //----------------------------------------

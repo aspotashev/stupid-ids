@@ -33,6 +33,8 @@ public:
 	std::vector<CommitFileChange *> m_changes;
 };
 
+//----------------------------------------
+
 class CommitFileChange
 {
 public:
@@ -67,6 +69,8 @@ private:
 	int m_type;
 };
 
+//----------------------------------------
+
 class Repository
 {
 public:
@@ -85,7 +89,7 @@ public:
 	int lastCommitByTime(git_time_t time) const;
 	const git_oid *findFileOidByTime(git_time_t time, const char *name, const char *path) const;
 
-	void dumpOids(std::vector<GitOid> &dest) const;
+	void dumpOids(std::vector<GitOid2Change> &dest) const;
 
 protected:
 	git_tree *git_tree_entry_subtree(const git_tree_entry *entry);

@@ -552,7 +552,7 @@ const git_oid *Repository::findFileOidByTime(git_time_t time, const char *name, 
 	return NULL;
 }
 
-void Repository::dumpOids(std::vector<GitOid> &dest) const
+void Repository::dumpOids(std::vector<GitOid2Change> &dest) const
 {
 	for (int i = 0; i < nCommits(); i ++)
 		for (int j = 0; j < commit(i)->nChanges(); j ++)
@@ -562,10 +562,10 @@ void Repository::dumpOids(std::vector<GitOid> &dest) const
 			const git_oid *oid;
 			oid = change->tryOid1();
 			if (oid)
-				dest.push_back(GitOid(oid));
+				dest.push_back(GitOid2Change(oid, change));
 			oid = change->tryOid2();
 			if (oid)
-				dest.push_back(GitOid(oid));
+				dest.push_back(GitOid2Change(oid, change));
 		}
 }
 

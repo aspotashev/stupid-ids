@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <algorithm>
+#include <map>
 
 #include "gitloader.h"
 #include "detectorbase.h"
@@ -139,6 +140,122 @@ void DetectorInterBranch::doDetect()
 
 //-------------------------------------------------------
 
+class GraphCondenser
+{
+public:
+	GraphCondenser(int n);
+	~GraphCondenser();
+
+	void addEdge(int i, int j);
+	void dumpCluster(std::vector<int> &dest, int start);
+
+private:
+	int m_n;
+	std::vector<int> *m_edges;
+	bool *m_vis;
+};
+
+GraphCondenser::GraphCondenser(int n)
+{
+	m_n = n;
+	m_edges = new std::vector<int>[n];
+	m_vis = new bool[n];
+	for (int i = 0; i < n; i ++)
+	{
+		m_edges[i] = std::vector<int>();
+		m_vis[i] = false;
+	}
+}
+
+GraphCondenser::~GraphCondenser()
+{
+	delete [] m_edges;
+	delete [] m_vis;
+}
+
+// Adds bidirectional edge
+void GraphCondenser::addEdge(int i, int j)
+{
+	m_edges[i].push_back(j);
+	m_edges[j].push_back(i);
+}
+
+void GraphCondenser::dumpCluster(std::vector<int> &dest, int start = -1)
+{
+	if (start == -1)
+	{
+		for (int i = 0; i < m_n; i ++)
+			if (!m_vis[i])
+			{
+				start = i;
+				break;
+			}
+
+		// If all vertices are visited, exit
+		if (start == -1)
+			return;
+	}
+
+	if (!m_vis[start])
+	{
+		dest.push_back(start);
+		m_vis[start] = true;
+
+		for (size_t i = 0; i < m_edges[start].size(); i ++)
+			dumpCluster(dest, m_edges[start][i]);
+	}
+}
+
+//-------------------------------------------------------
+
+void clusterStats(Repository *repo, Repository *repo_stable, std::vector<GitOidPair> &allPairs)
+{
+	// Generating statistics on "clusters" of OIDs
+	std::vector<GitOid2Change> allOids;
+	repo->dumpOids(allOids);
+	repo_stable->dumpOids(allOids);
+
+	sort(allOids.begin(), allOids.end());
+	allOids.resize(unique(allOids.begin(), allOids.end()) - allOids.begin());
+
+	printf("Number of unique OIDs: %d\n", (int)allOids.size());
+
+	// Factorization
+	std::map<GitOid2Change, int> gitoid2num;
+	for (size_t i = 0; i < allOids.size(); i ++)
+		gitoid2num[allOids[i]] = i;
+
+	// Condense a graph with the given number of vertices
+	GraphCondenser cond(allOids.size());
+	for (size_t i = 0; i < allPairs.size(); i ++)
+	{
+		cond.addEdge(
+			gitoid2num[GitOid2Change(allPairs[i].oid1(), NULL)],
+			gitoid2num[GitOid2Change(allPairs[i].oid2(), NULL)]);
+	}
+
+	while (1)
+	{
+		std::vector<int> cluster;
+		cond.dumpCluster(cluster);
+		if (cluster.size() == 0)
+			break;
+
+		if (cluster.size() < 3)
+		{
+			printf("%d\n", (int)cluster.size());
+			for (size_t i = 0; i < cluster.size(); i ++)
+			{
+				const CommitFileChange *change = allOids[cluster[i]].change();
+				printf("%s/%s\n", change->path(), change->name());
+			}
+		}
+	}
+
+}
+
+//-------------------------------------------------------
+
 int main()
 {
 	Repository *repo = new Repository("/home/sasha/kde-ru/xx-numbering/templates/.git/");
@@ -165,6 +282,9 @@ int main()
 	sort(allPairs.begin(), allPairs.end());
 	allPairs.resize(unique(allPairs.begin(), allPairs.end()) - allPairs.begin());
 	printf("Number of unique pairs: %d\n", (int)allPairs.size());
+
+//	clusterStats(repo, repo_stable, allPairs);
+
 
 	delete repo;
 	delete repo_stable;
