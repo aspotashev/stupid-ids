@@ -97,7 +97,7 @@ CommitFileChange::CommitFileChange(
 		git_oid_cpy(&m_oid1, oid1);
 	if (oid2)
 		git_oid_cpy(&m_oid2, oid2);
-	m_path = xstrdup(path);
+	m_path = xstrdup(path + (path[0] == '/' ? 1 : 0));
 	m_name = xstrdup(name);
 	m_type = type;
 }
