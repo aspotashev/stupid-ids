@@ -99,21 +99,7 @@ void DetectorInterBranch::processChange(
 	Repository *repo, Repository *other_repo,
 	int commit_index, int change_index, const CommitFileChange *change)
 {
-	const git_oid *oid = NULL;
-
-	// TODO: create a method in class CommitFileChange for this
-	switch (change->type())
-	{
-	case CommitFileChange::MOD:
-	case CommitFileChange::ADD:
-		oid = change->oid2();
-		break;
-	case CommitFileChange::DEL:
-		break;
-	default:
-		assert(0);
-	}
-
+	const git_oid *oid = change->tryOid2();
 	if (oid == NULL)
 		return;
 
