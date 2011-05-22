@@ -240,6 +240,23 @@ void clusterStats(Repository *repo, Repository *repo_stable, std::vector<GitOidP
 
 }
 
+void generateGraphviz(std::vector<GitOidPair> &allPairs)
+{
+	FILE *f_dot = fopen("1.dot", "w");
+	fprintf(f_dot, "graph identified_translation_templates\n{\n");
+	char oid1_str[41] = {0};
+	char oid2_str[41] = {0};
+	for (size_t i = 0; i < allPairs.size(); i ++)
+	{
+		git_oid_fmt(oid1_str, allPairs[i].oid1());
+		git_oid_fmt(oid2_str, allPairs[i].oid2());
+
+		fprintf(f_dot, "    \"%s\" -- \"%s\";\n", oid1_str, oid2_str);
+	}
+	fprintf(f_dot, "}\n");
+	fclose(f_dot);
+}
+
 //-------------------------------------------------------
 
 int main()
@@ -270,6 +287,7 @@ int main()
 	printf("Number of unique pairs: %d\n", (int)allPairs.size());
 
 //	clusterStats(repo, repo_stable, allPairs);
+//	generateGraphviz(allPairs);
 
 
 	delete repo;
