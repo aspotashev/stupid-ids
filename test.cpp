@@ -295,6 +295,20 @@ void generateGraphviz(std::vector<GitOidPair> &allPairs)
 
 //-------------------------------------------------------
 
+void writePairToFile(std::vector<GitOidPair> &allPairs, const char *out_file)
+{
+	FILE *fout = fopen(out_file, "wb");
+	for (size_t i = 0; i < allPairs.size(); i ++)
+	{
+		assert(fwrite(allPairs[i].oid1(), GIT_OID_RAWSZ, 1, fout) == 1);
+		assert(fwrite(allPairs[i].oid2(), GIT_OID_RAWSZ, 1, fout) == 1);
+	}
+
+	fclose(fout);
+}
+
+//-------------------------------------------------------
+
 int main()
 {
 	Repository *repo = new Repository("/home/sasha/kde-ru/xx-numbering/templates/.git/");
@@ -322,6 +336,7 @@ int main()
 	allPairs.resize(unique(allPairs.begin(), allPairs.end()) - allPairs.begin());
 	printf("Number of unique pairs: %d\n", (int)allPairs.size());
 
+//	writePairToFile(allPairs, "pairs.dat");
 //	clusterStats(repo, repo_stable, allPairs);
 //	generateGraphviz(allPairs);
 
