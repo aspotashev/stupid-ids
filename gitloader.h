@@ -85,6 +85,8 @@ public:
 	const Commit *commit(int index) const;
 
 	const git_oid *findLastRemovalOid(int from_commit, const char *name, const char *path) const;
+	const git_oid *findNextUpdateOid(int from_commit, const char *name, const char *path) const;
+	const git_oid *findLastUpdateOid(int from_commit, const char *name, const char *path) const;
 
 	int lastCommitByTime(git_time_t time) const;
 	const git_oid *findFileOidByTime(git_time_t time, const char *name, const char *path) const;

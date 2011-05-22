@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include <string.h>
 #include <assert.h>
 #include <algorithm>
 #include <map>
@@ -34,22 +35,57 @@ DetectorSuccessors::~DetectorSuccessors()
 
 void DetectorSuccessors::processChange(int commit_index, int change_index, const CommitFileChange *change)
 {
-	const git_oid *oid1;
+	const git_oid *oid;
+	std::vector<const ProcessOrphansTxtEntry *> transitions;
 
 	switch (change->type())
 	{
 	case CommitFileChange::MOD:
-		// TODO: Try to apply data from ProcessOrphansTxt here
 		addOidPair(change->oid1(), change->oid2());
 		break;
 	case CommitFileChange::DEL:
-		// Do nothing
+		// Load commands "move" and "merge" from ProcessOrphansTxt and search forward
+		if (m_transitions)
+		{
+			m_transitions->findByOrigin(transitions, change->name(), change->path(), ProcessOrphansTxtEntry::MOVE | ProcessOrphansTxtEntry::MERGE);
+			for (size_t i = 0; i < transitions.size(); i ++)
+			{
+				const ProcessOrphansTxtEntry *entry = transitions[i];
+
+				oid = m_repo->findNextUpdateOid(std::max(commit_index - 20, 0), entry->destNamePot(), entry->destPath());
+				if (oid)
+				{
+					addOidPair(change->oid1(), oid);
+//					printf("yay! [%s]\n", change->name());
+				}
+			}
+		}
 		break;
 	case CommitFileChange::ADD:
-		// TODO: Try to apply data from ProcessOrphansTxt here
-		oid1 = m_repo->findLastRemovalOid(commit_index - 1, change->name(), change->path());
-		if (oid1)
-			addOidPair(oid1, change->oid2());
+		oid = m_repo->findLastRemovalOid(commit_index - 1, change->name(), change->path());
+		if (oid)
+			addOidPair(oid, change->oid2());
+
+		// Load commands "copy" from ProcessOrphansTxt and search backwards
+		if (m_transitions)
+		{
+			m_transitions->findByDestination(transitions, change->name(), change->path(), ProcessOrphansTxtEntry::COPY);
+			for (size_t i = 0; i < transitions.size(); i ++)
+			{
+				const ProcessOrphansTxtEntry *entry = transitions[i];
+
+				// Try to find where the added file was copied from
+				oid = m_repo->findLastUpdateOid(commit_index, entry->origNamePot(), entry->origPath());
+				if (oid)
+				{
+					addOidPair(change->oid2(), oid);
+//					printf("yay! [%s/%s] -> [%s/%s], nCommits - commit_index = %d\n",
+//						entry->origPath(), entry->origNamePot(),
+//						entry->destPath(), entry->destNamePot(),
+//						m_repo->nCommits() - commit_index);
+				}
+			}
+		}
 		break;
 	default:
 		assert(0);

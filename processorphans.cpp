@@ -30,10 +30,14 @@ ProcessOrphansTxtEntry::ProcessOrphansTxtEntry(const char *cmd, const char *orig
 
 
 	m_origin = xstrdup(origin);
+	splitFullnamePot(m_origin, &m_origPath, &m_origNamePot);
 
 	m_destination = NULL;
 	if (m_type != DELETE)
+	{
 		m_destination = xstrdup(destination);
+		splitFullnamePot(m_destination, &m_destPath, &m_destNamePot);
+	}
 }
 
 ProcessOrphansTxtEntry::~ProcessOrphansTxtEntry()
@@ -42,6 +46,78 @@ ProcessOrphansTxtEntry::~ProcessOrphansTxtEntry()
 
 	if (m_type != DELETE)
 		delete [] m_destination;
+}
+
+int ProcessOrphansTxtEntry::type() const
+{
+	return m_type;
+}
+
+/*
+const char *ProcessOrphansTxtEntry::origin() const
+{
+	assert(m_origin);
+
+	return m_origin;
+}
+
+const char *ProcessOrphansTxtEntry::destination() const
+{
+	assert(m_destination);
+
+	return m_destination;
+}
+*/
+
+/*
+void ProcessOrphansTxtEntry::splitFullname(const char *fullname, char **path, char **name)
+{
+	const char *slash = strrchr(fullname, '/');
+	int path_len = slash - fullname;
+
+	*path = new char[path_len + 1];
+	memcpy(*path, fullname, path_len * sizeof(char));
+	(*path)[path_len] = '\0';
+
+	*name = xstrdup(slash + 1);
+}
+*/
+
+// Adds letter "t" to the end of file name
+void ProcessOrphansTxtEntry::splitFullnamePot(const char *fullname, char **path, char **name)
+{
+	const char *slash = strrchr(fullname, '/');
+	int path_len = slash - fullname;
+
+	*path = new char[path_len + 1]; // "+1" for '\0'
+	memcpy(*path, fullname, path_len * sizeof(char));
+	(*path)[path_len] = '\0';
+
+	int name_len = (int)strlen(slash + 1);
+	*name = new char[name_len + 2]; // "+2" for 't' and '\0'
+	memcpy(*name, slash + 1, name_len * sizeof(char));
+	(*name)[name_len] = 't'; // .po -> .pot
+	(*name)[name_len + 1] = '\0';
+}
+
+const char *ProcessOrphansTxtEntry::destNamePot() const
+{
+	return m_destNamePot;
+}
+
+const char *ProcessOrphansTxtEntry::destPath() const
+{
+	return m_destPath;
+}
+
+const char *ProcessOrphansTxtEntry::origNamePot() const
+{
+	return m_origNamePot;
+}
+
+const char *ProcessOrphansTxtEntry::origPath() const
+{
+	return m_origPath;
 }
 
 //-------------------------------------------------------
@@ -56,7 +132,7 @@ ProcessOrphansTxt::ProcessOrphansTxt(const char *filename)
 		if (!fgets(line, 10000, f))
 			break;
 
-		if (line[0] == '\0' || line[0] == '\n' || line[0] == '\r') // empty
+		if (line[0] == '\0' || line[0] == '\n' || line[0] == '\r') // empty line
 			continue;
 		if (line[0] == '#') // comment
 			continue;
@@ -90,5 +166,27 @@ ProcessOrphansTxt::ProcessOrphansTxt(const char *filename)
 
 ProcessOrphansTxt::~ProcessOrphansTxt()
 {
+}
+
+void ProcessOrphansTxt::findByOrigin(std::vector<const ProcessOrphansTxtEntry *> &dest, const char *name, const char *path, int types = ProcessOrphansTxtEntry::ALL) const
+{
+	for (size_t i = 0; i < m_entries.size(); i ++)
+		if ((m_entries[i]->type() & types) &&
+			!strcmp(path, m_entries[i]->origPath()) &&
+			!strcmp(name, m_entries[i]->origNamePot()))
+		{
+			dest.push_back(m_entries[i]);
+		}
+}
+
+void ProcessOrphansTxt::findByDestination(std::vector<const ProcessOrphansTxtEntry *> &dest, const char *name, const char *path, int types = ProcessOrphansTxtEntry::ALL) const
+{
+	for (size_t i = 0; i < m_entries.size(); i ++)
+		if ((m_entries[i]->type() & types) &&
+			!strcmp(path, m_entries[i]->destPath()) &&
+			!strcmp(name, m_entries[i]->destNamePot()))
+		{
+			dest.push_back(m_entries[i]);
+		}
 }
 

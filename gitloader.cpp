@@ -507,6 +507,36 @@ const git_oid *Repository::findLastRemovalOid(int from_commit, const char *name,
 	return NULL;
 }
 
+const git_oid *Repository::findNextUpdateOid(int from_commit, const char *name, const char *path) const
+{
+	assert(from_commit >= 0 && from_commit < nCommits());
+
+	// Forward search in all commits newer than from_commit
+	for (int i = from_commit; i < nCommits(); i ++)
+	{
+		const git_oid *oid = commit(i)->findUpdateOid(name, path);
+		if (oid)
+			return oid;
+	}
+
+	return NULL;
+}
+
+const git_oid *Repository::findLastUpdateOid(int from_commit, const char *name, const char *path) const
+{
+	assert(from_commit >= 0 && from_commit < nCommits());
+
+	// Forward search in all commits newer than from_commit
+	for (int i = from_commit; i >= 0; i --)
+	{
+		const git_oid *oid = commit(i)->findUpdateOid(name, path);
+		if (oid)
+			return oid;
+	}
+
+	return NULL;
+}
+
 // Return the latest commit done before the given time.
 int Repository::lastCommitByTime(git_time_t time) const
 {
