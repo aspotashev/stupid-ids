@@ -4,7 +4,7 @@
 #include <assert.h>
 
 #include "processorphans.h"
-#include "xstrdup.h"
+#include "../gettextpo-helper.h"
 
 ProcessOrphansTxtEntry::ProcessOrphansTxtEntry(const char *cmd, const char *origin, const char *destination)
 {

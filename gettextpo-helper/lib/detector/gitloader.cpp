@@ -8,7 +8,7 @@
 #include <git2.h>
 
 #include "gitloader.h"
-#include "xstrdup.h"
+#include "../gettextpo-helper.h"
 
 #define REPO_MODE_DIR 040000
 

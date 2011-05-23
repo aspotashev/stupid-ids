@@ -1,5 +1,5 @@
 
-#include "detector.h"
+#include <gettextpo-helper/detector.h>
 
 int main()
 {

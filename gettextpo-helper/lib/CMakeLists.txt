@@ -8,6 +8,11 @@ project(gettextpo_helper)
 set(gettextpo_helper_LIB_SRCS
 	gettextpo-helper.cpp
 	translation-collector.cpp
+
+	detector/detector.cpp
+	detector/detectorbase.cpp
+	detector/gitloader.cpp
+	detector/processorphans.cpp
 )
 
 add_library(gettextpo_helper SHARED ${gettextpo_helper_LIB_SRCS})
@@ -15,6 +20,7 @@ target_link_libraries(gettextpo_helper
 	${QT_QTCORE_LIBRARY} # for QCryptographicHash
 	cryptopp
 	gettextpo
+	git2
 )
 
 SET(INCLUDE_INSTALL_DIR include) # what's the full path?
@@ -22,6 +28,11 @@ install(FILES
 	gettextpo-helper.h
 	translation-collector.h
 	DESTINATION ${INCLUDE_INSTALL_DIR} COMPONENT Devel
+)
+install(FILES
+	detector/detectorbase.h
+	detector/detector.h
+	DESTINATION ${INCLUDE_INSTALL_DIR}/gettextpo-helper COMPONENT Devel
 )
 
 set(INSTALL_TARGETS_DEFAULT_ARGS
