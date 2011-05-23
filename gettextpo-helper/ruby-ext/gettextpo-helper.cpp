@@ -3,6 +3,7 @@
 #include "ruby.h"
 
 #include <gettextpo-helper.h>
+#include <gettextpo-helper/detector.h>
 #include "mappedfile.h"
 
 void init_search(const char *f_dump, const char *f_index, const char *f_map);
@@ -56,6 +57,37 @@ VALUE wrap_get_min_ids_by_tp_hash(VALUE self, VALUE tp_hash)
 	VALUE res = rb_ary_new();
 	for (size_t i = 0; i < vector_res.size(); i ++)
 		rb_ary_push(res, INT2FIX(vector_res[i]));
+
+	return res;
+}
+
+VALUE rb_git_oid_fmt(const git_oid *oid)
+{
+	VALUE str = rb_str_buf_new(GIT_OID_HEXSZ); // TODO: how to avoid allocation before resizing? May be use str_alloc?
+	rb_str_resize(str, GIT_OID_HEXSZ); // rb_str_resize also adds '\0' at the end
+	char *str_ptr = StringValuePtr(str);
+	git_oid_fmt(str_ptr, oid);
+
+	return str;
+}
+
+VALUE wrap_detect_transitions(VALUE self, VALUE path_trunk, VALUE path_stable, VALUE path_proorph)
+{
+	std::vector<GitOidPair> allPairs;
+	detectTransitions(allPairs,
+		StringValuePtr(path_trunk),
+		StringValuePtr(path_stable),
+		StringValuePtr(path_proorph));
+
+	VALUE res = rb_ary_new(); // create array
+	for (size_t i = 0; i < allPairs.size(); i ++)
+	{
+		VALUE pair = rb_ary_new(); // create array for next pair
+		rb_ary_push(pair, rb_git_oid_fmt(allPairs[i].oid1()));
+		rb_ary_push(pair, rb_git_oid_fmt(allPairs[i].oid2()));
+
+		rb_ary_push(res, pair);
+	}
 
 	return res;
 }
@@ -212,6 +244,7 @@ void Init_stupidsruby()
 	rb_define_singleton_method(GettextpoHelper, "get_pot_length", RUBY_METHOD_FUNC(wrap_get_pot_length), 1);
 	rb_define_singleton_method(GettextpoHelper, "list_equal_messages_ids_2", RUBY_METHOD_FUNC(wrap_list_equal_messages_ids_2), 4);
 	rb_define_singleton_method(GettextpoHelper, "get_min_ids_by_tp_hash", RUBY_METHOD_FUNC(wrap_get_min_ids_by_tp_hash), 1);
+	rb_define_singleton_method(GettextpoHelper, "detect_transitions", RUBY_METHOD_FUNC(wrap_detect_transitions), 3);
 
 	cIdMapDb = rb_define_class_under(GettextpoHelper, "IdMapDb", rb_cObject);
 	rb_define_singleton_method(cIdMapDb, "new", RUBY_METHOD_FUNC(cIdMapDb_new), 1);
