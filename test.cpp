@@ -309,11 +309,11 @@ void writePairToFile(std::vector<GitOidPair> &allPairs, const char *out_file)
 
 //-------------------------------------------------------
 
-int main()
+void detectTransitions(std::vector<GitOidPair> &dest, const char *path_trunk, const char *path_stable, const char *path_proorph)
 {
-	Repository *repo = new Repository("/home/sasha/kde-ru/xx-numbering/templates/.git/");
-	Repository *repo_stable = new Repository("/home/sasha/kde-ru/xx-numbering/stable-templates/.git/");
-	ProcessOrphansTxt transitions("/home/sasha/l10n-kde4/scripts/process_orphans.txt");
+	Repository *repo = new Repository(path_trunk);
+	Repository *repo_stable = new Repository(path_stable);
+	ProcessOrphansTxt transitions(path_proorph);
 
 	// Run detectors
 	std::vector<DetectorBase *> detectors;
@@ -338,6 +338,10 @@ int main()
 	allPairs.resize(unique(allPairs.begin(), allPairs.end()) - allPairs.begin());
 	printf("Number of unique pairs: %d\n", (int)allPairs.size());
 
+	// TODO: do this using STL, or even use 'unique_copy' instead of 'unique'
+	for (size_t i = 0; i < allPairs.size(); i ++)
+		dest.push_back(allPairs[i]);
+
 //	writePairToFile(allPairs, "pairs.dat");
 //	clusterStats(repo, repo_stable, allPairs);
 //	generateGraphviz(allPairs);
@@ -345,6 +349,18 @@ int main()
 
 	delete repo;
 	delete repo_stable;
+}
+
+//-------------------------------------------------------
+
+int main()
+{
+	std::vector<GitOidPair> allPairs;
+	detectTransitions(
+		allPairs,
+		"/home/sasha/kde-ru/xx-numbering/templates/.git/",
+		"/home/sasha/kde-ru/xx-numbering/stable-templates/.git/",
+		"/home/sasha/l10n-kde4/scripts/process_orphans.txt");
 
 	return 0;
 }
