@@ -324,13 +324,13 @@ void detectTransitions(std::vector<GitOidPair> &dest, const char *path_trunk, co
 	std::vector<GitOidPair> allPairs;
 	for (size_t i = 0; i < detectors.size(); i ++)
 	{
-		DetectorBase *detector = detectors[i];
-		detector->detect();
-		printf("Detected pairs: %d\n", detector->nPairs());
+		detectors[i]->detect();
+		printf("Detected pairs: %d\n", detectors[i]->nPairs());
 
-		detector->dumpPairs(allPairs);
+		detectors[i]->dumpPairs(allPairs);
 
-		delete detector;
+		delete detectors[i];
+		detectors[i] = NULL;
 	}
 
 	printf("\nTotal pairs: %d\n", (int)allPairs.size());

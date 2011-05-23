@@ -33,6 +33,8 @@ ProcessOrphansTxtEntry::ProcessOrphansTxtEntry(const char *cmd, const char *orig
 	splitFullnamePot(m_origin, &m_origPath, &m_origNamePot);
 
 	m_destination = NULL;
+	m_destPath = NULL;
+	m_destNamePot = NULL;
 	if (m_type != DELETE)
 	{
 		m_destination = xstrdup(destination);
@@ -43,14 +45,24 @@ ProcessOrphansTxtEntry::ProcessOrphansTxtEntry(const char *cmd, const char *orig
 ProcessOrphansTxtEntry::~ProcessOrphansTxtEntry()
 {
 	delete [] m_origin;
+	m_origin = NULL;
+
 	delete [] m_origPath;
+	m_origPath = NULL;
+
 	delete [] m_origNamePot;
+	m_origNamePot = NULL;
 
 	if (m_type != DELETE)
 	{
 		delete [] m_destination;
+		m_destination = NULL;
+
 		delete [] m_destPath;
+		m_destPath = NULL;
+
 		delete [] m_destNamePot;
+		m_destNamePot = NULL;
 	}
 }
 
@@ -173,7 +185,10 @@ ProcessOrphansTxt::ProcessOrphansTxt(const char *filename)
 ProcessOrphansTxt::~ProcessOrphansTxt()
 {
 	for (size_t i = 0; i < m_entries.size(); i ++)
-		delete [] m_entries[i];
+	{
+		delete m_entries[i];
+		m_entries[i] = NULL;
+	}
 }
 
 void ProcessOrphansTxt::findByOrigin(std::vector<const ProcessOrphansTxtEntry *> &dest, const char *name, const char *path, int types = ProcessOrphansTxtEntry::ALL) const
