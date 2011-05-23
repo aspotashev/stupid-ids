@@ -263,6 +263,8 @@ void clusterStats(Repository *repo, Repository *repo_stable, std::vector<GitOidP
 		if (cluster.size() == 0)
 			break;
 
+//		if (!strcmp(allOids[cluster[0]].change()->name(), "words.pot") || !strcmp(allOids[cluster[0]].change()->name(), "kword.pot"))
+//		if (!strcmp(allOids[cluster[0]].change()->name(), "katesnippets_tng.pot"))
 		if (cluster.size() < 3)
 		{
 			printf("%d\n", (int)cluster.size());
