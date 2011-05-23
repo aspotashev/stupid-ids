@@ -9,6 +9,10 @@ end
 #    1. http://websvn.kde.org/?view=revision&revision=1207849 -- almost normal .pot, but the header is not fuzzy
 #
 def is_virgin_pot_content(content)
+	if content.empty?
+		return :empty_content
+	end
+
 	lines = content.split("\n")
 
 	if lines.any? {|line| line.match(/^#\. \+> /) }
