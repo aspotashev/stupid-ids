@@ -110,8 +110,12 @@ void DetectorInterBranch::processChange(
 	if (other_oid)
 		addOidPair(oid, other_oid);
 
-	// For reliability ;)
+	// "+5000" was put here for reliability ;)
 	// This should cope with system time instability on the KDE SVN server.
+	//
+	//
+	// TODO: also search for renamed files (from process_orphans.txt)
+	// For example, "STABLE/messages/kdesdk/katesnippets_tng.po" is the same as "TRUNK/messages/kdebase/katesnippets_tng.po"
 	const git_oid *other_oid2 = other_repo->findFileOidByTime(repo->commit(commit_index)->time() + 5000, change->name(), change->path());
 	if (other_oid2 && other_oid2 != other_oid)
 		addOidPair(oid, other_oid2);
