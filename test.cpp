@@ -329,6 +329,8 @@ int main()
 		printf("Detected pairs: %d\n", detector->nPairs());
 
 		detector->dumpPairs(allPairs);
+
+		delete detector;
 	}
 
 	printf("\nTotal pairs: %d\n", (int)allPairs.size());

@@ -43,9 +43,15 @@ ProcessOrphansTxtEntry::ProcessOrphansTxtEntry(const char *cmd, const char *orig
 ProcessOrphansTxtEntry::~ProcessOrphansTxtEntry()
 {
 	delete [] m_origin;
+	delete [] m_origPath;
+	delete [] m_origNamePot;
 
 	if (m_type != DELETE)
+	{
 		delete [] m_destination;
+		delete [] m_destPath;
+		delete [] m_destNamePot;
+	}
 }
 
 int ProcessOrphansTxtEntry::type() const
@@ -166,6 +172,8 @@ ProcessOrphansTxt::ProcessOrphansTxt(const char *filename)
 
 ProcessOrphansTxt::~ProcessOrphansTxt()
 {
+	for (size_t i = 0; i < m_entries.size(); i ++)
+		delete [] m_entries[i];
 }
 
 void ProcessOrphansTxt::findByOrigin(std::vector<const ProcessOrphansTxtEntry *> &dest, const char *name, const char *path, int types = ProcessOrphansTxtEntry::ALL) const
