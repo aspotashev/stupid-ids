@@ -1,15 +1,5 @@
 
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
-#include <algorithm>
-#include <map>
-
-#include "gitloader.h"
-#include "detectorbase.h"
-#include "processorphans.h"
 #include "detector.h"
-
 
 int main()
 {
