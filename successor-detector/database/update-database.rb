@@ -12,7 +12,7 @@ ActiveRecord::Base.class_eval do
 	end
 end
 
-require '../../gettextpo-helper/ruby-ext/gettextpo_helper'
+require 'stupidsruby'
 require '../../gettextpo-helper/ruby-helpers/ruby-helpers'
 require '../../stupid-id-filler/database/filler-models.rb'
 require './merger-models.rb'

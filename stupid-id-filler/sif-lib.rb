@@ -1,5 +1,5 @@
 
-require '../gettextpo-helper/ruby-ext/gettextpo_helper'
+require 'stupidsruby'
 
 class Sif
 	# http://www.oreillynet.com/ruby/blog/2007/01/nubygems_dont_use_class_variab_1.html

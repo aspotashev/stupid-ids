@@ -1,7 +1,7 @@
 #!/usr/bin/ruby19
 # Ruby 1.9 required for "Dir.exists?(path)"
 
-require '../gettextpo-helper/ruby-ext/gettextpo_helper'
+require 'stupidsruby'
 require '../gettextpo-helper/ruby-helpers/ruby-helpers.rb'
 require '../stupid-id-filler/check-lib.rb'
 

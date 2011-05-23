@@ -205,7 +205,7 @@ VALUE wrap_read_po_file_messages(VALUE self, VALUE filename)
 extern "C" {
 
 /* Function called at module loading */
-void Init_gettextpo_helper()
+void Init_stupidsruby()
 {
 	VALUE GettextpoHelper = rb_define_module("GettextpoHelper");
 	rb_define_singleton_method(GettextpoHelper, "calculate_tp_hash", RUBY_METHOD_FUNC(wrap_calculate_tp_hash), 1);

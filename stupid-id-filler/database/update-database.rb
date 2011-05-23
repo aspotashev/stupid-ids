@@ -9,7 +9,7 @@ ActiveRecord::Base.class_eval do
 end
 
 require './filler-models.rb'
-require '../../gettextpo-helper/ruby-ext/gettextpo_helper'
+require 'stupidsruby'
 require '../../gettextpo-helper/ruby-helpers/ruby-helpers'
 
 class CreateDb < ActiveRecord::Migration

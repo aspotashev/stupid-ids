@@ -1,7 +1,7 @@
 #!/usr/bin/ruby19
 
 require '../ruby-helpers/ruby-helpers.rb'
-require '../ruby-ext/gettextpo_helper'
+require 'stupidsruby'
 
 require 'active_record'
 

@@ -1,7 +1,7 @@
 #!/usr/bin/ruby19
-# Ruby 1.9 is required for gettextpo_helper Ruby extension
+# Ruby 1.9 is required for "stupidsruby" Ruby extension
 
-require './gettextpo_helper'
+require 'stupidsruby'
 
 require 'active_record'
 
