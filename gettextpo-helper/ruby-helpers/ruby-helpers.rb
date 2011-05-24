@@ -3,69 +3,69 @@ require 'open3'
 
 # Returns the Git hash of a .pot file by its tp_hash.
 def get_pot_git_hash(tp_hash)
-	# perform checks
-	all_rows = TphashPotsha.find(:all, :conditions => {:tp_hash => tp_hash})
-	if all_rows.size > 1
-		p all_rows
-		raise "There should not be more than one .pot file with the same tp_hash"
-	elsif all_rows.size == 0
-		raise "tp_hash not found: tp_hash = #{tp_hash}"
-	end
+  # perform checks
+  all_rows = TphashPotsha.find(:all, :conditions => {:tp_hash => tp_hash})
+  if all_rows.size > 1
+    p all_rows
+    raise "There should not be more than one .pot file with the same tp_hash"
+  elsif all_rows.size == 0
+    raise "tp_hash not found: tp_hash = #{tp_hash}"
+  end
 
-	# simply do the job
-	TphashPotsha.find(:first, :conditions => {:tp_hash => tp_hash}).potsha
+  # simply do the job
+  TphashPotsha.find(:first, :conditions => {:tp_hash => tp_hash}).potsha
 end
 
 def try_extract_pot_to_file(git_dir, git_hash, filename)
-	Open3.popen3("cd \"#{git_dir}\" ; git show #{git_hash} --") do |stdin, stdout, stderr|
-		stdout_data = stdout.read # reading in this order to avoid blocking
-		stderr_data = stderr.read
+  Open3.popen3("cd \"#{git_dir}\" ; git show #{git_hash} --") do |stdin, stdout, stderr|
+    stdout_data = stdout.read # reading in this order to avoid blocking
+    stderr_data = stderr.read
 
-		if not stderr_data.empty? # git object not found
-			return false
-		else
-			File.open(filename, 'w') do |f|
-				f.write(stdout_data)
-			end
+    if not stderr_data.empty? # git object not found
+      return false
+    else
+      File.open(filename, 'w') do |f|
+	f.write(stdout_data)
+      end
 
-			return true # OK
-		end
-	end
+      return true # OK
+    end
+  end
 end
 
 # filename -- where to write the .pot
 def extract_pot_to_file(tp_hash, filename)
-	git_hash = get_pot_git_hash(tp_hash)
+  git_hash = get_pot_git_hash(tp_hash)
 
-	['~/kde-ru/xx-numbering/templates', '~/kde-ru/xx-numbering/stable-templates'].
-		map {|path| File.expand_path(path) }.
-		any? do |git_dir|
+  ['~/kde-ru/xx-numbering/templates', '~/kde-ru/xx-numbering/stable-templates'].
+    map {|path| File.expand_path(path) }.
+    any? do |git_dir|
 
-		try_extract_pot_to_file(git_dir, git_hash, filename)
-	end
+    try_extract_pot_to_file(git_dir, git_hash, filename)
+  end
 end
 
 #-------------- Git -----------------
 
 def git_head_sha1(git_dir)
-	git_ref_sha1(git_dir, 'HEAD')
+  git_ref_sha1(git_dir, 'HEAD')
 end
 
 def git_ref_sha1(git_dir, ref)
-	`cd "#{git_dir}" ; git log --format=format:%H -1 #{ref}`.strip
+  `cd "#{git_dir}" ; git log --format=format:%H -1 #{ref}`.strip
 end
 
 # ref1 must be in the "git log #{ref2}" (i.e. ref1 is earlier than ref2)
 def git_commits_between(git_dir, ref1, ref2)
-	ref1 = git_ref_sha1(git_dir, ref1)
-	ref2 = git_ref_sha1(git_dir, ref2)
+  ref1 = git_ref_sha1(git_dir, ref1)
+  ref2 = git_ref_sha1(git_dir, ref2)
 
-	log = `cd "#{git_dir}" ; git log --format=format:%H #{ref2} --`.split("\n")
-	index = log.index(ref1)
+  log = `cd "#{git_dir}" ; git log --format=format:%H #{ref2} --`.split("\n")
+  index = log.index(ref1)
 
-	raise if index.nil?
+  raise if index.nil?
 
-	log[0...index].reverse
+  log[0...index].reverse
 end
 
 # List of changes in a Git commit
@@ -77,49 +77,49 @@ end
 # result[i][4] -- operation
 # result[i][5] -- filename
 def parse_commit_changes(git_dir, git_ref)
-	`cd #{git_dir} ; git show --raw --no-abbrev #{git_ref}`.split("\n").
-		select {|line| line[0..0] == ':' }.
-		map do |line|
-			line =~ /^:([0-9]{6}) ([0-9]{6}) ([0-9a-f]{40}) ([0-9a-f]{40}) ([AMD])\t(.+)$/ && $~.captures
-		end
+  `cd #{git_dir} ; git show --raw --no-abbrev #{git_ref}`.split("\n").
+    select {|line| line[0..0] == ':' }.
+    map do |line|
+      line =~ /^:([0-9]{6}) ([0-9]{6}) ([0-9a-f]{40}) ([0-9a-f]{40}) ([AMD])\t(.+)$/ && $~.captures
+    end
 end
 
 class IncrementalCommitProcessing < Struct.new(:git_dir, :proc_git_dir)
-	# git_dir -- repo from where the commits are taken
-	# proc_git_dir -- directory where 'processed.txt' resides
+  # git_dir -- repo from where the commits are taken
+  # proc_git_dir -- directory where 'processed.txt' resides
 
-	def commits_to_process
-		_git_commits(git_dir) - _processed_git_commits(proc_git_dir)
-	end
+  def commits_to_process
+    _git_commits(git_dir) - _processed_git_commits(proc_git_dir)
+  end
 
-	def add_to_processed_list(commit_sha1)
-		_add_to_processed_list(proc_git_dir, commit_sha1)
-	end
+  def add_to_processed_list(commit_sha1)
+    _add_to_processed_list(proc_git_dir, commit_sha1)
+  end
 
 private
-	# List of all commits in git_dir, from the oldest to the newest
-	def _git_commits(git_dir)
-		`cd "#{git_dir}" ; git log --format=format:%H`.split("\n").reverse
-	end
+  # List of all commits in git_dir, from the oldest to the newest
+  def _git_commits(git_dir)
+    `cd "#{git_dir}" ; git log --format=format:%H`.split("\n").reverse
+  end
 
-	# List of SHA-1s from processed.txt
-	def _processed_git_commits(git_dir)
-		begin
-			File.open(git_dir + '/processed.txt').read.split("\n")
-		rescue Errno::ENOENT => e
-			[]
-		end
-	end
+  # List of SHA-1s from processed.txt
+  def _processed_git_commits(git_dir)
+    begin
+      File.open(git_dir + '/processed.txt').read.split("\n")
+    rescue Errno::ENOENT => e
+      []
+    end
+  end
 
-	# Add SHA-1 to processed.txt
-	def _add_to_processed_list(git_dir, commit_sha1)
-		if not File.exists?(git_dir)
-			`mkdir -p "#{git_dir}"`
-		end
+  # Add SHA-1 to processed.txt
+  def _add_to_processed_list(git_dir, commit_sha1)
+    if not File.exists?(git_dir)
+      `mkdir -p "#{git_dir}"`
+    end
 
-		File.open(git_dir + '/processed.txt', 'a+') do |f|
-			f.puts commit_sha1
-		end
-	end
+    File.open(git_dir + '/processed.txt', 'a+') do |f|
+      f.puts commit_sha1
+    end
+  end
 end
 
