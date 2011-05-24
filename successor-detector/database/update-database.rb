@@ -29,18 +29,20 @@ end
 
 $id_map_db = GettextpoHelper::IdMapDb.new('idmap.mmapdb')
 
+$tphash_tempfile_pot = `tempfile --suffix=.pot`.strip
+$tempfile_pot_a = `tempfile --suffix=.pot`.strip
+$tempfile_pot_b = `tempfile --suffix=.pot`.strip
+
 # Copied from stupid-ids/successor-detector/detect.rb
 def sha1_to_tp_hash(git_dir, sha1)
-  tempfile_pot = `tempfile --suffix=.pot`.strip
-  `cd "#{git_dir}" ; git show #{sha1} > "#{tempfile_pot}"`
+  `cd "#{git_dir}" ; git show #{sha1} > "#{$tphash_tempfile_pot}"`
 
   res = nil
-  if is_virgin_pot(tempfile_pot) == :ok
+  if is_virgin_pot($tphash_tempfile_pot) == :ok
     # TODO: GettextpoHelper.calculate_tp_hash should be able to read .pot from buffer (not only from a file)
-    res = GettextpoHelper.calculate_tp_hash(tempfile_pot)
+    res = GettextpoHelper.calculate_tp_hash($tphash_tempfile_pot)
   end
 
-  `rm -f "#{tempfile_pot}"`
   res
 end
 
@@ -58,19 +60,14 @@ def update_database
     tp_hash_b = oid_to_tp_hash(pair[1])
     next if tp_hash_a == tp_hash_b
 
-    tempfile_pot_a = `tempfile --suffix=.pot`.strip
-    tempfile_pot_b = `tempfile --suffix=.pot`.strip
 
-    extract_pot_to_file(tp_hash_a, tempfile_pot_a)
-    extract_pot_to_file(tp_hash_b, tempfile_pot_b)
+    extract_pot_to_file(tp_hash_a, $tempfile_pot_a)
+    extract_pot_to_file(tp_hash_b, $tempfile_pot_b)
 
     # Results should _probably_ be cached (in files or in a database)
     id_map_list = GettextpoHelper.list_equal_messages_ids_2(
-      tempfile_pot_a, get_pot_first_id(tp_hash_a),
-      tempfile_pot_b, get_pot_first_id(tp_hash_b))
-
-    `rm -f "#{tempfile_pot_a}"`
-    `rm -f "#{tempfile_pot_b}"`
+      $tempfile_pot_a, get_pot_first_id(tp_hash_a),
+      $tempfile_pot_b, get_pot_first_id(tp_hash_b))
 
     puts "#{tp_hash_a} <-> #{tp_hash_b}: #{id_map_list.size} pairs of IDs"
 
@@ -87,4 +84,8 @@ end
 update_database
 
 $id_map_db.normalize_database
+
+`rm -f "#{$tphash_tempfile_pot}"`
+`rm -f "#{$tempfile_pot_a}"`
+`rm -f "#{$tempfile_pot_b}"`
 
