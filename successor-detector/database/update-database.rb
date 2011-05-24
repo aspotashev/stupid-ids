@@ -6,16 +6,11 @@ ActiveRecord::Base.class_eval do
   def self.establish_connection_filler
     establish_connection(YAML::load(File.open('../../stupid-id-filler/database/filler-database.yml')))
   end
-
-  def self.establish_connection_merger
-    establish_connection(YAML::load(File.open('merger-database.yml')))
-  end
 end
 
 require 'stupidsruby'
 require '../../gettextpo-helper/ruby-helpers/ruby-helpers'
 require '../../stupid-id-filler/database/filler-models.rb'
-require '../../stupid-id-filler/check-lib.rb'
 
 Array.class_eval do
   def is_uniq
