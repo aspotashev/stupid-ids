@@ -33,21 +33,10 @@ $tphash_tempfile_pot = `tempfile --suffix=.pot`.strip
 $tempfile_pot_a = `tempfile --suffix=.pot`.strip
 $tempfile_pot_b = `tempfile --suffix=.pot`.strip
 
-# Copied from stupid-ids/successor-detector/detect.rb
-def sha1_to_tp_hash(git_dir, sha1)
-  `cd "#{git_dir}" ; git show #{sha1} > "#{$tphash_tempfile_pot}"`
-
-  res = nil
-  if is_virgin_pot($tphash_tempfile_pot) == :ok
-    # TODO: GettextpoHelper.calculate_tp_hash should be able to read .pot from buffer (not only from a file)
-    res = GettextpoHelper.calculate_tp_hash($tphash_tempfile_pot)
-  end
-
-  res
-end
-
 def oid_to_tp_hash(sha1)
-  sha1_to_tp_hash('/home/sasha/kde-ru/xx-numbering/templates/', sha1) || sha1_to_tp_hash('/home/sasha/kde-ru/xx-numbering/stable-templates/', sha1)
+  # TODO: create a database index to make this work faster
+  x = TphashPotsha.find(:first, :conditions => {:potsha => sha1})
+  x.nil? ? nil : x.tp_hash
 end
 
 def update_database
@@ -58,7 +47,7 @@ def update_database
   pairs.each do |pair|
     tp_hash_a = oid_to_tp_hash(pair[0])
     tp_hash_b = oid_to_tp_hash(pair[1])
-    next if tp_hash_a == tp_hash_b
+    next if tp_hash_a == tp_hash_b or tp_hash_a.nil? or tp_hash_b.nil?
 
 
     extract_pot_to_file(tp_hash_a, $tempfile_pot_a)
