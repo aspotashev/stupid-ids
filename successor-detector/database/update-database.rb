@@ -56,8 +56,6 @@ def update_database
 
     puts "#{tp_hash_a} <-> #{tp_hash_b}: #{id_map_list.size} pairs of IDs"
 
-    raise if id_map_list.nil?
-    raise if $id_map_db.nil?
     $id_map_db.create(id_map_list)
   end
 end
