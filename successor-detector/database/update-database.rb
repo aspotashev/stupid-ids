@@ -58,7 +58,7 @@ def update_database
 
     id_map_list = id_map_list.
       map {|id_pair| id_pair.sort }.
-      map {|id_pair| [id_pair[1], id_pair[0], 0] }
+      map {|id_pair| [id_pair[1], id_pair[0]] }
 
     raise if id_map_list.nil?
     raise if $id_map_db.nil?

@@ -127,9 +127,8 @@ VALUE cIdMapDb_create(VALUE self, VALUE ary)
 
 		int msg_id = FIX2INT(rb_ary_entry(item, 0));
 		int min_id = FIX2INT(rb_ary_entry(item, 1));
-		int merge_pair_id = FIX2INT(rb_ary_entry(item, 2));
 
-		mapped_file->addRow(msg_id, min_id, merge_pair_id);
+		mapped_file->addRow(msg_id, min_id);
 	}
 
 	return Qnil;

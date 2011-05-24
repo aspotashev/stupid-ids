@@ -167,21 +167,17 @@ class MappedFileIdMapDb : public MappedFile
 	struct IdMapDb_row
 	{
 		int min_id;
-
-		// TODO: store merge_pair_id in a separate DB (or just remove merge_pair_id?),
-		// because it may be useful only in special cases.
-		int merge_pair_id;
 	};
 
 protected:
-	void writeRow(int msg_id, int min_id, int merge_pair_id);
+	void writeRow(int msg_id, int min_id);
 	IdMapDb_row *getRow(int msg_id);
 	const IdMapDb_row *getRowConst(int msg_id) const;
 
 public:
 	MappedFileIdMapDb(const char *filename);
 
-	void addRow(int msg_id, int min_id, int merge_pair_id);
+	void addRow(int msg_id, int min_id);
 	int getRecursiveMinId(int msg_id) const;
 
 	// put globally minimum IDs into 'min_id'
@@ -202,7 +198,7 @@ MappedFileIdMapDb::IdMapDb_row *MappedFileIdMapDb::getRow(int msg_id)
 
 const MappedFileIdMapDb::IdMapDb_row *MappedFileIdMapDb::getRowConst(int msg_id) const
 {
-	const static IdMapDb_row zeroRow = {0, 0};
+	const static IdMapDb_row zeroRow = {0};
 
 	if (sizeof(IdMapDb_row) * msg_id >= fileLength())
 		return &zeroRow;
@@ -221,19 +217,19 @@ int MappedFileIdMapDb::getRecursiveMinId(int msg_id) const
 }
 
 // 'Collapse' two IDs
-void MappedFileIdMapDb::addRow(int msg_id, int min_id, int merge_pair_id)
+void MappedFileIdMapDb::addRow(int msg_id, int min_id)
 {
 	assert(msg_id != min_id);
 
 	int global_min = std::min(getRecursiveMinId(msg_id), getRecursiveMinId(min_id));
 	if (msg_id != global_min) // This means that msg_id > global_min
-		writeRow(msg_id, global_min, merge_pair_id);
+		writeRow(msg_id, global_min);
 	if (min_id != global_min) // This means that min_id > global_min
-		writeRow(min_id, global_min, merge_pair_id);
+		writeRow(min_id, global_min);
 }
 
 // Simply write the row
-void MappedFileIdMapDb::writeRow(int msg_id, int min_id, int merge_pair_id)
+void MappedFileIdMapDb::writeRow(int msg_id, int min_id)
 {
 	// Too large IDs may be unsafe, because they
 	// take a lot of disk and virtual memory.
@@ -241,7 +237,6 @@ void MappedFileIdMapDb::writeRow(int msg_id, int min_id, int merge_pair_id)
 
 	IdMapDb_row *row = getRow(msg_id);
 	row->min_id = min_id;
-	row->merge_pair_id = merge_pair_id;
 }
 
 // put globally minimum IDs into 'min_id'
