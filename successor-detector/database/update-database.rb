@@ -54,7 +54,7 @@ def update_database
       $tempfile_pot_a, get_pot_first_id(tp_hash_a),
       $tempfile_pot_b, get_pot_first_id(tp_hash_b))
 
-    puts "#{tp_hash_a} <-> #{tp_hash_b}: #{id_map_list.size} pairs of IDs"
+    puts "#{pair[0]} <-> #{pair[1]}: #{id_map_list.size} pairs of IDs"
 
     $id_map_db.create(id_map_list)
   end
