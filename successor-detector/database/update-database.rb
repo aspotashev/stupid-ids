@@ -50,13 +50,14 @@ def update_database
     extract_pot_to_file(tp_hash_b, $tempfile_pot_b)
 
     # Results should _probably_ be cached (in files or in a database)
-    id_map_list = GettextpoHelper.list_equal_messages_ids_2(
+    n_pairs = GettextpoHelper.dump_equal_messages_to_mmapdb(
       $tempfile_pot_a, get_pot_first_id(tp_hash_a),
-      $tempfile_pot_b, get_pot_first_id(tp_hash_b))
+      $tempfile_pot_b, get_pot_first_id(tp_hash_b),
+      $id_map_db)
 
-    puts "#{pair[0]} <-> #{pair[1]}: #{id_map_list.size} pairs of IDs"
+    puts "#{pair[0]} <-> #{pair[1]}: #{n_pairs} pairs of IDs"
 
-    $id_map_db.create(id_map_list)
+#    $id_map_db.create(id_map_list)
   end
 end
 

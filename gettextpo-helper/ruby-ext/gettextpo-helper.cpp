@@ -9,6 +9,8 @@
 void init_search(const char *f_dump, const char *f_index, const char *f_map);
 const char *find_string_id_by_str_multiple(char *s, int n);
 
+MappedFileIdMapDb *rb_get_mapped_file(VALUE self);
+
 //-------------------------------
 
 VALUE wrap_calculate_tp_hash(VALUE self, VALUE filename)
@@ -39,6 +41,14 @@ VALUE wrap_list_equal_messages_ids_2(VALUE self, VALUE filename_a, VALUE first_i
 	}
 
 	return res;
+}
+
+VALUE wrap_dump_equal_messages_to_mmapdb(VALUE self, VALUE filename_a, VALUE first_id_a, VALUE filename_b, VALUE first_id_b, VALUE mmapdb)
+{
+	return INT2FIX(dump_equal_messages_to_mmapdb(
+		StringValuePtr(filename_a), FIX2INT(first_id_a),
+		StringValuePtr(filename_b), FIX2INT(first_id_b),
+		rb_get_mapped_file(mmapdb)));
 }
 
 VALUE wrap_get_min_ids_by_tp_hash(VALUE self, VALUE tp_hash)
@@ -242,6 +252,7 @@ void Init_stupidsruby()
 	rb_define_singleton_method(GettextpoHelper, "calculate_tp_hash", RUBY_METHOD_FUNC(wrap_calculate_tp_hash), 1);
 	rb_define_singleton_method(GettextpoHelper, "get_pot_length", RUBY_METHOD_FUNC(wrap_get_pot_length), 1);
 	rb_define_singleton_method(GettextpoHelper, "list_equal_messages_ids_2", RUBY_METHOD_FUNC(wrap_list_equal_messages_ids_2), 4);
+	rb_define_singleton_method(GettextpoHelper, "dump_equal_messages_to_mmapdb", RUBY_METHOD_FUNC(wrap_dump_equal_messages_to_mmapdb), 5);
 	rb_define_singleton_method(GettextpoHelper, "get_min_ids_by_tp_hash", RUBY_METHOD_FUNC(wrap_get_min_ids_by_tp_hash), 1);
 	rb_define_singleton_method(GettextpoHelper, "detect_transitions", RUBY_METHOD_FUNC(wrap_detect_transitions), 3);
 

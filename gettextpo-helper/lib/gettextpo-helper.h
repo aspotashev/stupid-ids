@@ -56,6 +56,10 @@ std::vector<std::vector<int> > list_equal_messages_ids(std::vector<std::pair<con
 
 std::vector<std::pair<int, int> > list_equal_messages_ids_2(const char *filename_a, int first_id_a, const char *filename_b, int first_id_b);
 
+class MappedFileIdMapDb;
+
+int dump_equal_messages_to_mmapdb(const char *filename_a, int first_id_a, const char *filename_b, int first_id_b, MappedFileIdMapDb *mmap_db);
+
 //------ For diff'ing tools ------
 
 // Returns 'true' when msgstr (or all msgstr[i]) are empty.

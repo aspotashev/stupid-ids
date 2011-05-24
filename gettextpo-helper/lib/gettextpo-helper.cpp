@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "gettextpo-helper.h"
+#include "mappedfile.h"
 
 char *xstrdup(const char *str)
 {
@@ -421,6 +422,16 @@ std::vector<std::pair<int, int> > list_equal_messages_ids_2(const char *filename
 	}
 
 	return res;
+}
+
+int dump_equal_messages_to_mmapdb(const char *filename_a, int first_id_a, const char *filename_b, int first_id_b, MappedFileIdMapDb *mmap_db)
+{
+	std::vector<std::pair<int, int> > list = list_equal_messages_ids_2(
+		filename_a, first_id_a, filename_b, first_id_b);
+	for (std::vector<std::pair<int, int> >::iterator iter = list.begin(); iter != list.end(); iter ++)
+		mmap_db->addRow(iter->first, iter->second);
+
+	return (int)list.size();
 }
 
 //------ For diff'ing tools ------
