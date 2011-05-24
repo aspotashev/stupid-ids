@@ -217,6 +217,8 @@ int MappedFileIdMapDb::getRecursiveMinId(int msg_id) const
 }
 
 // 'Collapse' two IDs
+//
+// It does not matter whether 'min_id' is smaller than 'msg_id' or not.
 void MappedFileIdMapDb::addRow(int msg_id, int min_id)
 {
 	assert(msg_id != min_id);
