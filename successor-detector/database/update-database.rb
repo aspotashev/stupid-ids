@@ -45,6 +45,7 @@ def update_database
     next if tp_hash_a == tp_hash_b or tp_hash_a.nil? or tp_hash_b.nil?
 
 
+    # TODO: use libgit2 instead of running Git executables
     extract_pot_to_file(tp_hash_a, $tempfile_pot_a)
     extract_pot_to_file(tp_hash_b, $tempfile_pot_b)
 
