@@ -56,8 +56,6 @@ def update_database
       $id_map_db)
 
     puts "#{pair[0]} <-> #{pair[1]}: #{n_pairs} pairs of IDs"
-
-#    $id_map_db.create(id_map_list)
   end
 end
 

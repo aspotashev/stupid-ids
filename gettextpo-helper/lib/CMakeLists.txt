@@ -29,9 +29,6 @@ install(FILES
 	gettextpo-helper.h
 	translation-collector.h
 	mappedfile.h
-	DESTINATION ${INCLUDE_INSTALL_DIR} COMPONENT Devel
-)
-install(FILES
 	detector/detectorbase.h
 	detector/detector.h
 	DESTINATION ${INCLUDE_INSTALL_DIR}/gettextpo-helper COMPONENT Devel
