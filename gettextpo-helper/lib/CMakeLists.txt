@@ -11,10 +11,10 @@ set(gettextpo_helper_LIB_SRCS
 	mappedfile.cpp
 	translationcontent.cpp
 
-	detector/detector.cpp
-	detector/detectorbase.cpp
-	detector/gitloader.cpp
-	detector/processorphans.cpp
+	detector.cpp
+	detectorbase.cpp
+	gitloader.cpp
+	processorphans.cpp
 )
 
 add_library(gettextpo_helper SHARED ${gettextpo_helper_LIB_SRCS})
@@ -31,8 +31,8 @@ install(FILES
 	translation-collector.h
 	mappedfile.h
 	translationcontent.h
-	detector/detectorbase.h
-	detector/detector.h
+	detectorbase.h
+	detector.h
 	DESTINATION ${INCLUDE_INSTALL_DIR}/gettextpo-helper COMPONENT Devel
 )
 

@@ -1,5 +1,5 @@
 
-#include "ruby.h"
+#include <ruby.h>
 
 #include <gettextpo-helper/gettextpo-helper.h>
 #include <gettextpo-helper/detector.h>
