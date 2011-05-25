@@ -50,13 +50,14 @@ int get_pot_length(const char *filename);
 
 //-------- Coupling IDs of equal messages in different .po/.pot files -------
 
-std::vector<std::pair<std::string, int> > dump_po_file_ids(const char *filename, int first_id);
-
-std::vector<std::vector<int> > list_equal_messages_ids(std::vector<std::pair<const char *, int> > files);
-
-std::vector<std::pair<int, int> > list_equal_messages_ids_2(const char *filename_a, int first_id_a, const char *filename_b, int first_id_b);
-
 class MappedFileIdMapDb;
+class TranslationContent;
+
+std::vector<std::pair<std::string, int> > dump_po_file_ids(TranslationContent *content, int first_id);
+
+std::vector<std::vector<int> > list_equal_messages_ids(std::vector<std::pair<TranslationContent *, int> > files);
+
+std::vector<std::pair<int, int> > list_equal_messages_ids_2(TranslationContent *file_a, int first_id_a, TranslationContent *file_b, int first_id_b);
 
 int dump_equal_messages_to_mmapdb(const char *filename_a, int first_id_a, const char *filename_b, int first_id_b, MappedFileIdMapDb *mmap_db);
 

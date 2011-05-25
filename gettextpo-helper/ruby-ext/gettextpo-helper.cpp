@@ -24,7 +24,7 @@ VALUE wrap_get_pot_length(VALUE self, VALUE filename)
 	return INT2FIX(get_pot_length(StringValuePtr(filename)));
 }
 
-VALUE wrap_list_equal_messages_ids_2(VALUE self, VALUE filename_a, VALUE first_id_a, VALUE filename_b, VALUE first_id_b)
+/*VALUE wrap_list_equal_messages_ids_2(VALUE self, VALUE filename_a, VALUE first_id_a, VALUE filename_b, VALUE first_id_b)
 {
 	std::vector<std::pair<int, int> > list = list_equal_messages_ids_2(
 		StringValuePtr(filename_a), FIX2INT(first_id_a),
@@ -41,7 +41,7 @@ VALUE wrap_list_equal_messages_ids_2(VALUE self, VALUE filename_a, VALUE first_i
 	}
 
 	return res;
-}
+}*/
 
 VALUE wrap_dump_equal_messages_to_mmapdb(VALUE self, VALUE filename_a, VALUE first_id_a, VALUE filename_b, VALUE first_id_b, VALUE mmapdb)
 {
@@ -251,7 +251,7 @@ void Init_stupidsruby()
 	VALUE GettextpoHelper = rb_define_module("GettextpoHelper");
 	rb_define_singleton_method(GettextpoHelper, "calculate_tp_hash", RUBY_METHOD_FUNC(wrap_calculate_tp_hash), 1);
 	rb_define_singleton_method(GettextpoHelper, "get_pot_length", RUBY_METHOD_FUNC(wrap_get_pot_length), 1);
-	rb_define_singleton_method(GettextpoHelper, "list_equal_messages_ids_2", RUBY_METHOD_FUNC(wrap_list_equal_messages_ids_2), 4);
+//	rb_define_singleton_method(GettextpoHelper, "list_equal_messages_ids_2", RUBY_METHOD_FUNC(wrap_list_equal_messages_ids_2), 4);
 	rb_define_singleton_method(GettextpoHelper, "dump_equal_messages_to_mmapdb", RUBY_METHOD_FUNC(wrap_dump_equal_messages_to_mmapdb), 5);
 	rb_define_singleton_method(GettextpoHelper, "get_min_ids_by_tp_hash", RUBY_METHOD_FUNC(wrap_get_min_ids_by_tp_hash), 1);
 	rb_define_singleton_method(GettextpoHelper, "detect_transitions", RUBY_METHOD_FUNC(wrap_detect_transitions), 3);

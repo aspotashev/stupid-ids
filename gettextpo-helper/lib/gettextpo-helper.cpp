@@ -4,6 +4,7 @@
 
 #include "gettextpo-helper.h"
 #include "mappedfile.h"
+#include "translationcontent.h"
 
 char *xstrdup(const char *str)
 {
@@ -347,11 +348,11 @@ int get_pot_length(const char *filename)
 
 //-------- Coupling IDs of equal messages in different .po/.pot files -------
 
-std::vector<std::pair<std::string, int> > dump_po_file_ids(const char *filename, int first_id)
+std::vector<std::pair<std::string, int> > dump_po_file_ids(TranslationContent *content, int first_id)
 {
 	std::vector<std::pair<std::string, int> > res;
 
-	po_file_t file = po_file_read(filename); // all checks and error reporting are done in po_file_read
+	po_file_t file = content->poFileRead(); // all checks and error reporting are done in po_file_read
 
 	// main cycle
 	po_message_iterator_t iterator = po_message_iterator(file, "messages");
@@ -371,7 +372,7 @@ std::vector<std::pair<std::string, int> > dump_po_file_ids(const char *filename,
 	return res;
 }
 
-std::vector<std::vector<int> > list_equal_messages_ids(std::vector<std::pair<const char *, int> > files)
+std::vector<std::vector<int> > list_equal_messages_ids(std::vector<std::pair<TranslationContent *, int> > files)
 {
 	std::vector<std::vector<int> > list;
 
@@ -404,11 +405,11 @@ std::vector<std::vector<int> > list_equal_messages_ids(std::vector<std::pair<con
 	return list;
 }
 
-std::vector<std::pair<int, int> > list_equal_messages_ids_2(const char *filename_a, int first_id_a, const char *filename_b, int first_id_b)
+std::vector<std::pair<int, int> > list_equal_messages_ids_2(TranslationContent *file_a, int first_id_a, TranslationContent *file_b, int first_id_b)
 {
-	std::vector<std::pair<const char *, int> > files;
-	files.push_back(std::pair<const char *, int>(filename_a, first_id_a));
-	files.push_back(std::pair<const char *, int>(filename_b, first_id_b));
+	std::vector<std::pair<TranslationContent *, int> > files;
+	files.push_back(std::pair<TranslationContent *, int>(file_a, first_id_a));
+	files.push_back(std::pair<TranslationContent *, int>(file_b, first_id_b));
 
 	std::vector<std::vector<int> > list = list_equal_messages_ids(files);
 
@@ -426,10 +427,16 @@ std::vector<std::pair<int, int> > list_equal_messages_ids_2(const char *filename
 
 int dump_equal_messages_to_mmapdb(const char *filename_a, int first_id_a, const char *filename_b, int first_id_b, MappedFileIdMapDb *mmap_db)
 {
+	TranslationContent *file_a = new TranslationContent(filename_a);
+	TranslationContent *file_b = new TranslationContent(filename_b);
+
 	std::vector<std::pair<int, int> > list = list_equal_messages_ids_2(
-		filename_a, first_id_a, filename_b, first_id_b);
+		file_a, first_id_a, file_b, first_id_b);
 	for (std::vector<std::pair<int, int> >::iterator iter = list.begin(); iter != list.end(); iter ++)
 		mmap_db->addRow(iter->first, iter->second);
+
+	delete file_a;
+	delete file_b;
 
 	return (int)list.size();
 }

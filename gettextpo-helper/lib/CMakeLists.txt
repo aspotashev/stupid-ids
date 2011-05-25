@@ -9,6 +9,7 @@ set(gettextpo_helper_LIB_SRCS
 	gettextpo-helper.cpp
 	translation-collector.cpp
 	mappedfile.cpp
+	translationcontent.cpp
 
 	detector/detector.cpp
 	detector/detectorbase.cpp
@@ -29,6 +30,7 @@ install(FILES
 	gettextpo-helper.h
 	translation-collector.h
 	mappedfile.h
+	translationcontent.h
 	detector/detectorbase.h
 	detector/detector.h
 	DESTINATION ${INCLUDE_INSTALL_DIR}/gettextpo-helper COMPONENT Devel
