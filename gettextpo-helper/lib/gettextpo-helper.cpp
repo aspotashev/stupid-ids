@@ -100,6 +100,7 @@ po_file_t po_buffer_read(const char *buffer, size_t length)
 	// Restore 'stdin'
 	close(0);
 	assert(dup2(stdin_fd, 0) >= 0);
+	close(stdin_fd);
 
 	// Kill zombie child process, check exit status
 	int status = -1;
