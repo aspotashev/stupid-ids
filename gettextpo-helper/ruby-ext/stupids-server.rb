@@ -16,7 +16,7 @@ require '../../stupid-id-filler/database/filler-models.rb'
 
 require 'gserver'
 
-$id_map_db = GettextpoHelper::IdMapDb.new('../../successor-detector/database/idmap.mmapdb')
+$id_map_db = GettextpoHelper::IdMapDb.new('../../transition-detector/idmap.mmapdb')
 
 # http://www.rubyinside.com/advent2006/10-gserver.html
 # http://www.ruby-doc.org/stdlib/libdoc/gserver/rdoc/index.html
