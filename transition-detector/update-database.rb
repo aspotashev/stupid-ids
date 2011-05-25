@@ -4,13 +4,13 @@ require 'active_record'
 
 ActiveRecord::Base.class_eval do
   def self.establish_connection_filler
-    establish_connection(YAML::load(File.open('../../stupid-id-filler/database/filler-database.yml')))
+    establish_connection(YAML::load(File.open('../stupid-id-filler/database/filler-database.yml')))
   end
 end
 
 require 'stupidsruby'
-require '../../gettextpo-helper/ruby-helpers/ruby-helpers'
-require '../../stupid-id-filler/database/filler-models.rb'
+require '../gettextpo-helper/ruby-helpers/ruby-helpers'
+require '../stupid-id-filler/database/filler-models.rb'
 
 Array.class_eval do
   def is_uniq
