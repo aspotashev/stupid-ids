@@ -51,8 +51,8 @@ def update_database
 
     # Results should _probably_ be cached (in files or in a database)
     n_pairs = GettextpoHelper.dump_equal_messages_to_mmapdb(
-      $tempfile_pot_a, get_pot_first_id(tp_hash_a),
-      $tempfile_pot_b, get_pot_first_id(tp_hash_b),
+      GettextpoHelper::TranslationContent.new($tempfile_pot_a), get_pot_first_id(tp_hash_a),
+      GettextpoHelper::TranslationContent.new($tempfile_pot_b), get_pot_first_id(tp_hash_b),
       $id_map_db)
 
     puts "#{pair[0]} <-> #{pair[1]}: #{n_pairs} pairs of IDs"

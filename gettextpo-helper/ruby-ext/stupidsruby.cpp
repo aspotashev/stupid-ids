@@ -10,6 +10,7 @@ void init_search(const char *f_dump, const char *f_index, const char *f_map);
 const char *find_string_id_by_str_multiple(char *s, int n);
 
 MappedFileIdMapDb *rb_get_mapped_file(VALUE self);
+TranslationContent *rb_get_translation_content(VALUE self);
 
 //-------------------------------
 
@@ -24,12 +25,12 @@ VALUE wrap_get_pot_length(VALUE self, VALUE filename)
 	return INT2FIX(get_pot_length(StringValuePtr(filename)));
 }
 
-VALUE wrap_dump_equal_messages_to_mmapdb(VALUE self, VALUE filename_a, VALUE first_id_a, VALUE filename_b, VALUE first_id_b, VALUE mmapdb)
+VALUE wrap_dump_equal_messages_to_mmapdb(VALUE self, VALUE file_a, VALUE first_id_a, VALUE file_b, VALUE first_id_b, VALUE mmapdb)
 {
 	return INT2FIX(dump_equal_messages_to_mmapdb(
-		new TranslationContent(StringValuePtr(filename_a)),
+		rb_get_translation_content(file_a),
 		FIX2INT(first_id_a),
-		new TranslationContent(StringValuePtr(filename_b)),
+		rb_get_translation_content(file_b),
 		FIX2INT(first_id_b),
 		rb_get_mapped_file(mmapdb)));
 }
@@ -83,6 +84,30 @@ VALUE wrap_detect_transitions(VALUE self, VALUE path_trunk, VALUE path_stable, V
 	}
 
 	return res;
+}
+
+//------- class GettextpoHelper::TranslationContent -------
+
+void free_cTranslationContent(void *content)
+{
+	delete (TranslationContent *)content;
+}
+
+VALUE cTranslationContent;
+
+VALUE cTranslationContent_new(VALUE klass, VALUE filename)
+{
+	TranslationContent *content = new TranslationContent(StringValuePtr(filename));
+	return Data_Wrap_Struct(cTranslationContent, NULL, free_cTranslationContent, content);
+}
+
+TranslationContent *rb_get_translation_content(VALUE self)
+{
+	TranslationContent *content;
+	Data_Get_Struct(self, TranslationContent, content);
+	assert(content);
+
+	return content;
 }
 
 //------- class GettextpoHelper::IdMapDb -------
@@ -237,6 +262,9 @@ void Init_stupidsruby()
 	rb_define_singleton_method(GettextpoHelper, "dump_equal_messages_to_mmapdb", RUBY_METHOD_FUNC(wrap_dump_equal_messages_to_mmapdb), 5);
 	rb_define_singleton_method(GettextpoHelper, "get_min_ids_by_tp_hash", RUBY_METHOD_FUNC(wrap_get_min_ids_by_tp_hash), 1);
 	rb_define_singleton_method(GettextpoHelper, "detect_transitions", RUBY_METHOD_FUNC(wrap_detect_transitions), 3);
+
+	cTranslationContent = rb_define_class_under(GettextpoHelper, "TranslationContent", rb_cObject);
+	rb_define_singleton_method(cTranslationContent, "new", RUBY_METHOD_FUNC(cTranslationContent_new), 1);
 
 	cIdMapDb = rb_define_class_under(GettextpoHelper, "IdMapDb", rb_cObject);
 	rb_define_singleton_method(cIdMapDb, "new", RUBY_METHOD_FUNC(cIdMapDb_new), 1);
