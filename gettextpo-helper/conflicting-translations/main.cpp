@@ -8,8 +8,8 @@
 #include <vector>
 #include <map>
 
-#include <translation-collector.h>
-#include <gettextpo-helper.h>
+#include <gettextpo-helper/translation-collector.h>
+#include <gettextpo-helper/gettextpo-helper.h>
 
 #include <QString>
 #include <QDirIterator>
