@@ -66,7 +66,7 @@ VALUE rb_git_oid_fmt(const git_oid *oid)
 	return str;
 }
 
-VALUE wrap_detect_transitions(VALUE self, VALUE path_trunk, VALUE path_stable, VALUE path_proorph)
+VALUE wrap_detect_transitions_inc(VALUE self, VALUE path_trunk, VALUE path_stable, VALUE path_proorph, VALUE file_processed)
 {
 	std::vector<GitOidPair> allPairs;
 	detectTransitions(allPairs,
@@ -74,17 +74,56 @@ VALUE wrap_detect_transitions(VALUE self, VALUE path_trunk, VALUE path_stable, V
 		StringValuePtr(path_stable),
 		StringValuePtr(path_proorph));
 
+	std::vector<GitOidPair> pairs;
+	filterProcessedTransitions(StringValuePtr(file_processed), allPairs, pairs);
+
 	VALUE res = rb_ary_new(); // create array
-	for (size_t i = 0; i < allPairs.size(); i ++)
+	for (size_t i = 0; i < pairs.size(); i ++)
 	{
 		VALUE pair = rb_ary_new(); // create array for next pair
-		rb_ary_push(pair, rb_git_oid_fmt(allPairs[i].oid1()));
-		rb_ary_push(pair, rb_git_oid_fmt(allPairs[i].oid2()));
+		rb_ary_push(pair, rb_git_oid_fmt(pairs[i].oid1()));
+		rb_ary_push(pair, rb_git_oid_fmt(pairs[i].oid2()));
 
 		rb_ary_push(res, pair);
 	}
 
 	return res;
+}
+
+VALUE wrap_append_processed_pairs(VALUE self, VALUE file_processed, VALUE pairs)
+{
+	FILE *f = fopen(StringValuePtr(file_processed), "ab");
+	assert(f);
+
+	long len = RARRAY_LEN(pairs);
+	const char *oid1_str;
+	const char *oid2_str;
+	git_oid oid1;
+	git_oid oid2;
+	unsigned char oid1_raw[GIT_OID_RAWSZ];
+	unsigned char oid2_raw[GIT_OID_RAWSZ];
+	for (long offset = 0; offset < len; offset ++)
+	{
+		VALUE pair = rb_ary_entry(pairs, offset);
+		VALUE p0 = rb_ary_entry(pair, 0);
+		VALUE p1 = rb_ary_entry(pair, 1);
+
+		oid1_str = StringValuePtr(p0);
+		oid2_str = StringValuePtr(p1);
+
+		assert(git_oid_mkstr(&oid1, oid1_str) == GIT_SUCCESS);
+		assert(git_oid_mkstr(&oid2, oid2_str) == GIT_SUCCESS);
+
+		// TODO: "git_oid_fmtraw" needed (for full portability)
+
+		assert(sizeof(oid1) == GIT_OID_RAWSZ);
+		assert(fwrite(&oid1, GIT_OID_RAWSZ, 1, f) == 1);
+		assert(fwrite(&oid2, GIT_OID_RAWSZ, 1, f) == 1);
+	}
+
+	fclose(f);
+
+	return Qnil;
 }
 
 //------- class GettextpoHelper::GitLoader -------
@@ -301,7 +340,8 @@ void Init_stupidsruby()
 	rb_define_singleton_method(GettextpoHelper, "get_pot_length", RUBY_METHOD_FUNC(wrap_get_pot_length), 1);
 	rb_define_singleton_method(GettextpoHelper, "dump_equal_messages_to_mmapdb", RUBY_METHOD_FUNC(wrap_dump_equal_messages_to_mmapdb), 5);
 	rb_define_singleton_method(GettextpoHelper, "get_min_ids_by_tp_hash", RUBY_METHOD_FUNC(wrap_get_min_ids_by_tp_hash), 1);
-	rb_define_singleton_method(GettextpoHelper, "detect_transitions", RUBY_METHOD_FUNC(wrap_detect_transitions), 3);
+	rb_define_singleton_method(GettextpoHelper, "detect_transitions_inc", RUBY_METHOD_FUNC(wrap_detect_transitions_inc), 4);
+	rb_define_singleton_method(GettextpoHelper, "append_processed_pairs", RUBY_METHOD_FUNC(wrap_append_processed_pairs), 2);
 
 	cGitLoader = rb_define_class_under(GettextpoHelper, "GitLoader", rb_cObject);
 	rb_define_singleton_method(cGitLoader, "new", RUBY_METHOD_FUNC(cGitLoader_new), 0);

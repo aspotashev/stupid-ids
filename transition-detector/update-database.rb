@@ -28,10 +28,13 @@ git_loader = GettextpoHelper::GitLoader.new
 git_loader.add_repository("/home/sasha/kde-ru/xx-numbering/templates/.git/")
 git_loader.add_repository("/home/sasha/kde-ru/xx-numbering/stable-templates/.git/")
 
-pairs = GettextpoHelper.detect_transitions(
+pairs = GettextpoHelper.detect_transitions_inc(
   "/home/sasha/kde-ru/xx-numbering/templates/.git/",
   "/home/sasha/kde-ru/xx-numbering/stable-templates/.git/",
-  "/home/sasha/l10n-kde4/scripts/process_orphans.txt")
+  "/home/sasha/l10n-kde4/scripts/process_orphans.txt",
+  "./processed-sha1-pairs.dat")
+
+puts "Unprocessed pairs: #{pairs.size}"
 pairs.each do |pair|
   tp_hash_a = oid_to_tp_hash(pair[0])
   tp_hash_b = oid_to_tp_hash(pair[1])
@@ -43,6 +46,8 @@ pairs.each do |pair|
     GettextpoHelper::TranslationContent.new(git_loader, pair[0]), get_pot_first_id(tp_hash_a),
     GettextpoHelper::TranslationContent.new(git_loader, pair[1]), get_pot_first_id(tp_hash_b),
     id_map_db)
+
+  GettextpoHelper.append_processed_pairs("./processed-sha1-pairs.dat", [pair])
 
   puts "#{pair[0]} <-> #{pair[1]}: #{n_pairs} pairs of IDs"
 end

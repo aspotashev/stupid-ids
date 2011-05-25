@@ -67,5 +67,7 @@ void writePairToFile(std::vector<GitOidPair> &allPairs, const char *out_file);
 
 void detectTransitions(std::vector<GitOidPair> &dest, const char *path_trunk, const char *path_stable, const char *path_proorph);
 
+void filterProcessedTransitions(const char *file_processed, std::vector<GitOidPair> &input, std::vector<GitOidPair> &output);
+
 #endif // DETECTOR_H
 

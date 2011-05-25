@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <algorithm>
 #include <map>
+#include <set>
 
 #include "detector.h"
 #include "gitloader.h"
@@ -307,5 +308,39 @@ void detectTransitions(std::vector<GitOidPair> &dest, const char *path_trunk, co
 
 	delete repo;
 	delete repo_stable;
+}
+
+//-------------------------------------------------------
+
+void filterProcessedTransitions(const char *file_processed, std::vector<GitOidPair> &input, std::vector<GitOidPair> &output)
+{
+	FILE *f = fopen(file_processed, "rb");
+	assert(f);
+	fseek(f, 0, SEEK_END);
+	int n_processed = ftell(f) / (2 * GIT_OID_RAWSZ);
+	rewind(f);
+
+
+	unsigned char oid1_raw[GIT_OID_RAWSZ];
+	unsigned char oid2_raw[GIT_OID_RAWSZ];
+	git_oid oid1;
+	git_oid oid2;
+	std::set<GitOidPair> processed;
+	for (int i = 0; i < n_processed; i ++)
+	{
+		assert(fread(oid1_raw, GIT_OID_RAWSZ, 1, f) == 1);
+		assert(fread(oid2_raw, GIT_OID_RAWSZ, 1, f) == 1);
+
+		git_oid_mkraw(&oid1, oid1_raw);
+		git_oid_mkraw(&oid2, oid2_raw);
+
+		processed.insert(GitOidPair(&oid1, &oid2));
+	}
+
+	fclose(f);
+
+	for (size_t i = 0; i < input.size(); i ++)
+		if (processed.find(input[i]) == processed.end())
+			output.push_back(input[i]);
 }
 
