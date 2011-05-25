@@ -24,10 +24,6 @@ end
 
 $id_map_db = GettextpoHelper::IdMapDb.new('idmap.mmapdb')
 
-$tphash_tempfile_pot = `tempfile --suffix=.pot`.strip
-$tempfile_pot_a = `tempfile --suffix=.pot`.strip
-$tempfile_pot_b = `tempfile --suffix=.pot`.strip
-
 def oid_to_tp_hash(sha1)
   # TODO: create a database index to make this work faster
   x = TphashPotsha.find(:first, :conditions => {:potsha => sha1})
@@ -35,6 +31,10 @@ def oid_to_tp_hash(sha1)
 end
 
 def update_database
+  git_loader = GettextpoHelper::GitLoader.new
+  git_loader.add_repository("/home/sasha/kde-ru/xx-numbering/templates/.git/")
+  git_loader.add_repository("/home/sasha/kde-ru/xx-numbering/stable-templates/.git/")
+
   pairs = GettextpoHelper.detect_transitions(
     "/home/sasha/kde-ru/xx-numbering/templates/.git/",
     "/home/sasha/kde-ru/xx-numbering/stable-templates/.git/",
@@ -45,14 +45,10 @@ def update_database
     next if tp_hash_a == tp_hash_b or tp_hash_a.nil? or tp_hash_b.nil?
 
 
-    # TODO: use libgit2 instead of running Git executables
-    extract_pot_to_file(tp_hash_a, $tempfile_pot_a)
-    extract_pot_to_file(tp_hash_b, $tempfile_pot_b)
-
     # Results should _probably_ be cached (in files or in a database)
     n_pairs = GettextpoHelper.dump_equal_messages_to_mmapdb(
-      GettextpoHelper::TranslationContent.new($tempfile_pot_a), get_pot_first_id(tp_hash_a),
-      GettextpoHelper::TranslationContent.new($tempfile_pot_b), get_pot_first_id(tp_hash_b),
+      GettextpoHelper::TranslationContent.new(git_loader, pair[0]), get_pot_first_id(tp_hash_a),
+      GettextpoHelper::TranslationContent.new(git_loader, pair[1]), get_pot_first_id(tp_hash_b),
       $id_map_db)
 
     puts "#{pair[0]} <-> #{pair[1]}: #{n_pairs} pairs of IDs"
@@ -62,8 +58,4 @@ end
 update_database
 
 $id_map_db.normalize_database
-
-`rm -f "#{$tphash_tempfile_pot}"`
-`rm -f "#{$tempfile_pot_a}"`
-`rm -f "#{$tempfile_pot_b}"`
 

@@ -354,6 +354,11 @@ std::vector<std::pair<std::string, int> > dump_po_file_ids(TranslationContent *c
 
 	po_file_t file = content->poFileRead(); // all checks and error reporting are done in po_file_read
 
+	assert(file);
+//	if (!file)
+//		return res;
+
+
 	// main cycle
 	po_message_iterator_t iterator = po_message_iterator(file, "messages");
 	po_message_t message; // in fact, this is a pointer
