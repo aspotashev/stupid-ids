@@ -59,7 +59,7 @@ std::vector<std::vector<int> > list_equal_messages_ids(std::vector<std::pair<Tra
 
 std::vector<std::pair<int, int> > list_equal_messages_ids_2(TranslationContent *file_a, int first_id_a, TranslationContent *file_b, int first_id_b);
 
-int dump_equal_messages_to_mmapdb(const char *filename_a, int first_id_a, const char *filename_b, int first_id_b, MappedFileIdMapDb *mmap_db);
+int dump_equal_messages_to_mmapdb(TranslationContent *file_a, int first_id_a, TranslationContent *file_b, int first_id_b, MappedFileIdMapDb *mmap_db);
 
 //------ For diff'ing tools ------
 

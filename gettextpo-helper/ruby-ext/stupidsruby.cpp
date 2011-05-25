@@ -4,6 +4,7 @@
 #include <gettextpo-helper/gettextpo-helper.h>
 #include <gettextpo-helper/detector.h>
 #include <gettextpo-helper/mappedfile.h>
+#include <gettextpo-helper/translationcontent.h>
 
 void init_search(const char *f_dump, const char *f_index, const char *f_map);
 const char *find_string_id_by_str_multiple(char *s, int n);
@@ -26,8 +27,10 @@ VALUE wrap_get_pot_length(VALUE self, VALUE filename)
 VALUE wrap_dump_equal_messages_to_mmapdb(VALUE self, VALUE filename_a, VALUE first_id_a, VALUE filename_b, VALUE first_id_b, VALUE mmapdb)
 {
 	return INT2FIX(dump_equal_messages_to_mmapdb(
-		StringValuePtr(filename_a), FIX2INT(first_id_a),
-		StringValuePtr(filename_b), FIX2INT(first_id_b),
+		new TranslationContent(StringValuePtr(filename_a)),
+		FIX2INT(first_id_a),
+		new TranslationContent(StringValuePtr(filename_b)),
+		FIX2INT(first_id_b),
 		rb_get_mapped_file(mmapdb)));
 }
 

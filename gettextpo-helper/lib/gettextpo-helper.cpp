@@ -425,18 +425,12 @@ std::vector<std::pair<int, int> > list_equal_messages_ids_2(TranslationContent *
 	return res;
 }
 
-int dump_equal_messages_to_mmapdb(const char *filename_a, int first_id_a, const char *filename_b, int first_id_b, MappedFileIdMapDb *mmap_db)
+int dump_equal_messages_to_mmapdb(TranslationContent *file_a, int first_id_a, TranslationContent *file_b, int first_id_b, MappedFileIdMapDb *mmap_db)
 {
-	TranslationContent *file_a = new TranslationContent(filename_a);
-	TranslationContent *file_b = new TranslationContent(filename_b);
-
 	std::vector<std::pair<int, int> > list = list_equal_messages_ids_2(
 		file_a, first_id_a, file_b, first_id_b);
 	for (std::vector<std::pair<int, int> >::iterator iter = list.begin(); iter != list.end(); iter ++)
 		mmap_db->addRow(iter->first, iter->second);
-
-	delete file_a;
-	delete file_b;
 
 	return (int)list.size();
 }
