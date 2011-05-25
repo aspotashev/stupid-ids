@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.6)
 find_package(Ruby REQUIRED)
 
 include_directories( ${RUBY_INCLUDE_DIRS} )
-set(stupidsruby_LIB_SRCS gettextpo-helper.cpp)
+set(stupidsruby_LIB_SRCS stupidsruby.cpp)
 
 add_library(stupidsruby SHARED ${stupidsruby_LIB_SRCS})
 
