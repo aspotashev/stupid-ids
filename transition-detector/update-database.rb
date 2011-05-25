@@ -9,7 +9,6 @@ ActiveRecord::Base.class_eval do
 end
 
 require 'stupidsruby'
-require '../gettextpo-helper/ruby-helpers/ruby-helpers'
 require '../stupid-id-filler/database/filler-models.rb'
 
 def get_pot_first_id(tp_hash)
