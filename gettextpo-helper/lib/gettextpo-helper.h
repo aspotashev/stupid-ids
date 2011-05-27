@@ -7,10 +7,6 @@
 #include <assert.h>
 #include <gettext-po.h>
 
-// for working with stupids-server
-#include <arpa/inet.h>
-#include <sys/socket.h>
-
 #include <sys/wait.h> // for waitpid
 
 //------------------------------
@@ -120,13 +116,4 @@ private:
 };
 
 std::vector<Message *> read_po_file_messages(const char *filename, bool loadObsolete);
-
-//-------- Working with stupids-server.rb over TCP/IP --------
-
-class TpHashNotFoundException : public std::exception
-{
-	virtual const char *what() const throw();
-};
-
-std::vector<int> get_min_ids_by_tp_hash(const char *tp_hash);
 

@@ -1,6 +1,7 @@
 
 #include "translation-collector.h"
 #include "gettextpo-helper.h"
+#include "stupids-client.h"
 
 StupIdTranslationCollector::StupIdTranslationCollector()
 {

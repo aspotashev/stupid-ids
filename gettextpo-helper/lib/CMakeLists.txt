@@ -5,11 +5,13 @@ project(gettextpo_helper)
 #	${QT_INCLUDES}
 #)
 
+include_directories( ${CMAKE_SOURCE_DIR}/lib/include )
 set(gettextpo_helper_LIB_SRCS
 	gettextpo-helper.cpp
 	translation-collector.cpp
 	mappedfile.cpp
 	translationcontent.cpp
+	stupids-client.cpp
 
 	detector.cpp
 	detectorbase.cpp
@@ -31,6 +33,7 @@ install(FILES
 	translation-collector.h
 	mappedfile.h
 	translationcontent.h
+	stupids-client.h
 	detectorbase.h
 	detector.h
 	DESTINATION ${INCLUDE_INSTALL_DIR}/gettextpo-helper COMPONENT Devel
