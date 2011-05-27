@@ -27,6 +27,7 @@ class CreateDb < ActiveRecord::Migration
 			t.string :potsha
 		end
 		add_index TphashPotsha.table_name, [:tp_hash]
+		add_index TphashPotsha.table_name, [:potsha]
 
 		create_table TphashFirstId.table_name do |t|
 			t.string :tp_hash
