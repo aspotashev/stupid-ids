@@ -23,19 +23,20 @@ const char *TpHashNotFoundException::what() const throw()
 
 StupidsClient::StupidsClient()
 {
+	m_sockfd = -1;
 }
 
 StupidsClient::~StupidsClient()
 {
 }
 
-int StupidsClient::sockReadOutput(int sockfd, char **buffer, int *res_bytes)
+int StupidsClient::sockReadOutput(char **buffer, int *res_bytes)
 {
 	// Read the size of output in bytes
 	char res_bytes_str[10];
 	ssize_t res;
 
-	res = read(sockfd, res_bytes_str, 10);
+	res = read(m_sockfd, res_bytes_str, 10);
 	if (res != 10)
 	{
 		printf("res = %d\n", (int)res);
@@ -50,7 +51,7 @@ int StupidsClient::sockReadOutput(int sockfd, char **buffer, int *res_bytes)
 	int bytes_cur = *res_bytes;
 	while (bytes_cur > 0)
 	{
-		res = read(sockfd, buffer_cur, bytes_cur);
+		res = read(m_sockfd, buffer_cur, bytes_cur);
 		assert(res > 0);
 
 		bytes_cur -= res;
@@ -62,15 +63,16 @@ int StupidsClient::sockReadOutput(int sockfd, char **buffer, int *res_bytes)
 	return 0; // OK
 }
 
-// TODO: use a single connection for all requests
-std::vector<int> StupidsClient::getMinIds(const char *tp_hash)
+void StupidsClient::connect()
 {
+	if (m_sockfd >= 0)
+		return;
+
 	// initialize connection
 	struct sockaddr_in servaddr;
-	int sockfd;
 
 	// SOCK_NONBLOCK requires Linux 2.6.27
-	if ((sockfd = socket(PF_INET, SOCK_STREAM, 0)) < 0)
+	if ((m_sockfd = socket(PF_INET, SOCK_STREAM, 0)) < 0)
 	{
 		assert(0);
 	}
@@ -80,28 +82,41 @@ std::vector<int> StupidsClient::getMinIds(const char *tp_hash)
 	servaddr.sin_port = htons(1234);
 	inet_aton("127.0.0.1", &servaddr.sin_addr);
 
-	if (connect(sockfd, (struct sockaddr*) &servaddr, sizeof(servaddr)) < 0)
+	if (::connect(m_sockfd, (struct sockaddr*) &servaddr, sizeof(servaddr)) < 0)
 	{
-		close(sockfd);
+		close(m_sockfd);
 
 		printf("Could not connect to stupids-server\n");
 		assert(0);
 	};
+}
+
+void StupidsClient::disconnect()
+{
+	const char exit_cmd[] = "exit\n";
+	assert(write(m_sockfd, exit_cmd, strlen(exit_cmd)) == strlen(exit_cmd));
+	close(m_sockfd);
+	m_sockfd = -1;
+}
+
+std::vector<int> StupidsClient::getMinIds(const char *tp_hash)
+{
+	connect();
 
 	// send command
 	const char get_min_ids_cmd[] = "get_min_id_array ";
 	const char newline[] = "\n";
 	assert(strlen(tp_hash) == 40); // sha-1 is 20 bytes long
 
-	assert(write(sockfd, get_min_ids_cmd, strlen(get_min_ids_cmd)) == strlen(get_min_ids_cmd));
-	assert(write(sockfd, tp_hash, 40) == 40);
-	assert(write(sockfd, newline, strlen(newline)) == strlen(newline));
+	assert(write(m_sockfd, get_min_ids_cmd, strlen(get_min_ids_cmd)) == strlen(get_min_ids_cmd));
+	assert(write(m_sockfd, tp_hash, 40) == 40);
+	assert(write(m_sockfd, newline, strlen(newline)) == strlen(newline));
 
 	// read results
 
 	char *output = NULL;
 	int output_len = 0;
-	assert(sockReadOutput(sockfd, &output, &output_len) == 0);
+	assert(sockReadOutput(&output, &output_len) == 0);
 
 	if (output_len >= 9 && !memcmp(output, "NOTFOUND\n", 9))
 	{
@@ -122,9 +137,7 @@ std::vector<int> StupidsClient::getMinIds(const char *tp_hash)
 		res.push_back(atoi(output_ptr));
 	}
 
-	const char exit_cmd[] = "exit\n";
-	assert(write(sockfd, exit_cmd, strlen(exit_cmd)) == strlen(exit_cmd));
-	close(sockfd);
+//	disconnect();
 
 	return res;
 }

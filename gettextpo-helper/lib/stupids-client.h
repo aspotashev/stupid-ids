@@ -17,6 +17,11 @@ public:
 	std::vector<int> getMinIds(const char *tp_hash);
 
 protected:
-	int sockReadOutput(int sockfd, char **buffer, int *res_bytes);
+	int sockReadOutput(char **buffer, int *res_bytes);
+	void connect();
+	void disconnect();
+
+private:
+	int m_sockfd;
 };
 
