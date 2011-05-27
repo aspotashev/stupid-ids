@@ -1,6 +1,6 @@
 
-#include "gettextpo-helper.h"
-#include "translationcontent.h"
+#include <gettextpo-helper/gettextpo-helper.h>
+#include <gettextpo-helper/translationcontent.h>
 
 TranslationContent::TranslationContent(const char *filename)
 {

@@ -3,8 +3,8 @@
 #include <string.h>
 #include <assert.h>
 
-#include "processorphans.h"
-#include "gettextpo-helper.h"
+#include <gettextpo-helper/processorphans.h>
+#include <gettextpo-helper/gettextpo-helper.h>
 
 ProcessOrphansTxtEntry::ProcessOrphansTxtEntry(const char *cmd, const char *origin, const char *destination)
 {

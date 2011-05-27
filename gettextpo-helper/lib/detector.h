@@ -2,7 +2,7 @@
 #ifndef DETECTOR_H
 #define DETECTOR_H
 
-#include "detectorbase.h"
+#include <gettextpo-helper/detectorbase.h>
 
 class Repository;
 class ProcessOrphansTxt;

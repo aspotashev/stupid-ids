@@ -7,7 +7,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-#include "mappedfile.h"
+#include <gettextpo-helper/mappedfile.h>
 
 MappedFile::MappedFile(const char *filename)
 {

@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "gettextpo-helper.h"
-#include "mappedfile.h"
-#include "translationcontent.h"
+#include <gettextpo-helper/gettextpo-helper.h>
+#include <gettextpo-helper/mappedfile.h>
+#include <gettextpo-helper/translationcontent.h>
 
 char *xstrdup(const char *str)
 {

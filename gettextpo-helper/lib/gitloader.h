@@ -6,7 +6,7 @@
 
 #include <git2.h>
 
-#include "detectorbase.h"
+#include <gettextpo-helper/detectorbase.h>
 
 class CommitFileChange;
 
