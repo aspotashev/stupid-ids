@@ -77,6 +77,7 @@ class StupidsServer < GServer
 end
 
 server = StupidsServer.new(1234)
+server.audit = true
 server.start
 server.join
 
