@@ -68,15 +68,18 @@ VALUE rb_git_oid_fmt(const git_oid *oid)
 
 VALUE wrap_detect_transitions_inc(VALUE self, VALUE path_trunk, VALUE path_stable, VALUE path_proorph, VALUE file_processed)
 {
+	printf("Detecting...\n");
 	std::vector<GitOidPair> allPairs;
 	detectTransitions(allPairs,
 		StringValuePtr(path_trunk),
 		StringValuePtr(path_stable),
 		StringValuePtr(path_proorph));
 
+	printf("Filtering...\n");
 	std::vector<GitOidPair> pairs;
 	filterProcessedTransitions(StringValuePtr(file_processed), allPairs, pairs);
 
+	printf("Returning into Ruby...\n");
 	VALUE res = rb_ary_new(); // create array
 	for (size_t i = 0; i < pairs.size(); i ++)
 	{
@@ -86,6 +89,7 @@ VALUE wrap_detect_transitions_inc(VALUE self, VALUE path_trunk, VALUE path_stabl
 
 		rb_ary_push(res, pair);
 	}
+	printf("detect_transitions_inc finished.\n\n");
 
 	return res;
 }
