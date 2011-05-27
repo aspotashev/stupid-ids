@@ -21,6 +21,12 @@ $id_map_db = GettextpoHelper::IdMapDb.new('../../transition-detector/idmap.mmapd
 # http://www.rubyinside.com/advent2006/10-gserver.html
 # http://www.ruby-doc.org/stdlib/libdoc/gserver/rdoc/index.html
 class StupidsServer < GServer
+  def write_output(io, s)
+    res_output = s + "\n"
+    io.print(res_output.size.to_s.rjust(9) + "\n")
+    io.print res_output
+  end
+
   def do_serve(io)
     loop do
       line = io.readline.strip
@@ -30,13 +36,13 @@ class StupidsServer < GServer
 
       if command == 'get_min_id_array' # args: tp_hash
         if !args or !args.match(/^[0-9a-f]{40}$/)
-          io.puts "get_min_id_array:  invalid arguments"
+          write_output(io, "get_min_id_array:  invalid arguments")
           return
         end
 
         first_ids = TphashFirstId.get_pot_first_id(args)
         if first_ids.nil?
-          io.puts "NOTFOUND" # tp_hash not found in TphashFirstId (or duplicate rows)
+          write_output(io, "NOTFOUND") # tp_hash not found in TphashFirstId (or duplicate rows)
           return
         end
         first_id, id_count = first_ids # first_ids is a 2-element array
@@ -48,16 +54,15 @@ class StupidsServer < GServer
         end
 
         if id_array.size != id_count
-          io.puts "id_array.size != id_count"
+          write_output(io, "id_array.size != id_count")
           return
         end
 
-        io.puts id_array.size
-        io.puts id_array
+        write_output(io, "#{id_array.size.to_s} #{id_array.join(' ')}")
       elsif command == 'exit'
         return
       else
-        io.puts "Unknown command: " + [command, args].inspect
+        write_output(io, "Unknown command: " + [command, args].inspect)
       end
     end
   end

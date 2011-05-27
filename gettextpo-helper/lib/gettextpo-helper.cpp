@@ -690,45 +690,39 @@ std::vector<Message *> read_po_file_messages(const char *filename, bool loadObso
 }
 
 //-------- Working with stupids-server.rb over TCP/IP --------
+// TODO: move this to stupids-client.cpp and stupids-client.h
 
-char *fd_read_line(int fd)
+int sock_read_output(int sockfd, char **buffer, int *res_bytes)
 {
-	const int BUFFER_SIZE = 256;
-	static char buf[BUFFER_SIZE];
-	char c = '\0';
+	// Read the size of output in bytes
+	char res_bytes_str[10];
+	ssize_t res;
 
-	int i;
-	for (i = 0; i < BUFFER_SIZE; i ++)
+	res = read(sockfd, res_bytes_str, 10);
+	if (res != 10)
 	{
-		// TODO: read in bulk to reduce number of syscalls.
-		assert(read(fd, &c, 1) == 1);
-
-		if (c == '\n')
-		{
-			buf[i] = '\0'; // remove '\n'
-			break;
-		}
-		else
-		{
-			buf[i] = c;
-		}
+		printf("res = %d\n", (int)res);
+		assert(0);
 	}
-	// i == string length (without '\0')
-	assert(i < BUFFER_SIZE); // buffer size was not enough for the line
 
-	assert(buf[i] == '\0');
+	*res_bytes = atoi(res_bytes_str);
 
-	return xstrdup(buf);
-}
+	*buffer = new char [*res_bytes + 1];
 
-// This function assumes that there is only one integer number on the line.
-int fd_read_integer_from_line(int fd)
-{
-	char *str = fd_read_line(fd);
-	int res = atoi(str);
-	delete [] str;
+	char *buffer_cur = *buffer;
+	int bytes_cur = *res_bytes;
+	while (bytes_cur > 0)
+	{
+		res = read(sockfd, buffer_cur, bytes_cur);
+		assert(res > 0);
 
-	return res;
+		bytes_cur -= res;
+		buffer_cur += res;
+	}
+
+	(*buffer)[*res_bytes] = '\0';
+
+	return 0; // OK
 }
 
 const char *TpHashNotFoundException::what() const throw()
@@ -736,6 +730,7 @@ const char *TpHashNotFoundException::what() const throw()
 	return "tp_hash was not found in database";
 }
 
+// TODO: use a single connection for all requests
 std::vector<int> get_min_ids_by_tp_hash(const char *tp_hash)
 {
 	// initialize connection
@@ -771,19 +766,29 @@ std::vector<int> get_min_ids_by_tp_hash(const char *tp_hash)
 	assert(write(sockfd, newline, strlen(newline)) == strlen(newline));
 
 	// read results
-	char *id_count_str = fd_read_line(sockfd);
-	if (!strcmp(id_count_str, "NOTFOUND"))
+
+	char *output = NULL;
+	int output_len = 0;
+	assert(sock_read_output(sockfd, &output, &output_len) == 0);
+
+	if (output_len >= 9 && !memcmp(output, "NOTFOUND\n", 9))
 	{
 		printf("tp_hash not found (%s)\n", tp_hash);
 		throw TpHashNotFoundException();
 	}
 
-	int id_count = atoi(id_count_str);
-	delete [] id_count_str;
+	int id_count = atoi(output);
+	char *output_ptr = output;
 
 	std::vector<int> res; // TODO: reserve memory for 'id_count' elements
 	for (int i = 0; i < id_count; i ++)
-		res.push_back(fd_read_integer_from_line(sockfd));
+	{
+		output_ptr = strchr(output_ptr, ' ');
+		assert(output_ptr);
+		output_ptr ++; // move from space to the number
+
+		res.push_back(atoi(output_ptr));
+	}
 
 	const char exit_cmd[] = "exit\n";
 	assert(write(sockfd, exit_cmd, strlen(exit_cmd)) == strlen(exit_cmd));

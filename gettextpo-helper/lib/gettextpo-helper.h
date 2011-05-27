@@ -123,11 +123,6 @@ std::vector<Message *> read_po_file_messages(const char *filename, bool loadObso
 
 //-------- Working with stupids-server.rb over TCP/IP --------
 
-char *fd_read_line(int fd);
-
-// This function assumes that there is only one integer number on the line.
-int fd_read_integer_from_line(int fd);
-
 class TpHashNotFoundException : public std::exception
 {
 	virtual const char *what() const throw();
