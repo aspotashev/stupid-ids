@@ -14,7 +14,22 @@
 
 //-------- Working with stupids-server.rb over TCP/IP --------
 
-int sock_read_output(int sockfd, char **buffer, int *res_bytes)
+const char *TpHashNotFoundException::what() const throw()
+{
+	return "tp_hash was not found in database";
+}
+
+//------------------------------------------------------------
+
+StupidsClient::StupidsClient()
+{
+}
+
+StupidsClient::~StupidsClient()
+{
+}
+
+int StupidsClient::sockReadOutput(int sockfd, char **buffer, int *res_bytes)
 {
 	// Read the size of output in bytes
 	char res_bytes_str[10];
@@ -47,13 +62,8 @@ int sock_read_output(int sockfd, char **buffer, int *res_bytes)
 	return 0; // OK
 }
 
-const char *TpHashNotFoundException::what() const throw()
-{
-	return "tp_hash was not found in database";
-}
-
 // TODO: use a single connection for all requests
-std::vector<int> get_min_ids_by_tp_hash(const char *tp_hash)
+std::vector<int> StupidsClient::getMinIds(const char *tp_hash)
 {
 	// initialize connection
 	struct sockaddr_in servaddr;
@@ -91,7 +101,7 @@ std::vector<int> get_min_ids_by_tp_hash(const char *tp_hash)
 
 	char *output = NULL;
 	int output_len = 0;
-	assert(sock_read_output(sockfd, &output, &output_len) == 0);
+	assert(sockReadOutput(sockfd, &output, &output_len) == 0);
 
 	if (output_len >= 9 && !memcmp(output, "NOTFOUND\n", 9))
 	{

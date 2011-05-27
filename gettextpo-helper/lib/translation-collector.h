@@ -3,6 +3,7 @@
 #include <map>
 
 class Message;
+class StupidsClient;
 
 class StupIdTranslationCollector
 {
@@ -27,5 +28,6 @@ private:
 	// int -- min_id
 	// std::vector<Message *> -- array of messages that belong to this 'min_id'
 	std::map<int, std::vector<Message *> > m_trans;
+	StupidsClient *m_client;
 };
 

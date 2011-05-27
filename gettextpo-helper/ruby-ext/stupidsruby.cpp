@@ -37,7 +37,7 @@ VALUE wrap_dump_equal_messages_to_mmapdb(VALUE self, VALUE file_a, VALUE first_i
 		rb_get_mapped_file(mmapdb)));
 }
 
-VALUE wrap_get_min_ids_by_tp_hash(VALUE self, VALUE tp_hash)
+/*VALUE wrap_get_min_ids_by_tp_hash(VALUE self, VALUE tp_hash)
 {
 	std::vector<int> vector_res;
 
@@ -55,7 +55,7 @@ VALUE wrap_get_min_ids_by_tp_hash(VALUE self, VALUE tp_hash)
 		rb_ary_push(res, INT2FIX(vector_res[i]));
 
 	return res;
-}
+}*/
 
 VALUE rb_git_oid_fmt(const git_oid *oid)
 {
@@ -344,7 +344,7 @@ void Init_stupidsruby()
 	rb_define_singleton_method(GettextpoHelper, "calculate_tp_hash", RUBY_METHOD_FUNC(wrap_calculate_tp_hash), 1);
 	rb_define_singleton_method(GettextpoHelper, "get_pot_length", RUBY_METHOD_FUNC(wrap_get_pot_length), 1);
 	rb_define_singleton_method(GettextpoHelper, "dump_equal_messages_to_mmapdb", RUBY_METHOD_FUNC(wrap_dump_equal_messages_to_mmapdb), 5);
-	rb_define_singleton_method(GettextpoHelper, "get_min_ids_by_tp_hash", RUBY_METHOD_FUNC(wrap_get_min_ids_by_tp_hash), 1);
+//	rb_define_singleton_method(GettextpoHelper, "get_min_ids_by_tp_hash", RUBY_METHOD_FUNC(wrap_get_min_ids_by_tp_hash), 1);
 	rb_define_singleton_method(GettextpoHelper, "detect_transitions_inc", RUBY_METHOD_FUNC(wrap_detect_transitions_inc), 4);
 	rb_define_singleton_method(GettextpoHelper, "append_processed_pairs", RUBY_METHOD_FUNC(wrap_append_processed_pairs), 2);
 

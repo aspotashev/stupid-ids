@@ -6,16 +6,18 @@
 StupIdTranslationCollector::StupIdTranslationCollector()
 {
 	m_trans = std::map<int, std::vector<Message *> >();
+	m_client = new StupidsClient();
 }
 
 StupIdTranslationCollector::~StupIdTranslationCollector()
 {
+	delete m_client;
 }
 
 void StupIdTranslationCollector::insertPo(const char *filename)
 {
 	std::string tp_hash = calculate_tp_hash(filename);
-	std::vector<int> min_ids = get_min_ids_by_tp_hash(tp_hash.c_str());
+	std::vector<int> min_ids = m_client->getMinIds(tp_hash.c_str());
 
 	//--------------------- insert messages --------------------
 	std::vector<Message *> messages = read_po_file_messages(filename, false);

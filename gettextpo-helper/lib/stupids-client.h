@@ -8,5 +8,15 @@ class TpHashNotFoundException : public std::exception
 	virtual const char *what() const throw();
 };
 
-std::vector<int> get_min_ids_by_tp_hash(const char *tp_hash);
+class StupidsClient
+{
+public:
+	StupidsClient();
+	~StupidsClient();
+
+	std::vector<int> getMinIds(const char *tp_hash);
+
+protected:
+	int sockReadOutput(int sockfd, char **buffer, int *res_bytes);
+};
 
