@@ -316,7 +316,10 @@ std::string dump_po_file_template(const char *filename)
 		}
 	}
 
-	po_file_free(file); // free memory
+	// free memory
+	po_message_iterator_free(iterator);
+	po_file_free(file);
+
 	return res;
 }
 
@@ -343,7 +346,10 @@ int get_pot_length(const char *filename)
 		if (!po_message_is_obsolete(message)) // in fact, if we're processing a .pot, there can't be any obsolete messages
 			length ++;
 
-	po_file_free(file); // free memory
+	// free memory
+	po_message_iterator_free(iterator);
+	po_file_free(file);
+
 	return length;
 }
 
@@ -374,7 +380,10 @@ std::vector<std::pair<std::string, int> > dump_po_file_ids(TranslationContent *c
 			res.push_back(make_pair(msg_dump, first_id + index));
 	}
 
-	po_file_free(file); // free memory
+	// free memory
+	po_message_iterator_free(iterator);
+	po_file_free(file);
+
 	return res;
 }
 
@@ -684,6 +693,7 @@ std::vector<Message *> read_po_file_messages(const char *filename, bool loadObso
 	}
 
 	// free memory
+	po_message_iterator_free(iterator);
 	po_file_free(file);
 
 	return res;
