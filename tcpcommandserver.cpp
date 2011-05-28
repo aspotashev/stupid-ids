@@ -1,5 +1,6 @@
 
 #include <string.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
 #include <errno.h>
@@ -93,10 +94,16 @@ void TcpCommandServer::start()
 			close(listenfd);
 
 			sessionOpened();
+			exit(0);
 		}
 		close(m_connfd);
 
 		assert(childpid > 0); // check that fork() was successful
 	}
+}
+
+void TcpCommandServer::disconnect()
+{
+	m_closeConnection = true;
 }
 

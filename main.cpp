@@ -11,8 +11,15 @@ public:
 
 void Server::commandHandler(const char *command)
 {
-	sendToClient(command, strlen(command));
-	sendToClient("\n", 1);
+	if (!strcmp(command, "exit"))
+	{
+		disconnect();
+	}
+	else
+	{
+		sendToClient(command, strlen(command));
+		sendToClient("\n", 1);
+	}
 }
 
 //-------------------
