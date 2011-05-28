@@ -15,19 +15,9 @@
 #include <QDirIterator>
 
 
-int main(int argc, char *argv[])
+void insertPoDir(StupIdTranslationCollector *collector, const char *path)
 {
-	StupIdTranslationCollector collector;
-//	collector.insertPo("a1.po");
-//	collector.insertPo("a2.po");
-
-	collector.insertPo("/home/sasha/messages/kdebase/dolphin.po");
-	collector.insertPo("/home/sasha/stable-messages/kdebase/dolphin.po");
-
-//	collector.insertPo("/home/sasha/messages/calligra/words.po");
-//	collector.insertPo("/home/sasha/messages/koffice/kword.po");
-
-	QString directory_path("/home/sasha/messages/kdelibs");
+	QString directory_path(path);
 	QDirIterator directory_walker(directory_path, QDir::Files | QDir::NoSymLinks, QDirIterator::Subdirectories);
 	while (directory_walker.hasNext())
 	{
@@ -38,9 +28,28 @@ int main(int argc, char *argv[])
 			const char *fn = ba.data();
 			printf("%s\n", fn);
 
-			collector.insertPo(fn);
+			collector->insertPo(fn);
 		}
 	}
+}
+
+int main(int argc, char *argv[])
+{
+	StupIdTranslationCollector collector;
+//	collector.insertPo("a1.po");
+//	collector.insertPo("a2.po");
+
+//	collector.insertPo("/home/sasha/messages/kdebase/dolphin.po");
+//	collector.insertPo("/home/sasha/stable-messages/kdebase/dolphin.po");
+
+//	collector.insertPo("/home/sasha/messages/calligra/words.po");
+//	collector.insertPo("/home/sasha/messages/koffice/kword.po");
+
+	insertPoDir(&collector, "/home/sasha/messages/kdepim");
+	insertPoDir(&collector, "/home/sasha/stable-messages/kdepim");
+
+//	collector.insertPo("/home/sasha/messages/kdebase/katesnippets_tng.po");
+//	collector.insertPo("/home/sasha/stable-messages/kdesdk/katesnippets_tng.po");
 
 	int num_shared = collector.numSharedIds();
 	int num_total = collector.numIds();
