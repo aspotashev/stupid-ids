@@ -146,6 +146,8 @@ int main(int argc, char *argv[])
 	}
 
 	// free memory
+	po_message_iterator_free(iterator_a);
+	po_message_iterator_free(iterator_b);
 	po_file_free(file_a);
 	po_file_free(file_b);
 
