@@ -1,4 +1,4 @@
-*.kdev4
-*.sqlite3
 b/
-transition-detector/idmap.mmapdb
+/transition-detector/idmap.mmapdb
+/stupid-id-filler/database/filler-db.sqlite3
+/stupid-ids.kdev4
