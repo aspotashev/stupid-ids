@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <gettextpo-helper/detectorbase.h>
+
 #include "tcpcommandserver.h"
 
 class Server : public TcpCommandServer
@@ -11,6 +13,8 @@ public:
 
 private:
 	static const char *getCommandArg(const char *input, const char *command);
+
+	void handleGetMinIds(const char *tp_hash_str);
 };
 
 const char *Server::getCommandArg(const char *input, const char *command)
@@ -20,6 +24,13 @@ const char *Server::getCommandArg(const char *input, const char *command)
 		return input + cmd_len + 1;
 	else
 		return NULL;
+}
+
+void Server::handleGetMinIds(const char *tp_hash_str)
+{
+	// "tp_hash" is not the same as "oid", but we can still use
+	// the class GitOid for tp_hashes.
+	GitOid tp_hash(tp_hash_str);
 }
 
 void Server::commandHandler(const char *command)
@@ -32,7 +43,7 @@ void Server::commandHandler(const char *command)
 	}
 	else if (arg = getCommandArg(command, "get_min_id_array"))
 	{
-		printf("tp_hash = %s\n", arg);
+		handleGetMinIds(arg);
 	}
 	else
 	{
