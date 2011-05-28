@@ -40,8 +40,8 @@ private:
 
 	enum
 	{
-		TYPE_FILE,
-		TYPE_GIT
+		TYPE_FILE = 1,
+		TYPE_GIT = 2
 	};
 };
 

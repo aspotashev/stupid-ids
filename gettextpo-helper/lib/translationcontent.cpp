@@ -1,4 +1,6 @@
 
+#include <stdio.h>
+
 #include <gettextpo-helper/gettextpo-helper.h>
 #include <gettextpo-helper/translationcontent.h>
 
@@ -34,6 +36,7 @@ po_file_t TranslationContent::poFileRead()
 	case TYPE_GIT:
 		return poreadGit();
 	default:
+		printf("m_type = %d\n", m_type);
 		assert(0);
 		return NULL;
 	}
