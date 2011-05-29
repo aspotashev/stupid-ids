@@ -5,6 +5,7 @@
 #include <map>
 
 #include <gettextpo-helper/detectorbase.h>
+#include <gettextpo-helper/mappedfile.h>
 
 #include "tcpcommandserver.h"
 
@@ -91,6 +92,7 @@ private:
 
 
 	FiledbFirstIds *m_firstIds;
+	MappedFileIdMapDb *m_idMapDb;
 };
 
 Server::Server()
@@ -98,11 +100,13 @@ Server::Server()
 	m_firstIds = new FiledbFirstIds(
 		"../../stupid-id-filler/ids/first_ids.txt",
 		"../../stupid-id-filler/ids/next_id.txt");
+	m_idMapDb = new MappedFileIdMapDb("../../transition-detector/idmap.mmapdb");
 }
 
 Server::~Server()
 {
 	delete m_firstIds;
+	delete m_idMapDb;
 }
 
 const char *Server::getCommandArg(const char *input, const char *command)
@@ -128,7 +132,10 @@ void Server::handleGetMinIds(const char *tp_hash_str)
 	uint32_t *output = new uint32_t[id_count + 1];
 	output[0] = htonl((uint32_t)id_count);
 	for (int i = 0; i < id_count; i ++)
-		output[i + 1] = htonl((uint32_t)(first_id + i));
+	{
+		int min_id = m_idMapDb->getRecursiveMinId(first_id + i);
+		output[i + 1] = htonl((uint32_t)min_id);
+	}
 
 	sendToClient(output, sizeof(uint32_t) * (id_count + 1));
 
