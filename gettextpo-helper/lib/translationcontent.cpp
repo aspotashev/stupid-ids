@@ -12,12 +12,6 @@ TranslationContent::TranslationContent(const char *filename)
 	m_filename = xstrdup(filename);
 }
 
-TranslationContent::~TranslationContent()
-{
-	if (m_filename)
-		delete [] m_filename;
-}
-
 TranslationContent::TranslationContent(GitLoader *git_loader, const char *oid_str)
 {
 	m_type = TYPE_GIT;
@@ -25,6 +19,12 @@ TranslationContent::TranslationContent(GitLoader *git_loader, const char *oid_st
 
 	m_gitLoader = git_loader;
 	assert(git_oid_mkstr(&m_oid, oid_str) == GIT_SUCCESS);
+}
+
+TranslationContent::~TranslationContent()
+{
+	if (m_filename)
+		delete [] m_filename;
 }
 
 po_file_t TranslationContent::poFileRead()
