@@ -1,6 +1,6 @@
-== dump-template ==
+== calculate-tp-hash ==
 This program returns the tp_hash of the given .po.
 (tp_hash is a much better .pot identifier than {pot_path, pot_creation_date}!)
 
 == TESTING ==
-./dump-template ~/messages/kdepimlibs/libkcalutils.po
+./calculate-tp-hash ~/messages/kdepimlibs/libkcalutils.po
