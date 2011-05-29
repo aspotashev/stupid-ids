@@ -15,6 +15,7 @@
 #include "../lib/qtranslationcollector.h"
 
 
+// TODO: fix memory leaks
 int main(int argc, char *argv[])
 {
 	TranslationCollector collector;
