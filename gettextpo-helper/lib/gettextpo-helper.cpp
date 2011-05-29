@@ -489,7 +489,7 @@ void Message::setNPluralsPacked(int n_plurals)
 
 Message::Message(po_message_t message, int index, const char *filename):
 	m_index(index),
-	m_filename(filename)
+	m_filename(xstrdup(filename))
 {
 	clear();
 	setNPluralsPacked(po_message_n_plurals(message));
@@ -536,7 +536,8 @@ void Message::setMsgstr(int index, const char *str)
 }
 
 // TODO: make sure that all instance (m_*) variables are initialized
-Message::Message(bool fuzzy, const char *msgcomment, const char *msgstr0, int n_plurals)
+Message::Message(bool fuzzy, const char *msgcomment, const char *msgstr0, int n_plurals):
+	m_index(-1), m_filename(NULL)
 {
 	m_obsolete = false;
 
@@ -560,7 +561,8 @@ void Message::clear()
 }
 
 // TODO: make sure that all instance (m_*) variables are initialized
-Message::Message(bool fuzzy, int n_plurals, const char *msgcomment)
+Message::Message(bool fuzzy, int n_plurals, const char *msgcomment):
+	m_index(-1), m_filename(NULL)
 {
 	clear();
 
@@ -571,6 +573,9 @@ Message::Message(bool fuzzy, int n_plurals, const char *msgcomment)
 
 Message::~Message()
 {
+	if (m_filename)
+		delete [] m_filename;
+
 	// TODO: free memory
 }
 
