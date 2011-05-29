@@ -28,3 +28,6 @@ target_link_libraries (globalize gettextpo_helper)
 
 set_target_properties (globalize PROPERTIES COMPILE_FLAGS "-ggdb")
 
+
+add_subdirectory(conflicting-translations)
+
