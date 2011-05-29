@@ -1,3 +1,5 @@
+.*
+!.gitignore
 b/
 /transition-detector/idmap.mmapdb
 /stupid-id-filler/database/filler-db.sqlite3
