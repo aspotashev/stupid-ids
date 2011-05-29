@@ -15,8 +15,14 @@
 #include <QDirIterator>
 
 
+class TranslationCollector : public StupIdTranslationCollector
+{
+public:
+	void insertPo(QString path);
+	void insertPoDir(QString directory_path);
+};
 
-void insertPo(StupIdTranslationCollector *collector, QString path)
+void TranslationCollector::insertPo(QString path)
 {
 	QFile file(path);
 	assert(file.open(QIODevice::ReadOnly));
@@ -37,23 +43,25 @@ void insertPo(StupIdTranslationCollector *collector, QString path)
 	const char *fn = ba.data();
 	printf("%s\n", fn);
 
-	collector->insertPo(buffer, (size_t)len, fn);
+	StupIdTranslationCollector::insertPo(buffer, (size_t)len, fn);
 }
 
-void insertPoDir(StupIdTranslationCollector *collector, QString directory_path)
+void TranslationCollector::insertPoDir(QString directory_path)
 {
 	QDirIterator directory_walker(directory_path, QDir::Files | QDir::NoSymLinks, QDirIterator::Subdirectories);
 	while (directory_walker.hasNext())
 	{
 		directory_walker.next();
 		if (directory_walker.fileInfo().completeSuffix() == QString("po"))
-			insertPo(collector, directory_walker.filePath());
+			insertPo(directory_walker.filePath());
 	}
 }
 
+//-----------------------------------------
+
 int main(int argc, char *argv[])
 {
-	StupIdTranslationCollector collector;
+	TranslationCollector collector;
 //	collector.insertPo("a1.po");
 //	collector.insertPo("a2.po");
 
@@ -63,8 +71,8 @@ int main(int argc, char *argv[])
 //	collector.insertPo("/home/sasha/messages/calligra/words.po");
 //	collector.insertPo("/home/sasha/messages/koffice/kword.po");
 
-	insertPoDir(&collector, "/home/sasha/messages/kdepim");
-	insertPoDir(&collector, "/home/sasha/stable-messages/kdepim");
+	collector.insertPoDir(QString("/home/sasha/kde-ru/kde-ru-trunk.git"));
+	collector.insertPoDir(QString("/home/sasha/kde-ru/kde-l10n-ru-stable"));
 
 //	collector.insertPo("/home/sasha/messages/kdebase/katesnippets_tng.po");
 //	collector.insertPo("/home/sasha/stable-messages/kdesdk/katesnippets_tng.po");
