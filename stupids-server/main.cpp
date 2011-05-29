@@ -89,6 +89,7 @@ private:
 	static const char *getCommandArg(const char *input, const char *command);
 
 	void handleGetMinIds(const char *tp_hash_str);
+	void handleGetFirstId(const char *tp_hash_str);
 
 
 	FiledbFirstIds *m_firstIds;
@@ -98,9 +99,9 @@ private:
 Server::Server()
 {
 	m_firstIds = new FiledbFirstIds(
-		"../../stupid-id-filler/ids/first_ids.txt",
-		"../../stupid-id-filler/ids/next_id.txt");
-	m_idMapDb = new MappedFileIdMapDb("../../transition-detector/idmap.mmapdb");
+		"../stupid-id-filler/ids/first_ids.txt",
+		"../stupid-id-filler/ids/next_id.txt");
+	m_idMapDb = new MappedFileIdMapDb("../transition-detector/idmap.mmapdb");
 }
 
 Server::~Server()
@@ -142,6 +143,21 @@ void Server::handleGetMinIds(const char *tp_hash_str)
 	delete [] output;
 }
 
+void Server::handleGetFirstId(const char *tp_hash_str)
+{
+	// "tp_hash" is not the same as "oid", but we can still use
+	// the class GitOid for tp_hashes.
+	GitOid tp_hash(tp_hash_str);
+
+	std::pair<int, int> first_ids = m_firstIds->getFirstId(tp_hash);
+	int first_id = first_ids.first;
+	assert(first_id != 0);
+
+	uint32_t output = htonl((uint32_t)first_id);
+	sendToClient(&output, sizeof(uint32_t));
+}
+
+// TODO: use input in binary format
 void Server::commandHandler(const char *command)
 {
 	const char *arg;
@@ -153,6 +169,10 @@ void Server::commandHandler(const char *command)
 	else if (arg = getCommandArg(command, "get_min_id_array"))
 	{
 		handleGetMinIds(arg);
+	}
+	else if (arg = getCommandArg(command, "get_first_id"))
+	{
+		handleGetFirstId(arg);
 	}
 	else
 	{

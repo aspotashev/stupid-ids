@@ -15,11 +15,13 @@ public:
 	~StupidsClient();
 
 	std::vector<int> getMinIds(const char *tp_hash);
+	int getFirstId(const char *tp_hash);
 
 protected:
 	void sockReadBlock(void *buffer, int length);
 	void connect();
 	void disconnect();
+	void sendString(const char *str);
 
 private:
 	int m_sockfd;

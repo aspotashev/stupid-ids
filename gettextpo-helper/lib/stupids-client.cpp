@@ -71,6 +71,12 @@ void StupidsClient::connect()
 	};
 }
 
+void StupidsClient::sendString(const char *str)
+{
+	size_t len = strlen(str);
+	assert(write(m_sockfd, str, len) == len);
+}
+
 void StupidsClient::disconnect()
 {
 	const char exit_cmd[] = "exit\n";
@@ -83,14 +89,12 @@ std::vector<int> StupidsClient::getMinIds(const char *tp_hash)
 {
 	connect();
 
-	// send command
-	const char get_min_ids_cmd[] = "get_min_id_array ";
-	const char newline[] = "\n";
 	assert(strlen(tp_hash) == 40); // sha-1 is 20 bytes long
 
-	assert(write(m_sockfd, get_min_ids_cmd, strlen(get_min_ids_cmd)) == strlen(get_min_ids_cmd));
-	assert(write(m_sockfd, tp_hash, 40) == 40);
-	assert(write(m_sockfd, newline, strlen(newline)) == strlen(newline));
+	// send command
+	sendString("get_min_id_array ");
+	sendString(tp_hash);
+	sendString("\n");
 
 	// read results
 	uint32_t id_count = -1;
@@ -116,6 +120,26 @@ std::vector<int> StupidsClient::getMinIds(const char *tp_hash)
 
 //	disconnect();
 
+	return res;
+}
+
+int StupidsClient::getFirstId(const char *tp_hash)
+{
+	connect();
+
+	assert(strlen(tp_hash) == 40); // sha-1 is 20 bytes long
+
+	// send command
+	sendString("get_first_id ");
+	sendString(tp_hash);
+	sendString("\n");
+
+	// read results
+	uint32_t first_id = 0;
+	sockReadBlock(&first_id, sizeof(uint32_t));
+	int res = (int)ntohl(first_id);
+
+	assert(res > 0);
 	return res;
 }
 

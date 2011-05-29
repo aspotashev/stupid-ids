@@ -8,7 +8,8 @@
 #include <vector>
 #include <map>
 
-#include <gettextpo-helper.h>
+#include <gettextpo-helper/gettextpo-helper.h>
+#include <gettextpo-helper/stupids-client.h>
 
 // escape quotes (" -> \") and put in quotes
 std::string iddiff_format_string(const char *str)
@@ -65,14 +66,19 @@ void print_message_list(std::vector<std::pair<int, std::string> > list)
 
 int main(int argc, char *argv[])
 {
-	assert(argc == 4); // 3 arguments
+	assert(argc == 3); // 2 arguments
 
 	const char *filename_a = argv[1];
 	const char *filename_b = argv[2];
-	int first_id = atoi(argv[3]); // it is the same for 2 files
 
 	// .po files should be derived from the same .pot
-	assert(calculate_tp_hash(filename_a) == calculate_tp_hash(filename_b));
+	std::string tp_hash = calculate_tp_hash(filename_a);
+	assert(tp_hash == calculate_tp_hash(filename_b));
+
+	// first_id is the same for 2 files
+	StupidsClient *client = new StupidsClient();
+	int first_id = client->getFirstId(tp_hash.c_str());
+	delete client;
 
 
 	// compare pairs of messages in 2 .po files
