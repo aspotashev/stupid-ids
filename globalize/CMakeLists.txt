@@ -8,6 +8,7 @@ include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
 
 set(globalize_SRCS
 	messageeditorwidget.cpp
+	messagetranslationoption.cpp
 	mainwindow.cpp
 	main.cpp
 	../lib/qtranslationcollector.cpp
@@ -20,6 +21,7 @@ qt4_wrap_ui(globalize_UIS_H
 qt4_wrap_cpp(globalize_MOCS
 	mainwindow.h
 	messageeditorwidget.h
+	messagetranslationoption.h
 )
 
 add_executable(globalize ${globalize_SRCS} ${globalize_UIS_H} ${globalize_MOCS})

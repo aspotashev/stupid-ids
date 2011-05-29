@@ -1,6 +1,22 @@
 #include "messageeditorwidget.h"
+#include "messagetranslationoption.h"
 
-MessageEditorWidget::MessageEditorWidget(QWidget *parent) :
+MessageEditorWidget::MessageEditorWidget(QWidget *parent):
     QWidget(parent)
 {
+    setMinimumHeight(30);
+
+    m_layout = new QHBoxLayout(this);
+    m_layout->setMargin(0);
+
+    addTranslationOption(NULL);
+    addTranslationOption(NULL);
+    addTranslationOption(NULL);
+}
+
+void MessageEditorWidget::addTranslationOption(Message *message)
+{
+    MessageTranslationOption *trans = new MessageTranslationOption(this, message);
+    m_trans.push_back(trans);
+    m_layout->addWidget(trans);
 }
