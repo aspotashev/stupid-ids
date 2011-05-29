@@ -36,7 +36,7 @@ void TcpCommandServer::sessionOpened()
 
 		int read_bytes = recvfrom(m_connfd, buffer + buffer_len, BUFFER_SZ - buffer_len,
 			0, (struct sockaddr *)&m_cliaddr, &m_clilen);
-		if (read_bytes < 0)
+		if (read_bytes <= 0)
 		{
 			printf("Client (probably) disconnected unexpectedly.\n");
 			break;
