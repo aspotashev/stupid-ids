@@ -12,7 +12,7 @@
 #include <QString>
 #include <QDirIterator>
 
-#include "qtranslationcollector.h"
+#include "../lib/qtranslationcollector.h"
 
 
 int main(int argc, char *argv[])
