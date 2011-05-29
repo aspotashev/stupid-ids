@@ -9,6 +9,7 @@ include_directories (${QT_QTGUI_INCLUDE_DIR} ${QT_QTCORE_INCLUDE_DIR})
 
 set(ct_SRCS
 	main.cpp
+	qtranslationcollector.cpp
 )
 
 add_executable (conflicting-translations ${ct_SRCS})
