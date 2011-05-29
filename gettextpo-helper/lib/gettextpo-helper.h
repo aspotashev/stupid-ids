@@ -36,9 +36,6 @@ std::string dump_format_types(po_message_t message);
 // include_non_id: include 'extracted comments', 'filepos entries', 'format types', 'range'
 std::string wrap_template_message(po_message_t message, bool include_non_id);
 
-// Pass filename = "-" to read .po file from stdin.
-std::string dump_po_file_template(const char *filename);
-
 std::string calculate_tp_hash(const char *filename);
 
 // Returns the number of messages in .pot (excluding the header)

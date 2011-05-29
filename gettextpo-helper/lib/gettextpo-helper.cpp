@@ -285,11 +285,6 @@ std::string wrap_template_message(po_message_t message, bool include_non_id)
 	return res;
 }
 
-// Pass filename = "-" to read .po file from stdin.
-//std::string dump_po_file_template(const char *filename)
-//{
-//}
-
 std::string calculate_tp_hash(const char *filename)
 {
 	TranslationContent *content = new TranslationContent(filename);
