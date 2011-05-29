@@ -2,6 +2,7 @@
 #include <gettextpo-helper/translation-collector.h>
 #include <gettextpo-helper/gettextpo-helper.h>
 #include <gettextpo-helper/stupids-client.h>
+#include <gettextpo-helper/translationcontent.h>
 
 StupIdTranslationCollector::StupIdTranslationCollector()
 {
@@ -21,6 +22,34 @@ void StupIdTranslationCollector::insertPo(const char *filename)
 
 	//--------------------- insert messages --------------------
 	std::vector<Message *> messages = read_po_file_messages(filename, false);
+
+//	printf("id_count = %d\n", (int)min_ids.size());
+	assert(messages.size() == min_ids.size());
+
+	int index; // outside of the loop in order to calculate message count
+	for (int index = 0; index < (int)messages.size(); index ++)
+	{
+		if (m_trans.find(min_ids[index]) == m_trans.end())
+		{
+			std::pair<int, std::vector<Message *> > new_pair;
+			new_pair.first = min_ids[index];
+			new_pair.second = std::vector<Message *>();
+
+			m_trans.insert(new_pair);
+		}
+
+		// fuzzy and untranslated messages will be also added
+		m_trans[min_ids[index]].push_back(messages[index]);
+	}
+}
+
+void StupIdTranslationCollector::insertPo(TranslationContent *content, const char *filename)
+{
+	std::string tp_hash = content->calculateTpHash();
+	std::vector<int> min_ids = m_client->getMinIds(tp_hash.c_str());
+
+	//--------------------- insert messages --------------------
+	std::vector<Message *> messages = content->readMessages(filename, false);
 
 //	printf("id_count = %d\n", (int)min_ids.size());
 	assert(messages.size() == min_ids.size());

@@ -28,9 +28,15 @@ public:
 	// Caller should run 'po_file_free'
 	po_file_t poFileRead();
 
+	std::string calculateTpHash();
+	std::vector<Message *> readMessages(const char *filename, bool loadObsolete);
+
 protected:
 	po_file_t poreadFile();
 	po_file_t poreadGit();
+
+	// for calculateTpHash
+	std::string dumpPoFileTemplate();
 
 private:
 	char *m_filename;

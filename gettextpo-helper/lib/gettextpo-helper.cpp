@@ -286,46 +286,17 @@ std::string wrap_template_message(po_message_t message, bool include_non_id)
 }
 
 // Pass filename = "-" to read .po file from stdin.
-std::string dump_po_file_template(const char *filename)
-{
-	std::string res;
-
-	po_file_t file = po_file_read(filename); // all checks and error reporting are done in po_file_read
-
-
-	// main cycle
-	po_message_iterator_t iterator = po_message_iterator(file, "messages");
-	po_message_t message; // in fact, this is a pointer
-
-	// processing header (header is the first message)
-	message = po_next_message(iterator);
-	res += wrap_template_header(message);
-
-	// ordinary .po messages (not header)
-	//
-	// Assuming that PO editors do not change the order of messages.
-	// Sorting messages in alphabetical order would be wrong, because for every template,
-	// we store only the ID of the first message. The IDs of other messages should be deterministic.
-	while (message = po_next_message(iterator))
-	{
-		std::string msg_dump = wrap_template_message(message, true);
-		if (msg_dump.length() > 0) // non-obsolete
-		{
-			res += "/";
-			res += msg_dump;
-		}
-	}
-
-	// free memory
-	po_message_iterator_free(iterator);
-	po_file_free(file);
-
-	return res;
-}
+//std::string dump_po_file_template(const char *filename)
+//{
+//}
 
 std::string calculate_tp_hash(const char *filename)
 {
-	return sha1_string(dump_po_file_template(filename));
+	TranslationContent *content = new TranslationContent(filename);
+	std::string res = content->calculateTpHash();
+	delete content;
+
+	return res;
 }
 
 // Returns the number of messages in .pot (excluding the header)
@@ -670,31 +641,9 @@ bool Message::equalTranslations(const Message *o) const
 
 std::vector<Message *> read_po_file_messages(const char *filename, bool loadObsolete)
 {
-	po_file_t file = po_file_read(filename);
-	po_message_iterator_t iterator = po_message_iterator(file, "messages");
-
-	// skipping header
-	po_message_t message = po_next_message(iterator);
-
-	std::vector<Message *> res;
-	int index = 0;
-	while (message = po_next_message(iterator))
-	{
-		// Checking that obsolete messages go after all normal messages
-		assert(index == (int)res.size());
-
-		if (loadObsolete || !po_message_is_obsolete(message))
-			res.push_back(new Message(
-				message,
-				po_message_is_obsolete(message) ? -1 : index,
-				filename));
-		if (!po_message_is_obsolete(message))
-			index ++;
-	}
-
-	// free memory
-	po_message_iterator_free(iterator);
-	po_file_free(file);
+	TranslationContent *content = new TranslationContent(filename);
+	std::vector<Message *> res = content->readMessages(filename, loadObsolete);
+	delete content;
 
 	return res;
 }

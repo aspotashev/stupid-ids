@@ -4,6 +4,7 @@
 
 class Message;
 class StupidsClient;
+class TranslationContent;
 
 class StupIdTranslationCollector
 {
@@ -12,6 +13,7 @@ public:
 	~StupIdTranslationCollector();
 
 	void insertPo(const char *filename);
+	void insertPo(TranslationContent *content, const char *filename);
 
 	// Cannot be 'const', because there is no const 'std::map::operator []'.
 	std::vector<int> listConflicting();
