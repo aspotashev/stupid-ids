@@ -17,7 +17,7 @@ public:
 	std::vector<int> getMinIds(const char *tp_hash);
 
 protected:
-	int sockReadOutput(char **buffer, int *res_bytes);
+	void sockReadBlock(void *buffer, int length);
 	void connect();
 	void disconnect();
 

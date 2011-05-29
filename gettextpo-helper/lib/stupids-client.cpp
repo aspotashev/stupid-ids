@@ -30,37 +30,17 @@ StupidsClient::~StupidsClient()
 {
 }
 
-int StupidsClient::sockReadOutput(char **buffer, int *res_bytes)
+void StupidsClient::sockReadBlock(void *buffer, int length)
 {
-	// Read the size of output in bytes
-	char res_bytes_str[10];
-	ssize_t res;
+	int bytes_read = 0;
 
-	res = read(m_sockfd, res_bytes_str, 10);
-	if (res != 10)
+	while (bytes_read < length)
 	{
-		printf("res = %d\n", (int)res);
-		assert(0);
-	}
-
-	*res_bytes = atoi(res_bytes_str);
-
-	*buffer = new char [*res_bytes + 1];
-
-	char *buffer_cur = *buffer;
-	int bytes_cur = *res_bytes;
-	while (bytes_cur > 0)
-	{
-		res = read(m_sockfd, buffer_cur, bytes_cur);
+		int res = read(m_sockfd, (char *)buffer + bytes_read, length - bytes_read);
 		assert(res > 0);
 
-		bytes_cur -= res;
-		buffer_cur += res;
+		bytes_read += res;
 	}
-
-	(*buffer)[*res_bytes] = '\0';
-
-	return 0; // OK
 }
 
 void StupidsClient::connect()
@@ -113,29 +93,26 @@ std::vector<int> StupidsClient::getMinIds(const char *tp_hash)
 	assert(write(m_sockfd, newline, strlen(newline)) == strlen(newline));
 
 	// read results
+	uint32_t id_count = -1;
+	sockReadBlock(&id_count, sizeof(uint32_t));
+	id_count = ntohl(id_count);
 
-	char *output = NULL;
-	int output_len = 0;
-	assert(sockReadOutput(&output, &output_len) == 0);
+	assert((int)id_count >= 0);
 
-	if (output_len >= 9 && !memcmp(output, "NOTFOUND\n", 9))
-	{
-		printf("tp_hash not found (%s)\n", tp_hash);
-		throw TpHashNotFoundException();
-	}
-
-	int id_count = atoi(output);
-	char *output_ptr = output;
+	uint32_t *first_ids = new uint32_t[(int)id_count];
+	sockReadBlock(first_ids, sizeof(uint32_t) * id_count);
 
 	std::vector<int> res; // TODO: reserve memory for 'id_count' elements
-	for (int i = 0; i < id_count; i ++)
-	{
-		output_ptr = strchr(output_ptr, ' ');
-		assert(output_ptr);
-		output_ptr ++; // move from space to the number
+	for (int i = 0; i < (int)id_count; i ++)
+		res.push_back((int)ntohl(first_ids[i]));
 
-		res.push_back(atoi(output_ptr));
-	}
+
+//	if (output_len >= 9 && !memcmp(output, "NOTFOUND\n", 9))
+//	{
+//		printf("tp_hash not found (%s)\n", tp_hash);
+//		throw TpHashNotFoundException();
+//	}
+
 
 //	disconnect();
 
