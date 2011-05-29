@@ -128,7 +128,7 @@ void Server::handleGetMinIds(const char *tp_hash_str)
 	uint32_t *output = new uint32_t[id_count + 1];
 	output[0] = htonl((uint32_t)id_count);
 	for (int i = 0; i < id_count; i ++)
-		output[i + 1] = htonl((uint32_t)id_count);
+		output[i + 1] = htonl((uint32_t)(first_id + i));
 
 	sendToClient(output, sizeof(uint32_t) * (id_count + 1));
 
