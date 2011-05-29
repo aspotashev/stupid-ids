@@ -61,6 +61,12 @@ void TcpCommandServer::sessionOpened()
 	}
 }
 
+// TODO: This needs a complete rewrite.
+// I will never copy-paste educational source code again.
+// I will never copy-paste educational source code again.
+// I will never copy-paste educational source code again.
+// I will never copy-paste educational source code again.
+// I will never copy-paste educational source code again.
 void TcpCommandServer::start()
 {
 	int listenfd;
