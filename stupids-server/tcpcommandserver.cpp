@@ -6,6 +6,7 @@
 #include <errno.h>
 
 #include <unistd.h>
+#include <sys/wait.h>
 
 #include "tcpcommandserver.h"
 
@@ -66,6 +67,34 @@ void TcpCommandServer::sessionOpened()
 	}
 }
 
+// SIGCHLD signal handler
+void sigchild_handler (int signum)
+{
+	int status;
+	int pid;
+
+	while (1)
+	{
+		// Killing zombies
+		pid = waitpid (-1, &status, WNOHANG);
+		if (pid > 0)
+		{
+			printf ("A child process has terminated (PID = %d, status = %d)\n", pid, status);
+			assert(status == 0);
+		}
+		else if (pid == 0 || (pid < 0 && errno == ECHILD))
+		{
+//			printf ("Somebody is joking with SIGCHLD...\n");
+			break;
+		}
+		else
+		{
+			printf ("waitpid failed\n");
+			break;
+		}
+	}
+}
+
 // TODO: This needs a complete rewrite.
 // I will never copy-paste educational source code again.
 // I will never copy-paste educational source code again.
@@ -93,6 +122,8 @@ void TcpCommandServer::start()
 	}
 
 	assert(listen(listenfd, 1024) == 0);
+
+	assert(signal (SIGCHLD, sigchild_handler) != SIG_ERR);
 
 	printf("Server started.\n");
 
