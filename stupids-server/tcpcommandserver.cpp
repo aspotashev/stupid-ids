@@ -67,6 +67,8 @@ void TcpCommandServer::sessionOpened()
 // I will never copy-paste educational source code again.
 // I will never copy-paste educational source code again.
 // I will never copy-paste educational source code again.
+//
+// TODO: kill zombies
 void TcpCommandServer::start()
 {
 	int listenfd;
