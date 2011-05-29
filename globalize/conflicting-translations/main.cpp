@@ -34,8 +34,10 @@ int main(int argc, char *argv[])
 	std::vector<int> list = collector.listConflicting();
 	for (int i = 0; i < (int)list.size(); i ++)
 	{
-		printf("%d\n", list[i]);
 		MessageGroup *variants = collector.listVariants(list[i]);
+                printf("%d      msgid = [%s], msgid_plural = [%s], msgctxt = [%s]\n",
+                    list[i], variants->msgid(), variants->msgidPlural(),
+                    variants->msgctxt());
 
 		for (int i = 0; i < variants->size(); i ++)
 		{

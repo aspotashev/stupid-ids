@@ -121,12 +121,20 @@ public:
 	Message *message(int index);
 	void mergeMessageGroup(MessageGroup *other);
 
+	const char *msgid() const;
+	const char *msgidPlural() const;
+	const char *msgctxt() const;
+
 protected:
+	void clear();
 	void setMsgid(const char *str);
+	void setMsgidPlural(const char *str);
+	void setMsgctxt(const char *str);
 
 private:
-//	char *m_msgid;
-//	char *m_msgidPlural;
+	char *m_msgid;
+	char *m_msgidPlural;
+	char *m_msgctxt;
 
 	std::vector<Message *> m_messages;
 };

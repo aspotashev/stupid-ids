@@ -652,10 +652,18 @@ std::vector<MessageGroup *> read_po_file_messages(const char *filename, bool loa
 
 MessageGroup::MessageGroup()
 {
+	clear();
 }
 
 MessageGroup::MessageGroup(po_message_t message, int index, const char *filename)
 {
+	clear();
+	setMsgid(po_message_msgid(message));
+	if (po_message_msgid_plural(message))
+		setMsgidPlural(po_message_msgid_plural(message));
+	if (po_message_msgctxt(message))
+		setMsgctxt(po_message_msgctxt(message));
+
 	addMessage(new Message(message, index, filename));
 }
 
@@ -683,10 +691,66 @@ Message *MessageGroup::message(int index)
 
 void MessageGroup::mergeMessageGroup(MessageGroup *other)
 {
+	// Only message groups with the same
+	// {msgid, msgid_plural, msgctxt} can be merged.
+//	TODO:
 //	assert(!strcmp(msgid(), other->msgid()));
 //	...
 
 	for (int i = 0; i < other->size(); i ++)
 		addMessage(other->message(i));
+}
+
+void MessageGroup::clear()
+{
+	m_msgid = NULL;
+	m_msgidPlural = NULL;
+	m_msgctxt = NULL;
+}
+
+void MessageGroup::setMsgid(const char *str)
+{
+	assert(m_msgid == NULL);
+
+	m_msgid = xstrdup(str);
+}
+
+void MessageGroup::setMsgidPlural(const char *str)
+{
+	assert(m_msgidPlural == NULL);
+
+	m_msgidPlural = xstrdup(str);
+}
+
+void MessageGroup::setMsgctxt(const char *str)
+{
+	assert(m_msgctxt == NULL);
+
+	m_msgctxt = xstrdup(str);
+}
+
+const char *MessageGroup::msgid() const
+{
+	assert(m_msgid);
+
+	return m_msgid;
+}
+
+const char *MessageGroup::msgidPlural() const
+{
+	// Checking that m_msgid is initialized. This should mean
+	// that m_msgidPlural is also set (probably, set to NULL).
+	assert(m_msgid);
+
+	return m_msgidPlural;
+}
+
+const char *MessageGroup::msgctxt() const
+{
+	// Checking that m_msgid is initialized. This should mean
+	// that m_msgctxt is also set (probably, set to NULL).
+	assert(m_msgid);
+
+	return m_msgctxt;
 }
 
