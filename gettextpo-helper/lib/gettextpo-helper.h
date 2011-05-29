@@ -114,3 +114,17 @@ private:
 
 std::vector<Message *> read_po_file_messages(const char *filename, bool loadObsolete);
 
+class MessageGroup
+{
+public:
+	MessageGroup();
+	~MessageGroup();
+
+	void addMessage(Message *message);
+	int size() const;
+	Message *message(int index);
+
+private:
+	std::vector<Message *> m_messages;
+};
+

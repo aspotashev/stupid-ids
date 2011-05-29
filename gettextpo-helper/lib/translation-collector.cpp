@@ -6,7 +6,7 @@
 
 StupIdTranslationCollector::StupIdTranslationCollector()
 {
-	m_trans = std::map<int, std::vector<Message *> >();
+	m_trans = std::map<int, MessageGroup *>();
 	m_client = new StupidsClient();
 }
 
@@ -39,15 +39,15 @@ void StupIdTranslationCollector::insertPo(TranslationContent *content, const cha
 	{
 		if (m_trans.find(min_ids[index]) == m_trans.end())
 		{
-			std::pair<int, std::vector<Message *> > new_pair;
+			std::pair<int, MessageGroup *> new_pair;
 			new_pair.first = min_ids[index];
-			new_pair.second = std::vector<Message *>();
+			new_pair.second = new MessageGroup();
 
 			m_trans.insert(new_pair);
 		}
 
 		// fuzzy and untranslated messages will be also added
-		m_trans[min_ids[index]].push_back(messages[index]);
+		m_trans[min_ids[index]]->addMessage(messages[index]);
 	}
 }
 
@@ -64,11 +64,11 @@ void StupIdTranslationCollector::insertPo(const void *buffer, size_t len, const 
 // Cannot be 'const', because there is no const 'std::map::operator []'.
 bool StupIdTranslationCollector::conflictingTrans(int min_id)
 {
-	assert(m_trans[min_id].size() > 0);
+	assert(m_trans[min_id]->size() > 0);
 
-	Message *msg = m_trans[min_id][0];
-	for (size_t i = 1; i < m_trans[min_id].size(); i ++)
-		if (!msg->equalTranslations(m_trans[min_id][i]))
+	Message *msg = m_trans[min_id]->message(0);
+	for (int i = 1; i < m_trans[min_id]->size(); i ++)
+		if (!msg->equalTranslations(m_trans[min_id]->message(i)))
 			return true;
 
 	return false;
@@ -81,7 +81,7 @@ std::vector<int> StupIdTranslationCollector::listConflicting()
 {
 	std::vector<int> res;
 
-	for (std::map<int, std::vector<Message *> >::iterator iter = m_trans.begin();
+	for (std::map<int, MessageGroup *>::iterator iter = m_trans.begin();
 		iter != m_trans.end();
 		iter ++)
 	{
@@ -92,7 +92,7 @@ std::vector<int> StupIdTranslationCollector::listConflicting()
 	return res;
 }
 
-std::vector<Message *> StupIdTranslationCollector::listVariants(int min_id)
+MessageGroup *StupIdTranslationCollector::listVariants(int min_id)
 {
 	assert (m_trans.find(min_id) != m_trans.end());
 
@@ -102,11 +102,11 @@ std::vector<Message *> StupIdTranslationCollector::listVariants(int min_id)
 int StupIdTranslationCollector::numSharedIds() const
 {
 	int res = 0;
-	for (std::map<int, std::vector<Message *> >::const_iterator iter = m_trans.begin();
+	for (std::map<int, MessageGroup *>::const_iterator iter = m_trans.begin();
 		iter != m_trans.end();
 		iter ++)
 	{
-		if (iter->second.size() > 1)
+		if (iter->second->size() > 1)
 			res ++;
 	}
 

@@ -648,3 +648,29 @@ std::vector<Message *> read_po_file_messages(const char *filename, bool loadObso
 	return res;
 }
 
+//-------------------------------------------------------
+
+MessageGroup::MessageGroup()
+{
+}
+
+MessageGroup::~MessageGroup()
+{
+	// TODO: free memory. Who takes care of "Message" objects?
+}
+
+void MessageGroup::addMessage(Message *message)
+{
+	m_messages.push_back(message);
+}
+
+int MessageGroup::size() const
+{
+	return (int)m_messages.size();
+}
+
+Message *MessageGroup::message(int index)
+{
+	return m_messages[index];
+}
+
