@@ -11,9 +11,11 @@ class GitOid
 public:
 	GitOid();
 	GitOid(const git_oid *oid);
+	GitOid(const char *oid_str);
 	~GitOid();
 
 	void setOid(const git_oid *oid);
+	void setOidStr(const char *oid_str);
 
 	bool operator<(const GitOid &o) const;
 	bool operator==(const GitOid &o) const;

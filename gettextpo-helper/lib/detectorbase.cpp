@@ -15,6 +15,11 @@ GitOid::GitOid(const git_oid *oid)
 	setOid(oid);
 }
 
+GitOid::GitOid(const char *oid_str)
+{
+	setOidStr(oid_str);
+}
+
 GitOid::~GitOid()
 {
 }
@@ -22,6 +27,11 @@ GitOid::~GitOid()
 void GitOid::setOid(const git_oid *oid)
 {
 	git_oid_cpy(&m_oid, oid);
+}
+
+void GitOid::setOidStr(const char *oid_str)
+{
+	assert(git_oid_mkstr(&m_oid, oid_str) == GIT_SUCCESS);
 }
 
 bool GitOid::operator<(const GitOid &o) const
