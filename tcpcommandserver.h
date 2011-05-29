@@ -13,7 +13,7 @@ public:
 
 protected:
 	virtual void commandHandler(const char *command) = 0;
-	void sendToClient(const char *str, size_t len);
+	void sendToClient(const void *data, size_t len);
 	void disconnect();
 
 private:

@@ -18,9 +18,9 @@ TcpCommandServer::~TcpCommandServer()
 {
 }
 
-void TcpCommandServer::sendToClient(const char *str, size_t len)
+void TcpCommandServer::sendToClient(const void *data, size_t len)
 {
-	sendto(m_connfd, str, len,
+	sendto(m_connfd, data, len,
 		0, (struct sockaddr *)&m_cliaddr, sizeof(m_cliaddr));
 }
 
