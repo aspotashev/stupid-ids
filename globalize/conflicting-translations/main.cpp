@@ -35,15 +35,15 @@ int main(int argc, char *argv[])
 	for (int i = 0; i < (int)list.size(); i ++)
 	{
 		printf("%d\n", list[i]);
-		std::vector<Message *> variants = collector.listVariants(list[i]);
+		MessageGroup *variants = collector.listVariants(list[i]);
 
-		for (size_t i = 0; i < variants.size(); i ++)
+		for (int i = 0; i < variants->size(); i ++)
 		{
-			Message *msg = variants[i];
+			Message *msg = variants->message(i);
 			printf("Variant %d: (from %s, #%d)\n", (int)i + 1, msg->filename(), msg->index() + 1);
 			if (msg->isFuzzy())
 				printf("\tfuzzy\n");
-			printf("\tmsgctxt: %s\n", msg->msgcomments());
+			printf("\tmsgcomments: %s\n", msg->msgcomments());
 			printf("\tmsgstr: %s\n", msg->msgstr(0));
 		}
 
