@@ -1,8 +1,6 @@
 == dump-template ==
-This program writes the content of translation template
-(but not in the .pot format) the given .po file was created
-from. The template content can be used as identifier of .pot
-(much better than {pot_path, pot_creation_date}!)
+This program returns the tp_hash of the given .po.
+(tp_hash is a much better .pot identifier than {pot_path, pot_creation_date}!)
 
 == TESTING ==
 ./dump-template ~/messages/kdepimlibs/libkcalutils.po
