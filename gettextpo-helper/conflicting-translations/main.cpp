@@ -1,5 +1,4 @@
 
-// http://www.gnu.org/software/gettext/manual/gettext.html#libgettextpo
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
@@ -62,14 +61,6 @@ void TranslationCollector::insertPoDir(QString directory_path)
 int main(int argc, char *argv[])
 {
 	TranslationCollector collector;
-//	collector.insertPo("a1.po");
-//	collector.insertPo("a2.po");
-
-//	collector.insertPo("/home/sasha/messages/kdebase/dolphin.po");
-//	collector.insertPo("/home/sasha/stable-messages/kdebase/dolphin.po");
-
-//	collector.insertPo("/home/sasha/messages/calligra/words.po");
-//	collector.insertPo("/home/sasha/messages/koffice/kword.po");
 
 	collector.insertPoDir(QString("/home/sasha/kde-ru/kde-ru-trunk.git"));
 	collector.insertPoDir(QString("/home/sasha/kde-ru/kde-l10n-ru-stable"));
