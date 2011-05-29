@@ -51,6 +51,14 @@ void StupIdTranslationCollector::insertPo(TranslationContent *content, const cha
 	}
 }
 
+// Takes ownership of the buffer.
+void StupIdTranslationCollector::insertPo(const void *buffer, size_t len, const char *filename)
+{
+	TranslationContent *content = new TranslationContent(buffer, len);
+	insertPo(content, filename);
+	delete content; // this also "delete[]"s the buffer
+}
+
 // Returns 'true' if there are different translations of the message.
 //
 // Cannot be 'const', because there is no const 'std::map::operator []'.

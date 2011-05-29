@@ -15,21 +15,39 @@
 #include <QDirIterator>
 
 
-void insertPoDir(StupIdTranslationCollector *collector, const char *path)
+
+void insertPo(StupIdTranslationCollector *collector, QString path)
 {
-	QString directory_path(path);
+	QFile file(path);
+	assert(file.open(QIODevice::ReadOnly));
+
+	int len = (int)file.size();
+	assert(file.size() == (qint64)len); // file should be small enough
+
+	char *buffer = new char[len];
+	assert(buffer);
+
+	QDataStream ds(&file);
+	assert(ds.readRawData(buffer, len) == len);
+	file.close();
+
+
+	// only for naming
+	QByteArray ba = path.toUtf8();
+	const char *fn = ba.data();
+	printf("%s\n", fn);
+
+	collector->insertPo(buffer, (size_t)len, fn);
+}
+
+void insertPoDir(StupIdTranslationCollector *collector, QString directory_path)
+{
 	QDirIterator directory_walker(directory_path, QDir::Files | QDir::NoSymLinks, QDirIterator::Subdirectories);
 	while (directory_walker.hasNext())
 	{
 		directory_walker.next();
 		if (directory_walker.fileInfo().completeSuffix() == QString("po"))
-		{
-			QByteArray ba = directory_walker.filePath().toUtf8();
-			const char *fn = ba.data();
-			printf("%s\n", fn);
-
-			collector->insertPo(fn);
-		}
+			insertPo(collector, directory_walker.filePath());
 	}
 }
 

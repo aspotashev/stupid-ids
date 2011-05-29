@@ -23,6 +23,7 @@ class TranslationContent
 public:
 	TranslationContent(const char *filename);
 	TranslationContent(GitLoader *git_loader, const char *oid_str);
+	TranslationContent(const void *buffer, size_t len);
 	~TranslationContent();
 
 	// Caller should run 'po_file_free'
@@ -34,20 +35,27 @@ public:
 protected:
 	po_file_t poreadFile();
 	po_file_t poreadGit();
+	po_file_t poreadBuffer();
 
 	// for calculateTpHash
 	std::string dumpPoFileTemplate();
 
 private:
 	char *m_filename;
+
 	GitLoader *m_gitLoader;
 	git_oid m_oid;
+
+	const void *m_buffer;
+	size_t m_bufferLen;
+
 	int m_type;
 
 	enum
 	{
 		TYPE_FILE = 1,
-		TYPE_GIT = 2
+		TYPE_GIT = 2,
+		TYPE_BUFFER = 3
 	};
 };
 

@@ -8,6 +8,7 @@ TranslationContent::TranslationContent(const char *filename)
 {
 	m_type = TYPE_FILE;
 	m_gitLoader = NULL;
+	m_buffer = NULL;
 
 	m_filename = xstrdup(filename);
 }
@@ -16,15 +17,28 @@ TranslationContent::TranslationContent(GitLoader *git_loader, const char *oid_st
 {
 	m_type = TYPE_GIT;
 	m_filename = NULL;
+	m_buffer = NULL;
 
 	m_gitLoader = git_loader;
 	assert(git_oid_mkstr(&m_oid, oid_str) == GIT_SUCCESS);
+}
+
+TranslationContent::TranslationContent(const void *buffer, size_t len)
+{
+	m_type = TYPE_BUFFER;
+	m_filename = NULL;
+	m_gitLoader = NULL;
+
+	m_buffer = buffer; // take ownership of the buffer
+	m_bufferLen = len;
 }
 
 TranslationContent::~TranslationContent()
 {
 	if (m_filename)
 		delete [] m_filename;
+	if (m_buffer)
+		delete [] (char *)m_buffer;
 }
 
 po_file_t TranslationContent::poFileRead()
@@ -35,6 +49,8 @@ po_file_t TranslationContent::poFileRead()
 		return poreadFile();
 	case TYPE_GIT:
 		return poreadGit();
+	case TYPE_BUFFER:
+		return poreadBuffer();
 	default:
 		printf("m_type = %d\n", m_type);
 		assert(0);
@@ -64,6 +80,13 @@ po_file_t TranslationContent::poreadGit()
 	git_blob_close(blob);
 
 	return file;
+}
+
+po_file_t TranslationContent::poreadBuffer()
+{
+	assert(m_buffer);
+
+	return po_buffer_read((const char *)m_buffer, m_bufferLen);
 }
 
 std::string TranslationContent::calculateTpHash()
