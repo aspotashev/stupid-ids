@@ -30,7 +30,7 @@ public:
 	po_file_t poFileRead();
 
 	std::string calculateTpHash();
-	std::vector<Message *> readMessages(const char *filename, bool loadObsolete);
+	std::vector<MessageGroup *> readMessages(const char *filename, bool loadObsolete);
 
 protected:
 	po_file_t poreadFile();

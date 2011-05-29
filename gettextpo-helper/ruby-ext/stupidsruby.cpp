@@ -326,11 +326,11 @@ VALUE cMessage_msgcomments(VALUE self)
 // TODO: provide options[:load_obsolete] option
 VALUE wrap_read_po_file_messages(VALUE self, VALUE filename)
 {
-	std::vector<Message *> messages = read_po_file_messages(StringValuePtr(filename), false);
+	std::vector<MessageGroup *> messages = read_po_file_messages(StringValuePtr(filename), false);
 
 	VALUE res = rb_ary_new();
 	for (size_t i = 0; i < messages.size(); i ++)
-		rb_ary_push(res, cMessage_wrap(messages[i]));
+		rb_ary_push(res, cMessage_wrap(messages[i]->message(0)));
 
 	return res;
 }

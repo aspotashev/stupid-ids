@@ -639,10 +639,10 @@ bool Message::equalTranslations(const Message *o) const
 	return m_fuzzy == o->isFuzzy() && !strcmp(m_msgcomments, o->msgcomments());
 }
 
-std::vector<Message *> read_po_file_messages(const char *filename, bool loadObsolete)
+std::vector<MessageGroup *> read_po_file_messages(const char *filename, bool loadObsolete)
 {
 	TranslationContent *content = new TranslationContent(filename);
-	std::vector<Message *> res = content->readMessages(filename, loadObsolete);
+	std::vector<MessageGroup *> res = content->readMessages(filename, loadObsolete);
 	delete content;
 
 	return res;
@@ -652,6 +652,11 @@ std::vector<Message *> read_po_file_messages(const char *filename, bool loadObso
 
 MessageGroup::MessageGroup()
 {
+}
+
+MessageGroup::MessageGroup(po_message_t message, int index, const char *filename)
+{
+	addMessage(new Message(message, index, filename));
 }
 
 MessageGroup::~MessageGroup()
@@ -671,6 +676,17 @@ int MessageGroup::size() const
 
 Message *MessageGroup::message(int index)
 {
+	assert(index >= 0 && index < size());
+
 	return m_messages[index];
+}
+
+void MessageGroup::mergeMessageGroup(MessageGroup *other)
+{
+//	assert(!strcmp(msgid(), other->msgid()));
+//	...
+
+	for (int i = 0; i < other->size(); i ++)
+		addMessage(other->message(i));
 }
 

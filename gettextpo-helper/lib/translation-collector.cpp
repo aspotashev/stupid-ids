@@ -29,7 +29,7 @@ void StupIdTranslationCollector::insertPo(TranslationContent *content, const cha
 	std::vector<int> min_ids = m_client->getMinIds(tp_hash.c_str());
 
 	//--------------------- insert messages --------------------
-	std::vector<Message *> messages = content->readMessages(filename, false);
+	std::vector<MessageGroup *> messages = content->readMessages(filename, false);
 
 //	printf("id_count = %d\n", (int)min_ids.size());
 	assert(messages.size() == min_ids.size());
@@ -37,17 +37,19 @@ void StupIdTranslationCollector::insertPo(TranslationContent *content, const cha
 	int index; // outside of the loop in order to calculate message count
 	for (int index = 0; index < (int)messages.size(); index ++)
 	{
+		// fuzzy and untranslated messages will be also added
 		if (m_trans.find(min_ids[index]) == m_trans.end())
 		{
 			std::pair<int, MessageGroup *> new_pair;
 			new_pair.first = min_ids[index];
-			new_pair.second = new MessageGroup();
+			new_pair.second = messages[index];
 
 			m_trans.insert(new_pair);
 		}
-
-		// fuzzy and untranslated messages will be also added
-		m_trans[min_ids[index]]->addMessage(messages[index]);
+		else
+		{
+			m_trans[min_ids[index]]->mergeMessageGroup(messages[index]);
+		}
 	}
 }
 

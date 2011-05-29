@@ -95,9 +95,6 @@ protected:
 	void setNPluralsPacked(int n_plurals);
 
 private:
-//	char *m_msgid;
-//	char *m_msgidPlural;
-
 	const static int MAX_PLURAL_FORMS = 4; // increase this if you need more plural forms
 
 	bool m_plural; // =true if message uses plural forms
@@ -112,19 +109,27 @@ private:
 	const char *m_filename;
 };
 
-std::vector<Message *> read_po_file_messages(const char *filename, bool loadObsolete);
-
 class MessageGroup
 {
 public:
 	MessageGroup();
+	MessageGroup(po_message_t message, int index, const char *filename);
 	~MessageGroup();
 
 	void addMessage(Message *message);
 	int size() const;
 	Message *message(int index);
+	void mergeMessageGroup(MessageGroup *other);
+
+protected:
+	void setMsgid(const char *str);
 
 private:
+//	char *m_msgid;
+//	char *m_msgidPlural;
+
 	std::vector<Message *> m_messages;
 };
+
+std::vector<MessageGroup *> read_po_file_messages(const char *filename, bool loadObsolete);
 

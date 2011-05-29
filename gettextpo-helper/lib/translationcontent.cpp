@@ -131,7 +131,7 @@ std::string TranslationContent::dumpPoFileTemplate()
 	return res;
 }
 
-std::vector<Message *> TranslationContent::readMessages(const char *filename, bool loadObsolete)
+std::vector<MessageGroup *> TranslationContent::readMessages(const char *filename, bool loadObsolete)
 {
 	po_file_t file = poFileRead();
 	po_message_iterator_t iterator = po_message_iterator(file, "messages");
@@ -139,7 +139,7 @@ std::vector<Message *> TranslationContent::readMessages(const char *filename, bo
 	// skipping header
 	po_message_t message = po_next_message(iterator);
 
-	std::vector<Message *> res;
+	std::vector<MessageGroup *> res;
 	int index = 0;
 	while (message = po_next_message(iterator))
 	{
@@ -147,7 +147,7 @@ std::vector<Message *> TranslationContent::readMessages(const char *filename, bo
 		assert(index == (int)res.size());
 
 		if (loadObsolete || !po_message_is_obsolete(message))
-			res.push_back(new Message(
+			res.push_back(new MessageGroup(
 				message,
 				po_message_is_obsolete(message) ? -1 : index,
 				filename));
