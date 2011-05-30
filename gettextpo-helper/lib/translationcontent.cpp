@@ -91,6 +91,9 @@ po_file_t TranslationContent::poreadBuffer()
 
 std::string TranslationContent::calculateTpHash()
 {
+	// TODO: cache calculated tp_hashes (it takes some time to
+	// calculate a tp_hash). A singleton class can be used for that.
+
 	return sha1_string(dumpPoFileTemplate());
 }
 
