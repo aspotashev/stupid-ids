@@ -20,6 +20,8 @@ public:
 	bool operator<(const GitOid &o) const;
 	bool operator==(const GitOid &o) const;
 
+	const git_oid *oid() const;
+
 private:
 	git_oid m_oid;
 };

@@ -3,12 +3,14 @@
 
 #include <gettextpo-helper/gettextpo-helper.h>
 #include <gettextpo-helper/translationcontent.h>
+#include <gettextpo-helper/tphashcache.h>
 
 TranslationContent::TranslationContent(const char *filename)
 {
 	m_type = TYPE_FILE;
 	m_gitLoader = NULL;
 	m_buffer = NULL;
+	m_tphash = NULL;
 
 	m_filename = xstrdup(filename);
 }
@@ -18,6 +20,7 @@ TranslationContent::TranslationContent(GitLoader *git_loader, const char *oid_st
 	m_type = TYPE_GIT;
 	m_filename = NULL;
 	m_buffer = NULL;
+	m_tphash = NULL;
 
 	m_gitLoader = git_loader;
 	assert(git_oid_mkstr(&m_oid, oid_str) == GIT_SUCCESS);
@@ -28,6 +31,7 @@ TranslationContent::TranslationContent(const void *buffer, size_t len)
 	m_type = TYPE_BUFFER;
 	m_filename = NULL;
 	m_gitLoader = NULL;
+	m_tphash = NULL;
 
 	m_buffer = buffer; // take ownership of the buffer
 	m_bufferLen = len;
@@ -39,6 +43,8 @@ TranslationContent::~TranslationContent()
 		delete [] m_filename;
 	if (m_buffer)
 		delete [] (char *)m_buffer;
+	if (m_tphash)
+		delete m_tphash;
 }
 
 po_file_t TranslationContent::poFileRead()
@@ -89,12 +95,66 @@ po_file_t TranslationContent::poreadBuffer()
 	return po_buffer_read((const char *)m_buffer, m_bufferLen);
 }
 
-std::string TranslationContent::calculateTpHash()
+const git_oid *TranslationContent::gitBlobHash()
 {
-	// TODO: cache calculated tp_hashes (it takes some time to
-	// calculate a tp_hash). A singleton class can be used for that.
+	char *temp_buffer;
+	long file_size;
+	FILE *f;
 
-	return sha1_string(dumpPoFileTemplate());
+	switch (m_type)
+	{
+	case TYPE_FILE:
+		f = fopen(m_filename, "r");
+		fseek(f, 0, SEEK_END);
+		file_size = ftell(f);
+		rewind(f);
+
+		temp_buffer = new char[file_size];
+		assert(fread(temp_buffer, 1, file_size, f) == file_size);
+		fclose(f);
+
+		assert(git_odb_hash(&m_oid, temp_buffer, file_size, GIT_OBJ_BLOB) == 0);
+		delete [] temp_buffer;
+
+		return &m_oid;
+//	case TYPE_GIT:
+//		return poreadGit();
+	case TYPE_BUFFER:
+		assert(git_odb_hash(&m_oid, m_buffer, m_bufferLen, GIT_OBJ_BLOB) == 0);
+		return &m_oid;
+	default:
+		printf("m_type = %d\n", m_type);
+		assert(0);
+		return NULL;
+	}
+}
+
+const git_oid *TranslationContent::calculateTpHash()
+{
+	if (m_tphash)
+		return m_tphash;
+
+
+	m_tphash = new git_oid;
+
+	// Cache calculated tp_hashes (it takes some time to
+	// calculate a tp_hash). A singleton class is used for that.
+	const git_oid *oid = gitBlobHash();
+	const git_oid *tp_hash = TphashCache::getTphash(oid);
+
+	if (tp_hash)
+	{
+		git_oid_cpy(m_tphash, tp_hash);
+	}
+	else
+	{
+		std::string tphash_str = sha1_string(dumpPoFileTemplate());
+		assert(git_oid_mkstr(m_tphash, tphash_str.c_str()) == GIT_SUCCESS);
+
+		TphashCache::addPair(oid, m_tphash);
+	}
+
+	return m_tphash;
 }
 
 std::string TranslationContent::dumpPoFileTemplate()

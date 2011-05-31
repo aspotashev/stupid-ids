@@ -29,7 +29,8 @@ public:
 	// Caller should run 'po_file_free'
 	po_file_t poFileRead();
 
-	std::string calculateTpHash();
+	const git_oid *gitBlobHash();
+	const git_oid *calculateTpHash();
 	std::vector<MessageGroup *> readMessages(const char *filename, bool loadObsolete);
 
 protected:
@@ -44,7 +45,8 @@ private:
 	char *m_filename;
 
 	GitLoader *m_gitLoader;
-	git_oid m_oid;
+	git_oid m_oid; // TODO: make this a pointer, like m_tphash (so that we will know if it is initialized)
+	git_oid *m_tphash;
 
 	const void *m_buffer;
 	size_t m_bufferLen;

@@ -25,8 +25,7 @@ void StupIdTranslationCollector::insertPo(const char *filename)
 
 void StupIdTranslationCollector::insertPo(TranslationContent *content, const char *filename)
 {
-	std::string tp_hash = content->calculateTpHash();
-	std::vector<int> min_ids = m_client->getMinIds(tp_hash.c_str());
+	std::vector<int> min_ids = m_client->getMinIds(content->calculateTpHash());
 
 	//--------------------- insert messages --------------------
 	std::vector<MessageGroup *> messages = content->readMessages(filename, false);

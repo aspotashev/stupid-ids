@@ -288,10 +288,13 @@ std::string wrap_template_message(po_message_t message, bool include_non_id)
 std::string calculate_tp_hash(const char *filename)
 {
 	TranslationContent *content = new TranslationContent(filename);
-	std::string res = content->calculateTpHash();
+	char res_str[GIT_OID_HEXSZ + 1];
+	git_oid_fmt(res_str, content->calculateTpHash());
+	res_str[GIT_OID_HEXSZ] = '\0';
+
 	delete content;
 
-	return res;
+	return std::string(res_str);
 }
 
 // Returns the number of messages in .pot (excluding the header)

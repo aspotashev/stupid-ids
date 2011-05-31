@@ -1,6 +1,8 @@
 
 #include <exception>
 
+#include <git2.h>
+
 //-------- Working with stupids-server.rb over TCP/IP --------
 
 class TpHashNotFoundException : public std::exception
@@ -14,7 +16,7 @@ public:
 	StupidsClient();
 	~StupidsClient();
 
-	std::vector<int> getMinIds(const char *tp_hash);
+	std::vector<int> getMinIds(const git_oid *tp_hash);
 	int getFirstId(const char *tp_hash);
 
 protected:

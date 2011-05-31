@@ -12,6 +12,7 @@ set(gettextpo_helper_LIB_SRCS
 	mappedfile.cpp
 	translationcontent.cpp
 	stupids-client.cpp
+	tphashcache.cpp
 
 	detector.cpp
 	detectorbase.cpp
