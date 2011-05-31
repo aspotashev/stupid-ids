@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
                 list[i], variants->msgid(), variants->msgidPlural(),
                 variants->msgctxt());
 
-            MessageEditorWidget *editor = addMessageEditor();
+            MessageEditorWidget *editor = addMessageEditor(variants);
 
             for (int i = 0; i < variants->size(); i ++)
             {
@@ -53,9 +53,9 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-MessageEditorWidget* MainWindow::addMessageEditor()
+MessageEditorWidget* MainWindow::addMessageEditor(MessageGroup *messageGroup)
 {
-    MessageEditorWidget *editor = new MessageEditorWidget(ui->scrollAreaWidgetContents);
+    MessageEditorWidget *editor = new MessageEditorWidget(messageGroup);
     m_layout->addWidget(editor);
 
     return editor;

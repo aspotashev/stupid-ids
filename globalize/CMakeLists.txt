@@ -7,6 +7,7 @@ include (UseQt4)
 include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
 
 set(globalize_SRCS
+	messageheaderwidget.cpp
 	messageeditorwidget.cpp
 	messagetranslationoption.cpp
 	mainwindow.cpp

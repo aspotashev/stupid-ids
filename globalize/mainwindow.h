@@ -18,7 +18,7 @@ public:
     ~MainWindow();
 
 protected:
-    MessageEditorWidget *addMessageEditor();
+    MessageEditorWidget *addMessageEditor(MessageGroup *messageGroup);
 
 private:
     Ui::MainWindow *ui;
