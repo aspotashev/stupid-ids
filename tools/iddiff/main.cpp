@@ -23,6 +23,11 @@ public:
 
 	void setMsgstr(int index, const char *str);
 
+	std::string formatPoMessage() const;
+
+protected:
+	static std::string formatString(const char *str);
+
 private:
 	const static int MAX_PLURAL_FORMS = 4; // increase this if you need more plural forms
 
@@ -100,43 +105,25 @@ const char *IddiffMessage::msgstr(int plural_form) const
 	return m_msgstr[plural_form];
 }
 
-//----------------------------------------------
-
-class Iddiff
+std::string IddiffMessage::formatPoMessage() const
 {
-};
+	std::string res;
 
-//----------------------------------------------
+	if (isFuzzy())
+		res += "f";
 
-class Iddiffer
-{
-public:
-	Iddiffer();
-	~Iddiffer();
+	res += formatString(msgstr(0));
+	for (int i = 1; i < numPlurals(); i ++)
+	{
+		res += " "; // separator
+		res += formatString(msgstr(i));
+	}
 
-	// TODO: make this a static function in class Iddiff, and remove class Iddiffer
-	std::string generateIddiffText(TranslationContent *content_a, TranslationContent *content_b);
-
-protected:
-	void writeMessageList(std::vector<std::pair<int, std::string> > list);
-
-	static std::string formatString(const char *str);
-	static std::string formatPoMessage(po_message_t message);
-
-private:
-	std::string m_output;
-};
-
-Iddiffer::Iddiffer()
-{
-}
-
-Iddiffer::~Iddiffer()
-{
+	return res;
 }
 
 // escape quotes (" -> \") and put in quotes
-std::string Iddiffer::formatString(const char *str)
+std::string IddiffMessage::formatString(const char *str)
 {
 	assert(str);
 
@@ -157,24 +144,46 @@ std::string Iddiffer::formatString(const char *str)
 	return res;
 }
 
+//----------------------------------------------
+
+class Iddiff
+{
+};
+
+//----------------------------------------------
+
+class Iddiffer
+{
+public:
+	Iddiffer();
+	~Iddiffer();
+
+	// TODO: make this a static function in class Iddiff, and remove class Iddiffer
+	std::string generateIddiffText(TranslationContent *content_a, TranslationContent *content_b);
+
+protected:
+	void writeMessageList(std::vector<std::pair<int, std::string> > list);
+
+	static std::string formatPoMessage(po_message_t message);
+
+private:
+	std::string m_output;
+};
+
+Iddiffer::Iddiffer()
+{
+}
+
+Iddiffer::~Iddiffer()
+{
+}
+
 std::string Iddiffer::formatPoMessage(po_message_t message)
 {
 	IddiffMessage *idm = new IddiffMessage(message);
-
-	std::string res;
-
-	if (idm->isFuzzy())
-		res += "f";
-
-	res += formatString(idm->msgstr(0));
-	for (int i = 1; i < idm->numPlurals(); i ++)
-	{
-		res += " "; // separator
-		res += formatString(idm->msgstr(i));
-	}
-
-
+	std::string res = idm->formatPoMessage();
 	delete idm;
+
 	return res;
 }
 
