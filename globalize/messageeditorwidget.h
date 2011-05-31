@@ -15,6 +15,8 @@ public:
     explicit MessageEditorWidget(MessageGroup *messageGroup);
 
     void addTranslationOption(Message *message);
+    void selectTranslationOption(MessageTranslationOption* option);
+    bool isHighlighted(MessageTranslationOption* option);
 
 signals:
 
@@ -24,6 +26,7 @@ private:
     std::vector<MessageTranslationOption *> m_trans;
     QHBoxLayout *m_layout;
     MessageHeaderWidget *m_messageHeader;
+    MessageTranslationOption* m_selection;
 };
 
 #endif // MESSAGEEDITORWIDGET_H

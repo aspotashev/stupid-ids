@@ -1,4 +1,5 @@
 #include "messagetranslationoption.h"
+#include "messageeditorwidget.h"
 
 #include <assert.h>
 #include <gettextpo-helper/detectorbase.h>
@@ -8,6 +9,8 @@ MessageTranslationOption::MessageTranslationOption(MessageEditorWidget *editor, 
     QWidget(), m_editor(editor), m_message(message)
 {
     assert(message);
+
+    m_highlighted = false;
 
     setMinimumWidth(50);
 
@@ -43,7 +46,10 @@ MessageTranslationOption::~MessageTranslationOption()
 void MessageTranslationOption::mousePressEvent(QMouseEvent *event)
 {
     QWidget::mousePressEvent(event);
-    // TODO: clicking on this widget should select this translation among others
+
+    // If this option is selected, then remove selection.
+    // If this option is not selected, then select it.
+    m_editor->selectTranslationOption(m_editor->isHighlighted(this) ? NULL : this);
 }
 
 void MessageTranslationOption::paintEvent(QPaintEvent *event)
@@ -51,8 +57,19 @@ void MessageTranslationOption::paintEvent(QPaintEvent *event)
     QWidget::paintEvent(event);
 
     QPainter p(this);
+    if (m_highlighted)
+        p.setBrush(QBrush(QColor(210, 230, 255)));
     QRectF border = rect();
     border.setBottom(border.bottom() - 1);
     border.setRight(border.right() - 1);
     p.drawRoundedRect(border, 5, 5);
+}
+
+void MessageTranslationOption::setHighlight(bool highlighted)
+{
+    if (highlighted == m_highlighted)
+        return;
+
+    m_highlighted = highlighted;
+    update();
 }

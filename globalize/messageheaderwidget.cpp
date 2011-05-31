@@ -8,7 +8,7 @@ MessageHeaderWidget::MessageHeaderWidget(MessageEditorWidget *editor, MessageGro
     setMinimumWidth(100);
     setMaximumWidth(100);
 
-    
+
     QGridLayout *layout = new QGridLayout(this);
     layout->setMargin(0);
     setLayout(layout);

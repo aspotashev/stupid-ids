@@ -6,6 +6,8 @@
 MessageEditorWidget::MessageEditorWidget(MessageGroup *messageGroup):
     QWidget()
 {
+    m_selection = NULL;
+
     setMinimumHeight(30);
 
     m_layout = new QHBoxLayout(this);
@@ -20,4 +22,24 @@ void MessageEditorWidget::addTranslationOption(Message *message)
     MessageTranslationOption *trans = new MessageTranslationOption(this, message);
     m_trans.push_back(trans);
     m_layout->addWidget(trans);
+}
+
+void MessageEditorWidget::selectTranslationOption(MessageTranslationOption* option)
+{
+    if (m_selection == option)
+        return;
+
+    if (m_selection)
+        m_selection->setHighlight(false);
+
+    m_selection = option;
+    if (option)
+    {
+        option->setHighlight(true);
+    }
+}
+
+bool MessageEditorWidget::isHighlighted(MessageTranslationOption* option)
+{
+    return m_selection == option;
 }
