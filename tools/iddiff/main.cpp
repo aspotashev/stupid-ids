@@ -10,9 +10,36 @@
 
 #include <gettextpo-helper/gettextpo-helper.h>
 #include <gettextpo-helper/stupids-client.h>
+#include <gettextpo-helper/translationcontent.h>
+
+class Iddiffer
+{
+public:
+	Iddiffer();
+	~Iddiffer();
+
+	std::string generateIddiff(TranslationContent *content_a, TranslationContent *content_b);
+
+protected:
+	void writeMessageList(std::vector<std::pair<int, std::string> > list);
+
+	static std::string formatString(const char *str);
+	static std::string formatPoMessage(po_message_t message);
+
+private:
+	std::string m_output;
+};
+
+Iddiffer::Iddiffer()
+{
+}
+
+Iddiffer::~Iddiffer()
+{
+}
 
 // escape quotes (" -> \") and put in quotes
-std::string iddiff_format_string(const char *str)
+std::string Iddiffer::formatString(const char *str)
 {
 	assert(str);
 
@@ -33,7 +60,7 @@ std::string iddiff_format_string(const char *str)
 	return res;
 }
 
-std::string iddiff_format_po_message(po_message_t message)
+std::string Iddiffer::formatPoMessage(po_message_t message)
 {
 	std::string res;
 
@@ -43,47 +70,53 @@ std::string iddiff_format_po_message(po_message_t message)
 	int n_plurals = po_message_n_plurals(message);
 	if (n_plurals > 0) // message with plurals
 	{
-		res += iddiff_format_string(po_message_msgstr_plural(message, 0));
+		res += formatString(po_message_msgstr_plural(message, 0));
 		for (int i = 1; i < n_plurals; i ++)
 		{
 			res += " "; // separator
-			res += iddiff_format_string(po_message_msgstr_plural(message, i));
+			res += formatString(po_message_msgstr_plural(message, i));
 		}
 	}
 	else // message without plurals
 	{
-		res += iddiff_format_string(po_message_msgstr(message));
+		res += formatString(po_message_msgstr(message));
 	}
 
 	return res;
 }
 
-void print_message_list(std::vector<std::pair<int, std::string> > list)
+void Iddiffer::writeMessageList(std::vector<std::pair<int, std::string> > list)
 {
 	for (size_t i = 0; i < list.size(); i ++)
-		printf("%d %s\n", list[i].first, list[i].second.c_str());
+	{
+		// TODO: do this using std::stringstream?
+		char id_str[20];
+		sprintf(id_str, "%d", list[i].first);
+
+		m_output += std::string(id_str);
+		m_output += std::string(" ");
+		m_output += list[i].second;
+		m_output += std::string("\n");
+	}
 }
 
-int main(int argc, char *argv[])
+std::string Iddiffer::generateIddiff(TranslationContent *content_a, TranslationContent *content_b)
 {
-	assert(argc == 3); // 2 arguments
-
-	const char *filename_a = argv[1];
-	const char *filename_b = argv[2];
+	m_output.clear();
 
 	// .po files should be derived from the same .pot
-	std::string tp_hash = calculate_tp_hash(filename_a);
-	assert(tp_hash == calculate_tp_hash(filename_b));
+	const git_oid *tp_hash = content_a->calculateTpHash();
+	assert(git_oid_cmp(tp_hash, content_b->calculateTpHash()) == 0);
 
 	// first_id is the same for 2 files
 	StupidsClient *client = new StupidsClient();
-	int first_id = client->getFirstId(tp_hash.c_str());
+	int first_id = client->getFirstId(tp_hash);
 	delete client;
 
 
 	// compare pairs of messages in 2 .po files
-	po_file_t file_a = po_file_read(filename_a);
-	po_file_t file_b = po_file_read(filename_b);
+	po_file_t file_a = content_a->poFileRead();
+	po_file_t file_b = content_b->poFileRead();
 
 	po_message_iterator_t iterator_a =
 		po_message_iterator(file_a, "messages");
@@ -142,13 +175,13 @@ int main(int argc, char *argv[])
 		//    "A" is not untranslated & there were changes (i.e. message_a != message_b)
 		if (!po_message_is_untranslated(message_a))
 			removed_list.push_back(std::pair<int, std::string>(
-				first_id + index, iddiff_format_po_message(message_a)));
+				first_id + index, formatPoMessage(message_a)));
 
 		// Adding to "ADDED" if:
 		//    "B" is translated & there were changes (i.e. message_a != message_b)
 		if (!po_message_is_untranslated(message_b) && !po_message_is_fuzzy(message_b))
 			added_list.push_back(std::pair<int, std::string>(
-				first_id + index, iddiff_format_po_message(message_b)));
+				first_id + index, formatPoMessage(message_b)));
 	}
 
 	// free memory
@@ -159,15 +192,32 @@ int main(int argc, char *argv[])
 
 	if (removed_list.size() > 0 || added_list.size() > 0)
 	{
-		printf("Subject: \n");
-		printf("Author: \n");
-		printf("Date: \n");
-		printf("\n");
-		printf("REMOVED\n");
-		print_message_list(removed_list);
-		printf("ADDED\n");
-		print_message_list(added_list);
+		m_output += std::string("Subject: \n");
+		m_output += std::string("Author: \n");
+		m_output += std::string("Date: \n");
+		m_output += std::string("\n");
+		m_output += std::string("REMOVED\n");
+		writeMessageList(removed_list);
+		m_output += std::string("ADDED\n");
+		writeMessageList(added_list);
 	}
+
+
+	return m_output;
+}
+
+int main(int argc, char *argv[])
+{
+	assert(argc == 3); // 2 arguments
+
+	const char *filename_a = argv[1];
+	const char *filename_b = argv[2];
+
+	TranslationContent *content_a = new TranslationContent(filename_a);
+	TranslationContent *content_b = new TranslationContent(filename_b);
+
+	Iddiffer *differ = new Iddiffer();
+	std::cout << differ->generateIddiff(content_a, content_b);
 
 	return 0;
 }

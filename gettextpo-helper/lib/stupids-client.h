@@ -17,7 +17,7 @@ public:
 	~StupidsClient();
 
 	std::vector<int> getMinIds(const git_oid *tp_hash);
-	int getFirstId(const char *tp_hash);
+	int getFirstId(const git_oid *tp_hash);
 
 protected:
 	void sockReadBlock(void *buffer, int length);

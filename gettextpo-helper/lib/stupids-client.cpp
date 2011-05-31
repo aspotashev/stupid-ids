@@ -124,15 +124,16 @@ std::vector<int> StupidsClient::getMinIds(const git_oid *tp_hash)
 	return res;
 }
 
-int StupidsClient::getFirstId(const char *tp_hash)
+int StupidsClient::getFirstId(const git_oid *tp_hash)
 {
 	connect();
 
-	assert(strlen(tp_hash) == 40); // sha-1 is 20 bytes long
+	char tp_hash_str[GIT_OID_HEXSZ + 1];
+	git_oid_fmt(tp_hash_str, tp_hash);
 
 	// send command
 	sendString("get_first_id ");
-	sendString(tp_hash);
+	sendString(tp_hash_str);
 	sendString("\n");
 
 	// read results
