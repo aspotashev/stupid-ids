@@ -5,7 +5,6 @@
 #include <string>
 #include <iostream>
 #include <vector>
-#include <map>
 
 #include <gettextpo-helper/gettextpo-helper.h>
 #include <gettextpo-helper/stupids-client.h>
@@ -17,7 +16,7 @@ public:
 	Iddiffer();
 	~Iddiffer();
 
-	std::string generateIddiff(TranslationContent *content_a, TranslationContent *content_b);
+	std::string generateIddiffText(TranslationContent *content_a, TranslationContent *content_b);
 
 protected:
 	void writeMessageList(std::vector<std::pair<int, std::string> > list);
@@ -99,7 +98,7 @@ void Iddiffer::writeMessageList(std::vector<std::pair<int, std::string> > list)
 	}
 }
 
-std::string Iddiffer::generateIddiff(TranslationContent *content_a, TranslationContent *content_b)
+std::string Iddiffer::generateIddiffText(TranslationContent *content_a, TranslationContent *content_b)
 {
 	m_output.clear();
 
@@ -213,7 +212,7 @@ int main(int argc, char *argv[])
 	TranslationContent *content_b = new TranslationContent(argv[2]);
 
 	Iddiffer *differ = new Iddiffer();
-	std::cout << differ->generateIddiff(content_a, content_b);
+	std::cout << differ->generateIddiffText(content_a, content_b);
 
 	return 0;
 }
