@@ -3,6 +3,8 @@
 
 #include <QtGui>
 
+#include "messageeditorwidget.h"
+
 namespace Ui {
     class MainWindow;
 }
@@ -15,8 +17,12 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+protected:
+    MessageEditorWidget *addMessageEditor();
+
 private:
     Ui::MainWindow *ui;
+    QVBoxLayout *m_layout;
 };
 
 #endif // MAINWINDOW_H

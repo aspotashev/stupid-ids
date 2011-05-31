@@ -8,10 +8,6 @@ MessageEditorWidget::MessageEditorWidget(QWidget *parent):
 
     m_layout = new QHBoxLayout(this);
     m_layout->setMargin(0);
-
-    addTranslationOption(NULL);
-    addTranslationOption(NULL);
-    addTranslationOption(NULL);
 }
 
 void MessageEditorWidget::addTranslationOption(Message *message)

@@ -15,7 +15,8 @@ public:
     ~MessageTranslationOption();
 
 protected:
-    virtual void mousePressEvent(QMouseEvent* );
+    virtual void mousePressEvent(QMouseEvent *event);
+    virtual void paintEvent(QPaintEvent *event);
     
 private:
     MessageEditorWidget *m_editor;
