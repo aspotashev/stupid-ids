@@ -10,12 +10,111 @@
 #include <gettextpo-helper/stupids-client.h>
 #include <gettextpo-helper/translationcontent.h>
 
+// TODO: derive class Message from this class
+class IddiffMessage
+{
+public:
+	IddiffMessage(po_message_t message);
+	~IddiffMessage();
+
+	bool isFuzzy() const;
+	int numPlurals() const;
+	const char *msgstr(int plural_form) const;
+
+	void setMsgstr(int index, const char *str);
+
+private:
+	const static int MAX_PLURAL_FORMS = 4; // increase this if you need more plural forms
+
+	int m_numPlurals; // =1 if the message does not use plural forms
+	char *m_msgstr[MAX_PLURAL_FORMS];
+	bool m_fuzzy;
+};
+
+IddiffMessage::IddiffMessage(po_message_t message)
+{
+	for (int i = 0; i < MAX_PLURAL_FORMS; i ++)
+		m_msgstr[i] = 0;
+
+	// set m_numPlurals
+	m_numPlurals = po_message_n_plurals(message);
+	bool m_plural;
+	if (m_numPlurals == 0) // message does not use plural forms
+	{
+		m_numPlurals = 1;
+		m_plural = false;
+	}
+	else
+	{
+		m_plural = true;
+	}
+	assert(m_numPlurals <= MAX_PLURAL_FORMS); // limited by the size of m_msgstr
+
+
+	for (int i = 0; i < m_numPlurals; i ++)
+	{
+		const char *tmp;
+		if (m_plural)
+		{
+			tmp = po_message_msgstr_plural(message, i);
+		}
+		else
+		{
+			assert(i == 0); // there can be only one form if 'm_plural' is false
+
+			tmp = po_message_msgstr(message);
+		}
+
+		setMsgstr(i, tmp);
+	}
+
+	m_fuzzy = po_message_is_fuzzy(message) != 0;
+}
+
+IddiffMessage::~IddiffMessage()
+{
+	// TODO: free memory
+}
+
+void IddiffMessage::setMsgstr(int index, const char *str)
+{
+	assert(m_msgstr[index] == 0);
+
+	m_msgstr[index] = xstrdup(str);
+}
+
+bool IddiffMessage::isFuzzy() const
+{
+	return m_fuzzy;
+}
+
+int IddiffMessage::numPlurals() const
+{
+	return m_numPlurals;
+}
+
+const char *IddiffMessage::msgstr(int plural_form) const
+{
+	assert(plural_form >= 0 && plural_form < m_numPlurals);
+
+	return m_msgstr[plural_form];
+}
+
+//----------------------------------------------
+
+class Iddiff
+{
+};
+
+//----------------------------------------------
+
 class Iddiffer
 {
 public:
 	Iddiffer();
 	~Iddiffer();
 
+	// TODO: make this a static function in class Iddiff, and remove class Iddiffer
 	std::string generateIddiffText(TranslationContent *content_a, TranslationContent *content_b);
 
 protected:
@@ -60,26 +159,22 @@ std::string Iddiffer::formatString(const char *str)
 
 std::string Iddiffer::formatPoMessage(po_message_t message)
 {
+	IddiffMessage *idm = new IddiffMessage(message);
+
 	std::string res;
 
-	if (po_message_is_fuzzy(message))
+	if (idm->isFuzzy())
 		res += "f";
 
-	int n_plurals = po_message_n_plurals(message);
-	if (n_plurals > 0) // message with plurals
+	res += formatString(idm->msgstr(0));
+	for (int i = 1; i < idm->numPlurals(); i ++)
 	{
-		res += formatString(po_message_msgstr_plural(message, 0));
-		for (int i = 1; i < n_plurals; i ++)
-		{
-			res += " "; // separator
-			res += formatString(po_message_msgstr_plural(message, i));
-		}
-	}
-	else // message without plurals
-	{
-		res += formatString(po_message_msgstr(message));
+		res += " "; // separator
+		res += formatString(idm->msgstr(i));
 	}
 
+
+	delete idm;
 	return res;
 }
 
@@ -203,6 +298,8 @@ std::string Iddiffer::generateIddiffText(TranslationContent *content_a, Translat
 
 	return m_output;
 }
+
+//----------------------------------------------
 
 int main(int argc, char *argv[])
 {
