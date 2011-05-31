@@ -209,11 +209,8 @@ int main(int argc, char *argv[])
 {
 	assert(argc == 3); // 2 arguments
 
-	const char *filename_a = argv[1];
-	const char *filename_b = argv[2];
-
-	TranslationContent *content_a = new TranslationContent(filename_a);
-	TranslationContent *content_b = new TranslationContent(filename_b);
+	TranslationContent *content_a = new TranslationContent(argv[1]);
+	TranslationContent *content_b = new TranslationContent(argv[2]);
 
 	Iddiffer *differ = new Iddiffer();
 	std::cout << differ->generateIddiff(content_a, content_b);
