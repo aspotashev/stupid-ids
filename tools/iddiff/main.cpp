@@ -1,5 +1,4 @@
 
-// http://www.gnu.org/software/gettext/manual/gettext.html#libgettextpo
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
