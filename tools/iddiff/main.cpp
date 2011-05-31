@@ -162,7 +162,7 @@ public:
 	std::string generateIddiffText(TranslationContent *content_a, TranslationContent *content_b);
 
 protected:
-	void writeMessageList(std::vector<std::pair<int, std::string> > list);
+	void writeMessageList(std::vector<std::pair<int, IddiffMessage *> > list);
 
 	static std::string formatPoMessage(po_message_t message);
 
@@ -187,7 +187,7 @@ std::string Iddiffer::formatPoMessage(po_message_t message)
 	return res;
 }
 
-void Iddiffer::writeMessageList(std::vector<std::pair<int, std::string> > list)
+void Iddiffer::writeMessageList(std::vector<std::pair<int, IddiffMessage *> > list)
 {
 	for (size_t i = 0; i < list.size(); i ++)
 	{
@@ -197,7 +197,7 @@ void Iddiffer::writeMessageList(std::vector<std::pair<int, std::string> > list)
 
 		m_output += std::string(id_str);
 		m_output += std::string(" ");
-		m_output += list[i].second;
+		m_output += list[i].second->formatPoMessage();
 		m_output += std::string("\n");
 	}
 }
@@ -228,8 +228,8 @@ std::string Iddiffer::generateIddiffText(TranslationContent *content_a, Translat
 	po_message_t message_a = po_next_message(iterator_a);
 	po_message_t message_b = po_next_message(iterator_b);
 
-	std::vector<std::pair<int, std::string> > removed_list;
-	std::vector<std::pair<int, std::string> > added_list;
+	std::vector<std::pair<int, IddiffMessage *> > removed_list;
+	std::vector<std::pair<int, IddiffMessage *> > added_list;
 
 	for (int index = 0;
 		(message_a = po_next_message(iterator_a)) &&
@@ -276,14 +276,14 @@ std::string Iddiffer::generateIddiffText(TranslationContent *content_a, Translat
 		// Adding to "REMOVED" if:
 		//    "A" is not untranslated & there were changes (i.e. message_a != message_b)
 		if (!po_message_is_untranslated(message_a))
-			removed_list.push_back(std::pair<int, std::string>(
-				first_id + index, formatPoMessage(message_a)));
+			removed_list.push_back(std::pair<int, IddiffMessage *>(
+				first_id + index, new IddiffMessage(message_a)));
 
 		// Adding to "ADDED" if:
 		//    "B" is translated & there were changes (i.e. message_a != message_b)
 		if (!po_message_is_untranslated(message_b) && !po_message_is_fuzzy(message_b))
-			added_list.push_back(std::pair<int, std::string>(
-				first_id + index, formatPoMessage(message_b)));
+			added_list.push_back(std::pair<int, IddiffMessage *>(
+				first_id + index, new IddiffMessage(message_b)));
 	}
 
 	// free memory
