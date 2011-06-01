@@ -158,6 +158,8 @@ public:
 	Iddiffer();
 	~Iddiffer();
 
+	void generateIddiff(TranslationContent *content_a, TranslationContent *content_b);
+
 	// TODO: make this a static function in class Iddiff, and remove class Iddiffer
 	std::string generateIddiffText(TranslationContent *content_a, TranslationContent *content_b);
 
@@ -167,6 +169,13 @@ protected:
 	static std::string formatPoMessage(po_message_t message);
 
 private:
+	std::string m_subject;
+	std::string m_author;
+	// TODO: m_date
+
+	std::vector<std::pair<int, IddiffMessage *> > m_removedList;
+	std::vector<std::pair<int, IddiffMessage *> > m_addedList;
+
 	std::string m_output;
 };
 
@@ -202,9 +211,11 @@ void Iddiffer::writeMessageList(std::vector<std::pair<int, IddiffMessage *> > li
 	}
 }
 
-std::string Iddiffer::generateIddiffText(TranslationContent *content_a, TranslationContent *content_b)
+// This function fills m_removedList and m_addedList
+void Iddiffer::generateIddiff(TranslationContent *content_a, TranslationContent *content_b)
 {
-	m_output.clear();
+	m_removedList.clear();
+	m_addedList.clear();
 
 	// .po files should be derived from the same .pot
 	const git_oid *tp_hash = content_a->calculateTpHash();
@@ -227,9 +238,6 @@ std::string Iddiffer::generateIddiffText(TranslationContent *content_a, Translat
 	// skipping headers
 	po_message_t message_a = po_next_message(iterator_a);
 	po_message_t message_b = po_next_message(iterator_b);
-
-	std::vector<std::pair<int, IddiffMessage *> > removed_list;
-	std::vector<std::pair<int, IddiffMessage *> > added_list;
 
 	for (int index = 0;
 		(message_a = po_next_message(iterator_a)) &&
@@ -276,13 +284,13 @@ std::string Iddiffer::generateIddiffText(TranslationContent *content_a, Translat
 		// Adding to "REMOVED" if:
 		//    "A" is not untranslated & there were changes (i.e. message_a != message_b)
 		if (!po_message_is_untranslated(message_a))
-			removed_list.push_back(std::pair<int, IddiffMessage *>(
+			m_removedList.push_back(std::pair<int, IddiffMessage *>(
 				first_id + index, new IddiffMessage(message_a)));
 
 		// Adding to "ADDED" if:
 		//    "B" is translated & there were changes (i.e. message_a != message_b)
 		if (!po_message_is_untranslated(message_b) && !po_message_is_fuzzy(message_b))
-			added_list.push_back(std::pair<int, IddiffMessage *>(
+			m_addedList.push_back(std::pair<int, IddiffMessage *>(
 				first_id + index, new IddiffMessage(message_b)));
 	}
 
@@ -291,19 +299,24 @@ std::string Iddiffer::generateIddiffText(TranslationContent *content_a, Translat
 	po_message_iterator_free(iterator_b);
 	po_file_free(file_a);
 	po_file_free(file_b);
+}
 
-	if (removed_list.size() > 0 || added_list.size() > 0)
+std::string Iddiffer::generateIddiffText(TranslationContent *content_a, TranslationContent *content_b)
+{
+	generateIddiff(content_a, content_b);
+
+	m_output.clear();
+	if (m_removedList.size() > 0 || m_addedList.size() > 0)
 	{
 		m_output += std::string("Subject: \n");
 		m_output += std::string("Author: \n");
 		m_output += std::string("Date: \n");
 		m_output += std::string("\n");
 		m_output += std::string("REMOVED\n");
-		writeMessageList(removed_list);
+		writeMessageList(m_removedList);
 		m_output += std::string("ADDED\n");
-		writeMessageList(added_list);
+		writeMessageList(m_addedList);
 	}
-
 
 	return m_output;
 }
