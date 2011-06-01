@@ -3,6 +3,7 @@
 #include <string.h>
 #include <assert.h>
 #include <string>
+#include <sstream>
 #include <iostream>
 #include <vector>
 
@@ -176,10 +177,11 @@ private:
 	std::vector<std::pair<int, IddiffMessage *> > m_removedList;
 	std::vector<std::pair<int, IddiffMessage *> > m_addedList;
 
-	std::string m_output;
+	std::ostringstream m_output;
 };
 
-Iddiffer::Iddiffer()
+Iddiffer::Iddiffer():
+	m_output(std::ostringstream::out)
 {
 }
 
@@ -199,16 +201,7 @@ std::string Iddiffer::formatPoMessage(po_message_t message)
 void Iddiffer::writeMessageList(std::vector<std::pair<int, IddiffMessage *> > list)
 {
 	for (size_t i = 0; i < list.size(); i ++)
-	{
-		// TODO: do this using std::stringstream?
-		char id_str[20];
-		sprintf(id_str, "%d", list[i].first);
-
-		m_output += std::string(id_str);
-		m_output += std::string(" ");
-		m_output += list[i].second->formatPoMessage();
-		m_output += std::string("\n");
-	}
+		m_output << list[i].first << " " << list[i].second->formatPoMessage() << "\n";
 }
 
 // This function fills m_removedList and m_addedList
@@ -305,20 +298,19 @@ std::string Iddiffer::generateIddiffText(TranslationContent *content_a, Translat
 {
 	generateIddiff(content_a, content_b);
 
-	m_output.clear();
+	m_output.str("");
 	if (m_removedList.size() > 0 || m_addedList.size() > 0)
 	{
-		m_output += std::string("Subject: \n");
-		m_output += std::string("Author: \n");
-		m_output += std::string("Date: \n");
-		m_output += std::string("\n");
-		m_output += std::string("REMOVED\n");
+		m_output << "Subject: " << m_subject << "\n";
+		m_output << "Author: " << m_author << "\n";
+		m_output << "Date: " << "\n\n";
+		m_output << "REMOVED\n";
 		writeMessageList(m_removedList);
-		m_output += std::string("ADDED\n");
+		m_output << "ADDED\n";
 		writeMessageList(m_addedList);
 	}
 
-	return m_output;
+	return m_output.str();
 }
 
 //----------------------------------------------
