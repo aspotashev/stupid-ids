@@ -15,14 +15,17 @@
 class IddiffMessage
 {
 public:
+	IddiffMessage();
 	IddiffMessage(po_message_t message);
 	~IddiffMessage();
 
 	bool isFuzzy() const;
+	void setFuzzy(bool fuzzy);
 	int numPlurals() const;
 	const char *msgstr(int plural_form) const;
 
 	void setMsgstr(int index, const char *str);
+	void addMsgstr(const char *str);
 
 	std::string formatPoMessage() const;
 
@@ -36,6 +39,12 @@ private:
 	char *m_msgstr[MAX_PLURAL_FORMS];
 	bool m_fuzzy;
 };
+
+IddiffMessage::IddiffMessage()
+{
+	m_numPlurals = 0;
+	m_fuzzy = false;
+}
 
 IddiffMessage::IddiffMessage(po_message_t message)
 {
@@ -89,9 +98,22 @@ void IddiffMessage::setMsgstr(int index, const char *str)
 	m_msgstr[index] = xstrdup(str);
 }
 
+void IddiffMessage::addMsgstr(const char *str)
+{
+	assert(m_numPlurals < MAX_PLURAL_FORMS);
+	m_numPlurals ++;
+
+	m_msgstr[m_numPlurals - 1] = xstrdup(str);
+}
+
 bool IddiffMessage::isFuzzy() const
 {
 	return m_fuzzy;
+}
+
+void IddiffMessage::setFuzzy(bool fuzzy)
+{
+	m_fuzzy = fuzzy;
 }
 
 int IddiffMessage::numPlurals() const
@@ -161,11 +183,15 @@ public:
 
 	void generateIddiff(TranslationContent *content_a, TranslationContent *content_b);
 
+	std::string generateIddiffText();
 	// TODO: make this a static function in class Iddiff, and remove class Iddiffer
 	std::string generateIddiffText(TranslationContent *content_a, TranslationContent *content_b);
 
+	void loadIddiff(const char *filename);
+
 protected:
 	void writeMessageList(std::vector<std::pair<int, IddiffMessage *> > list);
+	void loadMessageListEntry(const char *line, std::vector<std::pair<int, IddiffMessage *> > &list);
 
 	static std::string formatPoMessage(po_message_t message);
 
@@ -294,16 +320,14 @@ void Iddiffer::generateIddiff(TranslationContent *content_a, TranslationContent 
 	po_file_free(file_b);
 }
 
-std::string Iddiffer::generateIddiffText(TranslationContent *content_a, TranslationContent *content_b)
+std::string Iddiffer::generateIddiffText()
 {
-	generateIddiff(content_a, content_b);
-
 	m_output.str("");
 	if (m_removedList.size() > 0 || m_addedList.size() > 0)
 	{
 		m_output << "Subject: " << m_subject << "\n";
 		m_output << "Author: " << m_author << "\n";
-		m_output << "Date: " << "\n\n";
+		m_output << "Date: " << "\n\n"; // TODO: m_date
 		m_output << "REMOVED\n";
 		writeMessageList(m_removedList);
 		m_output << "ADDED\n";
@@ -311,6 +335,212 @@ std::string Iddiffer::generateIddiffText(TranslationContent *content_a, Translat
 	}
 
 	return m_output.str();
+}
+
+std::string Iddiffer::generateIddiffText(TranslationContent *content_a, TranslationContent *content_b)
+{
+	generateIddiff(content_a, content_b);
+	return generateIddiffText();
+}
+
+void Iddiffer::loadIddiff(const char *filename)
+{
+	FILE *f = fopen(filename, "r");
+	fseek(f, 0, SEEK_END);
+	int file_size = (int)ftell(f);
+	rewind(f);
+
+	char *buffer = new char[file_size + 1];
+	assert(fread(buffer, 1, file_size, f) == file_size);
+	buffer[file_size] = '\0';
+
+	std::vector<char *> lines;
+
+	char *cur_line = buffer;
+	char *line_break = buffer; // something that is not NULL
+
+	bool has_subject = false;
+	bool has_author = false;
+	bool has_date = false;
+	while (line_break)
+	{
+		line_break = strchr(cur_line, '\n');
+		if (line_break == NULL) // last line does not end with "\n"
+		{
+			break;
+		}
+		else if (line_break - buffer == file_size - 1) // last line ends with "\n"
+		{
+			*line_break = '\0';
+			line_break = NULL;
+		}
+
+		if (line_break)
+			*line_break = '\0';
+
+		lines.push_back(cur_line);
+		cur_line = line_break + 1;
+	}
+
+	// Reading header
+	size_t index = 0;
+	for (index; index < lines.size(); index ++)
+	{
+		char *line = lines[index];
+
+		if (strlen(line) == 0)
+		{
+			// the header ends
+			index ++;
+			break;
+		}
+
+		char *colon = strchr(line, ':');
+		assert(colon);
+
+		colon[0] = '\0'; // truncate at the end of header item key
+		assert(colon[1] == ' '); // space after colon
+
+		colon += 2; // move to the header item value
+
+		if (!strcmp(line, "Subject"))
+		{
+			assert(!has_subject); // catch duplicate "Subject:" fields
+			has_subject = true;
+
+			m_subject = std::string(colon);
+		}
+		else if (!strcmp(line, "Author"))
+		{
+			assert(!has_author); // catch duplicate "Author:" fields
+			has_author = true;
+
+			m_author = std::string(colon);
+		}
+		else if (!strcmp(line, "Date"))
+		{
+			assert(!has_date); // catch duplicate "Date:" fields
+			has_date = true;
+
+			// TODO: m_date
+		}
+		else
+		{
+			// Unknown header field
+			assert(0);
+		}
+	}
+	// Check that all fields are present (is it really necessary?)
+	assert(has_subject);
+	assert(has_author);
+	assert(has_date);
+
+
+	enum
+	{
+		SECTION_UNKNOWN,
+		SECTION_REMOVED,
+		SECTION_ADDED
+	} current_section = SECTION_UNKNOWN;
+
+	bool has_removed = false;
+	bool has_added = false;
+	for (index; index < lines.size(); index ++)
+	{
+		char *line = lines[index];
+
+		if (!strcmp(line, "REMOVED"))
+		{
+			assert(!has_removed);
+			has_removed = true;
+
+			current_section = SECTION_REMOVED;
+		}
+		else if (!strcmp(line, "ADDED"))
+		{
+			assert(!has_added);
+			has_added = true;
+
+			current_section = SECTION_ADDED;
+		}
+		else
+		{
+			if (current_section == SECTION_REMOVED)
+				loadMessageListEntry(line, m_removedList);
+			else if (current_section == SECTION_ADDED)
+				loadMessageListEntry(line, m_addedList);
+			else
+			{
+				// Unknown iddiff section
+				assert(0);
+			}
+		}
+	}
+
+	// Check that the .iddiff was not useless
+	assert(has_removed || has_added);
+
+
+	fclose(f);
+}
+
+void Iddiffer::loadMessageListEntry(const char *line, std::vector<std::pair<int, IddiffMessage *> > &list)
+{
+	const char *space = strchr(line, ' ');
+	assert(space);
+	for (const char *cur = line; cur < space; cur ++)
+		assert(isdigit(*cur));
+
+	int msg_id = atoi(line);
+	line = space + 1;
+
+//	printf("%d <<<%s>>>\n", msg_id, line);
+
+	IddiffMessage *msg = new IddiffMessage();
+	char *msgstr_buf = new char[strlen(line) + 1];
+	while (*line != '\0')
+	{
+		if (*line == 'f')
+		{
+			msg->setFuzzy(true);
+			line ++;
+		}
+
+		assert(*line == '\"');
+		line ++;
+
+		int msgstr_i = 0;
+		while (*line != '\0')
+		{
+			if (*line == '\"')
+				break;
+			else if (line[0] == '\\' && line[1] == '\"')
+			{
+				msgstr_buf[msgstr_i] = '\"';
+				line ++;
+			}
+			else
+			{
+				msgstr_buf[msgstr_i] = *line;
+			}
+
+			line ++;
+			msgstr_i ++;
+		}
+		msgstr_buf[msgstr_i] = '\0';
+		msg->addMsgstr(msgstr_buf);
+//		printf("[[[%s]]]\n", msgstr_buf);
+
+		assert(*line == '\"');
+		line ++;
+		if (*line == ' ')
+			line ++;
+		else
+			assert(*line == '\0');
+	}
+
+	delete [] msgstr_buf;
+	list.push_back(std::make_pair<int, IddiffMessage *>(msg_id, msg));
 }
 
 //----------------------------------------------
@@ -323,6 +553,7 @@ int main(int argc, char *argv[])
 	TranslationContent *content_b = new TranslationContent(argv[2]);
 
 	Iddiffer *differ = new Iddiffer();
+//	differ->loadIddiff("1.iddiff");
 	std::cout << differ->generateIddiffText(content_a, content_b);
 
 	return 0;
