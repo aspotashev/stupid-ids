@@ -1,7 +1,7 @@
 
 cmake_minimum_required(VERSION 2.8)
 
-include_directories(${CMAKE_SOURCE_DIR}/lib/include/gettextpo-helper)
+include_directories(${GETTEXTPO_HELPER_INCLUDES})
 
 add_subdirectory(lib)
 add_subdirectory(ruby-ext)

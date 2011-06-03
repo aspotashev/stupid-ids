@@ -12,7 +12,7 @@ set(globalize_SRCS
 	messagetranslationoption.cpp
 	mainwindow.cpp
 	main.cpp
-	../lib/qtranslationcollector.cpp
+	lib/qtranslationcollector.cpp
 )
 
 qt4_wrap_ui(globalize_UIS_H

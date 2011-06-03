@@ -1,11 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(gettextpo_helper)
 
-#include_directories(
-#	${QT_INCLUDES}
-#)
-
-include_directories( ${CMAKE_SOURCE_DIR}/lib/include )
 set(gettextpo_helper_LIB_SRCS
 	gettextpo-helper.cpp
 	translation-collector.cpp
