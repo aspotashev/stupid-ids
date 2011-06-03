@@ -26,11 +26,6 @@ int main(int argc, char *argv[])
 //	collector.insertPo("/home/sasha/messages/kdebase/katesnippets_tng.po");
 //	collector.insertPo("/home/sasha/stable-messages/kdesdk/katesnippets_tng.po");
 
-	int num_shared = collector.numSharedIds();
-	int num_total = collector.numIds();
-
-	printf("Translation file match: %1.2lf%%\n", 100.0 * num_shared / num_total);
-
 	std::vector<int> list = collector.listConflicting();
 	for (int i = 0; i < (int)list.size(); i ++)
 	{

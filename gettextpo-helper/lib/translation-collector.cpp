@@ -100,22 +100,3 @@ MessageGroup *StupIdTranslationCollector::listVariants(int min_id)
 	return m_trans[min_id];
 }
 
-int StupIdTranslationCollector::numSharedIds() const
-{
-	int res = 0;
-	for (std::map<int, MessageGroup *>::const_iterator iter = m_trans.begin();
-		iter != m_trans.end();
-		iter ++)
-	{
-		if (iter->second->size() > 1)
-			res ++;
-	}
-
-	return res;
-}
-
-int StupIdTranslationCollector::numIds() const
-{
-	return (int)m_trans.size();
-}
-

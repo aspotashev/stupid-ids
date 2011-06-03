@@ -4,7 +4,11 @@ find_package (Qt4 REQUIRED)
 include (UseQt4)
 
 #include_directories (${QT_QTGUI_INCLUDE_DIR} ${QT_QTCORE_INCLUDE_DIR})
-include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
+include_directories(
+	${QT_INCLUDES}
+	${CMAKE_CURRENT_BINARY_DIR}
+	${GETTEXTPO_HELPER_INCLUDES}
+)
 
 set(globalize_SRCS
 	messageheaderwidget.cpp
