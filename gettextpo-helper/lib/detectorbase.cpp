@@ -34,6 +34,11 @@ void GitOid::setOidStr(const char *oid_str)
 	assert(git_oid_mkstr(&m_oid, oid_str) == GIT_SUCCESS);
 }
 
+void GitOid::setOidRaw(const unsigned char *oid_raw)
+{
+	git_oid_mkraw(&m_oid, oid_raw);
+}
+
 bool GitOid::operator<(const GitOid &o) const
 {
 	return git_oid_cmp(&m_oid, &o.m_oid) < 0;

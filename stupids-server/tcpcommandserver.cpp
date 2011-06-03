@@ -25,45 +25,36 @@ void TcpCommandServer::sendToClient(const void *data, size_t len)
 		0, (struct sockaddr *)&m_cliaddr, sizeof(m_cliaddr));
 }
 
+int TcpCommandServer::recvFromClient(void *data, size_t len)
+{
+	ssize_t read_bytes = recvfrom(m_connfd, data, len,
+		0, (struct sockaddr *)&m_cliaddr, &m_clilen);
+	if (read_bytes == 0)
+	{
+		printf("Client has disconnected.\n");
+		return -1;
+	}
+	else if (read_bytes < 0)
+	{
+		printf("Failed to read from socket.\n");
+		return -2;
+	}
+
+	assert(read_bytes == (ssize_t)len);
+
+	return 0;
+}
+
 void TcpCommandServer::sessionOpened()
 {
-	const int BUFFER_SZ = 4096;
-	char buffer[BUFFER_SZ];
-	int buffer_len = 0;
+	uint32_t command;
 
 	while (!m_closeConnection)
 	{
-		assert(BUFFER_SZ > buffer_len); // check that the buffer is not full
-
-		int read_bytes = recvfrom(m_connfd, buffer + buffer_len, BUFFER_SZ - buffer_len,
-			0, (struct sockaddr *)&m_cliaddr, &m_clilen);
-		if (read_bytes == 0)
-		{
-			printf("Client has disconnected.\n");
+		if (recvFromClient(&command, 4) != 0)
 			break;
-		}
-		else if (read_bytes < 0)
-		{
-			printf("Failed to read from socket.\n");
-			break;
-		}
 
-		buffer_len += read_bytes;
-
-		char *newline = (char *)memchr(buffer, '\n', buffer_len);
-		if (newline)
-		{
-			*newline = '\0';
-			if (newline > buffer && newline[-1] == '\r')
-				newline[-1] = '\0';
-			commandHandler(buffer);
-
-			// substract the length of the current command (including "\n")
-			buffer_len -= newline - buffer + 1;
-
-			// erase the current command
-			memmove(buffer, newline + 1, buffer_len);
-		}
+		commandHandler(ntohl(command));
 	}
 }
 

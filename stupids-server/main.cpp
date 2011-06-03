@@ -6,6 +6,7 @@
 
 #include <gettextpo-helper/detectorbase.h>
 #include <gettextpo-helper/mappedfile.h>
+#include <gettextpo-helper/stupids-client.h>
 
 #include "tcpcommandserver.h"
 
@@ -83,13 +84,13 @@ public:
 	Server();
 	~Server();
 
-	virtual void commandHandler(const char *command);
+	virtual void commandHandler(uint32_t command);
 
 private:
-	static const char *getCommandArg(const char *input, const char *command);
+	GitOid recvOid();
 
-	void handleGetMinIds(const char *tp_hash_str);
-	void handleGetFirstId(const char *tp_hash_str);
+	void handleGetMinIds();
+	void handleGetFirstId();
 
 
 	FiledbFirstIds *m_firstIds;
@@ -110,20 +111,21 @@ Server::~Server()
 	delete m_idMapDb;
 }
 
-const char *Server::getCommandArg(const char *input, const char *command)
+GitOid Server::recvOid()
 {
-	size_t cmd_len = strlen(command);
-	if (!strncmp(input, command, cmd_len) && input[cmd_len] == ' ')
-		return input + cmd_len + 1;
-	else
-		return NULL;
+	static unsigned char oid_raw[GIT_OID_RAWSZ];
+	assert(recvFromClient(oid_raw, GIT_OID_RAWSZ) == 0);
+	GitOid oid;
+	oid.setOidRaw(oid_raw);
+
+	return oid;
 }
 
-void Server::handleGetMinIds(const char *tp_hash_str)
+void Server::handleGetMinIds()
 {
 	// "tp_hash" is not the same as "oid", but we can still use
 	// the class GitOid for tp_hashes.
-	GitOid tp_hash(tp_hash_str);
+	GitOid tp_hash = recvOid();
 
 	std::pair<int, int> first_ids = m_firstIds->getFirstId(tp_hash);
 	int first_id = first_ids.first;
@@ -143,11 +145,11 @@ void Server::handleGetMinIds(const char *tp_hash_str)
 	delete [] output;
 }
 
-void Server::handleGetFirstId(const char *tp_hash_str)
+void Server::handleGetFirstId()
 {
 	// "tp_hash" is not the same as "oid", but we can still use
 	// the class GitOid for tp_hashes.
-	GitOid tp_hash(tp_hash_str);
+	GitOid tp_hash = recvOid();
 
 	std::pair<int, int> first_ids = m_firstIds->getFirstId(tp_hash);
 	int first_id = first_ids.first;
@@ -157,27 +159,17 @@ void Server::handleGetFirstId(const char *tp_hash_str)
 	sendToClient(&output, sizeof(uint32_t));
 }
 
-// TODO: use input in binary format
-void Server::commandHandler(const char *command)
+void Server::commandHandler(uint32_t command)
 {
-	const char *arg;
-
-	if (!strcmp(command, "exit"))
-	{
+	if (command == StupidsClient::CMD_EXIT)
 		disconnect();
-	}
-	else if (arg = getCommandArg(command, "get_min_id_array"))
-	{
-		handleGetMinIds(arg);
-	}
-	else if (arg = getCommandArg(command, "get_first_id"))
-	{
-		handleGetFirstId(arg);
-	}
+	else if (command == StupidsClient::CMD_GET_MIN_ID_ARRAY)
+		handleGetMinIds();
+	else if (command == StupidsClient::CMD_GET_FIRST_ID)
+		handleGetFirstId();
 	else
 	{
-		sendToClient(command, strlen(command));
-		sendToClient("\n", 1);
+		printf("Unknown command code %d.\n", command);
 	}
 }
 

@@ -71,16 +71,26 @@ void StupidsClient::connect()
 	};
 }
 
-void StupidsClient::sendString(const char *str)
+void StupidsClient::sendLong(uint32_t data)
 {
-	size_t len = strlen(str);
-	assert(write(m_sockfd, str, len) == len);
+	data = htonl(data);
+	sendToServer(&data, 4);
+}
+
+void StupidsClient::sendOid(const git_oid *oid)
+{
+	sendToServer(oid, GIT_OID_RAWSZ);
+}
+
+void StupidsClient::sendToServer(const void *data, size_t len)
+{
+	assert(write(m_sockfd, data, len) == len);
 }
 
 void StupidsClient::disconnect()
 {
-	const char exit_cmd[] = "exit\n";
-	assert(write(m_sockfd, exit_cmd, strlen(exit_cmd)) == strlen(exit_cmd));
+	sendLong(CMD_EXIT);
+
 	close(m_sockfd);
 	m_sockfd = -1;
 }
@@ -89,13 +99,9 @@ std::vector<int> StupidsClient::getMinIds(const git_oid *tp_hash)
 {
 	connect();
 
-	char tp_hash_str[GIT_OID_HEXSZ + 1];
-	git_oid_fmt(tp_hash_str, tp_hash);
-
 	// send command
-	sendString("get_min_id_array ");
-	sendString(tp_hash_str);
-	sendString("\n");
+	sendLong(CMD_GET_MIN_ID_ARRAY);
+	sendOid(tp_hash);
 
 	// read results
 	uint32_t id_count = -1;
@@ -128,13 +134,9 @@ int StupidsClient::getFirstId(const git_oid *tp_hash)
 {
 	connect();
 
-	char tp_hash_str[GIT_OID_HEXSZ + 1];
-	git_oid_fmt(tp_hash_str, tp_hash);
-
 	// send command
-	sendString("get_first_id ");
-	sendString(tp_hash_str);
-	sendString("\n");
+	sendLong(CMD_GET_FIRST_ID);
+	sendOid(tp_hash);
 
 	// read results
 	uint32_t first_id = 0;

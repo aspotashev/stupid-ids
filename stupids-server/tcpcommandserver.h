@@ -12,7 +12,8 @@ public:
 	void start();
 
 protected:
-	virtual void commandHandler(const char *command) = 0;
+	virtual void commandHandler(uint32_t command) = 0;
+	int recvFromClient(void *data, size_t len);
 	void sendToClient(const void *data, size_t len);
 	void disconnect();
 
