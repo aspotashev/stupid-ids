@@ -6,11 +6,6 @@
 
 //-------- Working with stupids-server.rb over TCP/IP --------
 
-class TpHashNotFoundException : public std::exception
-{
-	virtual const char *what() const throw();
-};
-
 class StupidsClient
 {
 public:

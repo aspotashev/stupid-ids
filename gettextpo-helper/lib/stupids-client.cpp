@@ -14,13 +14,6 @@
 
 //-------- Working with stupids-server.rb over TCP/IP --------
 
-const char *TpHashNotFoundException::what() const throw()
-{
-	return "tp_hash was not found in database";
-}
-
-//------------------------------------------------------------
-
 StupidsClient::StupidsClient()
 {
 	m_sockfd = -1;
@@ -124,8 +117,6 @@ std::vector<int> StupidsClient::getMinIds(const git_oid *tp_hash)
 //		throw TpHashNotFoundException();
 //	}
 
-
-//	disconnect();
 
 	return res;
 }
