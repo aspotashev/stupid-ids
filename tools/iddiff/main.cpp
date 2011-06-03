@@ -169,25 +169,19 @@ std::string IddiffMessage::formatString(const char *str)
 
 //----------------------------------------------
 
-class Iddiff
-{
-};
-
-//----------------------------------------------
-
 class Iddiffer
 {
 public:
 	Iddiffer();
 	~Iddiffer();
 
-	void generateIddiff(TranslationContent *content_a, TranslationContent *content_b);
+	void diffFiles(TranslationContent *content_a, TranslationContent *content_b);
+	void loadIddiff(const char *filename);
 
 	std::string generateIddiffText();
-	// TODO: make this a static function in class Iddiff, and remove class Iddiffer
-	std::string generateIddiffText(TranslationContent *content_a, TranslationContent *content_b);
 
-	void loadIddiff(const char *filename);
+	// TODO: may be remove this?
+	static std::string generateIddiffText(TranslationContent *content_a, TranslationContent *content_b);
 
 protected:
 	void writeMessageList(std::vector<std::pair<int, IddiffMessage *> > list);
@@ -231,7 +225,7 @@ void Iddiffer::writeMessageList(std::vector<std::pair<int, IddiffMessage *> > li
 }
 
 // This function fills m_removedList and m_addedList
-void Iddiffer::generateIddiff(TranslationContent *content_a, TranslationContent *content_b)
+void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *content_b)
 {
 	m_removedList.clear();
 	m_addedList.clear();
@@ -339,8 +333,13 @@ std::string Iddiffer::generateIddiffText()
 
 std::string Iddiffer::generateIddiffText(TranslationContent *content_a, TranslationContent *content_b)
 {
-	generateIddiff(content_a, content_b);
-	return generateIddiffText();
+	Iddiffer *diff = new Iddiffer();
+	diff->diffFiles(content_a, content_b);
+
+	std::string res = diff->generateIddiffText();
+	delete diff;
+
+	return res;
 }
 
 void Iddiffer::loadIddiff(const char *filename)
@@ -552,9 +551,9 @@ int main(int argc, char *argv[])
 	TranslationContent *content_a = new TranslationContent(argv[1]);
 	TranslationContent *content_b = new TranslationContent(argv[2]);
 
-	Iddiffer *differ = new Iddiffer();
+//	Iddiffer *differ = new Iddiffer();
 //	differ->loadIddiff("1.iddiff");
-	std::cout << differ->generateIddiffText(content_a, content_b);
+	std::cout << Iddiffer::generateIddiffText(content_a, content_b);
 
 	return 0;
 }
