@@ -13,13 +13,15 @@ public:
 	~StupidsClient();
 
 	std::vector<int> getMinIds(const git_oid *tp_hash);
+	std::vector<int> getMinIds(std::vector<int> msg_ids);
 	int getFirstId(const git_oid *tp_hash);
 
 	enum
 	{
 		CMD_EXIT = 1,
 		CMD_GET_MIN_ID_ARRAY = 2,
-		CMD_GET_FIRST_ID = 3
+		CMD_GET_FIRST_ID = 3,
+		CMD_GET_MIN_IDS = 4,
 	};
 
 protected:

@@ -482,3 +482,32 @@ void Iddiffer::loadMessageListEntry(const char *line, std::vector<std::pair<int,
 	list.push_back(std::make_pair<int, IddiffMessage *>(msg_id, msg));
 }
 
+void Iddiffer::minimizeIds()
+{
+	// Collect all involved IDs
+	std::map<int, int> min_ids;
+	for (size_t i = 0; i < m_removedList.size(); i ++)
+		min_ids[m_removedList[i].first] = 0;
+	for (size_t i = 0; i < m_addedList.size(); i ++)
+		min_ids[m_addedList[i].first] = 0;
+
+	std::vector<int> msg_ids_arr;
+	for (std::map<int, int>::iterator iter = min_ids.begin(); iter != min_ids.end(); iter ++)
+		msg_ids_arr.push_back(iter->first);
+
+	// Request minimized IDs from server
+	StupidsClient *client = new StupidsClient();
+	std::vector<int> min_ids_arr = client->getMinIds(msg_ids_arr);
+	delete client;
+	assert(msg_ids_arr.size() == min_ids_arr.size());
+
+	for (size_t i = 0; i < msg_ids_arr.size(); i ++)
+		min_ids[msg_ids_arr[i]] = min_ids_arr[i];
+
+	// Write minimized IDs back to m_removedList and m_addedList
+	for (size_t i = 0; i < m_removedList.size(); i ++)
+		m_removedList[i].first = min_ids[m_removedList[i].first];
+	for (size_t i = 0; i < m_addedList.size(); i ++)
+		m_addedList[i].first = min_ids[m_addedList[i].first];
+}
+

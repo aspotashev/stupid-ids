@@ -89,8 +89,9 @@ public:
 private:
 	GitOid recvOid();
 
-	void handleGetMinIds();
+	void handleGetMinIdArray();
 	void handleGetFirstId();
+	void handleGetMinIds();
 
 
 	FiledbFirstIds *m_firstIds;
@@ -121,7 +122,7 @@ GitOid Server::recvOid()
 	return oid;
 }
 
-void Server::handleGetMinIds()
+void Server::handleGetMinIdArray()
 {
 	// "tp_hash" is not the same as "oid", but we can still use
 	// the class GitOid for tp_hashes.
@@ -145,6 +146,26 @@ void Server::handleGetMinIds()
 	delete [] output;
 }
 
+void Server::handleGetMinIds()
+{
+	uint32_t id_count = -1;
+	assert(recvFromClient(&id_count, 4) == 0);
+	id_count = ntohl(id_count);
+
+	uint32_t *ids_arr = new uint32_t[(size_t)id_count];
+	recvFromClient(ids_arr, id_count * 4);
+
+	for (size_t i = 0; i < id_count; i ++)
+	{
+		int msg_id = (int)ntohl(ids_arr[i]);
+		int min_id = m_idMapDb->getRecursiveMinId(msg_id);
+		ids_arr[i] = htonl((uint32_t)min_id);
+	}
+
+	sendToClient(ids_arr, id_count * 4);
+	delete [] ids_arr;
+}
+
 void Server::handleGetFirstId()
 {
 	// "tp_hash" is not the same as "oid", but we can still use
@@ -164,9 +185,11 @@ void Server::commandHandler(uint32_t command)
 	if (command == StupidsClient::CMD_EXIT)
 		disconnect();
 	else if (command == StupidsClient::CMD_GET_MIN_ID_ARRAY)
-		handleGetMinIds();
+		handleGetMinIdArray();
 	else if (command == StupidsClient::CMD_GET_FIRST_ID)
 		handleGetFirstId();
+	else if (command == StupidsClient::CMD_GET_MIN_IDS)
+		handleGetMinIds();
 	else
 	{
 		printf("Unknown command code %d.\n", command);

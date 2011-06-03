@@ -47,6 +47,7 @@ public:
 	void diffFiles(TranslationContent *content_a, TranslationContent *content_b);
 	void loadIddiff(const char *filename);
 
+	void minimizeIds();
 	std::string generateIddiffText();
 
 	// TODO: may be remove this?
