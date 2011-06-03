@@ -13,6 +13,7 @@ set(gettextpo_helper_LIB_SRCS
 	translationcontent.cpp
 	stupids-client.cpp
 	tphashcache.cpp
+	iddiff.cpp
 
 	detector.cpp
 	detectorbase.cpp
@@ -37,6 +38,7 @@ install(FILES
 	stupids-client.h
 	detectorbase.h
 	detector.h
+	iddiff.h
 	DESTINATION ${INCLUDE_INSTALL_DIR}/gettextpo-helper COMPONENT Devel
 )
 

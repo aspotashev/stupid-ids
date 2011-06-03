@@ -2,6 +2,9 @@
 #ifndef TRANSLATIONCONTENT_H
 #define TRANSLATIONCONTENT_H
 
+#include <vector>
+#include <string>
+
 #include <gettext-po.h>
 #include <git2.h>
 
@@ -17,6 +20,8 @@ public:
 private:
 	std::vector<git_repository *> m_repos;
 };
+
+class MessageGroup;
 
 class TranslationContent
 {
