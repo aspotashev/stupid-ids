@@ -4,6 +4,7 @@
 #include <gettextpo-helper/gettextpo-helper.h>
 #include <gettextpo-helper/translationcontent.h>
 #include <gettextpo-helper/tphashcache.h>
+#include <gettextpo-helper/stupids-client.h>
 
 TranslationContent::TranslationContent(const char *filename)
 {
@@ -253,6 +254,17 @@ std::vector<MessageGroup *> TranslationContent::readMessages(const char *filenam
 
 	return res;
 
+}
+
+std::vector<int> TranslationContent::getMinIds()
+{
+	if (!m_minIdsInit)
+	{
+		m_minIds = stupidsClient.getMinIds(calculateTpHash());
+		m_minIdsInit = true;
+	}
+
+	return m_minIds;
 }
 
 //---------------------------------------------------------

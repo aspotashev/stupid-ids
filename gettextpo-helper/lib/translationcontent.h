@@ -42,6 +42,8 @@ public:
 	const git_oid *calculateTpHash();
 	std::vector<MessageGroup *> readMessages(const char *filename, bool loadObsolete);
 
+	std::vector<int> getMinIds();
+
 protected:
 	po_file_t poreadFile();
 	po_file_t poreadGit();
@@ -62,6 +64,9 @@ private:
 	size_t m_bufferLen;
 
 	int m_type;
+
+	std::vector<int> m_minIds;
+	bool m_minIdsInit; // "true" if m_minIds is initialized
 
 	enum
 	{

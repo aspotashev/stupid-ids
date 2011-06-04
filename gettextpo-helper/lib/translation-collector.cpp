@@ -92,7 +92,7 @@ void StupIdTranslationCollector::initTransConfl()
 	{
 		TranslationContent *content = m_contents[content_i];
 
-		std::vector<int> min_ids = stupidsClient.getMinIds(content->calculateTpHash());
+		std::vector<int> min_ids = content->getMinIds();
 
 		//--------------------- insert messages --------------------
 		std::vector<MessageGroup *> messages = content->readMessages(content->displayFilename(), false);
