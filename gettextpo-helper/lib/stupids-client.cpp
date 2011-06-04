@@ -9,6 +9,7 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include <gettextpo-helper/stupids-client.h>
 
@@ -79,7 +80,20 @@ void StupidsClient::sendOid(const git_oid *oid)
 
 void StupidsClient::sendToServer(const void *data, size_t len)
 {
-	assert(write(m_sockfd, data, len) == len);
+	size_t written = 0;
+	while (written < len)
+	{
+		ssize_t res = write(m_sockfd, data, len);
+		if (res <= 0)
+		{
+			printf("res = %d, len = %d, errno = %d\n", (int)res, (int)len, errno);
+			assert(0);
+		}
+
+		written += res;
+	}
+
+	assert(written == len);
 }
 
 void StupidsClient::disconnect()
