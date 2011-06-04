@@ -14,6 +14,8 @@
 
 //-------- Working with stupids-server.rb over TCP/IP --------
 
+StupidsClient *StupidsClient::s_instance = NULL;
+
 StupidsClient::StupidsClient()
 {
 	m_sockfd = -1;
@@ -161,5 +163,15 @@ int StupidsClient::getFirstId(const git_oid *tp_hash)
 
 	assert(res > 0);
 	return res;
+}
+
+StupidsClient &StupidsClient::instance()
+{
+	if (s_instance == NULL)
+	{
+		s_instance = new StupidsClient();
+	}
+
+	return *s_instance;
 }
 

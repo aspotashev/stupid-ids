@@ -7,12 +7,10 @@
 StupIdTranslationCollector::StupIdTranslationCollector()
 {
 	m_trans = std::map<int, MessageGroup *>();
-	m_client = new StupidsClient();
 }
 
 StupIdTranslationCollector::~StupIdTranslationCollector()
 {
-	delete m_client;
 }
 
 // DEPRECATED
@@ -26,7 +24,7 @@ void StupIdTranslationCollector::insertPo(const char *filename)
 
 void StupIdTranslationCollector::insertPo(TranslationContent *content)
 {
-	std::vector<int> min_ids = m_client->getMinIds(content->calculateTpHash());
+	std::vector<int> min_ids = stupidsClient.getMinIds(content->calculateTpHash());
 
 	//--------------------- insert messages --------------------
 	std::vector<MessageGroup *> messages = content->readMessages(content->displayFilename(), false);

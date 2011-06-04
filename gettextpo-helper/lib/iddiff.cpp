@@ -175,9 +175,7 @@ void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *cont
 	assert(git_oid_cmp(tp_hash, content_b->calculateTpHash()) == 0);
 
 	// first_id is the same for 2 files
-	StupidsClient *client = new StupidsClient();
-	int first_id = client->getFirstId(tp_hash);
-	delete client;
+	int first_id = stupidsClient.getFirstId(tp_hash);
 
 
 	// compare pairs of messages in 2 .po files
@@ -496,9 +494,7 @@ void Iddiffer::minimizeIds()
 		msg_ids_arr.push_back(iter->first);
 
 	// Request minimized IDs from server
-	StupidsClient *client = new StupidsClient();
-	std::vector<int> min_ids_arr = client->getMinIds(msg_ids_arr);
-	delete client;
+	std::vector<int> min_ids_arr = stupidsClient.getMinIds(msg_ids_arr);
 	assert(msg_ids_arr.size() == min_ids_arr.size());
 
 	for (size_t i = 0; i < msg_ids_arr.size(); i ++)

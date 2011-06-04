@@ -16,6 +16,8 @@ public:
 	std::vector<int> getMinIds(std::vector<int> msg_ids);
 	int getFirstId(const git_oid *tp_hash);
 
+	static StupidsClient &instance();
+
 	enum
 	{
 		CMD_EXIT = 1,
@@ -34,5 +36,9 @@ protected:
 
 private:
 	int m_sockfd;
+
+	static StupidsClient *s_instance;
 };
+
+#define stupidsClient (StupidsClient::instance())
 
