@@ -37,6 +37,7 @@ private:
 //----------------------------------------------
 
 class TranslationContent;
+class StupIdTranslationCollector;
 
 class Iddiffer
 {
@@ -48,7 +49,11 @@ public:
 	void loadIddiff(const char *filename);
 
 	void minimizeIds();
+	std::vector<int> involvedIds();
+
 	std::string generateIddiffText();
+
+	void applyIddiff(StupIdTranslationCollector *collector);
 
 	// TODO: may be remove this?
 	static std::string generateIddiffText(TranslationContent *content_a, TranslationContent *content_b);
@@ -66,6 +71,7 @@ private:
 
 	std::vector<std::pair<int, IddiffMessage *> > m_removedList;
 	std::vector<std::pair<int, IddiffMessage *> > m_addedList;
+	bool m_minimizedIds;
 
 	std::ostringstream m_output;
 };

@@ -1,4 +1,8 @@
 
+#include <string.h>
+#include <dirent.h>
+#include <algorithm>
+
 #include <gettextpo-helper/translation-collector.h>
 #include <gettextpo-helper/gettextpo-helper.h>
 #include <gettextpo-helper/stupids-client.h>
@@ -14,7 +18,6 @@ StupIdTranslationCollector::~StupIdTranslationCollector()
 {
 }
 
-// DEPRECATED
 void StupIdTranslationCollector::insertPo(const char *filename)
 {
 	TranslationContent *content = new TranslationContent(filename);
@@ -34,6 +37,42 @@ void StupIdTranslationCollector::insertPo(const void *buffer, size_t len, const 
 	TranslationContent *content = new TranslationContent(buffer, len);
 	content->setDisplayFilename(filename);
 	insertPo(content); // takes ownership of "content"
+}
+
+void StupIdTranslationCollector::insertPoDir(const char *directory_path)
+{
+	DIR *dir = opendir(directory_path);
+	struct dirent *entry;
+	while (entry = readdir(dir))
+	{
+		const char *d_name = entry->d_name;
+		size_t len = strlen(d_name);
+
+		char *fullpath = new char[strlen(directory_path) + len + 2];
+		strcpy(fullpath, directory_path);
+		strcat(fullpath, "/");
+		strcat(fullpath, d_name);
+
+		if (entry->d_type == DT_REG)
+		{
+			if (len >= 3 && strcmp(d_name + len - 3, ".po") == 0)
+				insertPo(fullpath);
+		}
+		else if (entry->d_type == DT_DIR)
+		{
+			if (strcmp(d_name, ".") != 0 && strcmp(d_name, "..") != 0)
+				insertPoDir(fullpath);
+		}
+		else
+		{
+			// Unhandled or unknown directory entry type
+			assert(0);
+		}
+
+		delete [] fullpath;
+	}
+
+	closedir(dir);
 }
 
 // Returns 'true' if there are different translations of the message.
@@ -116,5 +155,30 @@ void StupIdTranslationCollector::initTransConfl()
 			}
 		}
 	}
+}
+
+std::vector<TranslationContent *> StupIdTranslationCollector::involvedByMinIds(std::vector<int> min_ids)
+{
+	// TODO: may be just require that "min_ids" should already be sorted?
+	sort(min_ids.begin(), min_ids.end());
+
+	std::vector<TranslationContent *> res;
+	for (size_t i = 0; i < m_contents.size(); i ++)
+	{
+		std::vector<int> c_ids = m_contents[i]->getMinIds();
+		// TODO: may be just require that "c_ids" should already be sorted?
+		sort(c_ids.begin(), c_ids.end());
+
+		std::vector<int> intersection(min_ids.size());
+		if (set_intersection(
+			min_ids.begin(), min_ids.end(),
+			c_ids.begin(), c_ids.end(),
+			intersection.begin()) != intersection.begin())
+		{
+			res.push_back(m_contents[i]);
+		}
+	}
+
+	return res;
 }
 

@@ -2,11 +2,13 @@
 #include <string.h>
 #include <stdio.h>
 #include <assert.h>
+#include <algorithm>
 
 #include <git2.h>
 #include <gettextpo-helper/gettextpo-helper.h>
 #include <gettextpo-helper/translationcontent.h>
 #include <gettextpo-helper/stupids-client.h>
+#include <gettextpo-helper/translation-collector.h>
 
 #include <gettextpo-helper/iddiff.h>
 
@@ -141,7 +143,7 @@ std::string IddiffMessage::formatString(const char *str)
 //----------------------------------------------
 
 Iddiffer::Iddiffer():
-	m_output(std::ostringstream::out)
+	m_output(std::ostringstream::out), m_minimizedIds(false)
 {
 }
 
@@ -480,23 +482,31 @@ void Iddiffer::loadMessageListEntry(const char *line, std::vector<std::pair<int,
 	list.push_back(std::make_pair<int, IddiffMessage *>(msg_id, msg));
 }
 
+std::vector<int> Iddiffer::involvedIds()
+{
+	std::vector<int> res;
+	for (size_t i = 0; i < m_removedList.size(); i ++)
+		res.push_back(m_removedList[i].first);
+	for (size_t i = 0; i < m_addedList.size(); i ++)
+		res.push_back(m_addedList[i].first);
+
+	// sort-uniq
+	// TODO: create a function for this
+	sort(res.begin(), res.end());
+	res.resize(unique(res.begin(), res.end()) - res.begin());
+
+	return res;
+}
+
 void Iddiffer::minimizeIds()
 {
-	// Collect all involved IDs
-	std::map<int, int> min_ids;
-	for (size_t i = 0; i < m_removedList.size(); i ++)
-		min_ids[m_removedList[i].first] = 0;
-	for (size_t i = 0; i < m_addedList.size(); i ++)
-		min_ids[m_addedList[i].first] = 0;
-
-	std::vector<int> msg_ids_arr;
-	for (std::map<int, int>::iterator iter = min_ids.begin(); iter != min_ids.end(); iter ++)
-		msg_ids_arr.push_back(iter->first);
+	std::vector<int> msg_ids_arr = involvedIds();
 
 	// Request minimized IDs from server
 	std::vector<int> min_ids_arr = stupidsClient.getMinIds(msg_ids_arr);
 	assert(msg_ids_arr.size() == min_ids_arr.size());
 
+	std::map<int, int> min_ids;
 	for (size_t i = 0; i < msg_ids_arr.size(); i ++)
 		min_ids[msg_ids_arr[i]] = min_ids_arr[i];
 
@@ -505,5 +515,19 @@ void Iddiffer::minimizeIds()
 		m_removedList[i].first = min_ids[m_removedList[i].first];
 	for (size_t i = 0; i < m_addedList.size(); i ++)
 		m_addedList[i].first = min_ids[m_addedList[i].first];
+
+	m_minimizedIds = true;
+}
+
+void Iddiffer::applyIddiff(StupIdTranslationCollector *collector)
+{
+	// Check that involvedIds() will return minimized IDs
+	assert(m_minimizedIds);
+
+	std::vector<TranslationContent *> contents = collector->involvedByMinIds(involvedIds());
+	printf("involved contents: %d\n", (int)contents.size());
+	for (size_t i = 0; i < contents.size(); i ++)
+		printf("[%s]\n", contents[i]->displayFilename());
+	assert(0); // TODO: apply patch to every file from "contents" vector
 }
 

@@ -15,11 +15,14 @@ public:
 	void insertPo(const char *filename);
 	void insertPo(TranslationContent *content);
 	void insertPo(const void *buffer, size_t len, const char *filename);
+	void insertPoDir(const char *directory_path);
 
 	void initTransConfl();
 	// Cannot be 'const', because there is no const 'std::map::operator []'.
 	std::vector<int> listConflicting();
 	MessageGroup *listVariants(int min_id);
+
+	std::vector<TranslationContent *> involvedByMinIds(std::vector<int> min_ids);
 
 protected:
 	// Cannot be 'const', because there is no const 'std::map::operator []'.
