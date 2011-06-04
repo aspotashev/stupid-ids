@@ -137,7 +137,7 @@ void Server::handleGetMinIdArray()
 	output[0] = htonl((uint32_t)id_count);
 	for (int i = 0; i < id_count; i ++)
 	{
-		int min_id = m_idMapDb->getRecursiveMinId(first_id + i);
+		int min_id = m_idMapDb->getPlainMinId(first_id + i);
 		output[i + 1] = htonl((uint32_t)min_id);
 	}
 
@@ -158,7 +158,7 @@ void Server::handleGetMinIds()
 	for (size_t i = 0; i < id_count; i ++)
 	{
 		int msg_id = (int)ntohl(ids_arr[i]);
-		int min_id = m_idMapDb->getRecursiveMinId(msg_id);
+		int min_id = m_idMapDb->getPlainMinId(msg_id);
 		ids_arr[i] = htonl((uint32_t)min_id);
 	}
 

@@ -143,6 +143,12 @@ int MappedFileIdMapDb::getRecursiveMinId(int msg_id) const
 	return prev_id;
 }
 
+int MappedFileIdMapDb::getPlainMinId(int msg_id) const
+{
+	int min_id = getRowConst(msg_id)->min_id;
+	return min_id != 0 ? min_id : msg_id;
+}
+
 // 'Collapse' two IDs
 //
 // It does not matter whether 'min_id' is smaller than 'msg_id' or not.

@@ -70,6 +70,7 @@ public:
 
 	void addRow(int msg_id, int min_id);
 	int getRecursiveMinId(int msg_id) const;
+	int getPlainMinId(int msg_id) const;
 
 	// put globally minimum IDs into 'min_id'
 	void normalizeDatabase();
