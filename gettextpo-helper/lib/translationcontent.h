@@ -30,6 +30,7 @@ public:
 	TranslationContent(GitLoader *git_loader, const char *oid_str);
 	TranslationContent(const void *buffer, size_t len);
 	~TranslationContent();
+	void clear();
 
 	void setDisplayFilename(const char *filename);
 	const char *displayFilename() const;
@@ -64,6 +65,7 @@ private:
 
 	enum
 	{
+		TYPE_UNKNOWN = 0,
 		TYPE_FILE = 1,
 		TYPE_GIT = 2,
 		TYPE_BUFFER = 3
