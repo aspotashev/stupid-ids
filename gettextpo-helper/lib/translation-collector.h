@@ -14,7 +14,7 @@ public:
 	~StupIdTranslationCollector();
 
 	void insertPo(const char *filename);
-	void insertPo(TranslationContent *content, const char *filename);
+	void insertPo(TranslationContent *content);
 	void insertPo(const void *buffer, size_t len, const char *filename);
 
 	// Cannot be 'const', because there is no const 'std::map::operator []'.

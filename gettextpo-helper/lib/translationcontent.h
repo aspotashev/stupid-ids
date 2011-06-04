@@ -31,6 +31,9 @@ public:
 	TranslationContent(const void *buffer, size_t len);
 	~TranslationContent();
 
+	void setDisplayFilename(const char *filename);
+	const char *displayFilename() const;
+
 	// Caller should run 'po_file_free'
 	po_file_t poFileRead();
 
@@ -48,6 +51,7 @@ protected:
 
 private:
 	char *m_filename;
+	char *m_displayFilename;
 
 	GitLoader *m_gitLoader;
 	git_oid m_oid; // TODO: make this a pointer, like m_tphash (so that we will know if it is initialized)

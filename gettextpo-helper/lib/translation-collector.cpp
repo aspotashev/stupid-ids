@@ -19,16 +19,17 @@ StupIdTranslationCollector::~StupIdTranslationCollector()
 void StupIdTranslationCollector::insertPo(const char *filename)
 {
 	TranslationContent *content = new TranslationContent(filename);
-	insertPo(content, filename);
+	content->setDisplayFilename(filename);
+	insertPo(content);
 	delete content;
 }
 
-void StupIdTranslationCollector::insertPo(TranslationContent *content, const char *filename)
+void StupIdTranslationCollector::insertPo(TranslationContent *content)
 {
 	std::vector<int> min_ids = m_client->getMinIds(content->calculateTpHash());
 
 	//--------------------- insert messages --------------------
-	std::vector<MessageGroup *> messages = content->readMessages(filename, false);
+	std::vector<MessageGroup *> messages = content->readMessages(content->displayFilename(), false);
 
 //	printf("id_count = %d\n", (int)min_ids.size());
 	assert(messages.size() == min_ids.size());
@@ -56,7 +57,8 @@ void StupIdTranslationCollector::insertPo(TranslationContent *content, const cha
 void StupIdTranslationCollector::insertPo(const void *buffer, size_t len, const char *filename)
 {
 	TranslationContent *content = new TranslationContent(buffer, len);
-	insertPo(content, filename);
+	content->setDisplayFilename(filename);
+	insertPo(content);
 	delete content; // this also "delete[]"s the buffer
 }
 

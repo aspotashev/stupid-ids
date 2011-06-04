@@ -7,10 +7,12 @@
 
 TranslationContent::TranslationContent(const char *filename)
 {
+	// TODO: TranslationContent::clear
 	m_type = TYPE_FILE;
 	m_gitLoader = NULL;
 	m_buffer = NULL;
 	m_tphash = NULL;
+	m_displayFilename = NULL;
 
 	m_filename = xstrdup(filename);
 }
@@ -21,6 +23,7 @@ TranslationContent::TranslationContent(GitLoader *git_loader, const char *oid_st
 	m_filename = NULL;
 	m_buffer = NULL;
 	m_tphash = NULL;
+	m_displayFilename = NULL;
 
 	m_gitLoader = git_loader;
 	assert(git_oid_mkstr(&m_oid, oid_str) == GIT_SUCCESS);
@@ -32,6 +35,7 @@ TranslationContent::TranslationContent(const void *buffer, size_t len)
 	m_filename = NULL;
 	m_gitLoader = NULL;
 	m_tphash = NULL;
+	m_displayFilename = NULL;
 
 	m_buffer = buffer; // take ownership of the buffer
 	m_bufferLen = len;
@@ -45,6 +49,20 @@ TranslationContent::~TranslationContent()
 		delete [] (char *)m_buffer;
 	if (m_tphash)
 		delete m_tphash;
+	if (m_displayFilename)
+		delete [] m_displayFilename;
+}
+
+void TranslationContent::setDisplayFilename(const char *filename)
+{
+	assert(m_displayFilename == NULL); // can be set only once
+
+	m_displayFilename = xstrdup(filename);
+}
+
+const char *TranslationContent::displayFilename() const
+{
+	return m_displayFilename;
 }
 
 po_file_t TranslationContent::poFileRead()
