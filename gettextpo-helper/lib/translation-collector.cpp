@@ -7,6 +7,7 @@
 StupIdTranslationCollector::StupIdTranslationCollector()
 {
 	m_trans = std::map<int, MessageGroup *>();
+	m_transInit = false;
 }
 
 StupIdTranslationCollector::~StupIdTranslationCollector()
@@ -18,37 +19,13 @@ void StupIdTranslationCollector::insertPo(const char *filename)
 {
 	TranslationContent *content = new TranslationContent(filename);
 	content->setDisplayFilename(filename);
-	insertPo(content);
-	delete content;
+	insertPo(content); // takes ownership of "content"
 }
 
+// Takes ownership of "content"
 void StupIdTranslationCollector::insertPo(TranslationContent *content)
 {
-	std::vector<int> min_ids = stupidsClient.getMinIds(content->calculateTpHash());
-
-	//--------------------- insert messages --------------------
-	std::vector<MessageGroup *> messages = content->readMessages(content->displayFilename(), false);
-
-//	printf("id_count = %d\n", (int)min_ids.size());
-	assert(messages.size() == min_ids.size());
-
-	int index; // outside of the loop in order to calculate message count
-	for (int index = 0; index < (int)messages.size(); index ++)
-	{
-		// fuzzy and untranslated messages will be also added
-		if (m_trans.find(min_ids[index]) == m_trans.end())
-		{
-			std::pair<int, MessageGroup *> new_pair;
-			new_pair.first = min_ids[index];
-			new_pair.second = messages[index];
-
-			m_trans.insert(new_pair);
-		}
-		else
-		{
-			m_trans[min_ids[index]]->mergeMessageGroup(messages[index]);
-		}
-	}
+	m_contents.push_back(content);
 }
 
 // Takes ownership of the buffer.
@@ -56,8 +33,7 @@ void StupIdTranslationCollector::insertPo(const void *buffer, size_t len, const 
 {
 	TranslationContent *content = new TranslationContent(buffer, len);
 	content->setDisplayFilename(filename);
-	insertPo(content);
-	delete content; // this also "delete[]"s the buffer
+	insertPo(content); // takes ownership of "content"
 }
 
 // Returns 'true' if there are different translations of the message.
@@ -65,6 +41,8 @@ void StupIdTranslationCollector::insertPo(const void *buffer, size_t len, const 
 // Cannot be 'const', because there is no const 'std::map::operator []'.
 bool StupIdTranslationCollector::conflictingTrans(int min_id)
 {
+	initTransConfl();
+
 	assert(m_trans[min_id]->size() > 0);
 
 	Message *msg = m_trans[min_id]->message(0);
@@ -80,6 +58,8 @@ bool StupIdTranslationCollector::conflictingTrans(int min_id)
 // Cannot be 'const', because there is no const 'std::map::operator []'.
 std::vector<int> StupIdTranslationCollector::listConflicting()
 {
+	initTransConfl();
+
 	std::vector<int> res;
 
 	for (std::map<int, MessageGroup *>::iterator iter = m_trans.begin();
@@ -95,8 +75,46 @@ std::vector<int> StupIdTranslationCollector::listConflicting()
 
 MessageGroup *StupIdTranslationCollector::listVariants(int min_id)
 {
+	initTransConfl();
+
 	assert (m_trans.find(min_id) != m_trans.end());
 
 	return m_trans[min_id];
+}
+
+void StupIdTranslationCollector::initTransConfl()
+{
+	if (m_transInit)
+		return;
+
+	m_transInit = true;
+	for (int content_i = 0; content_i < m_contents.size(); content_i ++)
+	{
+		TranslationContent *content = m_contents[content_i];
+
+		std::vector<int> min_ids = stupidsClient.getMinIds(content->calculateTpHash());
+
+		//--------------------- insert messages --------------------
+		std::vector<MessageGroup *> messages = content->readMessages(content->displayFilename(), false);
+
+		assert(messages.size() == min_ids.size());
+
+		for (int index = 0; index < (int)messages.size(); index ++)
+		{
+			// fuzzy and untranslated messages will be also added
+			if (m_trans.find(min_ids[index]) == m_trans.end())
+			{
+				std::pair<int, MessageGroup *> new_pair;
+				new_pair.first = min_ids[index];
+				new_pair.second = messages[index];
+
+				m_trans.insert(new_pair);
+			}
+			else
+			{
+				m_trans[min_ids[index]]->mergeMessageGroup(messages[index]);
+			}
+		}
+	}
 }
 
