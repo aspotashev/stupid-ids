@@ -55,7 +55,7 @@ private:
 	char *m_displayFilename;
 
 	GitLoader *m_gitLoader;
-	git_oid m_oid; // TODO: make this a pointer, like m_tphash (so that we will know if it is initialized)
+	git_oid *m_oid;
 	git_oid *m_tphash;
 
 	const void *m_buffer;

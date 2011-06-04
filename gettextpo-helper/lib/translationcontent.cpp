@@ -19,7 +19,8 @@ TranslationContent::TranslationContent(GitLoader *git_loader, const char *oid_st
 
 	m_type = TYPE_GIT;
 	m_gitLoader = git_loader;
-	assert(git_oid_mkstr(&m_oid, oid_str) == GIT_SUCCESS);
+	m_oid = new git_oid;
+	assert(git_oid_mkstr(m_oid, oid_str) == GIT_SUCCESS);
 }
 
 TranslationContent::TranslationContent(const void *buffer, size_t len)
@@ -39,6 +40,8 @@ TranslationContent::~TranslationContent()
 		delete [] (char *)m_buffer;
 	if (m_tphash)
 		delete m_tphash;
+	if (m_oid)
+		delete m_oid;
 	if (m_displayFilename)
 		delete [] m_displayFilename;
 }
@@ -47,6 +50,7 @@ void TranslationContent::clear()
 {
 	m_type = TYPE_UNKNOWN;
 	m_gitLoader = NULL;
+	m_oid = NULL;
 	m_buffer = NULL;
 	m_bufferLen = 0;
 	m_tphash = NULL;
@@ -93,8 +97,9 @@ po_file_t TranslationContent::poreadFile()
 po_file_t TranslationContent::poreadGit()
 {
 	assert(m_gitLoader);
+	assert(m_oid);
 
-	git_blob *blob = m_gitLoader->blobLookup(&m_oid);
+	git_blob *blob = m_gitLoader->blobLookup(m_oid);
 	if (!blob)
 		return NULL;
 
@@ -120,6 +125,12 @@ const git_oid *TranslationContent::gitBlobHash()
 	long file_size;
 	FILE *f;
 
+	if (m_oid)
+		return m_oid;
+
+	// If type is TYPE_GIT, then m_oid must be already initialized
+
+	m_oid = new git_oid;
 	switch (m_type)
 	{
 	case TYPE_FILE:
@@ -132,20 +143,19 @@ const git_oid *TranslationContent::gitBlobHash()
 		assert(fread(temp_buffer, 1, file_size, f) == file_size);
 		fclose(f);
 
-		assert(git_odb_hash(&m_oid, temp_buffer, file_size, GIT_OBJ_BLOB) == 0);
+		assert(git_odb_hash(m_oid, temp_buffer, file_size, GIT_OBJ_BLOB) == 0);
 		delete [] temp_buffer;
-
-		return &m_oid;
-//	case TYPE_GIT:
-//		return poreadGit();
+		break;
 	case TYPE_BUFFER:
-		assert(git_odb_hash(&m_oid, m_buffer, m_bufferLen, GIT_OBJ_BLOB) == 0);
-		return &m_oid;
+		assert(git_odb_hash(m_oid, m_buffer, m_bufferLen, GIT_OBJ_BLOB) == 0);
+		break;
 	default:
 		printf("m_type = %d\n", m_type);
 		assert(0);
-		return NULL;
+		break;
 	}
+
+	return m_oid;
 }
 
 const git_oid *TranslationContent::calculateTpHash()
