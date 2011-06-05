@@ -83,12 +83,12 @@ void Server::sendLongArray(std::vector<int> arr)
 
 void Server::handleGetMinIds()
 {
-	std::vector<int> ids_arr = recvLongVector();
+	std::vector<int> ids = recvLongVector();
 
-	for (size_t i = 0; i < ids_arr.size(); i ++)
-		ids_arr[i] = m_idMapDb->getPlainMinId(ids_arr[i]);
+	for (size_t i = 0; i < ids.size(); i ++)
+		ids[i] = m_idMapDb->getPlainMinId(ids[i]);
 
-	sendLongArray(ids_arr);
+	sendLongArray(ids);
 }
 
 void Server::sendLong(uint32_t data)
