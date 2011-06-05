@@ -23,6 +23,8 @@ public:
 
 	std::string formatPoMessage() const;
 
+	bool equalTranslations(const Message *message);
+
 protected:
 	static std::string formatString(const char *str);
 
@@ -53,6 +55,13 @@ public:
 
 	std::string generateIddiffText();
 
+	std::vector<IddiffMessage *> getIddiffArr(std::vector<std::pair<int, IddiffMessage *> > &section, int msg_id);
+	std::vector<IddiffMessage *> getRemovedArr(int msg_id);
+	std::vector<IddiffMessage *> getAddedArr(int msg_id);
+	IddiffMessage *getAdded(int msg_id);
+
+	void applyToMessage(MessageGroup *messageGroup, int min_id);
+	void applyToContent(TranslationContent *content);
 	void applyIddiff(StupIdTranslationCollector *collector);
 
 	// TODO: may be remove this?

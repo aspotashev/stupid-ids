@@ -230,7 +230,7 @@ std::vector<MessageGroup *> TranslationContent::readMessages(bool loadObsolete)
 	assert(m_displayFilename);
 
 	// loadObsolete is not completely supported yet, because it's non-trivial (ok, it's trivial) to cache readMessages results for both loadObsolete=false and loadObsolete=true
-	assert(loadObsolete);
+	assert(loadObsolete == false);
 
 	po_file_t file = poFileRead();
 	po_message_iterator_t iterator = po_message_iterator(file, "messages");

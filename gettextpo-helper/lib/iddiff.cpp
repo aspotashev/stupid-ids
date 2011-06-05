@@ -140,6 +140,18 @@ std::string IddiffMessage::formatString(const char *str)
 	return res;
 }
 
+bool IddiffMessage::equalTranslations(const Message *message)
+{
+	if (numPlurals() != message->numPlurals())
+		return false;
+
+	for (int i = 0; i < numPlurals(); i ++)
+		if (strcmp(msgstr(i), message->msgstr(i)) != 0)
+			return false;
+
+	return true;
+}
+
 //----------------------------------------------
 
 Iddiffer::Iddiffer():
@@ -482,6 +494,7 @@ void Iddiffer::loadMessageListEntry(const char *line, std::vector<std::pair<int,
 	list.push_back(std::make_pair<int, IddiffMessage *>(msg_id, msg));
 }
 
+// Returns _sorted_ vector
 std::vector<int> Iddiffer::involvedIds()
 {
 	std::vector<int> res;
@@ -519,6 +532,82 @@ void Iddiffer::minimizeIds()
 	m_minimizedIds = true;
 }
 
+std::vector<IddiffMessage *> Iddiffer::getIddiffArr(std::vector<std::pair<int, IddiffMessage *> > &section, int msg_id)
+{
+	std::vector<IddiffMessage *> res;
+	for (size_t i = 0; i < section.size(); i ++)
+		if (section[i].first == msg_id)
+			res.push_back(section[i].second);
+
+	return res;
+}
+
+std::vector<IddiffMessage *> Iddiffer::getRemovedArr(int msg_id)
+{
+	return getIddiffArr(m_removedList, msg_id);
+}
+
+std::vector<IddiffMessage *> Iddiffer::getAddedArr(int msg_id)
+{
+	return getIddiffArr(m_addedList, msg_id);
+}
+
+IddiffMessage *Iddiffer::getAdded(int msg_id)
+{
+	std::vector<IddiffMessage *> arr = getAddedArr(msg_id);
+
+	assert(arr.size() <= 1);
+	return arr.size() == 1 ? arr[0] : NULL;
+}
+
+void Iddiffer::applyToMessage(MessageGroup *messageGroup, int min_id)
+{
+	assert(messageGroup->size() == 1);
+	Message *message = messageGroup->message(0);
+
+	std::vector<IddiffMessage *> removed = getRemovedArr(min_id);
+	IddiffMessage *added = getAdded(min_id);
+
+	// If "ignoreOldTranslation" is true, we can put the new translation
+	bool ignoreOldTranslation = message->isUntranslated();
+	for (size_t i = 0; !ignoreOldTranslation && i < removed.size(); i ++)
+		if (removed[i]->equalTranslations(message))
+			ignoreOldTranslation = true;
+
+	if (ignoreOldTranslation)
+	{
+		if (added) // change translation
+		{
+			assert(0);
+		}
+		else // fuzzy old translation
+		{
+			assert(0);
+		}
+	}
+	else // !ignoreOldTranslation
+	{
+		// We cannot just add the new translation without
+		// "blacklisting" the existing one.
+		assert(!added || added->equalTranslations(message));
+	}
+}
+
+// Applies the iddiff to the given TranslationContent and writes changes to file
+void Iddiffer::applyToContent(TranslationContent *content)
+{
+	std::vector<MessageGroup *> messages = content->readMessages(false);
+	std::vector<int> min_ids = content->getMinIds();
+	std::vector<int> involved_ids = involvedIds();
+
+	for (size_t i = 0; i < messages.size(); i ++)
+		if (binary_search(involved_ids.begin(), involved_ids.end(), min_ids[i]))
+			applyToMessage(messages[i], min_ids[i]);
+
+	// TODO: write content back to file
+	assert(0);
+}
+
 void Iddiffer::applyIddiff(StupIdTranslationCollector *collector)
 {
 	// Check that involvedIds() will return minimized IDs
@@ -527,7 +616,9 @@ void Iddiffer::applyIddiff(StupIdTranslationCollector *collector)
 	std::vector<TranslationContent *> contents = collector->involvedByMinIds(involvedIds());
 	printf("involved contents: %d\n", (int)contents.size());
 	for (size_t i = 0; i < contents.size(); i ++)
-		printf("[%s]\n", contents[i]->displayFilename());
-	assert(0); // TODO: apply patch to every file from "contents" vector
+	{
+		printf("Patching %s\n", contents[i]->displayFilename());
+		applyToContent(contents[i]); // writes changes to file
+	}
 }
 
