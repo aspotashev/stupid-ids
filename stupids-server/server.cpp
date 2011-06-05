@@ -76,11 +76,7 @@ void Server::handleGetMinIds()
 	std::vector<int> ids_arr = recvLongVector();
 
 	for (size_t i = 0; i < ids_arr.size(); i ++)
-	{
-		int msg_id = ids_arr[i];
-		int min_id = m_idMapDb->getPlainMinId(msg_id);
-		ids_arr[i] = min_id;
-	}
+		ids_arr[i] = m_idMapDb->getPlainMinId(ids_arr[i]);
 
 
 	uint32_t *ids_arr_raw = new uint32_t[(size_t)ids_arr.size()];
