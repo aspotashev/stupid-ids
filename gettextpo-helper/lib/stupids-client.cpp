@@ -150,29 +150,28 @@ std::vector<int> StupidsClient::getMinIds(const git_oid *tp_hash)
 //	}
 }
 
+void StupidsClient::sendLongVector(std::vector<int> vec)
+{
+	size_t count = vec.size();
+	uint32_t *arr = new uint32_t[count];
+
+	sendLong((uint32_t)count);
+	for (size_t i = 0; i < count; i ++)
+		arr[i] = htonl((uint32_t)vec[i]);
+	sendToServer(arr, count * 4);
+	delete [] arr;
+}
+
 std::vector<int> StupidsClient::getMinIds(std::vector<int> msg_ids)
 {
 	connect();
 
-	size_t id_count = msg_ids.size();
-	uint32_t *ids_arr = new uint32_t[id_count];
-
 	// send command
 	sendLong(CMD_GET_MIN_IDS);
-	sendLong((uint32_t)id_count);
-	for (size_t i = 0; i < id_count; i ++)
-		ids_arr[i] = htonl((uint32_t)msg_ids[i]);
-	sendToServer(ids_arr, id_count * 4);
+	sendLongVector(msg_ids);
 
 	// read results
-	recvFromServer(ids_arr, id_count * 4);
-
-	std::vector<int> res;
-	for (size_t i = 0; i < id_count; i ++)
-		res.push_back((int)ntohl(ids_arr[i]));
-	delete [] ids_arr;
-
-	return res;
+	return recvLongArray(msg_ids.size());
 }
 
 int StupidsClient::getFirstId(const git_oid *tp_hash)

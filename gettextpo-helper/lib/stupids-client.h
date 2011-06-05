@@ -33,6 +33,7 @@ protected:
 	void sendToServer(const void *data, size_t len);
 	void sendLong(uint32_t data);
 	void sendOid(const git_oid *oid);
+	void sendLongVector(std::vector<int> vec);
 
 	void recvFromServer(void *data, size_t len);
 	uint32_t recvLong();
