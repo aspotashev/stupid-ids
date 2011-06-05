@@ -43,15 +43,16 @@ void Server::handleGetMinIdArray()
 	int id_count = first_ids.second;
 	assert(first_id != 0);
 
-	uint32_t *output = new uint32_t[id_count + 1];
-	output[0] = htonl((uint32_t)id_count);
+	sendLong((uint32_t)id_count);
+
+	uint32_t *output = new uint32_t[id_count];
 	for (int i = 0; i < id_count; i ++)
 	{
 		int min_id = m_idMapDb->getPlainMinId(first_id + i);
-		output[i + 1] = htonl((uint32_t)min_id);
+		output[i] = htonl((uint32_t)min_id);
 	}
 
-	sendToClient(output, sizeof(uint32_t) * (id_count + 1));
+	sendToClient(output, sizeof(uint32_t) * id_count);
 
 	delete [] output;
 }
