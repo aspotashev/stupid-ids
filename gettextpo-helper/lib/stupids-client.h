@@ -16,6 +16,7 @@ public:
 	std::vector<int> getMinIds(const git_oid *tp_hash);
 	std::vector<int> getMinIds(std::vector<int> msg_ids);
 	int getFirstId(const git_oid *tp_hash);
+	std::vector<int> involvedByMinIds(std::vector<const git_oid *> tp_hashes, std::vector<int> min_ids);
 
 	static StupidsClient &instance();
 
@@ -25,6 +26,7 @@ public:
 		CMD_GET_MIN_ID_ARRAY = 2,
 		CMD_GET_FIRST_ID = 3,
 		CMD_GET_MIN_IDS = 4,
+		CMD_INVOLVED_BY_MIN_IDS = 5,
 	};
 
 protected:

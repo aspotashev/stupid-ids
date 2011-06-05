@@ -159,24 +159,17 @@ void StupIdTranslationCollector::initTransConfl()
 
 std::vector<TranslationContent *> StupIdTranslationCollector::involvedByMinIds(std::vector<int> min_ids)
 {
-	// TODO: may be just require that "min_ids" should already be sorted?
-	sort(min_ids.begin(), min_ids.end());
+	std::vector<const git_oid *> tp_hashes;
+	for (size_t i = 0; i < m_contents.size(); i ++)
+		tp_hashes.push_back(m_contents[i]->calculateTpHash());
+
+	std::vector<int> res_indices = stupidsClient.involvedByMinIds(tp_hashes, min_ids);
 
 	std::vector<TranslationContent *> res;
-	for (size_t i = 0; i < m_contents.size(); i ++)
+	for (size_t i = 0; i < res_indices.size(); i ++)
 	{
-		std::vector<int> c_ids = m_contents[i]->getMinIds();
-		// TODO: may be just require that "c_ids" should already be sorted?
-		sort(c_ids.begin(), c_ids.end());
-
-		std::vector<int> intersection(min_ids.size());
-		if (set_intersection(
-			min_ids.begin(), min_ids.end(),
-			c_ids.begin(), c_ids.end(),
-			intersection.begin()) != intersection.begin())
-		{
-			res.push_back(m_contents[i]);
-		}
+		assert(res_indices[i] >= 0 && res_indices[i] < m_contents.size());
+		res.push_back(m_contents[res_indices[i]]);
 	}
 
 	return res;

@@ -23,9 +23,13 @@ private:
 	void sendLongArray(std::vector<int> arr);
 	void sendLongVector(std::vector<int> vec);
 
+	std::vector<int> getTphashMinIds(GitOid tp_hash);
+	std::vector<int> getMinIds(std::vector<int> ids);
+
 	void handleGetMinIdArray();
 	void handleGetFirstId();
 	void handleGetMinIds();
+	void handleInvolvedByMinIds();
 
 
 	FiledbFirstIds *m_firstIds;

@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include <assert.h>
+#include <algorithm>
 
 #include <gettextpo-helper/stupids-client.h>
 #include <gettextpo-helper/mappedfile.h>
@@ -82,31 +83,37 @@ void Server::sendLongVector(std::vector<int> vec)
 
 //-----------------------
 
-void Server::handleGetMinIdArray()
+std::vector<int> Server::getTphashMinIds(GitOid tp_hash)
 {
-	// "tp_hash" is not the same as "oid", but we can still use
-	// the class GitOid for tp_hashes.
-	GitOid tp_hash = recvOid();
-
 	std::pair<int, int> first_ids = m_firstIds->getFirstId(tp_hash);
 	int first_id = first_ids.first;
 	int id_count = first_ids.second;
 	assert(first_id != 0);
 
-	std::vector<int> output(id_count);
+	std::vector<int> res(id_count);
 	for (int i = 0; i < id_count; i ++)
-		output[i] = m_idMapDb->getPlainMinId(first_id + i);
-	sendLongVector(output);
+		res[i] = m_idMapDb->getPlainMinId(first_id + i);
+
+	return res;
+}
+
+std::vector<int> Server::getMinIds(std::vector<int> ids)
+{
+	std::vector<int> min_ids(ids.size());
+	for (size_t i = 0; i < ids.size(); i ++)
+		min_ids[i] = m_idMapDb->getPlainMinId(ids[i]);
+
+	return min_ids;
+}
+
+void Server::handleGetMinIdArray()
+{
+	sendLongVector(getTphashMinIds(recvOid()));
 }
 
 void Server::handleGetMinIds()
 {
-	std::vector<int> ids = recvLongVector();
-
-	for (size_t i = 0; i < ids.size(); i ++)
-		ids[i] = m_idMapDb->getPlainMinId(ids[i]);
-
-	sendLongArray(ids);
+	sendLongArray(getMinIds(recvLongVector()));
 }
 
 void Server::handleGetFirstId()
@@ -122,6 +129,41 @@ void Server::handleGetFirstId()
 	sendLong((uint32_t)first_id);
 }
 
+void Server::handleInvolvedByMinIds()
+{
+	// read input data
+	size_t tp_hash_count = recvLong();
+	std::vector<GitOid> tp_hashes;
+	for (size_t i = 0; i < tp_hash_count; i ++)
+		tp_hashes.push_back(recvOid());
+
+	std::vector<int> min_ids = getMinIds(recvLongVector());
+
+	// process request
+	sort(min_ids.begin(), min_ids.end());
+
+	// TODO: sort tp_hashes by first_id (to optimize reads from mapped file), remember indices before sorting!
+
+	std::vector<int> res;
+	for (size_t i = 0; i < tp_hashes.size(); i ++)
+	{
+		std::vector<int> c_ids = getTphashMinIds(tp_hashes[i]);
+		sort(c_ids.begin(), c_ids.end());
+
+		std::vector<int> intersection(min_ids.size());
+		if (set_intersection(
+			min_ids.begin(), min_ids.end(),
+			c_ids.begin(), c_ids.end(),
+			intersection.begin()) != intersection.begin())
+		{
+			res.push_back(i);
+		}
+	}
+
+	// write output data
+	sendLongVector(res);
+}
+
 void Server::commandHandler()
 {
 	uint32_t command = recvLong();
@@ -134,6 +176,8 @@ void Server::commandHandler()
 		handleGetFirstId();
 	else if (command == StupidsClient::CMD_GET_MIN_IDS)
 		handleGetMinIds();
+	else if (command == StupidsClient::CMD_INVOLVED_BY_MIN_IDS)
+		handleInvolvedByMinIds();
 	else
 	{
 		printf("Unknown command code %d.\n", command);
