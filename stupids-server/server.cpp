@@ -45,16 +45,10 @@ void Server::handleGetMinIdArray()
 
 	sendLong((uint32_t)id_count);
 
-	uint32_t *output = new uint32_t[id_count];
+	std::vector<int> output(id_count);
 	for (int i = 0; i < id_count; i ++)
-	{
-		int min_id = m_idMapDb->getPlainMinId(first_id + i);
-		output[i] = htonl((uint32_t)min_id);
-	}
-
-	sendToClient(output, sizeof(uint32_t) * id_count);
-
-	delete [] output;
+		output[i] = m_idMapDb->getPlainMinId(first_id + i);
+	sendLongArray(output);
 }
 
 std::vector<int> Server::recvLongVector()
