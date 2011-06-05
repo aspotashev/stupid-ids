@@ -47,15 +47,8 @@ int TcpCommandServer::recvFromClient(void *data, size_t len)
 
 void TcpCommandServer::sessionOpened()
 {
-	uint32_t command;
-
 	while (!m_closeConnection)
-	{
-		if (recvFromClient(&command, 4) != 0)
-			break;
-
-		commandHandler(ntohl(command));
-	}
+		commandHandler();
 }
 
 // SIGCHLD signal handler

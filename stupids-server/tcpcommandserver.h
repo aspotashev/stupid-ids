@@ -12,7 +12,7 @@ public:
 	void start();
 
 protected:
-	virtual void commandHandler(uint32_t command) = 0;
+	virtual void commandHandler() = 0;
 	int recvFromClient(void *data, size_t len);
 	void sendToClient(const void *data, size_t len);
 	void disconnect();
