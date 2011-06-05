@@ -18,6 +18,8 @@ private:
 	GitOid recvOid();
 	uint32_t recvLong();
 
+	void sendLong(uint32_t data);
+
 	void handleGetMinIdArray();
 	void handleGetFirstId();
 	void handleGetMinIds();

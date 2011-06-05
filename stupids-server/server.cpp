@@ -74,6 +74,12 @@ void Server::handleGetMinIds()
 	delete [] ids_arr;
 }
 
+void Server::sendLong(uint32_t data)
+{
+	data = htonl(data);
+	sendToClient(&data, sizeof(uint32_t));
+}
+
 void Server::handleGetFirstId()
 {
 	// "tp_hash" is not the same as "oid", but we can still use
@@ -84,8 +90,7 @@ void Server::handleGetFirstId()
 	int first_id = first_ids.first;
 	assert(first_id != 0);
 
-	uint32_t output = htonl((uint32_t)first_id);
-	sendToClient(&output, sizeof(uint32_t));
+	sendLong((uint32_t)first_id);
 }
 
 uint32_t Server::recvLong()
