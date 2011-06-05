@@ -22,6 +22,15 @@ Server::~Server()
 	delete m_idMapDb;
 }
 
+//-----------------------
+
+uint32_t Server::recvLong()
+{
+	uint32_t res;
+	assert (recvFromClient(&res, 4) == 0);
+	return ntohl(res);
+}
+
 GitOid Server::recvOid()
 {
 	static unsigned char oid_raw[GIT_OID_RAWSZ];
@@ -32,11 +41,46 @@ GitOid Server::recvOid()
 	return oid;
 }
 
+std::vector<int> Server::recvLongVector()
+{
+	uint32_t count = recvLong();
+
+	uint32_t *arr = new uint32_t[(size_t)count];
+	recvFromClient(arr, count * 4);
+
+	std::vector<int> res;
+	for (size_t i = 0; i < count; i ++)
+		res.push_back((int)ntohl(arr[i]));
+	delete [] arr;
+
+	return res;
+}
+
+//-----------------------
+
+void Server::sendLong(uint32_t data)
+{
+	data = htonl(data);
+	sendToClient(&data, sizeof(uint32_t));
+}
+
+void Server::sendLongArray(std::vector<int> arr)
+{
+	uint32_t *arr_raw = new uint32_t[(size_t)arr.size()];
+	for (size_t i = 0; i < arr.size(); i ++)
+		arr_raw[i] = htonl((uint32_t)arr[i]);
+
+	sendToClient(arr_raw, sizeof(uint32_t) * arr.size());
+	delete [] arr_raw;
+}
+
 void Server::sendLongVector(std::vector<int> vec)
 {
 	sendLong((uint32_t)vec.size());
 	sendLongArray(vec);
 }
+
+//-----------------------
 
 void Server::handleGetMinIdArray()
 {
@@ -55,31 +99,6 @@ void Server::handleGetMinIdArray()
 	sendLongVector(output);
 }
 
-std::vector<int> Server::recvLongVector()
-{
-	uint32_t count = recvLong();
-
-	uint32_t *arr = new uint32_t[(size_t)count];
-	recvFromClient(arr, count * 4);
-
-	std::vector<int> res;
-	for (size_t i = 0; i < count; i ++)
-		res.push_back((int)ntohl(arr[i]));
-	delete [] arr;
-
-	return res;
-}
-
-void Server::sendLongArray(std::vector<int> arr)
-{
-	uint32_t *arr_raw = new uint32_t[(size_t)arr.size()];
-	for (size_t i = 0; i < arr.size(); i ++)
-		arr_raw[i] = htonl((uint32_t)arr[i]);
-
-	sendToClient(arr_raw, sizeof(uint32_t) * arr.size());
-	delete [] arr_raw;
-}
-
 void Server::handleGetMinIds()
 {
 	std::vector<int> ids = recvLongVector();
@@ -88,12 +107,6 @@ void Server::handleGetMinIds()
 		ids[i] = m_idMapDb->getPlainMinId(ids[i]);
 
 	sendLongArray(ids);
-}
-
-void Server::sendLong(uint32_t data)
-{
-	data = htonl(data);
-	sendToClient(&data, sizeof(uint32_t));
 }
 
 void Server::handleGetFirstId()
@@ -107,13 +120,6 @@ void Server::handleGetFirstId()
 	assert(first_id != 0);
 
 	sendLong((uint32_t)first_id);
-}
-
-uint32_t Server::recvLong()
-{
-	uint32_t res;
-	assert (recvFromClient(&res, 4) == 0);
-	return ntohl(res);
 }
 
 void Server::commandHandler()
