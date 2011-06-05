@@ -111,20 +111,25 @@ void StupidsClient::disconnect()
 	m_sockfd = -1;
 }
 
+std::vector<int> StupidsClient::recvLongArray(size_t count)
+{
+	uint32_t *arr = new uint32_t[count];
+	recvFromServer(arr, sizeof(uint32_t) * count);
+
+	std::vector<int> res; // TODO: reserve memory for 'count' elements
+	for (size_t i = 0; i < count; i ++)
+		res.push_back((int)ntohl(arr[i]));
+	delete [] arr;
+
+	return res;
+}
+
 std::vector<int> StupidsClient::recvLongVector()
 {
 	int count = (int)recvLong();
 	assert(count >= 0);
 
-	uint32_t *arr = new uint32_t[count];
-	recvFromServer(arr, sizeof(uint32_t) * count);
-
-	std::vector<int> res; // TODO: reserve memory for 'count' elements
-	for (int i = 0; i < count; i ++)
-		res.push_back((int)ntohl(arr[i]));
-	delete [] arr;
-
-	return res;
+	return recvLongArray(count);
 }
 
 std::vector<int> StupidsClient::getMinIds(const git_oid *tp_hash)

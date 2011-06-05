@@ -36,6 +36,7 @@ protected:
 
 	void recvFromServer(void *data, size_t len);
 	uint32_t recvLong();
+	std::vector<int> recvLongArray(size_t count);
 	std::vector<int> recvLongVector();
 
 private:
