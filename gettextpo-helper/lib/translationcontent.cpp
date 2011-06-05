@@ -224,8 +224,14 @@ std::string TranslationContent::dumpPoFileTemplate()
 	return res;
 }
 
-std::vector<MessageGroup *> TranslationContent::readMessages(const char *filename, bool loadObsolete)
+std::vector<MessageGroup *> TranslationContent::readMessages(bool loadObsolete)
 {
+	// m_displayFilename will be used as "filename" for all messages
+	assert(m_displayFilename);
+
+	// loadObsolete is not completely supported yet, because it's non-trivial (ok, it's trivial) to cache readMessages results for both loadObsolete=false and loadObsolete=true
+	assert(loadObsolete);
+
 	po_file_t file = poFileRead();
 	po_message_iterator_t iterator = po_message_iterator(file, "messages");
 
@@ -243,7 +249,7 @@ std::vector<MessageGroup *> TranslationContent::readMessages(const char *filenam
 			res.push_back(new MessageGroup(
 				message,
 				po_message_is_obsolete(message) ? -1 : index,
-				filename));
+				m_displayFilename));
 		if (!po_message_is_obsolete(message))
 			index ++;
 	}

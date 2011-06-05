@@ -645,7 +645,8 @@ bool Message::equalTranslations(const Message *o) const
 std::vector<MessageGroup *> read_po_file_messages(const char *filename, bool loadObsolete)
 {
 	TranslationContent *content = new TranslationContent(filename);
-	std::vector<MessageGroup *> res = content->readMessages(filename, loadObsolete);
+	content->setDisplayFilename(filename);
+	std::vector<MessageGroup *> res = content->readMessages(loadObsolete);
 	delete content;
 
 	return res;

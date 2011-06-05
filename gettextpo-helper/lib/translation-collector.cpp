@@ -134,7 +134,7 @@ void StupIdTranslationCollector::initTransConfl()
 		std::vector<int> min_ids = content->getMinIds();
 
 		//--------------------- insert messages --------------------
-		std::vector<MessageGroup *> messages = content->readMessages(content->displayFilename(), false);
+		std::vector<MessageGroup *> messages = content->readMessages(false);
 
 		assert(messages.size() == min_ids.size());
 
