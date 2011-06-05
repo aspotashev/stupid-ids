@@ -28,14 +28,14 @@ Server::~Server()
 uint32_t Server::recvLong()
 {
 	uint32_t res;
-	assert (recvFromClient(&res, 4) == 0);
+	recvFromClient(&res, 4);
 	return ntohl(res);
 }
 
 GitOid Server::recvOid()
 {
 	static unsigned char oid_raw[GIT_OID_RAWSZ];
-	assert(recvFromClient(oid_raw, GIT_OID_RAWSZ) == 0);
+	recvFromClient(oid_raw, GIT_OID_RAWSZ);
 	GitOid oid;
 	oid.setOidRaw(oid_raw);
 
@@ -166,7 +166,16 @@ void Server::handleInvolvedByMinIds()
 
 void Server::commandHandler()
 {
-	uint32_t command = recvLong();
+	uint32_t command;
+	try
+	{
+		command = recvLong();
+	}
+	catch (std::exception &e)
+	{
+		disconnect();
+		return;
+	}
 
 	if (command == StupidsClient::CMD_EXIT)
 		disconnect();

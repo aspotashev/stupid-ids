@@ -21,28 +21,33 @@ TcpCommandServer::~TcpCommandServer()
 
 void TcpCommandServer::sendToClient(const void *data, size_t len)
 {
+	assert (!m_closeConnection);
+
 	assert(sendto(m_connfd, data, len,
 		0, (struct sockaddr *)&m_cliaddr, sizeof(m_cliaddr)) == len);
 }
 
-int TcpCommandServer::recvFromClient(void *data, size_t len)
+void TcpCommandServer::recvFromClient(void *data, size_t len)
 {
+	if (m_closeConnection)
+		throw ExceptionNoConnection();
+
 	ssize_t read_bytes = recvfrom(m_connfd, data, len,
 		0, (struct sockaddr *)&m_cliaddr, &m_clilen);
 	if (read_bytes == 0)
 	{
 		printf("Client has disconnected.\n");
-		return -1;
+		disconnect();
+		throw ExceptionDisconnected();
 	}
 	else if (read_bytes < 0)
 	{
 		printf("Failed to read from socket.\n");
-		return -2;
+		disconnect();
+		throw ExceptionRecvFailed();
 	}
 
 	assert(read_bytes == (ssize_t)len);
-
-	return 0;
 }
 
 void TcpCommandServer::sessionOpened()
@@ -133,5 +138,22 @@ void TcpCommandServer::start()
 void TcpCommandServer::disconnect()
 {
 	m_closeConnection = true;
+}
+
+//--------------------------------
+
+const char *TcpCommandServer::ExceptionNoConnection::what() const throw()
+{
+	return "ExceptionNoConnection (connection has already been closed)";
+}
+
+const char *TcpCommandServer::ExceptionDisconnected::what() const throw()
+{
+	return "ExceptionDisconnected (connection has just been closed)";
+}
+
+const char *TcpCommandServer::ExceptionRecvFailed::what() const throw()
+{
+	return "ExceptionRecvFailed (failed to read from socket)";
 }
 
