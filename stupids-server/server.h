@@ -20,6 +20,7 @@ private:
 	std::vector<int> recvLongVector();
 
 	void sendLong(uint32_t data);
+	void sendLongArray(std::vector<int> arr);
 
 	void handleGetMinIdArray();
 	void handleGetFirstId();

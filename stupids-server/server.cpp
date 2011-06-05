@@ -71,6 +71,16 @@ std::vector<int> Server::recvLongVector()
 	return res;
 }
 
+void Server::sendLongArray(std::vector<int> arr)
+{
+	uint32_t *arr_raw = new uint32_t[(size_t)arr.size()];
+	for (size_t i = 0; i < arr.size(); i ++)
+		arr_raw[i] = htonl((uint32_t)arr[i]);
+
+	sendToClient(arr_raw, sizeof(uint32_t) * arr.size());
+	delete [] arr_raw;
+}
+
 void Server::handleGetMinIds()
 {
 	std::vector<int> ids_arr = recvLongVector();
@@ -78,13 +88,7 @@ void Server::handleGetMinIds()
 	for (size_t i = 0; i < ids_arr.size(); i ++)
 		ids_arr[i] = m_idMapDb->getPlainMinId(ids_arr[i]);
 
-
-	uint32_t *ids_arr_raw = new uint32_t[(size_t)ids_arr.size()];
-	for (size_t i = 0; i < ids_arr.size(); i ++)
-		ids_arr_raw[i] = htonl((uint32_t)ids_arr[i]);
-
-	sendToClient(ids_arr_raw, ids_arr.size() * 4);
-	delete [] ids_arr_raw;
+	sendLongArray(ids_arr);
 }
 
 void Server::sendLong(uint32_t data)
