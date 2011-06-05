@@ -116,13 +116,13 @@ std::vector<int> StupidsClient::recvLongVector()
 	int count = (int)recvLong();
 	assert(count >= 0);
 
-	uint32_t *first_ids = new uint32_t[count];
-	recvFromServer(first_ids, sizeof(uint32_t) * count);
+	uint32_t *arr = new uint32_t[count];
+	recvFromServer(arr, sizeof(uint32_t) * count);
 
 	std::vector<int> res; // TODO: reserve memory for 'count' elements
 	for (int i = 0; i < count; i ++)
-		res.push_back((int)ntohl(first_ids[i]));
-	delete [] first_ids;
+		res.push_back((int)ntohl(arr[i]));
+	delete [] arr;
 
 	return res;
 }
