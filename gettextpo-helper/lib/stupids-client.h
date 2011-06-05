@@ -1,6 +1,7 @@
 
-#include <exception>
 #include <arpa/inet.h>
+#include <exception>
+#include <vector>
 
 #include <git2.h>
 
