@@ -120,14 +120,14 @@ std::vector<int> StupidsClient::getMinIds(const git_oid *tp_hash)
 	sendOid(tp_hash);
 
 	// read results
-	uint32_t id_count = recvLong();
-	assert((int)id_count >= 0);
+	int id_count = (int)recvLong();
+	assert(id_count >= 0);
 
-	uint32_t *first_ids = new uint32_t[(int)id_count];
+	uint32_t *first_ids = new uint32_t[id_count];
 	recvFromServer(first_ids, sizeof(uint32_t) * id_count);
 
 	std::vector<int> res; // TODO: reserve memory for 'id_count' elements
-	for (int i = 0; i < (int)id_count; i ++)
+	for (int i = 0; i < id_count; i ++)
 		res.push_back((int)ntohl(first_ids[i]));
 
 
