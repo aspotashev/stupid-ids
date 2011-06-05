@@ -35,6 +35,7 @@ protected:
 	void sendOid(const git_oid *oid);
 
 	void recvFromServer(void *data, size_t len);
+	uint32_t recvLong();
 
 private:
 	int m_sockfd;

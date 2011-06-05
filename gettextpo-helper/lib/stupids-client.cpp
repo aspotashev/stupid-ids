@@ -39,6 +39,13 @@ void StupidsClient::recvFromServer(void *data, size_t len)
 	}
 }
 
+uint32_t StupidsClient::recvLong()
+{
+	uint32_t res = 0xffffffff;
+	recvFromServer(&res, sizeof(uint32_t));
+	return ntohl(res);
+}
+
 void StupidsClient::connect()
 {
 	if (m_sockfd >= 0)
@@ -113,10 +120,7 @@ std::vector<int> StupidsClient::getMinIds(const git_oid *tp_hash)
 	sendOid(tp_hash);
 
 	// read results
-	uint32_t id_count = -1;
-	recvFromServer(&id_count, sizeof(uint32_t));
-	id_count = ntohl(id_count);
-
+	uint32_t id_count = recvLong();
 	assert((int)id_count >= 0);
 
 	uint32_t *first_ids = new uint32_t[(int)id_count];
@@ -171,12 +175,10 @@ int StupidsClient::getFirstId(const git_oid *tp_hash)
 	sendOid(tp_hash);
 
 	// read results
-	uint32_t first_id = 0;
-	recvFromServer(&first_id, sizeof(uint32_t));
-	int res = (int)ntohl(first_id);
+	int first_id = (int)recvLong();
 
-	assert(res > 0);
-	return res;
+	assert(first_id > 0);
+	return first_id;
 }
 
 StupidsClient &StupidsClient::instance()
