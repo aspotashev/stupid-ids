@@ -118,7 +118,10 @@ std::string IddiffMessage::formatPoMessage() const
 	return res;
 }
 
-// escape quotes (" -> \") and put in quotes
+// Escape special symbols and put in quotes.
+//
+// " -> \"
+// newline [\n] -> \n
 std::string IddiffMessage::formatString(const char *str)
 {
 	assert(str);
@@ -132,6 +135,17 @@ std::string IddiffMessage::formatString(const char *str)
 	{
 		if (str[i] == '\"')
 			res += "\\\""; // escape quote
+		else if (str[i] == '\\')
+			res += "\\\\";
+		else if (str[i] == '\n')
+			res += "\\n";
+		else if (str[i] == '\t')
+			res += "\\t";
+		else if ((unsigned char)str[i] < ' ')
+		{
+			printf("Unescaped special symbol: code = %d\n", (int)str[i]);
+			assert(0);
+		}
 		else
 			res += str[i];
 	}
@@ -468,6 +482,21 @@ void Iddiffer::loadMessageListEntry(const char *line, std::vector<std::pair<int,
 			else if (line[0] == '\\' && line[1] == '\"')
 			{
 				msgstr_buf[msgstr_i] = '\"';
+				line ++;
+			}
+			else if (line[0] == '\\' && line[1] == 'n')
+			{
+				msgstr_buf[msgstr_i] = '\n';
+				line ++;
+			}
+			else if (line[0] == '\\' && line[1] == 't')
+			{
+				msgstr_buf[msgstr_i] = '\t';
+				line ++;
+			}
+			else if (line[0] == '\\' && line[1] == '\\')
+			{
+				msgstr_buf[msgstr_i] = '\\';
 				line ++;
 			}
 			else
