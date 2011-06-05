@@ -21,8 +21,8 @@ TcpCommandServer::~TcpCommandServer()
 
 void TcpCommandServer::sendToClient(const void *data, size_t len)
 {
-	sendto(m_connfd, data, len,
-		0, (struct sockaddr *)&m_cliaddr, sizeof(m_cliaddr));
+	assert(sendto(m_connfd, data, len,
+		0, (struct sockaddr *)&m_cliaddr, sizeof(m_cliaddr)) == len);
 }
 
 int TcpCommandServer::recvFromClient(void *data, size_t len)
