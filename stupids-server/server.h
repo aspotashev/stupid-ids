@@ -17,6 +17,7 @@ public:
 private:
 	GitOid recvOid();
 	uint32_t recvLong();
+	std::vector<int> recvLongVector();
 
 	void sendLong(uint32_t data);
 

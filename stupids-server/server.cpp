@@ -56,22 +56,39 @@ void Server::handleGetMinIdArray()
 	delete [] output;
 }
 
+std::vector<int> Server::recvLongVector()
+{
+	uint32_t count = recvLong();
+
+	uint32_t *arr = new uint32_t[(size_t)count];
+	recvFromClient(arr, count * 4);
+
+	std::vector<int> res;
+	for (size_t i = 0; i < count; i ++)
+		res.push_back((int)ntohl(arr[i]));
+	delete [] arr;
+
+	return res;
+}
+
 void Server::handleGetMinIds()
 {
-	uint32_t id_count = recvLong();
+	std::vector<int> ids_arr = recvLongVector();
 
-	uint32_t *ids_arr = new uint32_t[(size_t)id_count];
-	recvFromClient(ids_arr, id_count * 4);
-
-	for (size_t i = 0; i < id_count; i ++)
+	for (size_t i = 0; i < ids_arr.size(); i ++)
 	{
-		int msg_id = (int)ntohl(ids_arr[i]);
+		int msg_id = ids_arr[i];
 		int min_id = m_idMapDb->getPlainMinId(msg_id);
-		ids_arr[i] = htonl((uint32_t)min_id);
+		ids_arr[i] = min_id;
 	}
 
-	sendToClient(ids_arr, id_count * 4);
-	delete [] ids_arr;
+
+	uint32_t *ids_arr_raw = new uint32_t[(size_t)ids_arr.size()];
+	for (size_t i = 0; i < ids_arr.size(); i ++)
+		ids_arr_raw[i] = htonl((uint32_t)ids_arr[i]);
+
+	sendToClient(ids_arr_raw, ids_arr.size() * 4);
+	delete [] ids_arr_raw;
 }
 
 void Server::sendLong(uint32_t data)
