@@ -21,6 +21,7 @@ private:
 
 	void sendLong(uint32_t data);
 	void sendLongArray(std::vector<int> arr);
+	void sendLongVector(std::vector<int> vec);
 
 	void handleGetMinIdArray();
 	void handleGetFirstId();

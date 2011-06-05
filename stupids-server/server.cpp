@@ -32,6 +32,12 @@ GitOid Server::recvOid()
 	return oid;
 }
 
+void Server::sendLongVector(std::vector<int> vec)
+{
+	sendLong((uint32_t)vec.size());
+	sendLongArray(vec);
+}
+
 void Server::handleGetMinIdArray()
 {
 	// "tp_hash" is not the same as "oid", but we can still use
@@ -43,12 +49,10 @@ void Server::handleGetMinIdArray()
 	int id_count = first_ids.second;
 	assert(first_id != 0);
 
-	sendLong((uint32_t)id_count);
-
 	std::vector<int> output(id_count);
 	for (int i = 0; i < id_count; i ++)
 		output[i] = m_idMapDb->getPlainMinId(first_id + i);
-	sendLongArray(output);
+	sendLongVector(output);
 }
 
 std::vector<int> Server::recvLongVector()
