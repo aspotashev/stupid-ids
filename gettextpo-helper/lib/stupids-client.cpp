@@ -26,13 +26,13 @@ StupidsClient::~StupidsClient()
 {
 }
 
-void StupidsClient::sockReadBlock(void *buffer, int length)
+void StupidsClient::recvFromServer(void *data, size_t len)
 {
 	int bytes_read = 0;
 
-	while (bytes_read < length)
+	while (bytes_read < len)
 	{
-		int res = read(m_sockfd, (char *)buffer + bytes_read, length - bytes_read);
+		int res = read(m_sockfd, (char *)data + bytes_read, len - bytes_read);
 		assert(res > 0);
 
 		bytes_read += res;
@@ -114,13 +114,13 @@ std::vector<int> StupidsClient::getMinIds(const git_oid *tp_hash)
 
 	// read results
 	uint32_t id_count = -1;
-	sockReadBlock(&id_count, sizeof(uint32_t));
+	recvFromServer(&id_count, sizeof(uint32_t));
 	id_count = ntohl(id_count);
 
 	assert((int)id_count >= 0);
 
 	uint32_t *first_ids = new uint32_t[(int)id_count];
-	sockReadBlock(first_ids, sizeof(uint32_t) * id_count);
+	recvFromServer(first_ids, sizeof(uint32_t) * id_count);
 
 	std::vector<int> res; // TODO: reserve memory for 'id_count' elements
 	for (int i = 0; i < (int)id_count; i ++)
@@ -152,7 +152,7 @@ std::vector<int> StupidsClient::getMinIds(std::vector<int> msg_ids)
 	sendToServer(ids_arr, id_count * 4);
 
 	// read results
-	sockReadBlock(ids_arr, id_count * 4);
+	recvFromServer(ids_arr, id_count * 4);
 
 	std::vector<int> res;
 	for (size_t i = 0; i < id_count; i ++)
@@ -172,7 +172,7 @@ int StupidsClient::getFirstId(const git_oid *tp_hash)
 
 	// read results
 	uint32_t first_id = 0;
-	sockReadBlock(&first_id, sizeof(uint32_t));
+	recvFromServer(&first_id, sizeof(uint32_t));
 	int res = (int)ntohl(first_id);
 
 	assert(res > 0);

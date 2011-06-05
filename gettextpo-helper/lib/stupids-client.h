@@ -27,12 +27,14 @@ public:
 	};
 
 protected:
-	void sockReadBlock(void *buffer, int length);
 	void connect();
 	void disconnect();
+
 	void sendLong(uint32_t data);
 	void sendOid(const git_oid *oid);
 	void sendToServer(const void *data, size_t len);
+
+	void recvFromServer(void *data, size_t len);
 
 private:
 	int m_sockfd;
