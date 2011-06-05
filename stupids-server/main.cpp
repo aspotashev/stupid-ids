@@ -193,6 +193,8 @@ void Server::commandHandler(uint32_t command)
 	else
 	{
 		printf("Unknown command code %d.\n", command);
+		disconnect();
+		assert(0);
 	}
 }
 
