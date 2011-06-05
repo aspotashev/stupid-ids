@@ -122,6 +122,7 @@ std::vector<int> StupidsClient::recvLongVector()
 	std::vector<int> res; // TODO: reserve memory for 'count' elements
 	for (int i = 0; i < count; i ++)
 		res.push_back((int)ntohl(first_ids[i]));
+	delete [] first_ids;
 
 	return res;
 }
