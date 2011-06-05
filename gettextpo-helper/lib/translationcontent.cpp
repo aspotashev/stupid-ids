@@ -253,7 +253,6 @@ std::vector<MessageGroup *> TranslationContent::readMessages(const char *filenam
 	po_file_free(file);
 
 	return res;
-
 }
 
 std::vector<int> TranslationContent::getMinIds()
