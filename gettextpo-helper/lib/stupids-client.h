@@ -36,6 +36,7 @@ protected:
 
 	void recvFromServer(void *data, size_t len);
 	uint32_t recvLong();
+	std::vector<int> recvLongVector();
 
 private:
 	int m_sockfd;

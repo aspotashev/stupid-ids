@@ -111,6 +111,21 @@ void StupidsClient::disconnect()
 	m_sockfd = -1;
 }
 
+std::vector<int> StupidsClient::recvLongVector()
+{
+	int count = (int)recvLong();
+	assert(count >= 0);
+
+	uint32_t *first_ids = new uint32_t[count];
+	recvFromServer(first_ids, sizeof(uint32_t) * count);
+
+	std::vector<int> res; // TODO: reserve memory for 'count' elements
+	for (int i = 0; i < count; i ++)
+		res.push_back((int)ntohl(first_ids[i]));
+
+	return res;
+}
+
 std::vector<int> StupidsClient::getMinIds(const git_oid *tp_hash)
 {
 	connect();
@@ -120,25 +135,13 @@ std::vector<int> StupidsClient::getMinIds(const git_oid *tp_hash)
 	sendOid(tp_hash);
 
 	// read results
-	int id_count = (int)recvLong();
-	assert(id_count >= 0);
-
-	uint32_t *first_ids = new uint32_t[id_count];
-	recvFromServer(first_ids, sizeof(uint32_t) * id_count);
-
-	std::vector<int> res; // TODO: reserve memory for 'id_count' elements
-	for (int i = 0; i < id_count; i ++)
-		res.push_back((int)ntohl(first_ids[i]));
-
+	return recvLongVector();
 
 //	if (output_len >= 9 && !memcmp(output, "NOTFOUND\n", 9))
 //	{
 //		printf("tp_hash not found (%s)\n", tp_hash);
 //		throw TpHashNotFoundException();
 //	}
-
-
-	return res;
 }
 
 std::vector<int> StupidsClient::getMinIds(std::vector<int> msg_ids)
