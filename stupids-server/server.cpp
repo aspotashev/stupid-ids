@@ -58,9 +58,7 @@ void Server::handleGetMinIdArray()
 
 void Server::handleGetMinIds()
 {
-	uint32_t id_count = -1;
-	assert(recvFromClient(&id_count, 4) == 0);
-	id_count = ntohl(id_count);
+	uint32_t id_count = recvLong();
 
 	uint32_t *ids_arr = new uint32_t[(size_t)id_count];
 	recvFromClient(ids_arr, id_count * 4);
@@ -90,15 +88,16 @@ void Server::handleGetFirstId()
 	sendToClient(&output, sizeof(uint32_t));
 }
 
+uint32_t Server::recvLong()
+{
+	uint32_t res;
+	assert (recvFromClient(&res, 4) == 0);
+	return ntohl(res);
+}
+
 void Server::commandHandler()
 {
-	uint32_t command;
-	if (recvFromClient(&command, 4) != 0)
-	{
-		disconnect();
-		return;
-	}
-	command = ntohl(command);
+	uint32_t command = recvLong();
 
 	if (command == StupidsClient::CMD_EXIT)
 		disconnect();

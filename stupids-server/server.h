@@ -16,6 +16,7 @@ public:
 
 private:
 	GitOid recvOid();
+	uint32_t recvLong();
 
 	void handleGetMinIdArray();
 	void handleGetFirstId();
