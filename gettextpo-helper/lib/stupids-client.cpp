@@ -26,26 +26,6 @@ StupidsClient::~StupidsClient()
 {
 }
 
-void StupidsClient::recvFromServer(void *data, size_t len)
-{
-	int bytes_read = 0;
-
-	while (bytes_read < len)
-	{
-		int res = read(m_sockfd, (char *)data + bytes_read, len - bytes_read);
-		assert(res > 0);
-
-		bytes_read += res;
-	}
-}
-
-uint32_t StupidsClient::recvLong()
-{
-	uint32_t res = 0xffffffff;
-	recvFromServer(&res, sizeof(uint32_t));
-	return ntohl(res);
-}
-
 void StupidsClient::connect()
 {
 	if (m_sockfd >= 0)
@@ -74,41 +54,34 @@ void StupidsClient::connect()
 	};
 }
 
-void StupidsClient::sendLong(uint32_t data)
-{
-	data = htonl(data);
-	sendToServer(&data, 4);
-}
-
-void StupidsClient::sendOid(const git_oid *oid)
-{
-	sendToServer(oid, GIT_OID_RAWSZ);
-}
-
-void StupidsClient::sendToServer(const void *data, size_t len)
-{
-	size_t written = 0;
-	while (written < len)
-	{
-		ssize_t res = write(m_sockfd, data, len);
-		if (res <= 0)
-		{
-			printf("res = %d, len = %d, errno = %d\n", (int)res, (int)len, errno);
-			assert(0);
-		}
-
-		written += res;
-	}
-
-	assert(written == len);
-}
-
 void StupidsClient::disconnect()
 {
 	sendLong(CMD_EXIT);
 
 	close(m_sockfd);
 	m_sockfd = -1;
+}
+
+//-----------------------
+
+void StupidsClient::recvFromServer(void *data, size_t len)
+{
+	int bytes_read = 0;
+
+	while (bytes_read < len)
+	{
+		int res = read(m_sockfd, (char *)data + bytes_read, len - bytes_read);
+		assert(res > 0);
+
+		bytes_read += res;
+	}
+}
+
+uint32_t StupidsClient::recvLong()
+{
+	uint32_t res = 0xffffffff;
+	recvFromServer(&res, sizeof(uint32_t));
+	return ntohl(res);
 }
 
 std::vector<int> StupidsClient::recvLongArray(size_t count)
@@ -132,6 +105,51 @@ std::vector<int> StupidsClient::recvLongVector()
 	return recvLongArray(count);
 }
 
+//-----------------------
+
+void StupidsClient::sendToServer(const void *data, size_t len)
+{
+	size_t written = 0;
+	while (written < len)
+	{
+		ssize_t res = write(m_sockfd, data, len);
+		if (res <= 0)
+		{
+			printf("res = %d, len = %d, errno = %d\n", (int)res, (int)len, errno);
+			assert(0);
+		}
+
+		written += res;
+	}
+
+	assert(written == len);
+}
+
+void StupidsClient::sendLong(uint32_t data)
+{
+	data = htonl(data);
+	sendToServer(&data, 4);
+}
+
+void StupidsClient::sendOid(const git_oid *oid)
+{
+	sendToServer(oid, GIT_OID_RAWSZ);
+}
+
+void StupidsClient::sendLongVector(std::vector<int> vec)
+{
+	size_t count = vec.size();
+	uint32_t *arr = new uint32_t[count];
+
+	sendLong((uint32_t)count);
+	for (size_t i = 0; i < count; i ++)
+		arr[i] = htonl((uint32_t)vec[i]);
+	sendToServer(arr, count * 4);
+	delete [] arr;
+}
+
+//-----------------------
+
 std::vector<int> StupidsClient::getMinIds(const git_oid *tp_hash)
 {
 	connect();
@@ -148,18 +166,6 @@ std::vector<int> StupidsClient::getMinIds(const git_oid *tp_hash)
 //		printf("tp_hash not found (%s)\n", tp_hash);
 //		throw TpHashNotFoundException();
 //	}
-}
-
-void StupidsClient::sendLongVector(std::vector<int> vec)
-{
-	size_t count = vec.size();
-	uint32_t *arr = new uint32_t[count];
-
-	sendLong((uint32_t)count);
-	for (size_t i = 0; i < count; i ++)
-		arr[i] = htonl((uint32_t)vec[i]);
-	sendToServer(arr, count * 4);
-	delete [] arr;
 }
 
 std::vector<int> StupidsClient::getMinIds(std::vector<int> msg_ids)
