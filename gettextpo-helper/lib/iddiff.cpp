@@ -641,8 +641,8 @@ void Iddiffer::applyToContent(TranslationContent *content)
 		if (binary_search(involved_ids.begin(), involved_ids.end(), min_ids[i]))
 			applyToMessage(messages[i], min_ids[i]);
 
-	// TODO: write content back to file
-	assert(0);
+	// Write updated content back to file
+	content->writeToFile();
 }
 
 void Iddiffer::applyIddiff(StupIdTranslationCollector *collector)

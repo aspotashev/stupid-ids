@@ -18,6 +18,9 @@ char *xstrdup(const char *str);
 // overloaded function, without 'xerror_handlers' argument
 po_file_t po_file_read(const char *filename);
 
+// overloaded function, without 'xerror_handlers' argument
+po_file_t po_file_write(po_file_t file, const char *filename);
+
 po_file_t po_buffer_read(const char *buffer, size_t length);
 
 //----------------------- Dumping translation files ------------------------
@@ -93,6 +96,7 @@ public:
 	// Used for patching translation files.
 	void editFuzzy(bool fuzzy);
 	void editMsgstr(int index, const char *str);
+	bool isEdited() const;
 
 protected:
 	void setMsgcomments(const char *str);

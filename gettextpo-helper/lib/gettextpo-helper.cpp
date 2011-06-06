@@ -60,6 +60,23 @@ po_file_t po_file_read(const char *filename)
 	return file;
 }
 
+// overloaded function, without 'xerror_handlers' argument
+po_file_t po_file_write(po_file_t file, const char *filename)
+{
+	struct po_xerror_handler xerror_handlers;
+	xerror_handlers.xerror = xerror_handler;
+	xerror_handlers.xerror2 = xerror2_handler;
+
+	po_file_t res = po_file_write(file, filename, &xerror_handlers);
+	if (res == NULL)
+	{
+		printf("Cannot write .po/.pot file: %s\n", filename);
+		assert(0);
+	}
+
+	return res;
+}
+
 po_file_t po_buffer_read(const char *buffer, size_t length)
 {
 	// Child process writes the contents of the buffer to a pipe.
@@ -656,12 +673,19 @@ void Message::editFuzzy(bool fuzzy)
 void Message::editMsgstr(int index, const char *str)
 {
 	assert(index >= 0 && index < numPlurals());
-
 	assert(m_msgstr[index]);
-	delete [] m_msgstr[index];
 
+	if (strcmp(m_msgstr[index], str) == 0)
+		return;
+
+	delete [] m_msgstr[index];
 	m_msgstr[index] = xstrdup(str);
 	m_edited = true;
+}
+
+bool Message::isEdited() const
+{
+	return m_edited;
 }
 
 std::vector<MessageGroup *> read_po_file_messages(const char *filename, bool loadObsolete)

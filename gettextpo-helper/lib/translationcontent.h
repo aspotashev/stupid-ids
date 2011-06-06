@@ -44,6 +44,8 @@ public:
 
 	std::vector<int> getMinIds();
 
+	void writeToFile();
+
 protected:
 	po_file_t poreadFile();
 	po_file_t poreadGit();

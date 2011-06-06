@@ -286,6 +286,72 @@ std::vector<int> TranslationContent::getMinIds()
 	return m_minIds;
 }
 
+void TranslationContent::writeToFile()
+{
+	assert(m_type == TYPE_FILE);
+
+	assert(m_messagesNormalInit);
+
+	// Working with file
+	po_file_t file = poFileRead();
+	po_message_iterator_t iterator = po_message_iterator(file, "messages");
+
+	// skipping header
+	po_message_t message = po_next_message(iterator);
+
+	bool madeChanges = false;
+	for (int index = 0; message = po_next_message(iterator); )
+	{
+		if (po_message_is_obsolete(message))
+			continue;
+
+		assert(index >= 0 && index < m_messagesNormal.size());
+		MessageGroup *messageGroup = m_messagesNormal[index];
+
+		assert(messageGroup->size() == 1);
+		Message *messageObj = messageGroup->message(0);
+
+		// TODO: check that msgids have not changed
+
+		if (messageObj->isEdited())
+		{
+			po_message_set_fuzzy(message, messageObj->isFuzzy() ? 1 : 0);
+			if (po_message_msgid_plural(message))
+			{ // with plural forms
+				for (int i = 0; i < messageObj->numPlurals(); i ++)
+				{
+					// Check that the number of plural forms has not changed
+					assert(po_message_msgstr_plural(message, i) != NULL);
+
+					po_message_set_msgstr_plural(message, i, messageObj->msgstr(i));
+				}
+
+				// Check that the number of plural forms has not changed
+				assert(po_message_msgstr_plural(message, messageObj->numPlurals()) == NULL);
+			}
+			else
+			{ // without plural forms
+				assert(messageObj->numPlurals() == 1);
+
+				po_message_set_msgstr(message, messageObj->msgstr(0));
+			}
+			madeChanges = true;
+		}
+
+		index ++;
+	}
+	// free memory
+	po_message_iterator_free(iterator);
+
+	if (madeChanges)
+	{
+		po_file_write(file, m_filename);
+	}
+
+	// free memory
+	po_file_free(file);
+}
+
 //---------------------------------------------------------
 
 GitLoader::GitLoader()
