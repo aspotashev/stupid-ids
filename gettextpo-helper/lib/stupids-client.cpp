@@ -66,7 +66,7 @@ void StupidsClient::disconnect()
 
 void StupidsClient::recvFromServer(void *data, size_t len)
 {
-	int bytes_read = 0;
+	size_t bytes_read = 0;
 
 	while (bytes_read < len)
 	{

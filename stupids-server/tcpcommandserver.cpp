@@ -32,22 +32,27 @@ void TcpCommandServer::recvFromClient(void *data, size_t len)
 	if (m_closeConnection)
 		throw ExceptionNoConnection();
 
-	ssize_t read_bytes = recvfrom(m_connfd, data, len,
-		0, (struct sockaddr *)&m_cliaddr, &m_clilen);
-	if (read_bytes == 0)
-	{
-		printf("Client has disconnected.\n");
-		disconnect();
-		throw ExceptionDisconnected();
-	}
-	else if (read_bytes < 0)
-	{
-		printf("Failed to read from socket.\n");
-		disconnect();
-		throw ExceptionRecvFailed();
-	}
+	size_t bytes_read = 0;
 
-	assert(read_bytes == (ssize_t)len);
+	while (bytes_read < len)
+	{
+		ssize_t res = recvfrom(m_connfd, (char *)data + bytes_read, len - bytes_read,
+			0, (struct sockaddr *)&m_cliaddr, &m_clilen);
+		if (res == 0)
+		{
+			printf("Client has disconnected.\n");
+			disconnect();
+			throw ExceptionDisconnected();
+		}
+		else if (res < 0)
+		{
+			printf("Failed to read from socket.\n");
+			disconnect();
+			throw ExceptionRecvFailed();
+		}
+
+		bytes_read += res;
+	}
 }
 
 void TcpCommandServer::sessionOpened()
