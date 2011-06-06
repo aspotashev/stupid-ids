@@ -89,6 +89,11 @@ public:
 
 	void setMsgstr(int index, const char *str);
 
+	// Also sets "m_edited" to true.
+	// Used for patching translation files.
+	void editFuzzy(bool fuzzy);
+	void editMsgstr(int index, const char *str);
+
 protected:
 	void setMsgcomments(const char *str);
 	void clear();
@@ -107,6 +112,8 @@ private:
 
 	int m_index;
 	const char *m_filename;
+
+	bool m_edited;
 };
 
 class MessageGroup

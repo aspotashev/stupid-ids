@@ -561,6 +561,8 @@ void Message::clear()
 	m_msgcomments = 0;
 	for (int i = 0; i < MAX_PLURAL_FORMS; i ++)
 		m_msgstr[i] = 0;
+
+	m_edited = false;
 }
 
 // TODO: make sure that all instance (m_*) variables are initialized
@@ -640,6 +642,26 @@ bool Message::equalTranslations(const Message *o) const
 			return false;
 
 	return m_fuzzy == o->isFuzzy() && !strcmp(m_msgcomments, o->msgcomments());
+}
+
+void Message::editFuzzy(bool fuzzy)
+{
+	if (fuzzy == m_fuzzy)
+		return;
+
+	m_fuzzy = fuzzy;
+	m_edited = true;
+}
+
+void Message::editMsgstr(int index, const char *str)
+{
+	assert(index >= 0 && index < numPlurals());
+
+	assert(m_msgstr[index]);
+	delete [] m_msgstr[index];
+
+	m_msgstr[index] = xstrdup(str);
+	m_edited = true;
 }
 
 std::vector<MessageGroup *> read_po_file_messages(const char *filename, bool loadObsolete)
