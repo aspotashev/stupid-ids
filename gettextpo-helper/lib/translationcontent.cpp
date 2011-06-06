@@ -345,6 +345,7 @@ void TranslationContent::writeToFile()
 
 	if (madeChanges)
 	{
+//		libgettextpo_message_page_width_set(80);
 		po_file_write(file, m_filename);
 	}
 

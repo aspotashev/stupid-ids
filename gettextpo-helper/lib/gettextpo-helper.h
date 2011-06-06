@@ -15,6 +15,12 @@ char *xstrdup(const char *str);
 
 //------------------------------
 
+// Hidden function from libgettextpo.
+// TODO: open access to this function (may be libgettextpo should be patched?)
+//extern void libgettextpo_message_page_width_set(size_t width);
+
+//------------------------------
+
 // overloaded function, without 'xerror_handlers' argument
 po_file_t po_file_read(const char *filename);
 
