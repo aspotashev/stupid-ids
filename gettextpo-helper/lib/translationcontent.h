@@ -52,6 +52,8 @@ protected:
 	// for calculateTpHash
 	std::string dumpPoFileTemplate();
 
+	void readMessagesInternal(std::vector<MessageGroup *> &dest, bool &destInit, bool obsolete);
+
 private:
 	char *m_filename;
 	char *m_displayFilename;
@@ -67,6 +69,9 @@ private:
 
 	std::vector<int> m_minIds;
 	bool m_minIdsInit; // "true" if m_minIds is initialized
+
+	std::vector<MessageGroup *> m_messagesNormal;
+	bool m_messagesNormalInit;
 
 	enum
 	{

@@ -57,6 +57,9 @@ void TranslationContent::clear()
 	m_tphash = NULL;
 	m_filename = NULL;
 	m_displayFilename = NULL;
+
+	m_minIdsInit = false;
+	m_messagesNormalInit = false;
 }
 
 void TranslationContent::setDisplayFilename(const char *filename)
@@ -224,13 +227,14 @@ std::string TranslationContent::dumpPoFileTemplate()
 	return res;
 }
 
-std::vector<MessageGroup *> TranslationContent::readMessages(bool loadObsolete)
+void TranslationContent::readMessagesInternal(std::vector<MessageGroup *> &dest, bool &destInit, bool obsolete)
 {
+	assert(!obsolete); // what are the use cases?
+	assert(!destInit);
+	assert(dest.size() == 0);
+
 	// m_displayFilename will be used as "filename" for all messages
 	assert(m_displayFilename);
-
-	// loadObsolete is not completely supported yet, because it's non-trivial (ok, it's trivial) to cache readMessages results for both loadObsolete=false and loadObsolete=true
-	assert(loadObsolete == false);
 
 	po_file_t file = poFileRead();
 	po_message_iterator_t iterator = po_message_iterator(file, "messages");
@@ -238,15 +242,15 @@ std::vector<MessageGroup *> TranslationContent::readMessages(bool loadObsolete)
 	// skipping header
 	po_message_t message = po_next_message(iterator);
 
-	std::vector<MessageGroup *> res;
 	int index = 0;
 	while (message = po_next_message(iterator))
 	{
 		// Checking that obsolete messages go after all normal messages
-		assert(index == (int)res.size());
+//		assert(index == (int)dest.size());
+		// TODO: check that! (the old check in the line above does not work after implementing caching)
 
-		if (loadObsolete || !po_message_is_obsolete(message))
-			res.push_back(new MessageGroup(
+		if (!obsolete == !po_message_is_obsolete(message))
+			dest.push_back(new MessageGroup(
 				message,
 				po_message_is_obsolete(message) ? -1 : index,
 				m_displayFilename));
@@ -258,7 +262,17 @@ std::vector<MessageGroup *> TranslationContent::readMessages(bool loadObsolete)
 	po_message_iterator_free(iterator);
 	po_file_free(file);
 
-	return res;
+	destInit = true;
+}
+
+std::vector<MessageGroup *> TranslationContent::readMessages(bool loadObsolete)
+{
+	// loadObsolete is not completely supported yet, because it's non-trivial (ok, it's trivial) to cache readMessages results for both loadObsolete=false and loadObsolete=true
+	assert(loadObsolete == false);
+
+	if (!m_messagesNormalInit)
+		readMessagesInternal(m_messagesNormal, m_messagesNormalInit, false);
+	return m_messagesNormal;
 }
 
 std::vector<int> TranslationContent::getMinIds()
