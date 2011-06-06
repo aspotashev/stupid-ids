@@ -5,6 +5,8 @@
 
 #include <gettext-po.h>
 
+class Message;
+
 // TODO: derive class Message from this class
 class IddiffMessage
 {

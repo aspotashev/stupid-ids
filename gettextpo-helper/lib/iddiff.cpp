@@ -227,12 +227,12 @@ void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *cont
 	{
 		if (strcmp(po_message_comments(message_a), po_message_comments(message_b)))
 		{
-			printf("Changes in comments will be ignored!");
-			printf("<<<<<\n");
-			printf("%s", po_message_comments(message_a)); // "\n" should be included in comments
-			printf("=====\n");
-			printf("%s", po_message_comments(message_b)); // "\n" should be included in comments
-			printf(">>>>>\n");
+			fprintf(stderr, "Changes in comments will be ignored!\n");
+			fprintf(stderr, "<<<<<\n");
+			fprintf(stderr, "%s", po_message_comments(message_a)); // "\n" should be included in comments
+			fprintf(stderr, "=====\n");
+			fprintf(stderr, "%s", po_message_comments(message_b)); // "\n" should be included in comments
+			fprintf(stderr, ">>>>>\n");
 		}
 
 
