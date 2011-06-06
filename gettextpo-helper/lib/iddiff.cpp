@@ -166,6 +166,14 @@ bool IddiffMessage::equalTranslations(const Message *message)
 	return true;
 }
 
+void IddiffMessage::copyTranslationsToMessage(Message *message)
+{
+	assert(numPlurals() == message->numPlurals());
+
+	for (int i = 0; i < numPlurals(); i ++)
+		message->editMsgstr(i, msgstr(i));
+}
+
 //----------------------------------------------
 
 Iddiffer::Iddiffer():
@@ -607,11 +615,11 @@ void Iddiffer::applyToMessage(MessageGroup *messageGroup, int min_id)
 	{
 		if (added) // change translation
 		{
-			assert(0);
+			added->copyTranslationsToMessage(message);
 		}
 		else // fuzzy old translation
 		{
-			assert(0);
+			message->editFuzzy(true);
 		}
 	}
 	else // !ignoreOldTranslation

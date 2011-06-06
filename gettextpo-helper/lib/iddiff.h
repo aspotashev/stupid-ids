@@ -26,6 +26,7 @@ public:
 	std::string formatPoMessage() const;
 
 	bool equalTranslations(const Message *message);
+	void copyTranslationsToMessage(Message *message);
 
 protected:
 	static std::string formatString(const char *str);
