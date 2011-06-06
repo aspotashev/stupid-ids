@@ -1,5 +1,5 @@
 
-//#include <assert.h>
+#include <assert.h>
 #include <iostream>
 
 //#include <gettextpo-helper/translationcontent.h>
@@ -7,10 +7,12 @@
 #include <gettextpo-helper/iddiff.h>
 
 
-int main()
+int main(int argc, char *argv[])
 {
+	assert(argc == 2); // 1 argument (path to .iddiff)
+
 	Iddiffer *differ = new Iddiffer();
-	differ->loadIddiff("../iddiff/amarok.iddiff");
+	differ->loadIddiff(argv[1]);
 	differ->minimizeIds();
 
 	std::cout << differ->generateIddiffText();
