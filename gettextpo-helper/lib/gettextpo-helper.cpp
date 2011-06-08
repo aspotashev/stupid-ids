@@ -197,10 +197,22 @@ std::string wrap_template_header(po_message_t message)
 	header[0] = '\n'; // prepend "\n" to simplify search for "\nPOT-Creation-Date: "
 	strcpy(header + 1, po_message_msgstr(message));
 
+	if (!isalpha(header[1]))
+	{
+		// Header corrupt. See KDE SVN revision 1228594 for an example.
+		throw TranslationContent::ExceptionNotPo();
+	}
+
 	// find the "POT-Creation-Date:" field
 	const char *pot_creation_pattern = "\nPOT-Creation-Date: "; // text that goes before the POT creation date
 	char *pot_creation_str = strstr(header, pot_creation_pattern);
-	assert(pot_creation_str != NULL); // There must be a "POT-Creation-Date:" in the header.
+	if (pot_creation_str == NULL)
+	{
+		// There must be a "POT-Creation-Date:" in the header.
+
+		printf("header:\n[%s]\n", header);
+		assert(0);
+	}
 
 	// extract the date
 	pot_creation_str += strlen(pot_creation_pattern); // move to the beginning of the date
