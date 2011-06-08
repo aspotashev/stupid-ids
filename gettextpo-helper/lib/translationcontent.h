@@ -30,7 +30,6 @@ public:
 	TranslationContent(GitLoader *git_loader, const char *oid_str);
 	TranslationContent(const void *buffer, size_t len);
 	~TranslationContent();
-	void clear();
 
 	void setDisplayFilename(const char *filename);
 	const char *displayFilename() const;
@@ -46,7 +45,9 @@ public:
 
 	void writeToFile();
 
-protected:
+private:
+	void clear();
+
 	po_file_t poreadFile();
 	po_file_t poreadGit();
 	po_file_t poreadBuffer();
