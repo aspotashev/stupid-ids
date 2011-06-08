@@ -202,7 +202,16 @@ const git_oid *TranslationContent::calculateTpHash()
 	}
 	else
 	{
-		std::string tphash_str = sha1_string(dumpPoFileTemplate());
+		std::string tphash_str;
+		try
+		{
+			tphash_str = sha1_string(dumpPoFileTemplate());
+		}
+		catch (std::exception &e)
+		{
+			return NULL;
+		}
+
 		assert(git_oid_mkstr(m_tphash, tphash_str.c_str()) == GIT_SUCCESS);
 
 		TphashCache::addPair(oid, m_tphash);
@@ -224,6 +233,8 @@ std::string TranslationContent::dumpPoFileTemplate()
 
 	// processing header (header is the first message)
 	message = po_next_message(iterator);
+	if (!message) // no messages in file, i.e. not a .po/.pot file
+		throw ExceptionNotPo();
 	res += wrap_template_header(message);
 
 	// ordinary .po messages (not header)
@@ -372,5 +383,12 @@ void TranslationContent::writeToFile()
 
 	// free memory
 	po_file_free(file);
+}
+
+//--------------------------------------------------
+
+const char *TranslationContent::ExceptionNotPo::what() const throw()
+{
+	return "ExceptionNotPo (file is not a correct .po/.pot file)";
 }
 

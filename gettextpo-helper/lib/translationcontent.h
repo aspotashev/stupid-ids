@@ -14,6 +14,11 @@ class GitLoader;
 class TranslationContent
 {
 public:
+	class ExceptionNotPo : public std::exception
+	{
+		virtual const char *what() const throw();
+	};
+
 	TranslationContent(const char *filename);
 	TranslationContent(GitLoader *git_loader, const git_oid *oid);
 	TranslationContent(const void *buffer, size_t len);
