@@ -34,6 +34,7 @@ install(FILES
 	detectorbase.h
 	detector.h
 	iddiff.h
+	gitloader.h
 	DESTINATION ${INCLUDE_INSTALL_DIR}/gettextpo-helper COMPONENT Devel
 )
 
