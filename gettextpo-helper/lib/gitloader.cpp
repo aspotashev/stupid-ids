@@ -229,7 +229,6 @@ Repository::Repository(const char *git_dir)
 	m_gitDir = xstrdup(git_dir);
 
 	m_repo = NULL;
-	m_oidMaster = NULL;
 
 	m_currentCommit = NULL;
 
@@ -434,13 +433,13 @@ void Repository::readRepositoryCommits()
 	git_reference *ref_master;
 	assert(git_reference_lookup(&ref_master, m_repo, "refs/heads/master") == 0);
 
-	m_oidMaster = git_reference_oid(ref_master);
-	assert(m_oidMaster != NULL);
+	const git_oid *oid_master = git_reference_oid(ref_master);
+	assert(oid_master != NULL);
 
 	// Read repository
 	git_commit *commit;
 	git_commit *parent;
-	assert(git_commit_lookup(&commit, m_repo, m_oidMaster) == 0);
+	assert(git_commit_lookup(&commit, m_repo, oid_master) == 0);
 
 	while (commit != NULL)
 	{
@@ -467,7 +466,6 @@ void Repository::readRepositoryCommits()
 	// Close repository
 	git_repository_free(m_repo);
 	m_repo = NULL;
-	m_oidMaster = NULL;
 
 	// Reverse commit list (to set the order from root to HEAD)
 	reverse(m_commits.begin(), m_commits.end());
