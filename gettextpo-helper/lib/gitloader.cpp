@@ -353,10 +353,18 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path, Co
 			}
 			else
 			{
-				assert(git_tree_entry_attributes(entry1) == git_tree_entry_attributes(entry2));
+				unsigned int attr1 = git_tree_entry_attributes(entry1);
+				unsigned int attr2 = git_tree_entry_attributes(entry2);
+				if (attr1 != attr2 && !(attr1 == 0100755 && attr2 == 0100644))
+				{
+					printf("Git tree entry attributes are changing in this commit: time = %lld\n", (long long int)currentCommit->time());
+					printf("    Old attributes: %o (octal)\n", attr1);
+					printf("    New attributes: %o (octal)\n", attr2);
+					assert(0);
+				}
 
 				const char *name = git_tree_entry_name(entry1);
-				if (git_tree_entry_attributes(entry1) & REPO_MODE_DIR) // tree
+				if (attr1 & REPO_MODE_DIR) // tree
 				{
 					git_tree *subtree1 = git_tree_entry_subtree(entry1);
 					git_tree *subtree2 = git_tree_entry_subtree(entry2);
