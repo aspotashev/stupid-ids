@@ -8,6 +8,8 @@
 #include <gettext-po.h>
 #include <git2.h>
 
+/** Class for loading files by their Git OIDs from multiple Git repositories.
+ */
 class GitLoader
 {
 public:
@@ -27,7 +29,7 @@ class TranslationContent
 {
 public:
 	TranslationContent(const char *filename);
-	TranslationContent(GitLoader *git_loader, const char *oid_str);
+	TranslationContent(GitLoader *git_loader, const git_oid *oid);
 	TranslationContent(const void *buffer, size_t len);
 	~TranslationContent();
 

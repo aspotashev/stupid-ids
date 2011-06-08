@@ -181,7 +181,10 @@ VALUE cTranslationContent_new_file(VALUE klass, VALUE filename)
 
 VALUE cTranslationContent_new_git(VALUE klass, VALUE git_loader, VALUE oid_str)
 {
-	TranslationContent *content = new TranslationContent(rb_get_git_loader(git_loader), StringValuePtr(oid_str));
+	git_oid oid;
+	assert(git_oid_mkstr(&oid, StringValuePtr(oid_str)) == GIT_SUCCESS);
+
+	TranslationContent *content = new TranslationContent(rb_get_git_loader(git_loader), &oid);
 	return Data_Wrap_Struct(cTranslationContent, NULL, free_cTranslationContent, content);
 }
 

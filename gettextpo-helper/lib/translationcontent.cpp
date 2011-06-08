@@ -6,6 +6,10 @@
 #include <gettextpo-helper/tphashcache.h>
 #include <gettextpo-helper/stupids-client.h>
 
+/** Constructs a TranslationContent from a file.
+ *
+ * \param filename File name.
+ */
 TranslationContent::TranslationContent(const char *filename)
 {
 	clear();
@@ -14,16 +18,26 @@ TranslationContent::TranslationContent(const char *filename)
 	m_filename = xstrdup(filename);
 }
 
-TranslationContent::TranslationContent(GitLoader *git_loader, const char *oid_str)
+/** Constructs a TranslationContent from a Git blob identified by its OID.
+ *
+ * \param git_loader Git repositories list used for searching the blob by OID.
+ * \param oid OID of the blob.
+ */
+TranslationContent::TranslationContent(GitLoader *git_loader, const git_oid *oid)
 {
 	clear();
 
 	m_type = TYPE_GIT;
 	m_gitLoader = git_loader;
 	m_oid = new git_oid;
-	assert(git_oid_mkstr(m_oid, oid_str) == GIT_SUCCESS);
+	git_oid_cpy(m_oid, oid);
 }
 
+/** Constructs a TranslationContent using data from a buffer.
+ *
+ * \param buffer Buffer.
+ * \param len Size of the buffer.
+ */
 TranslationContent::TranslationContent(const void *buffer, size_t len)
 {
 	clear();
@@ -62,6 +76,8 @@ void TranslationContent::clear()
 	m_messagesNormalInit = false;
 }
 
+/** Set the filename used for Message objects created by readMessages().
+ */
 void TranslationContent::setDisplayFilename(const char *filename)
 {
 	assert(m_displayFilename == NULL); // can be set only once
@@ -368,6 +384,13 @@ GitLoader::~GitLoader()
 	}
 }
 
+/** Search blob by OID in all repositories added using addRepository().
+ *
+ * \param oid Git object ID of the blob.
+ *
+ * \returns Blob or NULL, if it was not found in any of the repositories.
+ * It is necessary to call this method when you stop using a blob. Failure to do so will cause a memory leak.
+ */
 git_blob *GitLoader::blobLookup(const git_oid *oid)
 {
 	git_blob *blob;
@@ -379,6 +402,10 @@ git_blob *GitLoader::blobLookup(const git_oid *oid)
 	return NULL;
 }
 
+/** Add directory to the list of Git repositories to search in.
+ *
+ * The repository will be opened until GitLoader object is destroyed.
+ */
 void GitLoader::addRepository(const char *git_dir)
 {
 	git_repository *repo;
