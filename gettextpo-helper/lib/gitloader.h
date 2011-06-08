@@ -99,10 +99,9 @@ private:
 
 private:
 	char *m_gitDir;
+	git_repository *m_repo;
 
-	git_repository *repo;
-	const git_oid *oid_master;
-
+	const git_oid *m_oidMaster;
 	Commit *m_currentCommit;
 
 	std::vector<Commit *> m_commits;

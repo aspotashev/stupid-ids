@@ -228,8 +228,8 @@ Repository::Repository(const char *git_dir)
 {
 	m_gitDir = xstrdup(git_dir);
 
-	repo = NULL;
-	oid_master = NULL;
+	m_repo = NULL;
+	m_oidMaster = NULL;
 
 	m_currentCommit = NULL;
 
@@ -246,11 +246,11 @@ Repository::~Repository()
 
 git_tree *Repository::git_tree_entry_subtree(const git_tree_entry *entry)
 {
-	assert(repo);
+	assert(m_repo);
 
 	const git_oid *subtree_oid = git_tree_entry_id(entry);
 	git_tree *subtree;
-	assert(git_tree_lookup(&subtree, repo, subtree_oid) == 0);
+	assert(git_tree_lookup(&subtree, m_repo, subtree_oid) == 0);
 
 	return subtree;
 }
@@ -424,23 +424,23 @@ void Repository::diffCommit(git_commit *commit1, git_commit *commit2)
 
 void Repository::readRepositoryCommits()
 {
-	assert(repo == NULL);
+	assert(m_repo == NULL);
 	if (m_commitsInit)
 		return;
 
 	// Open repository
-	assert(git_repository_open(&repo, m_gitDir) == 0);
+	assert(git_repository_open(&m_repo, m_gitDir) == 0);
 
 	git_reference *ref_master;
-	assert(git_reference_lookup(&ref_master, repo, "refs/heads/master") == 0);
+	assert(git_reference_lookup(&ref_master, m_repo, "refs/heads/master") == 0);
 
-	oid_master = git_reference_oid(ref_master);
-	assert(oid_master != NULL);
+	m_oidMaster = git_reference_oid(ref_master);
+	assert(m_oidMaster != NULL);
 
 	// Read repository
 	git_commit *commit;
 	git_commit *parent;
-	assert(git_commit_lookup(&commit, repo, oid_master) == 0);
+	assert(git_commit_lookup(&commit, m_repo, m_oidMaster) == 0);
 
 	while (commit != NULL)
 	{
@@ -465,9 +465,9 @@ void Repository::readRepositoryCommits()
 	}
 
 	// Close repository
-	git_repository_free(repo);
-	repo = NULL;
-	oid_master = NULL;
+	git_repository_free(m_repo);
+	m_repo = NULL;
+	m_oidMaster = NULL;
 
 	// Reverse commit list (to set the order from root to HEAD)
 	reverse(m_commits.begin(), m_commits.end());
