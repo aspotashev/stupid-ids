@@ -79,6 +79,9 @@ void DetectorSuccessors::processChange(int commit_index, int change_index, const
 
 void DetectorSuccessors::doDetect()
 {
+	assert(m_repo);
+	m_repo->readRepositoryCommits();
+
 	for (int i = 0; i < m_repo->nCommits(); i ++)
 	{
 		const Commit *commit = m_repo->commit(i);
@@ -124,6 +127,11 @@ void DetectorInterBranch::processChange(
 
 void DetectorInterBranch::doDetect()
 {
+	assert(m_repoA);
+	assert(m_repoB);
+	m_repoA->readRepositoryCommits();
+	m_repoB->readRepositoryCommits();
+
 	for (int i = 0; i < m_repoA->nCommits(); i ++)
 	{
 		const Commit *commit = m_repoA->commit(i);

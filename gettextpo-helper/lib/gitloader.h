@@ -77,9 +77,7 @@ public:
 	Repository(const char *git_dir);
 	~Repository();
 
-	void diffTree(git_tree *tree1, git_tree *tree2, const char *path);
-	void diffCommit(git_commit *commit1, git_commit *commit2);
-	void readRepository(const char *git_dir);
+	void readRepositoryCommits();
 
 	int nCommits() const;
 	const Commit *commit(int index) const;
@@ -93,15 +91,22 @@ public:
 
 	void dumpOids(std::vector<GitOid2Change> &dest) const;
 
-protected:
+private:
 	git_tree *git_tree_entry_subtree(const git_tree_entry *entry);
 
+	void diffTree(git_tree *tree1, git_tree *tree2, const char *path);
+	void diffCommit(git_commit *commit1, git_commit *commit2);
+
 private:
+	char *m_gitDir;
+
 	git_repository *repo;
 	const git_oid *oid_master;
 
 	Commit *m_currentCommit;
+
 	std::vector<Commit *> m_commits;
+	bool m_commitsInit;
 };
 
 //----------------------------------------

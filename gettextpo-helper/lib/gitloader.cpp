@@ -226,17 +226,28 @@ const git_oid *Commit::findUpdateOid(const char *name, const char *path) const
 
 Repository::Repository(const char *git_dir)
 {
-	readRepository(git_dir);
+	m_gitDir = xstrdup(git_dir);
+
+	repo = NULL;
+	oid_master = NULL;
+
+	m_currentCommit = NULL;
+
+	m_commitsInit = false;
 }
 
 Repository::~Repository()
 {
+	delete [] m_gitDir;
+
 	for (size_t i = 0; i < m_commits.size(); i ++)
 		delete m_commits[i];
 }
 
 git_tree *Repository::git_tree_entry_subtree(const git_tree_entry *entry)
 {
+	assert(repo);
+
 	const git_oid *subtree_oid = git_tree_entry_id(entry);
 	git_tree *subtree;
 	assert(git_tree_lookup(&subtree, repo, subtree_oid) == 0);
@@ -390,6 +401,9 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 // commit2 -- current commit
 void Repository::diffCommit(git_commit *commit1, git_commit *commit2)
 {
+	// This function should be called only during initialization of "m_commits".
+	assert(!m_commitsInit);
+
 	git_tree *tree1 = NULL, *tree2 = NULL;
 	if (commit1)
 		assert(git_commit_tree(&tree1, commit1) == 0);
@@ -408,10 +422,14 @@ void Repository::diffCommit(git_commit *commit1, git_commit *commit2)
 		git_tree_close(tree2);
 }
 
-void Repository::readRepository(const char *git_dir)
+void Repository::readRepositoryCommits()
 {
+	assert(repo == NULL);
+	if (m_commitsInit)
+		return;
+
 	// Open repository
-	assert(git_repository_open(&repo, git_dir) == 0);
+	assert(git_repository_open(&repo, m_gitDir) == 0);
 
 	git_reference *ref_master;
 	assert(git_reference_lookup(&ref_master, repo, "refs/heads/master") == 0);
@@ -477,15 +495,20 @@ void Repository::readRepository(const char *git_dir)
 	for (size_t i = 0; i < m_commits.size() - 2; i ++)
 		if (m_commits[i]->time() >= m_commits[i + 2]->time())
 			assert(0);
+
+	m_commitsInit = true;
 }
 
 int Repository::nCommits() const
 {
+	assert(m_commitsInit);
+
 	return (int)m_commits.size();
 }
 
 const Commit *Repository::commit(int index) const
 {
+	assert(m_commitsInit);
 	assert(index >= 0 && index < nCommits());
 
 	return m_commits[index];
