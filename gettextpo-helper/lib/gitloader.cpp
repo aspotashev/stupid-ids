@@ -689,6 +689,7 @@ void GitLoader::addRepository(const char *git_dir)
 	m_repos.push_back(new Repository(git_dir));
 }
 
+// TODO: cache results of this function (may be even create a stupids-server command for this function?)
 TranslationContent *GitLoader::findOldestByTphash(const git_oid *tp_hash)
 {
 	// TODO: ch_iterator (iterator for walking through all CommitFileChanges)
