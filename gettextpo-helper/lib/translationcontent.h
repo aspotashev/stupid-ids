@@ -8,22 +8,8 @@
 #include <gettext-po.h>
 #include <git2.h>
 
-/** Class for loading files by their Git OIDs from multiple Git repositories.
- */
-class GitLoader
-{
-public:
-	GitLoader();
-	~GitLoader();
-
-	git_blob *blobLookup(const git_oid *oid);
-	void addRepository(const char *git_dir);
-
-private:
-	std::vector<git_repository *> m_repos;
-};
-
 class MessageGroup;
+class GitLoader;
 
 class TranslationContent
 {

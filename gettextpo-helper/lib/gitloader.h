@@ -104,5 +104,22 @@ private:
 	std::vector<Commit *> m_commits;
 };
 
+//----------------------------------------
+
+/** Class for loading files by their Git OIDs from multiple Git repositories.
+ */
+class GitLoader
+{
+public:
+	GitLoader();
+	~GitLoader();
+
+	git_blob *blobLookup(const git_oid *oid);
+	void addRepository(const char *git_dir);
+
+private:
+	std::vector<git_repository *> m_repos;
+};
+
 #endif // GITLOADER_H
 

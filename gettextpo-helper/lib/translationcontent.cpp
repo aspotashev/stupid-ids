@@ -5,6 +5,7 @@
 #include <gettextpo-helper/translationcontent.h>
 #include <gettextpo-helper/tphashcache.h>
 #include <gettextpo-helper/stupids-client.h>
+#include <gettextpo-helper/gitloader.h>
 
 /**
  * \brief Constructs a TranslationContent from a file.
@@ -371,52 +372,5 @@ void TranslationContent::writeToFile()
 
 	// free memory
 	po_file_free(file);
-}
-
-//---------------------------------------------------------
-
-GitLoader::GitLoader()
-{
-}
-
-GitLoader::~GitLoader()
-{
-	for (size_t i = 0; i < m_repos.size(); i ++)
-	{
-		git_repository_free(m_repos[i]);
-		m_repos[i] = NULL;
-	}
-}
-
-/**
- * \brief Search blob by OID in all repositories added using addRepository().
- *
- * \param oid Git object ID of the blob.
- *
- * \returns Blob or NULL, if it was not found in any of the repositories.
- * It is necessary to call this method when you stop using a blob. Failure to do so will cause a memory leak.
- */
-git_blob *GitLoader::blobLookup(const git_oid *oid)
-{
-	git_blob *blob;
-
-	for (size_t i = 0; i < m_repos.size(); i ++)
-		if (git_blob_lookup(&blob, m_repos[i], oid) == 0)
-			return blob;
-
-	return NULL;
-}
-
-/**
- * \brief Add directory to the list of Git repositories to search in.
- *
- * The repository will be opened until GitLoader object is destroyed.
- */
-void GitLoader::addRepository(const char *git_dir)
-{
-	git_repository *repo;
-	assert(git_repository_open(&repo, git_dir) == 0);
-
-	m_repos.push_back(repo);
 }
 
