@@ -94,14 +94,12 @@ public:
 private:
 	git_tree *git_tree_entry_subtree(const git_tree_entry *entry);
 
-	void diffTree(git_tree *tree1, git_tree *tree2, const char *path);
+	void diffTree(git_tree *tree1, git_tree *tree2, const char *path, Commit *currentCommit);
 	void diffCommit(git_commit *commit1, git_commit *commit2);
 
 private:
 	char *m_gitDir;
 	git_repository *m_repo;
-
-	Commit *m_currentCommit;
 
 	std::vector<Commit *> m_commits;
 	bool m_commitsInit;

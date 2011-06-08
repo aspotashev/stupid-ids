@@ -229,9 +229,6 @@ Repository::Repository(const char *git_dir)
 	m_gitDir = xstrdup(git_dir);
 
 	m_repo = NULL;
-
-	m_currentCommit = NULL;
-
 	m_commitsInit = false;
 }
 
@@ -264,7 +261,7 @@ char *concat_path(const char *path, const char *name)
 	return res;
 }
 
-void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
+void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path, Commit *currentCommit)
 {
 	// This should have been checked earlier
 	if (tree1 != NULL && tree2 != NULL && git_oid_cmp(git_tree_id(tree1), git_tree_id(tree2)) == 0)
@@ -311,7 +308,7 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 				git_tree *subtree1 = git_tree_entry_subtree(entry1);
 				char *subtree_path = concat_path(path, name);
 
-				diffTree(subtree1, NULL, subtree_path);
+				diffTree(subtree1, NULL, subtree_path, currentCommit);
 				delete [] subtree_path;
 				git_tree_close(subtree1);
 			}
@@ -319,7 +316,7 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 			{
 				CommitFileChange *change = new CommitFileChange(
 					git_tree_entry_id(entry1), NULL, path, name, CommitFileChange::DEL);
-				m_currentCommit->addChange(change);
+				currentCommit->addChange(change);
 //				change->print();
 			}
 
@@ -333,7 +330,7 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 				git_tree *subtree2 = git_tree_entry_subtree(entry2);
 				char *subtree_path = concat_path(path, name);
 
-				diffTree(NULL, subtree2, subtree_path);
+				diffTree(NULL, subtree2, subtree_path, currentCommit);
 				delete [] subtree_path;
 				git_tree_close(subtree2);
 			}
@@ -341,7 +338,7 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 			{
 				CommitFileChange *change = new CommitFileChange(
 					NULL, git_tree_entry_id(entry2), path, name, CommitFileChange::ADD);
-				m_currentCommit->addChange(change);
+				currentCommit->addChange(change);
 //				change->print();
 			}
 
@@ -364,7 +361,7 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 					git_tree *subtree2 = git_tree_entry_subtree(entry2);
 					char *subtree_path = concat_path(path, name);
 
-					diffTree(subtree1, subtree2, subtree_path);
+					diffTree(subtree1, subtree2, subtree_path, currentCommit);
 					delete [] subtree_path;
 					git_tree_close(subtree1);
 					git_tree_close(subtree2);
@@ -373,7 +370,7 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path)
 				{
 					CommitFileChange *change = new CommitFileChange(
 						git_tree_entry_id(entry1), git_tree_entry_id(entry2), path, name, CommitFileChange::MOD);
-					m_currentCommit->addChange(change);
+					currentCommit->addChange(change);
 //					change->print();
 				}
 			}
@@ -409,11 +406,11 @@ void Repository::diffCommit(git_commit *commit1, git_commit *commit2)
 	if (commit2)
 		assert(git_commit_tree(&tree2, commit2) == 0);
 
-	m_currentCommit = new Commit(commit2);
+	Commit *currentCommit = new Commit(commit2);
 
-	diffTree(tree1, tree2, "");
+	diffTree(tree1, tree2, "", currentCommit);
 
-	m_commits.push_back(m_currentCommit);
+	m_commits.push_back(currentCommit);
 
 	if (tree1)
 		git_tree_close(tree1);
