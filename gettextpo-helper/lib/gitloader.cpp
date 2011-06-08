@@ -230,6 +230,7 @@ Repository::Repository(const char *git_dir)
 
 	m_repo = NULL;
 	m_commitsInit = false;
+	m_libgitRepo = NULL;
 }
 
 Repository::~Repository()
@@ -617,6 +618,25 @@ void Repository::dumpOids(std::vector<GitOid2Change> &dest) const
 		}
 }
 
+void Repository::libgitClose()
+{
+	if (m_libgitRepo)
+	{
+		git_repository_free(m_libgitRepo);
+		m_libgitRepo = NULL;
+	}
+}
+
+git_repository *Repository::libgitRepo()
+{
+	if (!m_libgitRepo)
+	{
+		assert(git_repository_open(&m_libgitRepo, m_gitDir) == 0);
+	}
+
+	return m_libgitRepo;
+}
+
 //---------------------------------------------------------
 
 GitLoader::GitLoader()
@@ -627,8 +647,7 @@ GitLoader::~GitLoader()
 {
 	for (size_t i = 0; i < m_repos.size(); i ++)
 	{
-		git_repository_free(m_repos[i]);
-		m_repos[i] = NULL;
+		m_repos[i]->libgitClose();
 	}
 }
 
@@ -645,7 +664,7 @@ git_blob *GitLoader::blobLookup(const git_oid *oid)
 	git_blob *blob;
 
 	for (size_t i = 0; i < m_repos.size(); i ++)
-		if (git_blob_lookup(&blob, m_repos[i], oid) == 0)
+		if (git_blob_lookup(&blob, m_repos[i]->libgitRepo(), oid) == 0)
 			return blob;
 
 	return NULL;
@@ -658,9 +677,6 @@ git_blob *GitLoader::blobLookup(const git_oid *oid)
  */
 void GitLoader::addRepository(const char *git_dir)
 {
-	git_repository *repo;
-	assert(git_repository_open(&repo, git_dir) == 0);
-
-	m_repos.push_back(repo);
+	m_repos.push_back(new Repository(git_dir));
 }
 

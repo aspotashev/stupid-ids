@@ -91,6 +91,9 @@ public:
 
 	void dumpOids(std::vector<GitOid2Change> &dest) const;
 
+	void libgitClose();
+	git_repository *libgitRepo();
+
 private:
 	git_tree *git_tree_entry_subtree(const git_tree_entry *entry);
 
@@ -100,6 +103,7 @@ private:
 private:
 	char *m_gitDir;
 	git_repository *m_repo;
+	git_repository *m_libgitRepo; // TODO: use only one variable for git_repository
 
 	std::vector<Commit *> m_commits;
 	bool m_commitsInit;
@@ -119,7 +123,7 @@ public:
 	void addRepository(const char *git_dir);
 
 private:
-	std::vector<git_repository *> m_repos;
+	std::vector<Repository *> m_repos;
 };
 
 #endif // GITLOADER_H
