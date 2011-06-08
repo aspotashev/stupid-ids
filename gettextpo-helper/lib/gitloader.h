@@ -111,6 +111,8 @@ private:
 
 //----------------------------------------
 
+class TranslationContent;
+
 /** Class for loading files by their Git OIDs from multiple Git repositories.
  */
 class GitLoader
@@ -121,6 +123,8 @@ public:
 
 	git_blob *blobLookup(const git_oid *oid);
 	void addRepository(const char *git_dir);
+
+	TranslationContent *findOldestByTphash(const git_oid *tp_hash);
 
 private:
 	std::vector<Repository *> m_repos;

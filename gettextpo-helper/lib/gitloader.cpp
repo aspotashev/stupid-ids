@@ -9,6 +9,7 @@
 
 #include <gettextpo-helper/gitloader.h>
 #include <gettextpo-helper/gettextpo-helper.h>
+#include <gettextpo-helper/translationcontent.h>
 
 #define REPO_MODE_DIR 040000
 
@@ -686,5 +687,42 @@ git_blob *GitLoader::blobLookup(const git_oid *oid)
 void GitLoader::addRepository(const char *git_dir)
 {
 	m_repos.push_back(new Repository(git_dir));
+}
+
+TranslationContent *GitLoader::findOldestByTphash(const git_oid *tp_hash)
+{
+	// TODO: ch_iterator (iterator for walking through all CommitFileChanges)
+	for (size_t i = 0; i < m_repos.size(); i ++)
+	{
+		Repository *repo = m_repos[i];
+
+		repo->readRepositoryCommits();
+		// TODO: check only .po files committed after POT-Creation-Date?
+		for (int j = 0; j < repo->nCommits(); j ++)
+		{
+			const Commit *commit = repo->commit(j);
+			for (int k = 0; k < commit->nChanges(); k ++)
+			{
+				const CommitFileChange *change = commit->change(k);
+				const char *name = change->name();
+				size_t len = strlen(name);
+				if (strcmp(name + len - 3, ".po") != 0)
+					continue;
+
+				const git_oid *oid = change->tryOid2();
+				if (!oid)
+					continue;
+
+				TranslationContent *content = new TranslationContent(this, oid);
+				const git_oid *current_tp_hash = content->calculateTpHash();
+				if (current_tp_hash && git_oid_cmp(tp_hash, current_tp_hash) == 0)
+					return content; // TODO: choose the oldest TranslationContent from _all_ repositories
+				else
+					delete content;
+			}
+		}
+	}
+
+	return NULL;
 }
 
