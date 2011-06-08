@@ -6,7 +6,8 @@
 #include <gettextpo-helper/tphashcache.h>
 #include <gettextpo-helper/stupids-client.h>
 
-/** Constructs a TranslationContent from a file.
+/**
+ * \brief Constructs a TranslationContent from a file.
  *
  * \param filename File name.
  */
@@ -18,7 +19,8 @@ TranslationContent::TranslationContent(const char *filename)
 	m_filename = xstrdup(filename);
 }
 
-/** Constructs a TranslationContent from a Git blob identified by its OID.
+/**
+ * \brief Constructs a TranslationContent from a Git blob identified by its OID.
  *
  * \param git_loader Git repositories list used for searching the blob by OID.
  * \param oid OID of the blob.
@@ -33,7 +35,8 @@ TranslationContent::TranslationContent(GitLoader *git_loader, const git_oid *oid
 	git_oid_cpy(m_oid, oid);
 }
 
-/** Constructs a TranslationContent using data from a buffer.
+/**
+ * \brief Constructs a TranslationContent using data from a buffer.
  *
  * \param buffer Buffer.
  * \param len Size of the buffer.
@@ -76,7 +79,8 @@ void TranslationContent::clear()
 	m_messagesNormalInit = false;
 }
 
-/** Set the filename used for Message objects created by readMessages().
+/**
+ * \brief Set the filename used for Message objects created by readMessages().
  */
 void TranslationContent::setDisplayFilename(const char *filename)
 {
@@ -384,7 +388,8 @@ GitLoader::~GitLoader()
 	}
 }
 
-/** Search blob by OID in all repositories added using addRepository().
+/**
+ * \brief Search blob by OID in all repositories added using addRepository().
  *
  * \param oid Git object ID of the blob.
  *
@@ -402,7 +407,8 @@ git_blob *GitLoader::blobLookup(const git_oid *oid)
 	return NULL;
 }
 
-/** Add directory to the list of Git repositories to search in.
+/**
+ * \brief Add directory to the list of Git repositories to search in.
  *
  * The repository will be opened until GitLoader object is destroyed.
  */
