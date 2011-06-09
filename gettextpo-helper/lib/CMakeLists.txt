@@ -7,7 +7,7 @@ set(gettextpo_helper_LIB_SRCS
 	mappedfile.cpp
 	translationcontent.cpp
 	stupids-client.cpp
-	tphashcache.cpp
+	oidmapcache.cpp
 	iddiff.cpp
 
 	detector.cpp

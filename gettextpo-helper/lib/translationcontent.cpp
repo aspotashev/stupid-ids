@@ -3,7 +3,7 @@
 
 #include <gettextpo-helper/gettextpo-helper.h>
 #include <gettextpo-helper/translationcontent.h>
-#include <gettextpo-helper/tphashcache.h>
+#include <gettextpo-helper/oidmapcache.h>
 #include <gettextpo-helper/stupids-client.h>
 #include <gettextpo-helper/gitloader.h>
 
@@ -194,7 +194,7 @@ const git_oid *TranslationContent::calculateTpHash()
 	// Cache calculated tp_hashes (it takes some time to
 	// calculate a tp_hash). A singleton class is used for that.
 	const git_oid *oid = gitBlobHash();
-	const git_oid *tp_hash = TphashCache::getTphash(oid);
+	const git_oid *tp_hash = TphashCache.getTphash(oid);
 
 	if (tp_hash)
 	{
@@ -214,7 +214,7 @@ const git_oid *TranslationContent::calculateTpHash()
 
 		assert(git_oid_mkstr(m_tphash, tphash_str.c_str()) == GIT_SUCCESS);
 
-		TphashCache::addPair(oid, m_tphash);
+		TphashCache.addPair(oid, m_tphash);
 	}
 
 	return m_tphash;
