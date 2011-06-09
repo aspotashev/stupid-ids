@@ -127,6 +127,9 @@ public:
 	TranslationContent *findOldestByTphash(const git_oid *tp_hash);
 
 private:
+	const git_oid *findOldestByTphash_oid(const git_oid *tp_hash);
+
+private:
 	std::vector<Repository *> m_repos;
 };
 

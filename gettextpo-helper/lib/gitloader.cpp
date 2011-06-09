@@ -690,7 +690,7 @@ void GitLoader::addRepository(const char *git_dir)
 }
 
 // TODO: cache results of this function (may be even create a stupids-server command for this function?)
-TranslationContent *GitLoader::findOldestByTphash(const git_oid *tp_hash)
+const git_oid *GitLoader::findOldestByTphash_oid(const git_oid *tp_hash)
 {
 	// TODO: ch_iterator (iterator for walking through all CommitFileChanges)
 	for (size_t i = 0; i < m_repos.size(); i ++)
@@ -717,13 +717,24 @@ TranslationContent *GitLoader::findOldestByTphash(const git_oid *tp_hash)
 				TranslationContent *content = new TranslationContent(this, oid);
 				const git_oid *current_tp_hash = content->calculateTpHash();
 				if (current_tp_hash && git_oid_cmp(tp_hash, current_tp_hash) == 0)
-					return content; // TODO: choose the oldest TranslationContent from _all_ repositories
-				else
+				{
 					delete content;
+					return oid; // TODO: choose the oldest TranslationContent from _all_ repositories
+				}
+				else
+				{
+					delete content;
+				}
 			}
 		}
 	}
 
 	return NULL;
+}
+
+TranslationContent *GitLoader::findOldestByTphash(const git_oid *tp_hash)
+{
+	const git_oid *oid = findOldestByTphash_oid(tp_hash);
+	return oid ? new TranslationContent(this, oid) : NULL;
 }
 
