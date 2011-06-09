@@ -160,6 +160,8 @@ const git_oid *TranslationContent::gitBlobHash()
 	{
 	case TYPE_FILE:
 		f = fopen(m_filename, "r");
+		assert(f);
+
 		fseek(f, 0, SEEK_END);
 		file_size = ftell(f);
 		rewind(f);
