@@ -32,16 +32,13 @@ int main(int argc, char *argv[])
 			//assert(0);
 		}
 
-		TranslationContent *old_content = git_loader->findOldestByTphash(tp_hash);
-		if (!old_content)
-		{
-			// TODO: diff against /dev/null
-			printf("Could not find old content for [%s]\n", argv[i]);
-			assert(0);
-		}
-
 		Iddiffer *diff = new Iddiffer();
-		diff->diffFiles(old_content, new_content);
+		TranslationContent *old_content = git_loader->findOldestByTphash(tp_hash);
+		if (old_content)
+			diff->diffFiles(old_content, new_content);
+		else
+			diff->diffAgainstEmpty(new_content); // diff against /dev/null
+
 		merged_diff->merge(diff);
 		delete diff;
 	}

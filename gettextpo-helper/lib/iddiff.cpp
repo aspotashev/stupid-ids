@@ -219,6 +219,49 @@ void Iddiffer::writeMessageList(std::vector<std::pair<int, IddiffMessage *> > li
 }
 
 // This function fills m_removedList and m_addedList
+void Iddiffer::diffAgainstEmpty(TranslationContent *content_b)
+{
+	m_removedList.clear();
+	m_addedList.clear();
+
+	const git_oid *tp_hash = content_b->calculateTpHash();
+	int first_id = stupidsClient.getFirstId(tp_hash);
+	assert(first_id > 0);
+
+
+	// compare pairs of messages in 2 .po files
+	po_file_t file_b = content_b->poFileRead();
+	po_message_iterator_t iterator_b = po_message_iterator(file_b, "messages");
+	// skipping headers
+	po_message_t message_b = po_next_message(iterator_b);
+
+	for (int index = 0;
+		(message_b = po_next_message(iterator_b)) &&
+		!po_message_is_obsolete(message_b);
+		index ++)
+	{
+		// Messages can be:
+		//     "" -- untranslated (does not matter fuzzy or not, so f"" is illegal)
+		//     "abc" -- translated
+		//     f"abc" -- fuzzy
+
+		// Types of possible changes:
+		//     ""     -> ""     : -
+		//     ""     -> "abc"  : ADDED
+		//     ""     -> f"abc" : - (fuzzy messages are "weak", you should write in comments instead what you are not sure in)
+
+		// Adding to "ADDED" if "B" is translated
+		if (!po_message_is_untranslated(message_b) && !po_message_is_fuzzy(message_b))
+			m_addedList.push_back(std::pair<int, IddiffMessage *>(
+				first_id + index, new IddiffMessage(message_b)));
+	}
+
+	// free memory
+	po_message_iterator_free(iterator_b);
+	po_file_free(file_b);
+}
+
+// This function fills m_removedList and m_addedList
 void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *content_b)
 {
 	m_removedList.clear();
