@@ -124,8 +124,9 @@ void Server::handleGetFirstId()
 
 	std::pair<int, int> first_ids = m_firstIds->getFirstId(tp_hash);
 	int first_id = first_ids.first;
-	assert(first_id != 0);
+//	assert(first_id != 0);
 
+	// "first_id == 0" means that the given tp_hash is unknown.
 	sendLong((uint32_t)first_id);
 }
 

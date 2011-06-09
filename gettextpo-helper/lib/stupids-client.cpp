@@ -191,7 +191,7 @@ int StupidsClient::getFirstId(const git_oid *tp_hash)
 	// read results
 	int first_id = (int)recvLong();
 
-	assert(first_id > 0);
+//	assert(first_id > 0);
 	return first_id;
 }
 

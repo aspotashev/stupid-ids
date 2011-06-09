@@ -212,6 +212,7 @@ void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *cont
 
 	// first_id is the same for 2 files
 	int first_id = stupidsClient.getFirstId(tp_hash);
+	assert(first_id > 0);
 
 
 	// compare pairs of messages in 2 .po files

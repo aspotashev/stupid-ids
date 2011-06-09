@@ -6,6 +6,7 @@
 #include <gettextpo-helper/translationcontent.h>
 #include <gettextpo-helper/iddiff.h>
 #include <gettextpo-helper/gitloader.h>
+#include <gettextpo-helper/stupids-client.h>
 
 
 int main(int argc, char *argv[])
@@ -22,10 +23,17 @@ int main(int argc, char *argv[])
 		const git_oid *tp_hash = new_content->calculateTpHash();
 		if (!tp_hash) // not a .po file
 			continue;
+		if (stupidsClient.getFirstId(tp_hash) == 0)
+		{
+			printf("Unknown tp_hash. Translation file: [%s]\nThis probably means that someone (probably, translator of this file) has generated the translation template by hand, or has changed something in the template.\n", argv[i]);
+			continue;
+			//assert(0);
+		}
 
 		TranslationContent *old_content = git_loader->findOldestByTphash(tp_hash);
 		if (!old_content)
 		{
+			// TODO: diff against /dev/null
 			printf("Could not find old content for [%s]\n", argv[i]);
 			assert(0);
 		}
