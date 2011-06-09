@@ -98,6 +98,7 @@ OidMapCache &OidMapCacheManager::instance(const char *cache_id)
 	{
 		cache = iter->second;
 	}
+	else
 	{
 		char *filename = new char[4096];
 		sprintf(filename, "%s/.stupids/oidmapcache-%s.dat", getenv("HOME"), cache_id);
