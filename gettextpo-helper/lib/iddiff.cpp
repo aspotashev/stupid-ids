@@ -118,10 +118,13 @@ std::string IddiffMessage::formatPoMessage() const
 	return res;
 }
 
-// Escape special symbols and put in quotes.
-//
-// " -> \"
-// newline [\n] -> \n
+/**
+ * \brief Escape special symbols and put in quotes.
+ *
+ * Escape the following characters: double quote ("), newline, tab, backslash.
+ *
+ * \static
+ */
 std::string IddiffMessage::formatString(const char *str)
 {
 	assert(str);
@@ -185,6 +188,9 @@ Iddiffer::~Iddiffer()
 {
 }
 
+/**
+ * \static
+ */
 std::string Iddiffer::formatPoMessage(po_message_t message)
 {
 	IddiffMessage *idm = new IddiffMessage(message);
@@ -306,6 +312,9 @@ std::string Iddiffer::generateIddiffText()
 	return m_output.str();
 }
 
+/**
+ * \static
+ */
 std::string Iddiffer::generateIddiffText(TranslationContent *content_a, TranslationContent *content_b)
 {
 	Iddiffer *diff = new Iddiffer();
