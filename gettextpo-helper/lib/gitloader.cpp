@@ -10,6 +10,7 @@
 #include <gettextpo-helper/gitloader.h>
 #include <gettextpo-helper/gettextpo-helper.h>
 #include <gettextpo-helper/translationcontent.h>
+#include <gettextpo-helper/oidmapcache.h>
 
 #define REPO_MODE_DIR 040000
 
@@ -689,10 +690,15 @@ void GitLoader::addRepository(const char *git_dir)
 	m_repos.push_back(new Repository(git_dir));
 }
 
-// TODO: cache results of this function (may be even create a stupids-server command for this function?)
 const git_oid *GitLoader::findOldestByTphash_oid(const git_oid *tp_hash)
 {
+	// Cache results of this function (TODO: may be even create a stupids-server command for this function?)
+	const git_oid *cached_oid = OidMapCacheManager::instance("lang_ru_oldest_oid").getTphash(tp_hash);
+	if (cached_oid)
+		return cached_oid;
+
 	// TODO: ch_iterator (iterator for walking through all CommitFileChanges)
+	// TODO: better: "ch_iterator_time" -- walking through all CommitFileChanges sorted by time (BONUS: starting at the given time)
 	for (size_t i = 0; i < m_repos.size(); i ++)
 	{
 		Repository *repo = m_repos[i];
@@ -719,6 +725,7 @@ const git_oid *GitLoader::findOldestByTphash_oid(const git_oid *tp_hash)
 				if (current_tp_hash && git_oid_cmp(tp_hash, current_tp_hash) == 0)
 				{
 					delete content;
+					OidMapCacheManager::instance("lang_ru_oldest_oid").addPair(tp_hash, oid);
 					return oid; // TODO: choose the oldest TranslationContent from _all_ repositories
 				}
 				else
