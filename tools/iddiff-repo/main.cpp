@@ -16,6 +16,8 @@ int main(int argc, char *argv[])
 	git_loader->addRepository("/home/sasha/kde-ru/kde-ru-trunk.git/.git");
 	git_loader->addRepository("/home/sasha/kde-ru/kde-l10n-ru-stable/.git");
 
+	Iddiffer *merged_diff = new Iddiffer();
+
 	for (int i = 1; i < argc; i ++)
 	{
 		TranslationContent *new_content = new TranslationContent(argv[i]);
@@ -38,8 +40,13 @@ int main(int argc, char *argv[])
 			assert(0);
 		}
 
-		std::cout << Iddiffer::generateIddiffText(old_content, new_content);
+		Iddiffer *diff = new Iddiffer();
+		diff->diffFiles(old_content, new_content);
+		merged_diff->merge(diff);
+		delete diff;
 	}
+
+	std::cout << merged_diff->generateIddiffText();
 
 	return 0;
 }

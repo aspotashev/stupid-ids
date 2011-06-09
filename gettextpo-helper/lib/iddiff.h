@@ -25,7 +25,9 @@ public:
 
 	std::string formatPoMessage() const;
 
-	bool equalTranslations(const Message *message);
+	bool equalTranslations(const IddiffMessage *message) const;
+
+	bool equalTranslations(const Message *message) const;
 	void copyTranslationsToMessage(Message *message);
 
 protected:
@@ -66,6 +68,10 @@ public:
 	void applyToMessage(MessageGroup *messageGroup, int min_id);
 	void applyToContent(TranslationContent *content);
 	void applyIddiff(StupIdTranslationCollector *collector);
+
+	void insertRemoved(std::pair<int, IddiffMessage *> item);
+	void insertAdded(std::pair<int, IddiffMessage *> item);
+	void merge(Iddiffer *diff);
 
 	// TODO: may be remove this?
 	static std::string generateIddiffText(TranslationContent *content_a, TranslationContent *content_b);

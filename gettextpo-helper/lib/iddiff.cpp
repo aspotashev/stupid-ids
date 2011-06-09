@@ -157,7 +157,19 @@ std::string IddiffMessage::formatString(const char *str)
 	return res;
 }
 
-bool IddiffMessage::equalTranslations(const Message *message)
+bool IddiffMessage::equalTranslations(const IddiffMessage *message) const
+{
+	if (numPlurals() != message->numPlurals())
+		return false;
+
+	for (int i = 0; i < numPlurals(); i ++)
+		if (strcmp(msgstr(i), message->msgstr(i)) != 0)
+			return false;
+
+	return true;
+}
+
+bool IddiffMessage::equalTranslations(const Message *message) const
 {
 	if (numPlurals() != message->numPlurals())
 		return false;
@@ -667,5 +679,47 @@ void Iddiffer::applyIddiff(StupIdTranslationCollector *collector)
 		printf("Patching %s\n", contents[i]->displayFilename());
 		applyToContent(contents[i]); // writes changes to file
 	}
+}
+
+void Iddiffer::insertRemoved(std::pair<int, IddiffMessage *> item)
+{
+	// TODO: use std::map (instead of std::vector<std::pair ...>) for faster searching IddiffMessages by IDs
+	for (size_t i = 0; i < m_removedList.size(); i ++)
+		if (m_removedList[i].first == item.first && m_removedList[i].second->equalTranslations(item.second))
+			assert(0); // duplicate in "REMOVED"
+
+	for (size_t i = 0; i < m_addedList.size(); i ++)
+		if (m_addedList[i].first == item.first && m_addedList[i].second->equalTranslations(item.second))
+			assert(0); // conflict: trying to "REMOVE" a translation already existing in "ADDED"
+
+	m_removedList.push_back(std::make_pair<int, IddiffMessage *>(
+		item.first, new IddiffMessage(*item.second)));
+}
+
+void Iddiffer::insertAdded(std::pair<int, IddiffMessage *> item)
+{
+	for (size_t i = 0; i < m_removedList.size(); i ++)
+		if (m_removedList[i].first == item.first && m_removedList[i].second->equalTranslations(item.second))
+			assert(0); // conflict: trying to "REMOVE" a translation already existing in "ADDED"
+
+	for (size_t i = 0; i < m_addedList.size(); i ++)
+		if (m_addedList[i].first == item.first)
+		{
+			if (m_addedList[i].second->equalTranslations(item.second))
+				assert(0); // duplicate in "ADDED"
+			else
+				assert(0); // conflict: two different translations in "ADDED"
+		}
+
+	m_addedList.push_back(std::make_pair<int, IddiffMessage *>(
+		item.first, new IddiffMessage(*item.second)));
+}
+
+void Iddiffer::merge(Iddiffer *diff)
+{
+	for (size_t i = 0; i < diff->m_removedList.size(); i ++)
+		insertRemoved(diff->m_removedList[i]);
+	for (size_t i = 0; i < diff->m_addedList.size(); i ++)
+		insertAdded(diff->m_addedList[i]);
 }
 
