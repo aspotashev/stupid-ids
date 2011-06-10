@@ -9,6 +9,12 @@ class MappedFileIdMapDb;
 class Server : public TcpCommandServer
 {
 public:
+	class ExceptionTpHashNotFound : public std::exception
+	{
+		virtual const char *what() const throw();
+	};
+
+
 	Server();
 	~Server();
 
