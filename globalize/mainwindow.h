@@ -19,6 +19,7 @@ public:
 
 protected:
     MessageEditorWidget *addMessageEditor(MessageGroup *messageGroup);
+    void loadConflicting();
 
 private:
     Ui::MainWindow *ui;

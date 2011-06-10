@@ -15,37 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_layout = new QVBoxLayout(ui->scrollAreaWidgetContents);
     ui->scrollAreaWidgetContents->setLayout(m_layout);
 
-
-    // Conflicting translations
-    TranslationCollector collector;
-
-    collector.insertPoDir(QString("/home/sasha/kde-ru/kde-ru-trunk.git/messages/kdepim"));
-    collector.insertPoDir(QString("/home/sasha/kde-ru/kde-l10n-ru-stable/messages/kdepim"));
-
-    std::vector<int> list = collector.listConflicting();
-    for (int i = 0; i < (int)list.size(); i ++)
-    {
-            MessageGroup *variants = collector.listVariants(list[i]);
-            printf("%d      msgid = [%s], msgid_plural = [%s], msgctxt = [%s]\n",
-                list[i], variants->msgid(), variants->msgidPlural(),
-                variants->msgctxt());
-
-            MessageEditorWidget *editor = addMessageEditor(variants);
-
-            for (int i = 0; i < variants->size(); i ++)
-            {
-                    Message *msg = variants->message(i);
-                    printf("Variant %d: (from %s, #%d)\n", (int)i + 1, msg->filename(), msg->index() + 1);
-                    if (msg->isFuzzy())
-                            printf("\tfuzzy\n");
-                    printf("\tmsgcomments: %s\n", msg->msgcomments());
-                    printf("\tmsgstr: %s\n", msg->msgstr(0));
-
-                    editor->addTranslationOption(msg);
-            }
-
-            printf("----------------\n");
-    }
+    loadConflicting();
 }
 
 MainWindow::~MainWindow()
@@ -59,4 +29,38 @@ MessageEditorWidget* MainWindow::addMessageEditor(MessageGroup *messageGroup)
     m_layout->addWidget(editor);
 
     return editor;
+}
+
+void MainWindow::loadConflicting()
+{
+    // Conflicting translations
+    TranslationCollector collector;
+
+    collector.insertPoDir(QString("/home/sasha/kde-ru/kde-ru-trunk.git/messages/kdepim"));
+    collector.insertPoDir(QString("/home/sasha/kde-ru/kde-l10n-ru-stable/messages/kdepim"));
+
+    std::vector<int> list = collector.listConflicting();
+    for (int i = 0; i < (int)list.size(); i ++)
+    {
+        MessageGroup *variants = collector.listVariants(list[i]);
+        printf("%d      msgid = [%s], msgid_plural = [%s], msgctxt = [%s]\n",
+            list[i], variants->msgid(), variants->msgidPlural(),
+            variants->msgctxt());
+
+        MessageEditorWidget *editor = addMessageEditor(variants);
+
+        for (int i = 0; i < variants->size(); i ++)
+        {
+            Message *msg = variants->message(i);
+            printf("Variant %d: (from %s, #%d)\n", (int)i + 1, msg->filename(), msg->index() + 1);
+            if (msg->isFuzzy())
+                    printf("\tfuzzy\n");
+            printf("\tmsgcomments: %s\n", msg->msgcomments());
+            printf("\tmsgstr: %s\n", msg->msgstr(0));
+
+            editor->addTranslationOption(msg);
+        }
+
+        printf("----------------\n");
+    }
 }
