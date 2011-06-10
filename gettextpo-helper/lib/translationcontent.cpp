@@ -385,6 +385,8 @@ void TranslationContent::writeToFile()
 
 	// free memory
 	po_file_free(file);
+
+	// TODO: set m_edited to "false" for all messages
 }
 
 //--------------------------------------------------

@@ -695,6 +695,7 @@ void Iddiffer::applyToMessage(MessageGroup *messageGroup, int min_id)
 	}
 }
 
+// TODO: rewrite using StupIdTranslationCollector::getMessagesByIds(std::vector<MessageGroup *> &messages, std::vector<TranslationContent *> &contents)
 // Applies the iddiff to the given TranslationContent and writes changes to file
 void Iddiffer::applyToContent(TranslationContent *content)
 {
@@ -707,9 +708,10 @@ void Iddiffer::applyToContent(TranslationContent *content)
 			applyToMessage(messages[i], min_ids[i]);
 
 	// Write updated content back to file
-	content->writeToFile();
+	content->writeToFile(); // TODO: StupIdTranslationCollector::writeChanges() for writing all changes to .po files
 }
 
+// TODO: rewrite using StupIdTranslationCollector::getMessagesByIds(std::vector<MessageGroup *> &messages, std::vector<TranslationContent *> &contents)
 void Iddiffer::applyIddiff(StupIdTranslationCollector *collector)
 {
 	// Check that involvedIds() will return minimized IDs

@@ -165,6 +165,13 @@ void Server::handleInvolvedByMinIds()
 	sendLongVector(res);
 }
 
+// TODO: the first word (4 bytes) in the output should be the error code.
+// How to implement this:
+// 1. "send*" function should only dump the data into a buffer, don't send it immediately (because if an error occurs, the data shouldn't be sent)
+// 2. on errors, "handle*" function throw different exceptions
+// 3. here, in Server::commandHandler(), we catch the exceptions, and:
+// 	3.1. If there was an exception, send only the error code to the client (different exceptions have different error codes)
+// 	3.2. If there were no exceptions, send 0 as the error code (0 = "no error") and the buffered data to the client
 void Server::commandHandler()
 {
 	uint32_t command;
