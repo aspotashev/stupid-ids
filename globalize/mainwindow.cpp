@@ -4,6 +4,7 @@
 #include "messageeditorwidget.h"
 
 #include <gettextpo-helper/gettextpo-helper.h>
+#include <gettextpo-helper/iddiff.h>
 #include "lib/qtranslationcollector.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -15,7 +16,67 @@ MainWindow::MainWindow(QWidget *parent) :
     m_layout = new QVBoxLayout(ui->scrollAreaWidgetContents);
     ui->scrollAreaWidgetContents->setLayout(m_layout);
 
-    loadConflicting();
+    //loadConflicting();
+
+
+//---------------------------------------------------------------------------
+    // Preparing message list for review
+    TranslationCollector collector;
+    collector.insertPoDir(QString("/home/sasha/kde-ru/kde-ru-trunk.git"));
+//    collector.insertPoDir(QString("/home/sasha/kde-ru/kde-l10n-ru-stable"));
+
+    // Reading iddiff for review
+    Iddiffer *diff = new Iddiffer();
+    diff->loadIddiff("/home/sasha/stupid-ids/tools/iddiff/amarok.iddiff");
+    diff->minimizeIds();
+    std::vector<int> ids = diff->involvedIds();
+
+    std::map<int, std::vector<MessageGroup *> > inv_messages; // involved messages
+    std::vector<TranslationContent *> inv_contents; // involved contents (not used)
+    collector.getMessagesByIds(inv_messages, inv_contents, ids);
+    for (size_t i = 0; i < ids.size(); i ++)
+    {
+        int id = ids[i];
+
+        std::vector<MessageGroup *> messages = inv_messages[id];
+
+        if (messages.size() == 0)
+        {
+            printf("ID not found: %d\n", id);
+            continue;
+        }
+        MessageEditorWidget *editor = addMessageEditor(messages[0]);
+
+        for (size_t i = 0; i < messages.size(); i ++)
+        {
+            assert(messages[i]->size() == 1);
+            Message *msg = messages[i]->message(i);
+
+            editor->addTranslationOption(msg);
+        }
+
+        std::vector<IddiffMessage *> removed = diff->getRemovedArr(id);
+        for (size_t i = 0; i < removed.size(); i ++)
+        {
+            Message *msg = new Message(false, messages[0]->size(), "");
+            for (size_t j = 0; j < messages[0]->size(); j ++)
+                msg->setMsgstr(j, "");
+            removed[i]->copyTranslationsToMessage(msg);
+
+            editor->addTranslationOption(msg);
+        }
+
+        IddiffMessage *added = diff->getAdded(id);
+        if (added)
+        {
+            Message *msg = new Message(false, messages[0]->size(), "");
+            for (size_t j = 0; j < messages[0]->size(); j ++)
+                msg->setMsgstr(j, "");
+            added->copyTranslationsToMessage(msg);
+
+            editor->addTranslationOption(msg);
+        }
+    }
 }
 
 MainWindow::~MainWindow()
