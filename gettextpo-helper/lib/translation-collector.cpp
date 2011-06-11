@@ -1,5 +1,6 @@
 
 #include <string.h>
+#include <stdio.h>
 #include <dirent.h>
 #include <algorithm>
 
@@ -173,5 +174,35 @@ std::vector<TranslationContent *> StupIdTranslationCollector::involvedByMinIds(s
 	}
 
 	return res;
+}
+
+/**
+ * \brief Generates the list of messages found in the contained TranslationContents by an array of IDs.
+ */
+// TODO: "std::vector<MessageGroup *>" -> "MessageGroup *" (MessageGroup may contain multiple translations)
+void StupIdTranslationCollector::getMessagesByIds(
+	std::map<int, std::vector<MessageGroup *> > &messages,
+	std::vector<TranslationContent *> &contents,
+	std::vector<int> ids)
+{
+	assert(messages.size() == 0);
+	assert(contents.size() == 0);
+
+	sort(ids.begin(), ids.end());
+
+	contents = involvedByMinIds(ids);
+	for (size_t i = 0; i < contents.size(); i ++)
+	{
+		printf("Searching for interesting messages in %s\n", contents[i]->displayFilename());
+
+		TranslationContent *content = contents[i];
+		std::vector<MessageGroup *> content_msgs = content->readMessages(false);
+		std::vector<int> content_ids = content->getMinIds();
+                assert(content_msgs.size() == content_ids.size());
+
+		for (size_t i = 0; i < content_msgs.size(); i ++)
+			if (binary_search(ids.begin(), ids.end(), content_ids[i]))
+				messages[content_ids[i]].push_back(content_msgs[i]);
+	}
 }
 

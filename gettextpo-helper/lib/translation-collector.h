@@ -24,6 +24,11 @@ public:
 
 	std::vector<TranslationContent *> involvedByMinIds(std::vector<int> min_ids);
 
+	void getMessagesByIds(
+		std::map<int, std::vector<MessageGroup *> > &messages,
+		std::vector<TranslationContent *> &contents,
+		std::vector<int> ids);
+
 protected:
 	// Cannot be 'const', because there is no const 'std::map::operator []'.
 	bool conflictingTrans(int min_id);
