@@ -1,0 +1,25 @@
+
+== calculate-tp-hash ==
+This program returns the tp_hash of the given .po.
+(tp_hash is a much better .pot identifier than {pot_path, pot_creation_date}!)
+
+Testing:
+	./calculate-tp-hash ~/messages/kdepimlibs/libkcalutils.po
+
+== dbuslokalize ==
+
+== iddiff-repo ==
+
+== iddiff-test ==
+
+== iddiff ==
+This program generates a list of differences between 2 .po files.
+The .po files should be based on the same .pot (even the order
+of messages should be the same).
+Obsolete messages should go after all other messages.
+
+Testing:
+	./iddiff dolphin1.po dolphin2.po 100
+
+== idpatch ==
+
