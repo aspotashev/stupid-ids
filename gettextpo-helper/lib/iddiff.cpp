@@ -181,7 +181,7 @@ bool IddiffMessage::equalTranslations(const Message *message) const
 	return true;
 }
 
-void IddiffMessage::copyTranslationsToMessage(Message *message)
+void IddiffMessage::copyTranslationsToMessage(Message *message) const
 {
 	assert(numPlurals() == message->numPlurals());
 
