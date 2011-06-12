@@ -30,6 +30,10 @@ public:
 	// Caller should run 'po_file_free'
 	po_file_t poFileRead();
 
+	const void *getDataBuffer();
+	size_t getDataBufferLength();
+	void writeBufferToFile(const char *filename);
+
 	const git_oid *gitBlobHash();
 	const git_oid *calculateTpHash();
 	std::vector<MessageGroup *> readMessages(bool loadObsolete);
@@ -41,9 +45,15 @@ public:
 private:
 	void clear();
 
+	// Helpers for poFileRead()
 	po_file_t poreadFile();
 	po_file_t poreadGit();
 	po_file_t poreadBuffer();
+
+	// Helpers for getDataBuffer() and getDataBufferLength()
+	void loadToBuffer();
+	void loadToBufferFile();
+	void loadToBufferGit();
 
 	// for calculateTpHash
 	std::string dumpPoFileTemplate();

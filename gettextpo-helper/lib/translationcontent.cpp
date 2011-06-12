@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include <string.h>
 
 #include <gettextpo-helper/gettextpo-helper.h>
 #include <gettextpo-helper/translationcontent.h>
@@ -119,6 +120,7 @@ po_file_t TranslationContent::poreadFile()
 	return po_file_read(m_filename);
 }
 
+// TODO: use m_buffer if it is initialized
 po_file_t TranslationContent::poreadGit()
 {
 	assert(m_gitLoader);
@@ -387,6 +389,83 @@ void TranslationContent::writeToFile()
 	po_file_free(file);
 
 	// TODO: set m_edited to "false" for all messages
+}
+
+const void *TranslationContent::getDataBuffer()
+{
+	if (!m_buffer) // if the data has not been buffered yet
+		loadToBuffer();
+
+	return m_buffer;
+}
+
+size_t TranslationContent::getDataBufferLength()
+{
+	if (!m_buffer) // if the data has not been buffered yet
+		loadToBuffer();
+
+	return m_bufferLen;
+}
+
+void TranslationContent::loadToBufferFile()
+{
+	assert(0); // not used for now, someone will write this later
+}
+
+void TranslationContent::loadToBufferGit()
+{
+	assert(m_gitLoader);
+	assert(m_oid);
+
+	git_blob *blob = m_gitLoader->blobLookup(m_oid);
+	if (!blob)
+		return;
+
+	const void *rawcontent = git_blob_rawcontent(blob);
+	int rawsize = git_blob_rawsize(blob);
+	assert(rawsize > 0);
+
+	char *rawcontent_copy = new char[rawsize];
+	assert(rawcontent_copy);
+	memcpy(rawcontent_copy, rawcontent, (size_t)rawsize);
+
+	git_blob_close(blob);
+
+
+	m_buffer = rawcontent_copy;
+	m_bufferLen = (size_t)rawsize;
+}
+
+void TranslationContent::loadToBuffer()
+{
+	if (m_buffer) // if the data has already been buffered
+		return;
+
+	switch (m_type)
+	{
+	case TYPE_FILE:
+		loadToBufferFile();
+		break;
+	case TYPE_GIT:
+		loadToBufferGit();
+		break;
+	case TYPE_BUFFER:
+		assert(0); // data should already be buffered (by definition of TYPE_BUFFER)
+		break;
+	default:
+		printf("m_type = %d\n", m_type);
+		assert(0);
+	}
+}
+
+void TranslationContent::writeBufferToFile(const char *filename)
+{
+	loadToBuffer();
+
+	FILE *f = fopen(filename, "w");
+	assert(f);
+	assert(fwrite(m_buffer, 1, m_bufferLen, f) == m_bufferLen);
+	fclose(f);
 }
 
 //--------------------------------------------------
