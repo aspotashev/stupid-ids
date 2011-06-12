@@ -206,3 +206,12 @@ void DBusLokalizeEditor::clearTemporaryEntryNotes(int entry)
 #endif
 }
 
+void DBusLokalizeEditor::openSyncSource(const char *filename)
+{
+	GError *error = NULL;
+	assert(dbus_g_proxy_call(
+		m_proxy, "openSyncSource", &error,
+		G_TYPE_STRING, filename, G_TYPE_INVALID,
+		G_TYPE_INVALID));
+}
+

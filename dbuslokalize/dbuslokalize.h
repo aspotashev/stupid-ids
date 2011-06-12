@@ -16,6 +16,7 @@ public:
 	void gotoEntry(int entry);
 	void addTemporaryEntryNote(int entry, const char *note);
 	void clearTemporaryEntryNotes(int entry);
+	void openSyncSource(const char *filename);
 
 private:
 	DBusGProxy *m_proxy;
