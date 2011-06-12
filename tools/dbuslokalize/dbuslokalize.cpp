@@ -189,3 +189,18 @@ void DBusLokalizeEditor::addTemporaryEntryNote(int entry, const char *note)
 		G_TYPE_INVALID));
 }
 
+void DBusLokalizeEditor::clearTemporaryEntryNotes(int entry)
+{
+#define LOKALIZE_CLEAR_TEMPORARY_NOTES 1
+
+#ifdef LOKALIZE_CLEAR_TEMPORARY_NOTES
+	GError *error = NULL;
+	assert(dbus_g_proxy_call(
+		m_proxy, "clearTemporaryEntryNotes", &error,
+		G_TYPE_INT, entry, G_TYPE_INVALID,
+		G_TYPE_INVALID));
+#else
+	fprintf(stderr, "Not calling D-Bus method clearTemporaryEntryNotes, because LOKALIZE_CLEAR_TEMPORARY_NOTES is disabled.");
+#endif
+}
+

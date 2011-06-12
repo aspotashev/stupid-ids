@@ -15,6 +15,7 @@ public:
 	void setEntryFilteredOut(int entry, bool filteredOut);
 	void gotoEntry(int entry);
 	void addTemporaryEntryNote(int entry, const char *note);
+	void clearTemporaryEntryNotes(int entry);
 
 private:
 	DBusGProxy *m_proxy;

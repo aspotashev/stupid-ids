@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
 
 		editor = filename2editor[filename];
 		editor->setEntryFilteredOut(message->index(), false);
+		editor->clearTemporaryEntryNotes(message->index());
 		editor->addTemporaryEntryNote(message->index(), "Hello, world!");
 	}
 
