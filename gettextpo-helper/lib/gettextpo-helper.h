@@ -92,6 +92,7 @@ public:
 	bool isFuzzy() const;
 	bool isPlural() const;
 	bool isUntranslated() const;
+	bool isTranslated() const;
 	int numPlurals() const;
 	const char *msgstr(int plural_form) const;
 	const char *msgcomments() const;

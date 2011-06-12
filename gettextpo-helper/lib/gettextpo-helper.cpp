@@ -638,6 +638,14 @@ bool Message::isUntranslated() const
 	return m_untranslated;
 }
 
+/**
+ * \brief Not untranslated and not fuzzy.
+ */
+bool Message::isTranslated() const
+{
+	return !isFuzzy() && !isUntranslated();
+}
+
 int Message::numPlurals() const
 {
 	return m_numPlurals;
