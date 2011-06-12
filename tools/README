@@ -7,10 +7,13 @@ Testing:
 	./calculate-tp-hash ~/messages/kdepimlibs/libkcalutils.po
 
 == dbuslokalize ==
+Opens in Lokalize all .po files that contains changes declared in an Iddiff.
 
 == iddiff-repo ==
+Generates an Iddiff with changes in the given .po files against files from KDE SVN.
 
 == iddiff-test ==
+Tests loading/saving Iddiffs using class Iddiffer.
 
 == iddiff ==
 This program generates a list of differences between 2 .po files.
