@@ -1,4 +1,6 @@
 
+// http://dbus.freedesktop.org/doc/dbus-tutorial.html
+
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
