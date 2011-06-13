@@ -252,8 +252,7 @@ void Iddiffer::diffAgainstEmpty(TranslationContent *content_b)
 
 		// Adding to "ADDED" if "B" is translated
 		if (!po_message_is_untranslated(message_b) && !po_message_is_fuzzy(message_b))
-			m_addedList.push_back(std::pair<int, IddiffMessage *>(
-				first_id + index, new IddiffMessage(message_b)));
+			insertAdded(first_id + index, new IddiffMessage(message_b));
 	}
 
 	// free memory
@@ -333,14 +332,12 @@ void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *cont
 		// Adding to "REMOVED" if:
 		//    "A" is not untranslated & there were changes (i.e. message_a != message_b)
 		if (!po_message_is_untranslated(message_a))
-			m_removedList.push_back(std::pair<int, IddiffMessage *>(
-				first_id + index, new IddiffMessage(message_a)));
+			insertRemoved(first_id + index, new IddiffMessage(message_a));
 
 		// Adding to "ADDED" if:
 		//    "B" is translated & there were changes (i.e. message_a != message_b)
 		if (!po_message_is_untranslated(message_b) && !po_message_is_fuzzy(message_b))
-			m_addedList.push_back(std::pair<int, IddiffMessage *>(
-				first_id + index, new IddiffMessage(message_b)));
+			insertAdded(first_id + index, new IddiffMessage(message_b));
 	}
 
 	// free memory
@@ -353,15 +350,17 @@ void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *cont
 std::string Iddiffer::generateIddiffText()
 {
 	m_output.str("");
-	if (m_removedList.size() > 0 || m_addedList.size() > 0)
+	std::vector<std::pair<int, IddiffMessage *> > removed_list = getRemovedVector();
+	std::vector<std::pair<int, IddiffMessage *> > added_list = getAddedVector();
+	if (removed_list.size() > 0 || added_list.size() > 0)
 	{
 		m_output << "Subject: " << m_subject << "\n";
 		m_output << "Author: " << m_author << "\n";
 		m_output << "Date: " << "\n\n"; // TODO: m_date
 		m_output << "REMOVED\n";
-		writeMessageList(m_removedList);
+		writeMessageList(removed_list);
 		m_output << "ADDED\n";
-		writeMessageList(m_addedList);
+		writeMessageList(added_list);
 	}
 
 	return m_output.str();

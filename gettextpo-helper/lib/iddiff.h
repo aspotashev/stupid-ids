@@ -87,7 +87,7 @@ public:
 	// TODO: may be remove this?
 	static std::string generateIddiffText(TranslationContent *content_a, TranslationContent *content_b);
 
-protected:
+private:
 	void writeMessageList(std::vector<std::pair<int, IddiffMessage *> > list);
 	void loadMessageListEntry(const char *line, std::vector<std::pair<int, IddiffMessage *> > &list);
 	IddiffMessage *findIddiffMessageList(std::vector<IddiffMessage *> list, IddiffMessage *item);
