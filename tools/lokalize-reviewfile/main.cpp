@@ -14,7 +14,8 @@
 // 3. Show only those strings that are different in two .po files (Lokalize D-Bus: setEntriesFilteredOut/setEntryFilteredOut)
 int main(int argc, char *argv[])
 {
-	const char *input_filename = "/home/sasha/messages/extragear-multimedia/amarok.po"; // TODO: argv[1]
+	assert(argc == 2); // 1 argument
+	const char *input_filename = argv[1];
 
 	TranslationContent *new_content = new TranslationContent(input_filename);
 	new_content->setDisplayFilename(input_filename);
