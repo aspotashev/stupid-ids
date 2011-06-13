@@ -847,7 +847,7 @@ IddiffMessage *Iddiffer::findIddiffMessageList(std::vector<IddiffMessage *> list
 
 IddiffMessage *Iddiffer::findRemoved(int msg_id, const IddiffMessage *item)
 {
-	return findIddiffMessageList(findAdded(msg_id), item);
+	return findIddiffMessageList(findRemoved(msg_id), item);
 }
 
 IddiffMessage *Iddiffer::findAdded(int msg_id, const IddiffMessage *item)
