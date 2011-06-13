@@ -71,8 +71,11 @@ public:
 	void applyToContent(TranslationContent *content);
 	void applyIddiff(StupIdTranslationCollector *collector);
 
-	void insertRemoved(std::pair<int, IddiffMessage *> item);
-	void insertAdded(std::pair<int, IddiffMessage *> item);
+	void insertRemoved(int msg_id, const IddiffMessage *item);
+	void insertAdded(int msg_id, const IddiffMessage *item);
+
+	std::vector<std::pair<int, IddiffMessage *> > getRemovedVector();
+	std::vector<std::pair<int, IddiffMessage *> > getAddedVector();
 	void merge(Iddiffer *diff);
 
 	// TODO: may be remove this?
