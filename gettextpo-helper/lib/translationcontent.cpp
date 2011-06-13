@@ -162,7 +162,11 @@ const git_oid *TranslationContent::gitBlobHash()
 	{
 	case TYPE_FILE:
 		f = fopen(m_filename, "r");
-		assert(f);
+		if (!f)
+		{
+			printf("Could not open file %s\n", m_filename);
+			assert(0);
+		}
 
 		fseek(f, 0, SEEK_END);
 		file_size = ftell(f);
