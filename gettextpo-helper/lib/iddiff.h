@@ -99,13 +99,20 @@ private:
 	static IddiffMessage *findIddiffMessageList(std::vector<IddiffMessage *> list, const IddiffMessage *item);
 	static std::string formatPoMessage(po_message_t message);
 
+	// Helper functions for minimizeIds()
+	static void substituteMsgId(std::map<int, std::vector<IddiffMessage *> > &items, int old_id, int new_id);
+	void substituteMsgId(int old_id, int new_id);
+
+	// Helper function for getRemovedVector() and getAddedVector()
+	static std::vector<std::pair<int, IddiffMessage *> > getItemsVector(std::map<int, std::vector<IddiffMessage *> > &items);
+
 private:
 	std::string m_subject;
 	std::string m_author;
 	// TODO: m_date
 
-	std::vector<std::pair<int, IddiffMessage *> > m_removedList;
-	std::vector<std::pair<int, IddiffMessage *> > m_addedList;
+	std::map<int, std::vector<IddiffMessage *> > m_removedItems;
+	std::map<int, std::vector<IddiffMessage *> > m_addedItems;
 	bool m_minimizedIds;
 
 	std::ostringstream m_output;

@@ -220,11 +220,11 @@ void Iddiffer::writeMessageList(std::vector<std::pair<int, IddiffMessage *> > li
 
 void Iddiffer::clearIddiff()
 {
-	m_removedList.clear();
-	m_addedList.clear();
+	m_removedItems.clear();
+	m_addedItems.clear();
 }
 
-// This function fills m_removedList and m_addedList
+// This function fills m_removedItems and m_addedItems
 void Iddiffer::diffAgainstEmpty(TranslationContent *content_b)
 {
 	clearIddiff();
@@ -265,7 +265,7 @@ void Iddiffer::diffAgainstEmpty(TranslationContent *content_b)
 	po_file_free(file_b);
 }
 
-// This function fills m_removedList and m_addedList
+// This function fills m_removedItems and m_addedItems
 void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *content_b)
 {
 	clearIddiff();
@@ -601,10 +601,13 @@ std::pair<int, IddiffMessage *> Iddiffer::loadMessageListEntry(const char *line)
 std::vector<int> Iddiffer::involvedIds()
 {
 	std::vector<int> res;
-	for (size_t i = 0; i < m_removedList.size(); i ++)
-		res.push_back(m_removedList[i].first);
-	for (size_t i = 0; i < m_addedList.size(); i ++)
-		res.push_back(m_addedList[i].first);
+	// TODO: macro for walking through an std::map
+	for (std::map<int, std::vector<IddiffMessage *> >::iterator iter = m_removedItems.begin();
+		iter != m_removedItems.end(); iter ++)
+		res.push_back(iter->first);
+	for (std::map<int, std::vector<IddiffMessage *> >::iterator iter = m_addedItems.begin();
+		iter != m_addedItems.end(); iter ++)
+		res.push_back(iter->first);
 
 	// sort-uniq
 	// TODO: create a function for this
@@ -612,6 +615,24 @@ std::vector<int> Iddiffer::involvedIds()
 	res.resize(unique(res.begin(), res.end()) - res.begin());
 
 	return res;
+}
+
+void Iddiffer::substituteMsgId(std::map<int, std::vector<IddiffMessage *> > &items, int old_id, int new_id)
+{
+	// Check that IDs won't collide
+	assert(items.find(new_id) == items.end());
+
+	if (items.find(old_id) != items.end())
+	{
+		items[new_id] = items[old_id]; // copying vector
+		items.erase(old_id);
+	}
+}
+
+void Iddiffer::substituteMsgId(int old_id, int new_id)
+{
+	substituteMsgId(m_removedItems, old_id, new_id);
+	substituteMsgId(m_addedItems, old_id, new_id);
 }
 
 void Iddiffer::minimizeIds()
@@ -622,16 +643,8 @@ void Iddiffer::minimizeIds()
 	std::vector<int> min_ids_arr = stupidsClient.getMinIds(msg_ids_arr);
 	assert(msg_ids_arr.size() == min_ids_arr.size());
 
-	// TODO: substituteMsgId(int old_id, int new_id)
-	std::map<int, int> min_ids;
 	for (size_t i = 0; i < msg_ids_arr.size(); i ++)
-		min_ids[msg_ids_arr[i]] = min_ids_arr[i];
-
-	// Write minimized IDs back to m_removedList and m_addedList
-	for (size_t i = 0; i < m_removedList.size(); i ++)
-		m_removedList[i].first = min_ids[m_removedList[i].first];
-	for (size_t i = 0; i < m_addedList.size(); i ++)
-		m_addedList[i].first = min_ids[m_addedList[i].first];
+		substituteMsgId(msg_ids_arr[i], min_ids_arr[i]);
 
 	m_minimizedIds = true;
 }
@@ -708,8 +721,7 @@ void Iddiffer::insertRemoved(int msg_id, const IddiffMessage *item)
 	assert(findRemoved(msg_id, item) == NULL); // duplicate in "REMOVED"
 	assert(findAdded(msg_id, item) == NULL); // conflict: trying to "REMOVE" a translation already existing in "ADDED"
 
-	m_removedList.push_back(std::make_pair<int, IddiffMessage *>(
-		msg_id, new IddiffMessage(*item)));
+	m_removedItems[msg_id].push_back(new IddiffMessage(*item));
 }
 
 /**
@@ -728,8 +740,7 @@ void Iddiffer::insertAdded(int msg_id, const IddiffMessage *item)
 			assert(0); // conflict: two different translations in "ADDED"
 	}
 
-	m_addedList.push_back(std::make_pair<int, IddiffMessage *>(
-		msg_id, new IddiffMessage(*item)));
+	m_addedItems[msg_id].push_back(new IddiffMessage(*item));
 }
 
 void Iddiffer::insertRemoved(std::pair<int, IddiffMessage *> item)
@@ -742,14 +753,31 @@ void Iddiffer::insertAdded(std::pair<int, IddiffMessage *> item)
 	insertAdded(item.first, item.second);
 }
 
+/**
+ * \static
+ */
+std::vector<std::pair<int, IddiffMessage *> > Iddiffer::getItemsVector(std::map<int, std::vector<IddiffMessage *> > &items)
+{
+	std::vector<std::pair<int, IddiffMessage *> > res;
+	for (std::map<int, std::vector<IddiffMessage *> >::iterator iter = items.begin();
+		iter != items.end(); iter ++)
+	{
+		std::vector<IddiffMessage *> id_items = iter->second;
+		for (size_t i = 0; i < id_items.size(); i ++)
+			res.push_back(std::make_pair<int, IddiffMessage *>(iter->first, id_items[i]));
+	}
+
+	return res;
+}
+
 std::vector<std::pair<int, IddiffMessage *> > Iddiffer::getRemovedVector()
 {
-	return m_removedList;
+	return getItemsVector(m_removedItems);
 }
 
 std::vector<std::pair<int, IddiffMessage *> > Iddiffer::getAddedVector()
 {
-	return m_addedList;
+	return getItemsVector(m_addedItems);
 }
 
 void Iddiffer::merge(Iddiffer *diff)
@@ -765,22 +793,20 @@ void Iddiffer::merge(Iddiffer *diff)
 
 std::vector<IddiffMessage *> Iddiffer::findRemoved(int msg_id)
 {
-	std::vector<IddiffMessage *> res;
-	for (size_t i = 0; i < m_removedList.size(); i ++)
-		if (m_removedList[i].first == msg_id)
-			res.push_back(m_removedList[i].second);
-
-	return res;
+	// Avoiding addition of empty vector to m_removedItems
+	if (m_removedItems.find(msg_id) != m_removedItems.end())
+		return m_removedItems[msg_id];
+	else
+		return std::vector<IddiffMessage *>();
 }
 
 std::vector<IddiffMessage *> Iddiffer::findAdded(int msg_id)
 {
-	std::vector<IddiffMessage *> res;
-	for (size_t i = 0; i < m_addedList.size(); i ++)
-		if (m_addedList[i].first == msg_id)
-			res.push_back(m_addedList[i].second);
-
-	return res;
+	// Avoiding addition of empty vector to m_addedItems
+	if (m_addedItems.find(msg_id) != m_addedItems.end())
+		return m_addedItems[msg_id];
+	else
+		return std::vector<IddiffMessage *>();
 }
 
 IddiffMessage *Iddiffer::findAddedSingle(int msg_id)
