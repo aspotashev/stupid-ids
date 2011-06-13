@@ -77,6 +77,8 @@ public:
 
 	void insertRemoved(int msg_id, const IddiffMessage *item);
 	void insertAdded(int msg_id, const IddiffMessage *item);
+	void insertRemoved(std::pair<int, IddiffMessage *> item);
+	void insertAdded(std::pair<int, IddiffMessage *> item);
 
 	// low-level functions
 	std::vector<std::pair<int, IddiffMessage *> > getRemovedVector();

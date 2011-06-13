@@ -500,17 +500,15 @@ void Iddiffer::loadIddiff(const char *filename)
 
 			current_section = SECTION_ADDED;
 		}
-		else
+		// Now we are processing a line inside a section
+		else if (current_section == SECTION_REMOVED)
+			insertRemoved(loadMessageListEntry(line));
+		else if (current_section == SECTION_ADDED)
+			insertAdded(loadMessageListEntry(line));
+		else // invalid value of "current_section"
 		{
-			if (current_section == SECTION_REMOVED)
-				m_removedList.push_back(loadMessageListEntry(line));
-			else if (current_section == SECTION_ADDED)
-				m_addedList.push_back(loadMessageListEntry(line));
-			else
-			{
-				// Unknown iddiff section
-				assert(0);
-			}
+			// Unknown iddiff section
+			assert(0);
 		}
 	}
 
@@ -735,6 +733,16 @@ void Iddiffer::insertAdded(int msg_id, const IddiffMessage *item)
 
 	m_addedList.push_back(std::make_pair<int, IddiffMessage *>(
 		msg_id, new IddiffMessage(*item)));
+}
+
+void Iddiffer::insertRemoved(std::pair<int, IddiffMessage *> item)
+{
+	insertRemoved(item.first, item.second);
+}
+
+void Iddiffer::insertAdded(std::pair<int, IddiffMessage *> item)
+{
+	insertAdded(item.first, item.second);
 }
 
 std::vector<std::pair<int, IddiffMessage *> > Iddiffer::getRemovedVector()
