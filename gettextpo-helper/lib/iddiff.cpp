@@ -622,6 +622,7 @@ void Iddiffer::minimizeIds()
 	std::vector<int> min_ids_arr = stupidsClient.getMinIds(msg_ids_arr);
 	assert(msg_ids_arr.size() == min_ids_arr.size());
 
+	// TODO: substituteMsgId(int old_id, int new_id)
 	std::map<int, int> min_ids;
 	for (size_t i = 0; i < msg_ids_arr.size(); i ++)
 		min_ids[msg_ids_arr[i]] = min_ids_arr[i];
@@ -704,14 +705,8 @@ void Iddiffer::applyIddiff(StupIdTranslationCollector *collector)
  */
 void Iddiffer::insertRemoved(int msg_id, const IddiffMessage *item)
 {
-	// TODO: use std::map (instead of std::vector<std::pair ...>) for faster searching IddiffMessages by IDs
-	for (size_t i = 0; i < m_removedList.size(); i ++)
-		if (m_removedList[i].first == msg_id && m_removedList[i].second->equalTranslations(item))
-			assert(0); // duplicate in "REMOVED"
-
-	for (size_t i = 0; i < m_addedList.size(); i ++)
-		if (m_addedList[i].first == msg_id && m_addedList[i].second->equalTranslations(item))
-			assert(0); // conflict: trying to "REMOVE" a translation already existing in "ADDED"
+	assert(findRemoved(msg_id, item) == NULL); // duplicate in "REMOVED"
+	assert(findAdded(msg_id, item) == NULL); // conflict: trying to "REMOVE" a translation already existing in "ADDED"
 
 	m_removedList.push_back(std::make_pair<int, IddiffMessage *>(
 		msg_id, new IddiffMessage(*item)));
@@ -722,18 +717,16 @@ void Iddiffer::insertRemoved(int msg_id, const IddiffMessage *item)
  */
 void Iddiffer::insertAdded(int msg_id, const IddiffMessage *item)
 {
-	for (size_t i = 0; i < m_removedList.size(); i ++)
-		if (m_removedList[i].first == msg_id && m_removedList[i].second->equalTranslations(item))
-			assert(0); // conflict: trying to "REMOVE" a translation already existing in "ADDED"
+	assert(findRemoved(msg_id, item) == NULL); // conflict: trying to "REMOVE" a translation already existing in "ADDED"
 
-	for (size_t i = 0; i < m_addedList.size(); i ++)
-		if (m_addedList[i].first == msg_id)
-		{
-			if (m_addedList[i].second->equalTranslations(item))
-				assert(0); // duplicate in "ADDED"
-			else
-				assert(0); // conflict: two different translations in "ADDED"
-		}
+	std::vector<IddiffMessage *> added_this_id = findAdded(msg_id);
+	for (size_t i = 0; i < added_this_id.size(); i ++)
+	{
+		if (added_this_id[i]->equalTranslations(item))
+			assert(0); // duplicate in "ADDED"
+		else
+			assert(0); // conflict: two different translations in "ADDED"
+	}
 
 	m_addedList.push_back(std::make_pair<int, IddiffMessage *>(
 		msg_id, new IddiffMessage(*item)));
@@ -801,7 +794,7 @@ IddiffMessage *Iddiffer::findAddedSingle(int msg_id)
 /**
  * \static
  */
-IddiffMessage *Iddiffer::findIddiffMessageList(std::vector<IddiffMessage *> list, IddiffMessage *item)
+IddiffMessage *Iddiffer::findIddiffMessageList(std::vector<IddiffMessage *> list, const IddiffMessage *item)
 {
 	for (size_t i = 0; i < list.size(); i ++)
 		if (list[i]->equalTranslations(item))
@@ -811,12 +804,12 @@ IddiffMessage *Iddiffer::findIddiffMessageList(std::vector<IddiffMessage *> list
 	return NULL;
 }
 
-IddiffMessage *Iddiffer::findRemoved(int msg_id, IddiffMessage *item)
+IddiffMessage *Iddiffer::findRemoved(int msg_id, const IddiffMessage *item)
 {
 	return findIddiffMessageList(findAdded(msg_id), item);
 }
 
-IddiffMessage *Iddiffer::findAdded(int msg_id, IddiffMessage *item)
+IddiffMessage *Iddiffer::findAdded(int msg_id, const IddiffMessage *item)
 {
 	return findIddiffMessageList(findAdded(msg_id), item);
 }

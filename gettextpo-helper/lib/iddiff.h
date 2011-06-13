@@ -75,8 +75,8 @@ public:
 	std::vector<IddiffMessage *> findRemoved(int msg_id);
 	std::vector<IddiffMessage *> findAdded(int msg_id);
 	IddiffMessage *findAddedSingle(int msg_id);
-	IddiffMessage *findRemoved(int msg_id, IddiffMessage *item);
-	IddiffMessage *findAdded(int msg_id, IddiffMessage *item);
+	IddiffMessage *findRemoved(int msg_id, const IddiffMessage *item);
+	IddiffMessage *findAdded(int msg_id, const IddiffMessage *item);
 
 	void insertRemoved(int msg_id, const IddiffMessage *item);
 	void insertAdded(int msg_id, const IddiffMessage *item);
@@ -95,8 +95,8 @@ public:
 private:
 	void writeMessageList(std::vector<std::pair<int, IddiffMessage *> > list);
 	std::pair<int, IddiffMessage *> loadMessageListEntry(const char *line);
-	IddiffMessage *findIddiffMessageList(std::vector<IddiffMessage *> list, IddiffMessage *item);
 
+	static IddiffMessage *findIddiffMessageList(std::vector<IddiffMessage *> list, const IddiffMessage *item);
 	static std::string formatPoMessage(po_message_t message);
 
 private:
