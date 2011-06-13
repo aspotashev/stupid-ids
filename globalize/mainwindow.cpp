@@ -55,7 +55,7 @@ MainWindow::MainWindow(QWidget *parent) :
             editor->addTranslationOption(msg);
         }
 
-        std::vector<IddiffMessage *> removed = diff->getRemovedArr(id);
+        std::vector<IddiffMessage *> removed = diff->findRemoved(id);
         for (size_t i = 0; i < removed.size(); i ++)
         {
             Message *msg = new Message(false, messages[0]->size(), "");
@@ -66,7 +66,7 @@ MainWindow::MainWindow(QWidget *parent) :
             editor->addTranslationOption(msg);
         }
 
-        IddiffMessage *added = diff->getAdded(id);
+        IddiffMessage *added = diff->findAddedSingle(id);
         if (added)
         {
             Message *msg = new Message(false, messages[0]->size(), "");

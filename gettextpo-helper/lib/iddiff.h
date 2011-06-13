@@ -63,19 +63,25 @@ public:
 	std::string generateIddiffText();
 
 	std::vector<IddiffMessage *> getIddiffArr(std::vector<std::pair<int, IddiffMessage *> > &section, int msg_id);
-	std::vector<IddiffMessage *> getRemovedArr(int msg_id);
-	std::vector<IddiffMessage *> getAddedArr(int msg_id);
-	IddiffMessage *getAdded(int msg_id);
 
 	void applyToMessage(MessageGroup *messageGroup, int min_id);
 	void applyToContent(TranslationContent *content);
 	void applyIddiff(StupIdTranslationCollector *collector);
 
+	// low-level functions
+	std::vector<IddiffMessage *> findRemoved(int msg_id);
+	std::vector<IddiffMessage *> findAdded(int msg_id);
+	IddiffMessage *findAddedSingle(int msg_id);
+	IddiffMessage *findRemoved(int msg_id, IddiffMessage *item);
+	IddiffMessage *findAdded(int msg_id, IddiffMessage *item);
+
 	void insertRemoved(int msg_id, const IddiffMessage *item);
 	void insertAdded(int msg_id, const IddiffMessage *item);
 
+	// low-level functions
 	std::vector<std::pair<int, IddiffMessage *> > getRemovedVector();
 	std::vector<std::pair<int, IddiffMessage *> > getAddedVector();
+
 	void merge(Iddiffer *diff);
 
 	// TODO: may be remove this?
@@ -84,6 +90,7 @@ public:
 protected:
 	void writeMessageList(std::vector<std::pair<int, IddiffMessage *> > list);
 	void loadMessageListEntry(const char *line, std::vector<std::pair<int, IddiffMessage *> > &list);
+	IddiffMessage *findIddiffMessageList(std::vector<IddiffMessage *> list, IddiffMessage *item);
 
 	static std::string formatPoMessage(po_message_t message);
 
