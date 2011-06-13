@@ -181,6 +181,9 @@ bool IddiffMessage::equalTranslations(const Message *message) const
 	return true;
 }
 
+/**
+ * Fuzzy flag state will not be copied.
+ */
 void IddiffMessage::copyTranslationsToMessage(Message *message) const
 {
 	assert(numPlurals() == message->numPlurals());
