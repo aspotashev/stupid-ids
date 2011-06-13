@@ -69,6 +69,9 @@ public:
 	void applyIddiff(StupIdTranslationCollector *collector);
 
 	// low-level functions
+	void clearIddiff();
+
+	// low-level functions
 	std::vector<IddiffMessage *> findRemoved(int msg_id);
 	std::vector<IddiffMessage *> findAdded(int msg_id);
 	IddiffMessage *findAddedSingle(int msg_id);

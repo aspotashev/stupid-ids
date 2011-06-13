@@ -218,11 +218,16 @@ void Iddiffer::writeMessageList(std::vector<std::pair<int, IddiffMessage *> > li
 		m_output << list[i].first << " " << list[i].second->formatPoMessage() << "\n";
 }
 
-// This function fills m_removedList and m_addedList
-void Iddiffer::diffAgainstEmpty(TranslationContent *content_b)
+void Iddiffer::clearIddiff()
 {
 	m_removedList.clear();
 	m_addedList.clear();
+}
+
+// This function fills m_removedList and m_addedList
+void Iddiffer::diffAgainstEmpty(TranslationContent *content_b)
+{
+	clearIddiff();
 
 	const git_oid *tp_hash = content_b->calculateTpHash();
 	int first_id = stupidsClient.getFirstId(tp_hash);
@@ -263,8 +268,7 @@ void Iddiffer::diffAgainstEmpty(TranslationContent *content_b)
 // This function fills m_removedList and m_addedList
 void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *content_b)
 {
-	m_removedList.clear();
-	m_addedList.clear();
+	clearIddiff();
 
 	// .po files should be derived from the same .pot
 	const git_oid *tp_hash = content_a->calculateTpHash();
