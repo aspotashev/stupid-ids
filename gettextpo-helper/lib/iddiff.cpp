@@ -503,9 +503,9 @@ void Iddiffer::loadIddiff(const char *filename)
 		else
 		{
 			if (current_section == SECTION_REMOVED)
-				loadMessageListEntry(line, m_removedList);
+				m_removedList.push_back(loadMessageListEntry(line));
 			else if (current_section == SECTION_ADDED)
-				loadMessageListEntry(line, m_addedList);
+				m_addedList.push_back(loadMessageListEntry(line));
 			else
 			{
 				// Unknown iddiff section
@@ -521,7 +521,7 @@ void Iddiffer::loadIddiff(const char *filename)
 	fclose(f);
 }
 
-void Iddiffer::loadMessageListEntry(const char *line, std::vector<std::pair<int, IddiffMessage *> > &list)
+std::pair<int, IddiffMessage *> Iddiffer::loadMessageListEntry(const char *line)
 {
 	const char *space = strchr(line, ' ');
 	assert(space);
@@ -592,7 +592,7 @@ void Iddiffer::loadMessageListEntry(const char *line, std::vector<std::pair<int,
 	}
 
 	delete [] msgstr_buf;
-	list.push_back(std::make_pair<int, IddiffMessage *>(msg_id, msg));
+	return std::make_pair<int, IddiffMessage *>(msg_id, msg);
 }
 
 // Returns _sorted_ vector

@@ -89,7 +89,7 @@ public:
 
 private:
 	void writeMessageList(std::vector<std::pair<int, IddiffMessage *> > list);
-	void loadMessageListEntry(const char *line, std::vector<std::pair<int, IddiffMessage *> > &list);
+	std::pair<int, IddiffMessage *> loadMessageListEntry(const char *line);
 	IddiffMessage *findIddiffMessageList(std::vector<IddiffMessage *> list, IddiffMessage *item);
 
 	static std::string formatPoMessage(po_message_t message);
