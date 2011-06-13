@@ -192,6 +192,18 @@ void IddiffMessage::copyTranslationsToMessage(Message *message) const
 		message->editMsgstr(i, msgstr(i));
 }
 
+bool IddiffMessage::isTranslated() const
+{
+	if (isFuzzy())
+		return false;
+
+	for (int i = 0; i < numPlurals(); i ++)
+		if (strlen(msgstr(i)) > 0)
+			return true;
+
+	return false;
+}
+
 //----------------------------------------------
 
 Iddiffer::Iddiffer():

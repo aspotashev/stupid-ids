@@ -21,6 +21,8 @@ public:
 	int numPlurals() const;
 	const char *msgstr(int plural_form) const;
 
+	bool isTranslated() const;
+
 	void setMsgstr(int index, const char *str);
 	void addMsgstr(const char *str);
 
