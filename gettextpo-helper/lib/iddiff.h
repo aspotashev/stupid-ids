@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <map>
 
 #include <gettext-po.h>
 
@@ -79,6 +80,8 @@ public:
 	IddiffMessage *findAddedSingle(int msg_id);
 	IddiffMessage *findRemoved(int msg_id, const IddiffMessage *item);
 	IddiffMessage *findAdded(int msg_id, const IddiffMessage *item);
+	void eraseRemoved(int msg_id, const IddiffMessage *item);
+	void eraseAdded(int msg_id, const IddiffMessage *item);
 
 	void insertRemoved(int msg_id, const IddiffMessage *item);
 	void insertAdded(int msg_id, const IddiffMessage *item);
@@ -90,6 +93,9 @@ public:
 	std::vector<std::pair<int, IddiffMessage *> > getAddedVector();
 
 	void merge(Iddiffer *diff);
+
+	void acceptTranslation(int msg_id, IddiffMessage *item);
+	void rejectTranslation(int msg_id, IddiffMessage *item);
 
 	// TODO: may be remove this?
 	static std::string generateIddiffText(TranslationContent *content_a, TranslationContent *content_b);
@@ -107,6 +113,9 @@ private:
 
 	// Helper function for getRemovedVector() and getAddedVector()
 	static std::vector<std::pair<int, IddiffMessage *> > getItemsVector(std::map<int, std::vector<IddiffMessage *> > &items);
+
+	// Helper function for eraseRemoved() and eraseAdded()
+	static void eraseItem(std::map<int, std::vector<IddiffMessage *> > &items, int msg_id, const IddiffMessage *item);
 
 private:
 	std::string m_subject;

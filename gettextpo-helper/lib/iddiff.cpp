@@ -855,3 +855,77 @@ IddiffMessage *Iddiffer::findAdded(int msg_id, const IddiffMessage *item)
 	return findIddiffMessageList(findAdded(msg_id), item);
 }
 
+/**
+ * \static
+ */
+void Iddiffer::eraseItem(std::map<int, std::vector<IddiffMessage *> > &items, int msg_id, const IddiffMessage *item)
+{
+	assert(items.find(msg_id) != items.end());
+
+	std::vector<IddiffMessage *> &list = items[msg_id];
+	for (std::vector<IddiffMessage *>::iterator iter = list.begin(); iter != list.end(); iter ++)
+		if (*iter == item) // comparison by pointer, not by translations!
+		{
+			list.erase(iter);
+			break;
+		}
+
+	// Do not keep empty vectors
+	if (list.size() == 0)
+		items.erase(msg_id);
+}
+
+void Iddiffer::eraseRemoved(int msg_id, const IddiffMessage *item)
+{
+	eraseItem(m_removedItems, msg_id, item);
+}
+
+void Iddiffer::eraseAdded(int msg_id, const IddiffMessage *item)
+{
+	eraseItem(m_addedItems, msg_id, item);
+}
+
+// 1. remove matching from m_removedItems (if any)
+// 2. move all _other_ translations for this "msg_id" from m_addedItems to m_removedItems (there can be only one translation for this "msg_id" in m_addedItems)
+// 3. add to m_addedItems
+void Iddiffer::acceptTranslation(int msg_id, IddiffMessage *item)
+{
+	assert(msg_id);
+	assert(item);
+
+	IddiffMessage *removed = findRemoved(msg_id, item);
+	if (removed)
+		eraseRemoved(msg_id, removed);
+
+
+	IddiffMessage *added = findAddedSingle(msg_id);
+	if (!added)
+	{
+		// create new item
+		insertAdded(msg_id, item);
+	}
+	else if (!added->equalTranslations(item))
+	{
+		// move old item to "REMOVED", create new item
+		insertAdded(msg_id, item);
+		rejectTranslation(msg_id, added);
+	}
+}
+
+// 1. remove matching from m_addedItems (if any)
+// 2. add to m_removedItems
+void Iddiffer::rejectTranslation(int msg_id, IddiffMessage *item)
+{
+	assert(msg_id);
+	assert(item);
+
+	IddiffMessage *added = findAddedSingle(msg_id);
+	if (added && added->equalTranslations(item))
+		eraseAdded(msg_id, added);
+
+
+	IddiffMessage *removed = findRemoved(msg_id, item);
+	if (!removed)
+		insertRemoved(msg_id, item);
+}
+
