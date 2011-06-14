@@ -27,19 +27,25 @@ int main(int argc, char *argv[])
 	git_loader->addRepository("/home/sasha/kde-ru/kde-ru-trunk.git/.git");
 	git_loader->addRepository("/home/sasha/kde-ru/kde-l10n-ru-stable/.git");
 	TranslationContent *old_content = git_loader->findOldestByTphash(tp_hash);
-	assert(old_content); // TODO: old_content may be NULL if nobody tried translating the given .po file before.
-	old_content->setDisplayFilename("[sync]");
 
 	// Write old_content to temporary file
 	const char *sync_filename = "/tmp/lokalize-sync-file.tmp";
-	old_content->writeBufferToFile(sync_filename);
+	if (old_content)
+	{
+		old_content->setDisplayFilename("[sync]");
+		old_content->writeBufferToFile(sync_filename);
+	}
 
 	// 2. Open the input .po file in Lokalize, select the original .po file for syncing (Lokalize D-Bus: openSyncSource)
 	DBusLokalizeInterface lokalize;
 	DBusLokalizeEditor *editor = lokalize.openFileInEditor(input_filename);
-	editor->openSyncSource(sync_filename);
+	if (old_content)
+		editor->openSyncSource(sync_filename);
 
 	// 3. Show only those strings that are different in two .po files (Lokalize D-Bus: setEntriesFilteredOut/setEntryFilteredOut)
+	if (!old_content)
+		return 0;
+
 	std::vector<MessageGroup *> old_messages = old_content->readMessages(false);
 	std::vector<MessageGroup *> new_messages = new_content->readMessages(false);
 	size_t msg_count = old_messages.size();
