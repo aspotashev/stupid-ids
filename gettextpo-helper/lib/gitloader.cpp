@@ -34,6 +34,8 @@ int git_tree_entry_namecmp(const git_tree_entry *entry1, const git_tree_entry *e
 
 Commit::Commit(git_commit *commit)
 {
+	git_oid_cpy(&m_oid, git_commit_id(commit));
+
 	// TODO: how to handle git_commit_time_offset?
 	m_time = git_commit_time(commit);
 }
@@ -64,6 +66,11 @@ const CommitFileChange *Commit::change(int index) const
 git_time_t Commit::time() const
 {
 	return m_time;
+}
+
+const git_oid *Commit::oid() const
+{
+	return &m_oid;
 }
 
 //----------------------------------------

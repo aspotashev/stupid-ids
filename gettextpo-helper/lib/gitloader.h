@@ -16,6 +16,7 @@ public:
 	Commit(git_commit *commit);
 	~Commit();
 
+	const git_oid *oid() const;
 	git_time_t time() const;
 
 	void addChange(CommitFileChange *change);
@@ -28,6 +29,7 @@ public:
 	const git_oid *findUpdateOid(const char *name, const char *path) const;
 
 public:
+	git_oid m_oid;
 	git_time_t m_time;
 
 	std::vector<CommitFileChange *> m_changes;
