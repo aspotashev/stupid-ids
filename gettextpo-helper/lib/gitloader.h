@@ -96,6 +96,8 @@ public:
 	void libgitClose();
 	git_repository *libgitRepo();
 
+	const char *gitDir() const;
+
 private:
 	git_tree *git_tree_entry_subtree(const git_tree_entry *entry);
 

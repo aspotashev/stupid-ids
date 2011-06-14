@@ -654,6 +654,11 @@ git_repository *Repository::libgitRepo()
 	return m_libgitRepo;
 }
 
+const char *Repository::gitDir() const
+{
+	return m_gitDir;
+}
+
 //---------------------------------------------------------
 
 GitLoader::GitLoader()
