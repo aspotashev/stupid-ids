@@ -12,9 +12,7 @@ set(dbuslokalize_LIB_SRCS
 )
 
 add_library(dbuslokalize SHARED ${dbuslokalize_LIB_SRCS})
-#target_link_libraries(dbuslokalize
-#	gettextpo
-#)
+target_link_libraries(dbuslokalize dbus-glib-1)
 
 SET(INCLUDE_INSTALL_DIR include) # what's the full path?
 install(FILES
