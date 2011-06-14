@@ -933,3 +933,19 @@ void Iddiffer::rejectTranslation(int msg_id, IddiffMessage *item)
 		insertRemoved(msg_id, item);
 }
 
+/**
+ * \brief Returns true if the "accept" action has already been reviewed.
+ */
+bool Iddiffer::isAcceptAlreadyReviewed(int msg_id, IddiffMessage *item)
+{
+	return findAdded(msg_id, item) != NULL;
+}
+
+/**
+ * \brief Returns true if the "reject" action has already been reviewed.
+ */
+bool Iddiffer::isRejectAlreadyReviewed(int msg_id, IddiffMessage *item)
+{
+	return findRemoved(msg_id, item) != NULL;
+}
+

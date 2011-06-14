@@ -97,6 +97,9 @@ public:
 	void acceptTranslation(int msg_id, IddiffMessage *item);
 	void rejectTranslation(int msg_id, IddiffMessage *item);
 
+	bool isAcceptAlreadyReviewed(int msg_id, IddiffMessage *item);
+	bool isRejectAlreadyReviewed(int msg_id, IddiffMessage *item);
+
 	// TODO: may be remove this?
 	static std::string generateIddiffText(TranslationContent *content_a, TranslationContent *content_b);
 
