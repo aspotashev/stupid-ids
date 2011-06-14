@@ -27,7 +27,7 @@ TranslationContent::TranslationContent(const char *filename)
  * \param git_loader Git repositories list used for searching the blob by OID.
  * \param oid OID of the blob.
  */
-TranslationContent::TranslationContent(GitLoader *git_loader, const git_oid *oid)
+TranslationContent::TranslationContent(GitLoaderBase *git_loader, const git_oid *oid)
 {
 	clear();
 

@@ -9,7 +9,7 @@
 #include <git2.h>
 
 class MessageGroup;
-class GitLoader;
+class GitLoaderBase;
 
 class TranslationContent
 {
@@ -20,7 +20,7 @@ public:
 	};
 
 	TranslationContent(const char *filename);
-	TranslationContent(GitLoader *git_loader, const git_oid *oid);
+	TranslationContent(GitLoaderBase *git_loader, const git_oid *oid);
 	TranslationContent(const void *buffer, size_t len);
 	~TranslationContent();
 
@@ -64,7 +64,7 @@ private:
 	char *m_filename;
 	char *m_displayFilename;
 
-	GitLoader *m_gitLoader;
+	GitLoaderBase *m_gitLoader;
 	git_oid *m_oid;
 	git_oid *m_tphash;
 

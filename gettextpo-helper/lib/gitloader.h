@@ -73,7 +73,13 @@ private:
 
 //----------------------------------------
 
-class Repository
+class GitLoaderBase
+{
+public:
+	virtual git_blob *blobLookup(const git_oid *oid) = 0;
+};
+
+class Repository : public GitLoaderBase
 {
 public:
 	Repository(const char *git_dir);
@@ -95,7 +101,7 @@ public:
 
 	void libgitClose();
 	git_repository *libgitRepo();
-	git_blob *blobLookup(const git_oid *oid);
+	virtual git_blob *blobLookup(const git_oid *oid);
 
 	const char *gitDir() const;
 
@@ -120,13 +126,13 @@ class TranslationContent;
 
 /** Class for loading files by their Git OIDs from multiple Git repositories.
  */
-class GitLoader
+class GitLoader : public GitLoaderBase
 {
 public:
 	GitLoader();
 	~GitLoader();
 
-	git_blob *blobLookup(const git_oid *oid);
+	virtual git_blob *blobLookup(const git_oid *oid);
 	void addRepository(const char *git_dir);
 
 	TranslationContent *findOldestByTphash(const git_oid *tp_hash);
