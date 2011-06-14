@@ -3,7 +3,7 @@
 This program returns the tp_hash of the given .po.
 (tp_hash is a much better .pot identifier than {pot_path, pot_creation_date}!)
 
-Testing:
+Example:
 	./calculate-tp-hash ~/messages/kdepimlibs/libkcalutils.po
 
 == dbuslokalize ==
@@ -21,8 +21,14 @@ The .po files should be based on the same .pot (even the order
 of messages should be the same).
 Obsolete messages should go after all other messages.
 
-Testing:
+Example:
 	./iddiff dolphin1.po dolphin2.po 100
+
+== iddiff-git ==
+Generates an .iddiff from a Git commit.
+
+Example:
+	iddiff-git ./.git 7fb8df3aed979214165e7c7d28e672966b13a15b
 
 == idpatch ==
 
