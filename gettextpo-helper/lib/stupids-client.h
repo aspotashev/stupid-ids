@@ -10,6 +10,11 @@
 class StupidsClient
 {
 public:
+	class ExceptionConnectionFailed : public std::exception
+	{
+		virtual const char *what() const throw();
+	};
+
 	StupidsClient();
 	~StupidsClient();
 

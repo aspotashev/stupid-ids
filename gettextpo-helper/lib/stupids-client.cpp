@@ -28,6 +28,7 @@ StupidsClient::~StupidsClient()
 
 void StupidsClient::connect()
 {
+	// If already connected
 	if (m_sockfd >= 0)
 		return;
 
@@ -50,7 +51,7 @@ void StupidsClient::connect()
 		close(m_sockfd);
 
 		printf("Could not connect to stupids-server\n");
-		assert(0);
+		throw ExceptionConnectionFailed();
 	};
 }
 
@@ -182,7 +183,14 @@ std::vector<int> StupidsClient::getMinIds(std::vector<int> msg_ids)
 
 int StupidsClient::getFirstId(const git_oid *tp_hash)
 {
-	connect();
+	try
+	{
+		connect();
+	}
+	catch (ExceptionConnectionFailed &e)
+	{
+		return 0;
+	}
 
 	// send command
 	sendLong(CMD_GET_FIRST_ID);
@@ -223,5 +231,12 @@ StupidsClient &StupidsClient::instance()
 	}
 
 	return *s_instance;
+}
+
+//--------------------------------------------
+
+const char *StupidsClient::ExceptionConnectionFailed::what() const throw()
+{
+	return "ExceptionConnectionFailed (could not connect to stupids-server)";
 }
 
