@@ -668,6 +668,15 @@ git_blob *Repository::blobLookup(const git_oid *oid)
 		return NULL;
 }
 
+int Repository::commitIndexByOid(const git_oid *oid) const
+{
+	for (int i = 0; i < nCommits(); i ++)
+		if (git_oid_cmp(oid, commit(i)->oid()) == 0)
+			return i;
+
+	return -1; // commit not found
+}
+
 //---------------------------------------------------------
 
 GitLoader::GitLoader()

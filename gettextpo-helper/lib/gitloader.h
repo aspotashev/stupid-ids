@@ -89,6 +89,7 @@ public:
 
 	int nCommits() const;
 	const Commit *commit(int index) const;
+	int commitIndexByOid(const git_oid *oid) const;
 
 	const git_oid *findLastRemovalOid(int from_commit, const char *name, const char *path) const;
 	const git_oid *findNextUpdateOid(int from_commit, const char *name, const char *path) const;
