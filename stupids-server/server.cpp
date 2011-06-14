@@ -127,6 +127,14 @@ void Server::handleGetFirstId()
 	int first_id = first_ids.first;
 //	assert(first_id != 0);
 
+	if (first_id == 0)
+	{
+		char tp_hash_str[GIT_OID_HEXSZ + 1];
+		tp_hash_str[GIT_OID_HEXSZ] = '\0';
+		git_oid_fmt(tp_hash_str, tp_hash.oid());
+		printf("First ID not found for this tp_hash: %s\n", tp_hash_str);
+	}
+
 	// "first_id == 0" means that the given tp_hash is unknown.
 	sendLong((uint32_t)first_id);
 }
