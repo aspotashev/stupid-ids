@@ -58,7 +58,7 @@ public:
 
 	void diffAgainstEmpty(TranslationContent *content_b);
 	void diffFiles(TranslationContent *content_a, TranslationContent *content_b);
-	void loadIddiff(const char *filename);
+	bool loadIddiff(const char *filename);
 
 	void minimizeIds();
 	std::vector<int> involvedIds();

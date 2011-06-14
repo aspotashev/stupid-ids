@@ -399,9 +399,12 @@ std::string Iddiffer::generateIddiffText(TranslationContent *content_a, Translat
 	return res;
 }
 
-void Iddiffer::loadIddiff(const char *filename)
+bool Iddiffer::loadIddiff(const char *filename)
 {
 	FILE *f = fopen(filename, "r");
+	if (!f)
+		return false; // FAIL
+
 	fseek(f, 0, SEEK_END);
 	int file_size = (int)ftell(f);
 	rewind(f);
@@ -536,6 +539,7 @@ void Iddiffer::loadIddiff(const char *filename)
 
 
 	fclose(f);
+	return true; // OK
 }
 
 std::pair<int, IddiffMessage *> Iddiffer::loadMessageListEntry(const char *line)
