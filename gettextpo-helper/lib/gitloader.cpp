@@ -659,6 +659,15 @@ const char *Repository::gitDir() const
 	return m_gitDir;
 }
 
+git_blob *Repository::blobLookup(const git_oid *oid)
+{
+	git_blob *blob;
+	if (git_blob_lookup(&blob, libgitRepo(), oid) == 0)
+		return blob;
+	else
+		return NULL;
+}
+
 //---------------------------------------------------------
 
 GitLoader::GitLoader()
@@ -684,9 +693,8 @@ GitLoader::~GitLoader()
 git_blob *GitLoader::blobLookup(const git_oid *oid)
 {
 	git_blob *blob;
-
 	for (size_t i = 0; i < m_repos.size(); i ++)
-		if (git_blob_lookup(&blob, m_repos[i]->libgitRepo(), oid) == 0)
+		if (blob = m_repos[i]->blobLookup(oid))
 			return blob;
 
 	return NULL;

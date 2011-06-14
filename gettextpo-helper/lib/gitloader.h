@@ -95,6 +95,7 @@ public:
 
 	void libgitClose();
 	git_repository *libgitRepo();
+	git_blob *blobLookup(const git_oid *oid);
 
 	const char *gitDir() const;
 
