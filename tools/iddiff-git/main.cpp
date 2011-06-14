@@ -10,7 +10,11 @@
 
 int main(int argc, char *argv[])
 {
-	assert(argc == 3); // 2 arguments
+	if (argc != 3) // 2 arguments
+	{
+		fprintf(stderr, "Example usage:\n\tiddiff-git ./.git 7fb8df3aed979214165e7c7d28e672966b13a15b\n");
+		exit(1);
+	}
 
 	Repository *repo = new Repository(argv[1]);
 	const char *input_oid_str = argv[2];
