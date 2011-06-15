@@ -74,6 +74,7 @@ public:
 	// low-level functions
 	void clearIddiff();
 	void clearReviewComments();
+	void clearReviewComment(int msg_id);
 
 	// low-level functions
 	std::vector<IddiffMessage *> findRemoved(int msg_id);

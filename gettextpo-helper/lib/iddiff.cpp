@@ -245,6 +245,11 @@ void Iddiffer::clearReviewComments()
 	m_reviewComments.clear();
 }
 
+void Iddiffer::clearReviewComment(int msg_id)
+{
+	m_reviewComments.erase(msg_id);
+}
+
 // This function fills m_removedItems and m_addedItems.
 // m_reviewComments will be cleared.
 void Iddiffer::diffAgainstEmpty(TranslationContent *content_b)
