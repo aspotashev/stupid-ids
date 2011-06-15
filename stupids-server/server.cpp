@@ -12,9 +12,9 @@
 Server::Server()
 {
 	m_firstIds = new FiledbFirstIds(
-		"../stupid-id-filler/ids/first_ids.txt",
-		"../stupid-id-filler/ids/next_id.txt");
-	m_idMapDb = new MappedFileIdMapDb("../transition-detector/idmap.mmapdb");
+		"/home/sasha/stupid-ids/stupid-id-filler/ids/first_ids.txt",
+		"/home/sasha/stupid-ids/stupid-id-filler/ids/next_id.txt");
+	m_idMapDb = new MappedFileIdMapDb("/home/sasha/stupid-ids/transition-detector/idmap.mmapdb");
 }
 
 Server::~Server()
