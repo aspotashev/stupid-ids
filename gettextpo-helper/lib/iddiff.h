@@ -73,6 +73,7 @@ public:
 
 	// low-level functions
 	void clearIddiff();
+	void clearReviewComments();
 
 	// low-level functions
 	std::vector<IddiffMessage *> findRemoved(int msg_id);
@@ -83,14 +84,19 @@ public:
 	void eraseRemoved(int msg_id, const IddiffMessage *item);
 	void eraseAdded(int msg_id, const IddiffMessage *item);
 
+	const char *reviewCommentText(int msg_id);
+
 	void insertRemoved(int msg_id, const IddiffMessage *item);
 	void insertAdded(int msg_id, const IddiffMessage *item);
+	void insertReview(int msg_id, const IddiffMessage *item);
 	void insertRemoved(std::pair<int, IddiffMessage *> item);
 	void insertAdded(std::pair<int, IddiffMessage *> item);
+	void insertReview(std::pair<int, IddiffMessage *> item);
 
 	// low-level functions
 	std::vector<std::pair<int, IddiffMessage *> > getRemovedVector();
 	std::vector<std::pair<int, IddiffMessage *> > getAddedVector();
+	std::vector<std::pair<int, IddiffMessage *> > getReviewVector();
 
 	void merge(Iddiffer *diff);
 
@@ -111,7 +117,7 @@ private:
 	static std::string formatPoMessage(po_message_t message);
 
 	// Helper functions for minimizeIds()
-	static void substituteMsgId(std::map<int, std::vector<IddiffMessage *> > &items, int old_id, int new_id);
+	template <typename T> static void substituteMsgId(std::map<int, T> &items, int old_id, int new_id);
 	void substituteMsgId(int old_id, int new_id);
 
 	// Helper function for getRemovedVector() and getAddedVector()
@@ -127,6 +133,7 @@ private:
 
 	std::map<int, std::vector<IddiffMessage *> > m_removedItems;
 	std::map<int, std::vector<IddiffMessage *> > m_addedItems;
+	std::map<int, IddiffMessage *> m_reviewComments;
 	bool m_minimizedIds;
 
 	std::ostringstream m_output;
