@@ -6,7 +6,7 @@ This program returns the tp_hash of the given .po.
 Example:
 	./calculate-tp-hash ~/messages/kdepimlibs/libkcalutils.po
 
-== dbuslokalize ==
+== lokalize-iddiff ==
 Opens in Lokalize all .po files that contains changes declared in an Iddiff.
 
 == iddiff-repo ==
