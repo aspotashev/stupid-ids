@@ -7,7 +7,6 @@ include (UseQt4)
 include_directories(
 	${QT_INCLUDES}
 	${CMAKE_CURRENT_BINARY_DIR}
-	${GETTEXTPO_HELPER_INCLUDES}
 )
 
 set(globalize_SRCS

@@ -5,6 +5,8 @@ set(GETTEXTPO_HELPER_INCLUDES
 	${CMAKE_SOURCE_DIR}/dbuslokalize
 )
 
+include_directories(${GETTEXTPO_HELPER_INCLUDES})
+
 add_subdirectory(globalize)
 add_subdirectory(gettextpo-helper)
 add_subdirectory(dbuslokalize)
