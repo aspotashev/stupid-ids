@@ -824,6 +824,9 @@ const char *MessageGroup::msgid() const
 	return m_msgid;
 }
 
+/**
+ * \brief Returns NULL for messages without plural forms.
+ */
 const char *MessageGroup::msgidPlural() const
 {
 	// Checking that m_msgid is initialized. This should mean

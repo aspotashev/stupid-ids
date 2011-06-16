@@ -13,6 +13,9 @@
 #include <gettextpo-helper/iddiff.h>
 
 
+/**
+ * \brief Constructs an empty IddiffMessage
+ */
 IddiffMessage::IddiffMessage()
 {
 	m_numPlurals = 0;
@@ -206,6 +209,9 @@ bool IddiffMessage::isTranslated() const
 
 //----------------------------------------------
 
+/**
+ * \brief Constructs an empty iddiff
+ */
 Iddiffer::Iddiffer():
 	m_output(std::ostringstream::out), m_minimizedIds(false)
 {
@@ -427,6 +433,11 @@ std::string Iddiffer::generateIddiffText(TranslationContent *content_a, Translat
 	return res;
 }
 
+/**
+ * \brief Load iddiff from an .iddiff file
+ *
+ * It actually merges the given file with the changes already existing in the current Iddiffer object.
+ */
 bool Iddiffer::loadIddiff(const char *filename)
 {
 	FILE *f = fopen(filename, "r");
@@ -725,7 +736,7 @@ void Iddiffer::applyToMessage(MessageGroup *messageGroup, int min_id)
 
 	// If "ignoreOldTranslation" is true, we can put the new translation
 	bool ignoreOldTranslation = message->isUntranslated();
-	for (size_t i = 0; !ignoreOldTranslation && i < removed.size(); i ++)
+	for (size_t i = 0; !ignoreOldTranslation && i < removed.size(); i ++) // TODO: make this a function; TODO: implement this through findRemoved (when Message and IddiffMessage will be merged)
 		if (removed[i]->equalTranslations(message))
 			ignoreOldTranslation = true;
 
