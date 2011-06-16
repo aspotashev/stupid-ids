@@ -105,6 +105,8 @@ public:
 	void editMsgstr(int index, const char *str);
 	bool isEdited() const;
 
+	std::string formatPoMessage() const;
+
 protected:
 	void setMsgcomments(const char *str);
 	void clear();

@@ -5,6 +5,7 @@
 #include <gettextpo-helper/gettextpo-helper.h>
 #include <gettextpo-helper/mappedfile.h>
 #include <gettextpo-helper/translationcontent.h>
+#include <gettextpo-helper/iddiff.h>
 
 char *xstrdup(const char *str)
 {
@@ -706,6 +707,23 @@ void Message::editMsgstr(int index, const char *str)
 bool Message::isEdited() const
 {
 	return m_edited;
+}
+
+std::string Message::formatPoMessage() const
+{
+	std::string res;
+
+	if (isFuzzy())
+		res += "f";
+
+	res += IddiffMessage::formatString(msgstr(0));
+	for (int i = 1; i < numPlurals(); i ++)
+	{
+		res += " "; // separator
+		res += IddiffMessage::formatString(msgstr(i));
+	}
+
+	return res;
 }
 
 std::vector<MessageGroup *> read_po_file_messages(const char *filename, bool loadObsolete)
