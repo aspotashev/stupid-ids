@@ -34,7 +34,6 @@ public:
 	bool equalTranslations(const Message *message) const;
 	void copyTranslationsToMessage(Message *message) const;
 
-protected:
 	static std::string formatString(const char *str);
 
 private:
