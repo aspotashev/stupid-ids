@@ -15,6 +15,11 @@ public:
 		virtual const char *what() const throw();
 	};
 
+	class ExceptionNoConnection : public std::exception
+	{
+		virtual const char *what() const throw();
+	};
+
 	StupidsClient();
 	~StupidsClient();
 

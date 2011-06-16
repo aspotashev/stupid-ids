@@ -49,6 +49,7 @@ void StupidsClient::connect()
 	if (::connect(m_sockfd, (struct sockaddr*) &servaddr, sizeof(servaddr)) < 0)
 	{
 		close(m_sockfd);
+		m_sockfd = -1;
 
 		printf("Could not connect to stupids-server\n");
 		throw ExceptionConnectionFailed();
@@ -67,6 +68,9 @@ void StupidsClient::disconnect()
 
 void StupidsClient::recvFromServer(void *data, size_t len)
 {
+	if (m_sockfd < 0)
+		throw ExceptionNoConnection();
+
 	size_t bytes_read = 0;
 
 	while (bytes_read < len)
@@ -110,6 +114,9 @@ std::vector<int> StupidsClient::recvLongVector()
 
 void StupidsClient::sendToServer(const void *data, size_t len)
 {
+	if (m_sockfd < 0)
+		throw ExceptionNoConnection();
+
 	size_t written = 0;
 	while (written < len)
 	{
@@ -238,5 +245,10 @@ StupidsClient &StupidsClient::instance()
 const char *StupidsClient::ExceptionConnectionFailed::what() const throw()
 {
 	return "ExceptionConnectionFailed (could not connect to stupids-server)";
+}
+
+const char *StupidsClient::ExceptionNoConnection::what() const throw()
+{
+	return "ExceptionNoConnection (connection has already been closed)";
 }
 
