@@ -87,12 +87,17 @@ public:
 
 	const char *reviewCommentText(int msg_id);
 
-	void insertRemoved(int msg_id, const IddiffMessage *item);
-	void insertAdded(int msg_id, const IddiffMessage *item);
-	void insertReview(int msg_id, const IddiffMessage *item);
+	// These functions take ownership of "item"
+	void insertRemoved(int msg_id, IddiffMessage *item);
+	void insertAdded(int msg_id, IddiffMessage *item);
+	void insertReview(int msg_id, IddiffMessage *item);
 	void insertRemoved(std::pair<int, IddiffMessage *> item);
 	void insertAdded(std::pair<int, IddiffMessage *> item);
 	void insertReview(std::pair<int, IddiffMessage *> item);
+
+	void insertRemovedClone(std::pair<int, IddiffMessage *> item);
+	void insertAddedClone(std::pair<int, IddiffMessage *> item);
+	void insertReviewClone(std::pair<int, IddiffMessage *> item);
 
 	// low-level functions
 	std::vector<std::pair<int, IddiffMessage *> > getRemovedVector();
@@ -101,8 +106,8 @@ public:
 
 	void merge(Iddiffer *diff);
 
-	void acceptTranslation(int msg_id, IddiffMessage *item);
-	void rejectTranslation(int msg_id, IddiffMessage *item);
+	void acceptTranslation(int msg_id, const IddiffMessage *item);
+	void rejectTranslation(int msg_id, const IddiffMessage *item);
 
 	bool isAcceptAlreadyReviewed(int msg_id, IddiffMessage *item);
 	bool isRejectAlreadyReviewed(int msg_id, IddiffMessage *item);

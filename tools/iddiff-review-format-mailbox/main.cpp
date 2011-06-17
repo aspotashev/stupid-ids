@@ -119,6 +119,9 @@ int main(int argc, char *argv[])
 		std::cout << mail_entries[i].generateText(i) << std::endl;
 	}
 
+	delete input_translation;
+	delete iddiff;
+
 	return 0;
 }
 
