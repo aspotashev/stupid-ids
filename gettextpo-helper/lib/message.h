@@ -7,7 +7,6 @@
 
 #include <gettextpo-helper/gettextpo-helper.h>
 
-//------ C++ wrapper library for 'libgettextpo' with some extra features -------
 
 class IddiffMessage;
 
