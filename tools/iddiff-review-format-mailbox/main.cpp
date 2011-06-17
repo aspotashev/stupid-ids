@@ -1,14 +1,71 @@
 // TODO: i18n of labels in the output (e.g. "Suggested translation:")
-// TODO: write strings with "Corrected translation:" after all strings without "Corrected translation:"
 
 #include <assert.h>
 #include <stdio.h>
 #include <iostream>
+#include <sstream>
+#include <algorithm>
 
 #include <gettextpo-helper/translationcontent.h>
 #include <gettextpo-helper/gettextpo-helper.h>
 #include <gettextpo-helper/iddiff.h>
 #include <gettextpo-helper/gitloader.h>
+
+class ReviewMailEntry
+{
+public:
+	ReviewMailEntry(int index, Iddiffer *iddiff, MessageGroup *messageGroup, int min_id);
+
+	std::string generateText(int review_item_index);
+	bool hasCorrected() const;
+	bool operator<(const ReviewMailEntry &o) const;
+
+private:
+	int m_index;
+	Iddiffer *m_iddiff;
+	MessageGroup *m_messageGroup;
+	int m_minId;
+};
+
+ReviewMailEntry::ReviewMailEntry(int index, Iddiffer *iddiff, MessageGroup *messageGroup, int min_id):
+	m_index(index),
+	m_iddiff(iddiff),
+	m_messageGroup(messageGroup),
+	m_minId(min_id)
+{
+}
+
+bool ReviewMailEntry::hasCorrected() const
+{
+	return m_iddiff->findAddedSingle(m_minId) != NULL;
+}
+
+bool ReviewMailEntry::operator<(const ReviewMailEntry &o) const
+{
+	return hasCorrected() == false && o.hasCorrected() == true;
+}
+
+std::string ReviewMailEntry::generateText(int review_item_index)
+{
+	std::stringstream out(std::stringstream::out);
+	Message *message = m_messageGroup->message(0);
+	IddiffMessage *added = m_iddiff->findAddedSingle(m_minId);
+
+	out << review_item_index << ". Строка перевода №" << (m_index + 1) << std::endl;
+
+	out << "   Исходная строка: " << IddiffMessage::formatString(m_messageGroup->msgid()) << std::endl;
+	if (m_messageGroup->msgidPlural())
+		out << "   Множественное число: " << IddiffMessage::formatString(m_messageGroup->msgidPlural()) << std::endl;
+
+	out << "   Предложенный перевод: " << message->formatPoMessage() << std::endl;
+	if (added)
+		out << "   Исправленный перевод: " << added->formatPoMessage() << std::endl;
+
+	if (m_iddiff->reviewCommentText(m_minId))
+		out << std::endl << "   " << m_iddiff->reviewCommentText(m_minId) << std::endl;
+
+	return out.str();
+}
 
 
 int main(int argc, char *argv[])
@@ -32,14 +89,13 @@ int main(int argc, char *argv[])
 	std::vector<MessageGroup *> messages = input_translation->readMessages(false); // TODO: loadObsolete=false by default
 	assert(min_ids.size() == messages.size()); // TODO: move this assertion into class TranslationContent
 
-	int review_item_index = 1;
+	std::vector<ReviewMailEntry> mail_entries;
 	for (size_t i = 0; i < min_ids.size(); i ++)
 	{
 		int min_id = min_ids[i];
 		MessageGroup *messageGroup = messages[i];
 		Message *message = messageGroup->message(0);
 
-		IddiffMessage *added = iddiff->findAddedSingle(min_id);
 		std::vector<IddiffMessage *> removed = iddiff->findRemoved(min_id);
 
 		// TODO: also skip messages that have not been changed by
@@ -57,21 +113,17 @@ int main(int argc, char *argv[])
 		if (!ignoreOldTranslation)
 			continue;
 
+		mail_entries.push_back(ReviewMailEntry(i, iddiff, messageGroup, min_id));
+	}
 
-		std::cout << review_item_index << ". Строка перевода №" << (i + 1) << std::endl;
+	sort(mail_entries.begin(), mail_entries.end());
 
-		std::cout << "   Исходная строка: " << IddiffMessage::formatString(messageGroup->msgid()) << std::endl;
-		if (messageGroup->msgidPlural())
-			std::cout << "   Множественное число: " << IddiffMessage::formatString(messageGroup->msgidPlural()) << std::endl;
+	for (size_t i = 0; i < mail_entries.size(); i ++)
+	{
+		if (mail_entries[i].hasCorrected() && (i == 0 || !mail_entries[i - 1].hasCorrected()))
+			std::cout << "===== Строки с готовыми исправлениями переводов =====" << std::endl;
 
-		std::cout << "   Предложенный перевод: " << message->formatPoMessage() << std::endl;
-		if (added)
-			std::cout << "   Исправленный перевод: " << added->formatPoMessage() << std::endl;
-
-		if (iddiff->reviewCommentText(min_id))
-			std::cout << std::endl << "   " << iddiff->reviewCommentText(min_id) << std::endl << std::endl;
-
-		review_item_index ++;
+		std::cout << mail_entries[i].generateText(i) << std::endl;
 	}
 
 	return 0;
