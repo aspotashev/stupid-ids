@@ -39,6 +39,12 @@ MessageTranslationBase::MessageTranslationBase(po_message_t message)
 	m_fuzzy = po_message_is_fuzzy(message) != 0;
 }
 
+MessageTranslationBase::~MessageTranslationBase()
+{
+	for (int i = 0; i < m_numPlurals; i ++)
+		delete [] m_msgstr[i];
+}
+
 // "packed" means that 'n_plurals' contains more information than m_numPlurals:
 // 	1. whether the message uses plural forms (n_plurals=0 means that message does not use plural forms)
 // 	2. the number of plural forms

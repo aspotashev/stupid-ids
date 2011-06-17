@@ -18,6 +18,7 @@ class MessageTranslationBase
 public:
 	MessageTranslationBase();
 	MessageTranslationBase(po_message_t message);
+	~MessageTranslationBase();
 
 	static std::string formatString(const char *str);
 	std::string formatPoMessage() const;
