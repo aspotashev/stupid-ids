@@ -148,6 +148,37 @@ int MessageTranslationBase::numPlurals() const
 	return m_numPlurals;
 }
 
+// Returns whether msgstr[*] are equal in two messages.
+bool MessageTranslationBase::equalMsgstr(const MessageTranslationBase *o) const
+{
+	// This happens, see messages/kdebase/plasma_applet_trash.po
+	// from http://websvn.kde.org/?view=revision&revision=825044
+	if (m_numPlurals != o->numPlurals())
+		return false;
+
+	for (int i = 0; i < m_numPlurals; i ++)
+		if (strcmp(m_msgstr[i], o->msgstr(i)))
+			return false;
+
+	return true;
+}
+
+// Returns whether msgstr[*] are equal in two messages.
+// States of 'fuzzy' flag should also be the same.
+bool MessageTranslationBase::equalTranslations(const MessageTranslationBase *o) const
+{
+	return equalMsgstr(o) && m_fuzzy == o->isFuzzy();
+}
+
+// Returns whether msgstr[*] and translator's comments are equal in two messages.
+// States of 'fuzzy' flag should also be the same.
+bool Message::equalTranslations(const Message *o) const
+{
+	assert(m_plural == o->isPlural());
+
+	return MessageTranslationBase::equalTranslations(o) && !strcmp(m_msgcomments, o->msgcomments());
+}
+
 //-------------------------------------------------------
 
 // Cannot use simple MessageTranslationBase(po_message_t),
@@ -249,11 +280,6 @@ const char *Message::filename() const
 	return m_filename;
 }
 
-bool Message::isFuzzy() const
-{
-	return m_fuzzy;
-}
-
 bool Message::isPlural() const
 {
 	return m_plural;
@@ -275,24 +301,6 @@ bool Message::isTranslated() const
 const char *Message::msgcomments() const
 {
 	return m_msgcomments;
-}
-
-// Returns whether msgstr[*] and translator's comments are equal in two messages.
-// States of 'fuzzy' flag should also be the same.
-bool Message::equalTranslations(const Message *o) const
-{
-	assert(m_plural == o->isPlural());
-
-	// This happens, see messages/kdebase/plasma_applet_trash.po
-	// from http://websvn.kde.org/?view=revision&revision=825044
-	if (m_numPlurals != o->numPlurals())
-		return false;
-
-	for (int i = 0; i < m_numPlurals; i ++)
-		if (strcmp(m_msgstr[i], o->msgstr(i)))
-			return false;
-
-	return m_fuzzy == o->isFuzzy() && !strcmp(m_msgcomments, o->msgcomments());
 }
 
 void Message::editFuzzy(bool fuzzy)

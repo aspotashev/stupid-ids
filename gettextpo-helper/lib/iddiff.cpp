@@ -44,6 +44,7 @@ void IddiffMessage::setFuzzy(bool fuzzy)
 	m_fuzzy = fuzzy;
 }
 
+// TODO: use MessageTranslationBase::equalMsgstr instead of this; remove this
 bool IddiffMessage::equalTranslations(const IddiffMessage *message) const
 {
 	if (numPlurals() != message->numPlurals())
@@ -56,6 +57,7 @@ bool IddiffMessage::equalTranslations(const IddiffMessage *message) const
 	return true;
 }
 
+// TODO: use MessageTranslationBase::equalMsgstr instead of this; remove this
 bool IddiffMessage::equalTranslations(const Message *message) const
 {
 	if (numPlurals() != message->numPlurals())
@@ -71,6 +73,7 @@ bool IddiffMessage::equalTranslations(const Message *message) const
 /**
  * Fuzzy flag state will not be copied.
  */
+// TODO: how to replace this?
 void IddiffMessage::copyTranslationsToMessage(Message *message) const
 {
 	assert(numPlurals() == message->numPlurals());

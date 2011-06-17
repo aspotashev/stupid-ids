@@ -24,12 +24,14 @@ public:
 	const char *msgstr(int plural_form) const;
 	void setMsgstr(int index, const char *str);
 	int numPlurals() const;
+	bool isFuzzy() const;
+	bool equalMsgstr(const MessageTranslationBase *o) const;
+	bool equalTranslations(const MessageTranslationBase *o) const;
 
 protected:
 	bool setNPluralsPacked(int n_plurals);
 
 	static std::string formatPoMessage(po_message_t message);
-	bool isFuzzy() const;
 
 protected:
 	const static int MAX_PLURAL_FORMS = 4; // increase this if you need more plural forms
@@ -51,7 +53,6 @@ public:
 	const char *filename() const;
 	bool equalTranslations(const Message *o) const;
 
-	bool isFuzzy() const;
 	bool isPlural() const;
 	bool isUntranslated() const;
 	bool isTranslated() const;
