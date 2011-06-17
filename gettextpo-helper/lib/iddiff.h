@@ -23,7 +23,6 @@ public:
 
 	bool isTranslated() const;
 
-	void setMsgstr(int index, const char *str);
 	void addMsgstr(const char *str);
 
 	bool equalTranslations(const IddiffMessage *message) const;
