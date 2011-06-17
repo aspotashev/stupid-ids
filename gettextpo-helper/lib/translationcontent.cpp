@@ -313,7 +313,11 @@ std::vector<MessageGroup *> TranslationContent::readMessages(bool loadObsolete)
 	assert(loadObsolete == false);
 
 	if (!m_messagesNormalInit)
+	{
 		readMessagesInternal(m_messagesNormal, m_messagesNormalInit, false);
+		assertOk();
+	}
+
 	return m_messagesNormal;
 }
 
@@ -323,6 +327,7 @@ std::vector<int> TranslationContent::getMinIds()
 	{
 		m_minIds = stupidsClient.getMinIds(calculateTpHash());
 		m_minIdsInit = true;
+		assertOk();
 	}
 
 	return m_minIds;
@@ -472,6 +477,12 @@ void TranslationContent::writeBufferToFile(const char *filename)
 	assert(f);
 	assert(fwrite(m_buffer, 1, m_bufferLen, f) == m_bufferLen);
 	fclose(f);
+}
+
+void TranslationContent::assertOk()
+{
+	if (m_minIdsInit && m_messagesNormalInit)
+		assert(m_minIds.size() == m_messagesNormal.size());
 }
 
 //--------------------------------------------------

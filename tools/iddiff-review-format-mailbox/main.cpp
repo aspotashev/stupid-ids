@@ -86,7 +86,6 @@ int main(int argc, char *argv[])
 	TranslationContent *input_translation = new TranslationContent(input_translation_path);
 	std::vector<int> min_ids = input_translation->getMinIds();
 	std::vector<MessageGroup *> messages = input_translation->readMessages();
-	assert(min_ids.size() == messages.size()); // TODO: move this assertion into class TranslationContent
 
 	std::vector<ReviewMailEntry> mail_entries;
 	for (size_t i = 0; i < min_ids.size(); i ++)

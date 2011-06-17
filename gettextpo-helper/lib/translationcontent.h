@@ -60,6 +60,8 @@ private:
 
 	void readMessagesInternal(std::vector<MessageGroup *> &dest, bool &destInit, bool obsolete);
 
+	void assertOk();
+
 private:
 	char *m_filename;
 	char *m_displayFilename;
