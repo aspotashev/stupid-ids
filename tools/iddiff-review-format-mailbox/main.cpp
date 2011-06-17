@@ -43,7 +43,10 @@ bool ReviewMailEntry::hasCorrected() const
 
 bool ReviewMailEntry::operator<(const ReviewMailEntry &o) const
 {
-	return hasCorrected() == false && o.hasCorrected() == true;
+	if (hasCorrected() == o.hasCorrected())
+		return m_index < o.m_index;
+	else
+		return hasCorrected() == false && o.hasCorrected() == true;
 }
 
 std::string ReviewMailEntry::generateText(int review_item_index)
