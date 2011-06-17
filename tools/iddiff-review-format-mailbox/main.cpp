@@ -95,8 +95,6 @@ int main(int argc, char *argv[])
 		MessageGroup *messageGroup = messages[i];
 		Message *message = messageGroup->message(0);
 
-		std::vector<IddiffMessage *> removed = iddiff->findRemoved(min_id);
-
 		// TODO: also skip messages that have not been changed by
 		// this translator in this "translation session" (irrelevant
 		// for newly created .po files). See tools/lokalize-reviewfile for
@@ -105,16 +103,13 @@ int main(int argc, char *argv[])
 		// Skip message if the submitted translation (from "input_translation")
 		// was not marked as "REMOVED" in the iddiff, i.e. the message looks OK to
 		// the reviewer or has not been reviewed yet.
-		bool ignoreOldTranslation = message->isUntranslated(); // TODO: copied from Iddiffer::applyToMessage, go there and follow TODOs
-		for (size_t j = 0; !ignoreOldTranslation && j < removed.size(); j ++) // TODO: make this a function; TODO: implement this through findRemoved (when Message and IddiffMessage will be merged)
-			if (removed[j]->equalTranslations(message))
-				ignoreOldTranslation = true;
-		if (!ignoreOldTranslation)
+		if (!iddiff->canDropMessage(message, min_id))
 			continue;
 
 		mail_entries.push_back(ReviewMailEntry(i, iddiff, messageGroup, min_id));
 	}
 
+	// Messages without "Corrected translation:" should go first
 	sort(mail_entries.begin(), mail_entries.end());
 
 	for (size_t i = 0; i < mail_entries.size(); i ++)

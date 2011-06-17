@@ -726,21 +726,27 @@ void Iddiffer::minimizeIds()
 	m_minimizedIds = true;
 }
 
+// If the return value is true, we can put the new translation and drop the old one (when patching)
+bool Iddiffer::canDropMessage(const Message *message, int min_id)
+{
+	std::vector<IddiffMessage *> removed = findRemoved(min_id);
+
+	if (message->isUntranslated())
+		return true;
+
+	for (size_t i = 0; i < removed.size(); i ++) // TODO: implement this through findRemoved (when Message and IddiffMessage will be merged)
+		if (removed[i]->equalTranslations(message))
+			return true;
+	return false;
+}
+
 void Iddiffer::applyToMessage(MessageGroup *messageGroup, int min_id)
 {
 	assert(messageGroup->size() == 1);
 	Message *message = messageGroup->message(0);
-
-	std::vector<IddiffMessage *> removed = findRemoved(min_id);
 	IddiffMessage *added = findAddedSingle(min_id);
 
-	// If "ignoreOldTranslation" is true, we can put the new translation
-	bool ignoreOldTranslation = message->isUntranslated();
-	for (size_t i = 0; !ignoreOldTranslation && i < removed.size(); i ++) // TODO: make this a function; TODO: implement this through findRemoved (when Message and IddiffMessage will be merged)
-		if (removed[i]->equalTranslations(message))
-			ignoreOldTranslation = true;
-
-	if (ignoreOldTranslation)
+	if (canDropMessage(message, min_id))
 	{
 		if (added) // change translation
 		{
@@ -751,7 +757,7 @@ void Iddiffer::applyToMessage(MessageGroup *messageGroup, int min_id)
 			message->editFuzzy(true);
 		}
 	}
-	else // !ignoreOldTranslation
+	else // !canDropMessage
 	{
 		// We cannot just add the new translation without
 		// "blacklisting" the existing one.

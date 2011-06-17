@@ -66,6 +66,7 @@ public:
 
 	std::vector<IddiffMessage *> getIddiffArr(std::vector<std::pair<int, IddiffMessage *> > &section, int msg_id);
 
+	bool canDropMessage(const Message *message, int min_id);
 	void applyToMessage(MessageGroup *messageGroup, int min_id);
 	void applyToContent(TranslationContent *content);
 	void applyIddiff(StupIdTranslationCollector *collector);
