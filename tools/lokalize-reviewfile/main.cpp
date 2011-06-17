@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
 		Message *old_msg = old_messages[i]->message(0);
 		Message *new_msg = new_messages[i]->message(0);
 
-		if (!old_msg->equalTranslations(new_msg) && (old_msg->isTranslated() || new_msg->isTranslated()))
+		if (!old_msg->equalTranslationsComments(new_msg) && (old_msg->isTranslated() || new_msg->isTranslated()))
 		{
 			if (!calledGotoEntry)
 			{

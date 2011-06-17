@@ -298,7 +298,7 @@ VALUE cMessage_num_plurals(VALUE self)
 
 VALUE cMessage_equal_translations(VALUE self, VALUE other)
 {
-	return rb_get_message(self)->equalTranslations(rb_get_message(other)) ? Qtrue : Qfalse;
+	return rb_get_message(self)->equalTranslationsComments(rb_get_message(other)) ? Qtrue : Qfalse;
 }
 
 VALUE cMessage_is_fuzzy(VALUE self)

@@ -170,15 +170,6 @@ bool MessageTranslationBase::equalTranslations(const MessageTranslationBase *o) 
 	return equalMsgstr(o) && m_fuzzy == o->isFuzzy();
 }
 
-// Returns whether msgstr[*] and translator's comments are equal in two messages.
-// States of 'fuzzy' flag should also be the same.
-bool Message::equalTranslations(const Message *o) const
-{
-	assert(m_plural == o->isPlural());
-
-	return MessageTranslationBase::equalTranslations(o) && !strcmp(m_msgcomments, o->msgcomments());
-}
-
 //-------------------------------------------------------
 
 // Cannot use simple MessageTranslationBase(po_message_t),
@@ -328,6 +319,15 @@ void Message::editMsgstr(int index, const char *str)
 bool Message::isEdited() const
 {
 	return m_edited;
+}
+
+// Returns whether msgstr[*] and translator's comments are equal in two messages.
+// States of 'fuzzy' flag should also be the same.
+bool Message::equalTranslationsComments(const Message *o) const
+{
+	assert(m_plural == o->isPlural());
+
+	return MessageTranslationBase::equalTranslations(o) && !strcmp(m_msgcomments, o->msgcomments());
 }
 
 //-------------------------------------------------------

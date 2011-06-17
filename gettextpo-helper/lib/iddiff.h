@@ -25,9 +25,6 @@ public:
 
 	void addMsgstr(const char *str);
 
-	bool equalTranslations(const IddiffMessage *message) const;
-
-	bool equalTranslations(const Message *message) const;
 	void copyTranslationsToMessage(Message *message) const;
 };
 

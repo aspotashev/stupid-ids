@@ -51,7 +51,7 @@ public:
 
 	int index() const;
 	const char *filename() const;
-	bool equalTranslations(const Message *o) const;
+	bool equalTranslationsComments(const Message *o) const;
 
 	bool isPlural() const;
 	bool isUntranslated() const;

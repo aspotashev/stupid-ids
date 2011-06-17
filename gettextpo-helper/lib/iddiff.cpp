@@ -44,32 +44,6 @@ void IddiffMessage::setFuzzy(bool fuzzy)
 	m_fuzzy = fuzzy;
 }
 
-// TODO: use MessageTranslationBase::equalMsgstr instead of this; remove this
-bool IddiffMessage::equalTranslations(const IddiffMessage *message) const
-{
-	if (numPlurals() != message->numPlurals())
-		return false;
-
-	for (int i = 0; i < numPlurals(); i ++)
-		if (strcmp(msgstr(i), message->msgstr(i)) != 0)
-			return false;
-
-	return true;
-}
-
-// TODO: use MessageTranslationBase::equalMsgstr instead of this; remove this
-bool IddiffMessage::equalTranslations(const Message *message) const
-{
-	if (numPlurals() != message->numPlurals())
-		return false;
-
-	for (int i = 0; i < numPlurals(); i ++)
-		if (strcmp(msgstr(i), message->msgstr(i)) != 0)
-			return false;
-
-	return true;
-}
-
 /**
  * Fuzzy flag state will not be copied.
  */
@@ -624,7 +598,7 @@ bool Iddiffer::canDropMessage(const Message *message, int min_id)
 		return true;
 
 	for (size_t i = 0; i < removed.size(); i ++) // TODO: implement this through findRemoved (when Message and IddiffMessage will be merged)
-		if (removed[i]->equalTranslations(message))
+		if (removed[i]->equalMsgstr(message))
 			return true;
 	return false;
 }
@@ -710,7 +684,7 @@ void Iddiffer::insertAdded(int msg_id, IddiffMessage *item)
 	std::vector<IddiffMessage *> added_this_id = findAdded(msg_id);
 	for (size_t i = 0; i < added_this_id.size(); i ++)
 	{
-		if (added_this_id[i]->equalTranslations(item))
+		if (added_this_id[i]->equalMsgstr(item))
 			assert(0); // duplicate in "ADDED"
 		else
 			assert(0); // conflict: two different translations in "ADDED"
@@ -867,7 +841,7 @@ IddiffMessage *Iddiffer::findAddedSingle(int msg_id)
 IddiffMessage *Iddiffer::findIddiffMessageList(std::vector<IddiffMessage *> list, const IddiffMessage *item)
 {
 	for (size_t i = 0; i < list.size(); i ++)
-		if (list[i]->equalTranslations(item))
+		if (list[i]->equalMsgstr(item))
 			return list[i];
 	// There can't be duplicate items, so the first found item is the only matching one
 
@@ -942,7 +916,7 @@ void Iddiffer::acceptTranslation(int msg_id, const IddiffMessage *item)
 		// create new item
 		insertAdded(msg_id, new IddiffMessage(*item));
 	}
-	else if (!added->equalTranslations(item))
+	else if (!added->equalMsgstr(item))
 	{
 		// move old item to "REMOVED", create new item
 		insertAdded(msg_id, new IddiffMessage(*item));
@@ -961,7 +935,7 @@ void Iddiffer::rejectTranslation(int msg_id, const IddiffMessage *item)
 	assert(item);
 
 	IddiffMessage *added = findAddedSingle(msg_id);
-	if (added && added->equalTranslations(item))
+	if (added && added->equalMsgstr(item))
 		eraseAdded(msg_id, added);
 
 

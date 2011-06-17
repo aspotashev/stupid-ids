@@ -87,7 +87,7 @@ bool StupIdTranslationCollector::conflictingTrans(int min_id)
 
 	Message *msg = m_trans[min_id]->message(0);
 	for (int i = 1; i < m_trans[min_id]->size(); i ++)
-		if (!msg->equalTranslations(m_trans[min_id]->message(i)))
+		if (!msg->equalTranslationsComments(m_trans[min_id]->message(i)))
 			return true;
 
 	return false;
