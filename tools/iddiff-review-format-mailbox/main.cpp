@@ -1,4 +1,4 @@
-// TODO: translate labels into Russian
+// TODO: i18n of labels in the output (e.g. "Suggested translation:")
 // TODO: write strings with "Corrected translation:" after all strings without "Corrected translation:"
 
 #include <assert.h>
@@ -58,15 +58,15 @@ int main(int argc, char *argv[])
 			continue;
 
 
-		std::cout << review_item_index << ". Translation string #" << (i + 1) << std::endl;
+		std::cout << review_item_index << ". Строка перевода №" << (i + 1) << std::endl;
 
-		std::cout << "   Source string: " << IddiffMessage::formatString(messageGroup->msgid()) << std::endl;
+		std::cout << "   Исходная строка: " << IddiffMessage::formatString(messageGroup->msgid()) << std::endl;
 		if (messageGroup->msgidPlural())
-			std::cout << "   Plural form: " << IddiffMessage::formatString(messageGroup->msgidPlural()) << std::endl;
+			std::cout << "   Множественное число: " << IddiffMessage::formatString(messageGroup->msgidPlural()) << std::endl;
 
-		std::cout << "   Suggested translation: " << message->formatPoMessage() << std::endl;
+		std::cout << "   Предложенный перевод: " << message->formatPoMessage() << std::endl;
 		if (added)
-			std::cout << "   Corrected translation: " << added->formatPoMessage() << std::endl;
+			std::cout << "   Исправленный перевод: " << added->formatPoMessage() << std::endl;
 
 		if (iddiff->reviewCommentText(min_id))
 			std::cout << std::endl << "   " << iddiff->reviewCommentText(min_id) << std::endl << std::endl;
