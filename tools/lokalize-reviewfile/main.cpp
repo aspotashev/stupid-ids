@@ -46,8 +46,8 @@ int main(int argc, char *argv[])
 	if (!old_content)
 		return 0;
 
-	std::vector<MessageGroup *> old_messages = old_content->readMessages(false);
-	std::vector<MessageGroup *> new_messages = new_content->readMessages(false);
+	std::vector<MessageGroup *> old_messages = old_content->readMessages();
+	std::vector<MessageGroup *> new_messages = new_content->readMessages();
 	size_t msg_count = old_messages.size();
 	assert(msg_count == new_messages.size());
 

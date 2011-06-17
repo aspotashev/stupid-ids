@@ -36,7 +36,7 @@ public:
 
 	const git_oid *gitBlobHash();
 	const git_oid *calculateTpHash();
-	std::vector<MessageGroup *> readMessages(bool loadObsolete);
+	std::vector<MessageGroup *> readMessages(bool loadObsolete = false);
 
 	std::vector<int> getMinIds();
 

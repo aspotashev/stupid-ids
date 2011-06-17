@@ -135,7 +135,7 @@ void StupIdTranslationCollector::initTransConfl()
 		std::vector<int> min_ids = content->getMinIds();
 
 		//--------------------- insert messages --------------------
-		std::vector<MessageGroup *> messages = content->readMessages(false);
+		std::vector<MessageGroup *> messages = content->readMessages();
 
 		assert(messages.size() == min_ids.size());
 
@@ -196,7 +196,7 @@ void StupIdTranslationCollector::getMessagesByIds(
 		printf("Searching for interesting messages in %s\n", contents[i]->displayFilename());
 
 		TranslationContent *content = contents[i];
-		std::vector<MessageGroup *> content_msgs = content->readMessages(false);
+		std::vector<MessageGroup *> content_msgs = content->readMessages();
 		std::vector<int> content_ids = content->getMinIds();
                 assert(content_msgs.size() == content_ids.size());
 

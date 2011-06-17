@@ -763,7 +763,7 @@ void Iddiffer::applyToMessage(MessageGroup *messageGroup, int min_id)
 // Applies the iddiff to the given TranslationContent and writes changes to file
 void Iddiffer::applyToContent(TranslationContent *content)
 {
-	std::vector<MessageGroup *> messages = content->readMessages(false);
+	std::vector<MessageGroup *> messages = content->readMessages();
 	std::vector<int> min_ids = content->getMinIds();
 	std::vector<int> involved_ids = involvedIds();
 
