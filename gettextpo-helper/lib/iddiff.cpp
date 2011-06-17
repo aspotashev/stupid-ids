@@ -300,6 +300,7 @@ std::string Iddiffer::generateIddiffText(TranslationContent *content_a, Translat
  */
 bool Iddiffer::loadIddiff(const char *filename)
 {
+	// TODO: function for reading the whole file
 	FILE *f = fopen(filename, "r");
 	if (!f)
 		return false; // FAIL
@@ -448,6 +449,7 @@ bool Iddiffer::loadIddiff(const char *filename)
 	assert(has_removed || has_added || has_review);
 
 
+	delete [] buffer;
 	fclose(f);
 	return true; // OK
 }
