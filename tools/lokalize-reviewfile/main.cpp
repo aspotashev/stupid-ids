@@ -6,6 +6,7 @@
 #include <gettextpo-helper/gitloader.h>
 #include <gettextpo-helper/iddiff.h>
 #include <gettextpo-helper/gettextpo-helper.h>
+#include <gettextpo-helper/message.h>
 
 #include "dbuslokalize.h"
 

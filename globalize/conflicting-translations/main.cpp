@@ -8,6 +8,7 @@
 #include <map>
 
 #include <gettextpo-helper/gettextpo-helper.h>
+#include <gettextpo-helper/message.h>
 
 #include <QString>
 #include <QDirIterator>

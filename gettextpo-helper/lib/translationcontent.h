@@ -90,5 +90,7 @@ private:
 	};
 };
 
+std::vector<MessageGroup *> read_po_file_messages(const char *filename, bool loadObsolete);
+
 #endif // TRANSLATIONCONTENT_H
 

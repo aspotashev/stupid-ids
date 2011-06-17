@@ -10,6 +10,7 @@
 #include <gettextpo-helper/gettextpo-helper.h>
 #include <gettextpo-helper/iddiff.h>
 #include <gettextpo-helper/gitloader.h>
+#include <gettextpo-helper/message.h>
 
 class ReviewMailEntry
 {

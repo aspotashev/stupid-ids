@@ -8,6 +8,7 @@
 #include <gettextpo-helper/gettextpo-helper.h>
 #include <gettextpo-helper/stupids-client.h>
 #include <gettextpo-helper/translationcontent.h>
+#include <gettextpo-helper/message.h>
 
 StupIdTranslationCollector::StupIdTranslationCollector()
 {

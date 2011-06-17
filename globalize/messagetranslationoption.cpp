@@ -3,7 +3,7 @@
 
 #include <assert.h>
 #include <gettextpo-helper/detectorbase.h>
-#include <gettextpo-helper/gettextpo-helper.h>
+#include <gettextpo-helper/message.h>
 
 MessageTranslationOption::MessageTranslationOption(MessageEditorWidget *editor, Message *message):
     QWidget(), m_editor(editor), m_message(message)

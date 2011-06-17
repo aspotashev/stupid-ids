@@ -7,6 +7,7 @@
 #include <gettextpo-helper/oidmapcache.h>
 #include <gettextpo-helper/stupids-client.h>
 #include <gettextpo-helper/gitloader.h>
+#include <gettextpo-helper/message.h>
 
 /**
  * \brief Constructs a TranslationContent from a file.
@@ -490,5 +491,16 @@ void TranslationContent::assertOk()
 const char *TranslationContent::ExceptionNotPo::what() const throw()
 {
 	return "ExceptionNotPo (file is not a correct .po/.pot file)";
+}
+
+//--------------------------------------------------
+
+std::vector<MessageGroup *> read_po_file_messages(const char *filename, bool loadObsolete)
+{
+	TranslationContent *content = new TranslationContent(filename);
+	std::vector<MessageGroup *> res = content->readMessages(loadObsolete);
+	delete content;
+
+	return res;
 }
 

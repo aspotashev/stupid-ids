@@ -7,6 +7,7 @@
 #include <gettextpo-helper/translationcontent.h>
 #include <gettextpo-helper/stupids-client.h>
 #include <gettextpo-helper/gitloader.h>
+#include <gettextpo-helper/message.h>
 
 void init_search(const char *f_dump, const char *f_index, const char *f_map);
 const char *find_string_id_by_str_multiple(char *s, int n);

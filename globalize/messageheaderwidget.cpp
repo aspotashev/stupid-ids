@@ -1,6 +1,6 @@
 #include "messageheaderwidget.h"
 
-#include <gettextpo-helper/gettextpo-helper.h>
+#include <gettextpo-helper/message.h>
 
 MessageHeaderWidget::MessageHeaderWidget(MessageEditorWidget *editor, MessageGroup *messageGroup):
     QWidget(), m_editor(editor), m_messageGroup(messageGroup)
