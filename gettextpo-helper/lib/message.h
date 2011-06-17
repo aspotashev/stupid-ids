@@ -1,4 +1,7 @@
 
+#ifndef MESSAGE_H
+#define MESSAGE_H
+
 #include <vector>
 #include <assert.h>
 #include <string.h>
@@ -10,7 +13,32 @@
 
 class IddiffMessage;
 
-class Message
+class MessageTranslationBase
+{
+public:
+	MessageTranslationBase();
+	MessageTranslationBase(po_message_t message);
+
+	static std::string formatString(const char *str);
+	std::string formatPoMessage() const;
+	const char *msgstr(int plural_form) const;
+	void setMsgstr(int index, const char *str);
+	int numPlurals() const;
+
+protected:
+	bool setNPluralsPacked(int n_plurals);
+
+	static std::string formatPoMessage(po_message_t message);
+	bool isFuzzy() const;
+
+protected:
+	const static int MAX_PLURAL_FORMS = 4; // increase this if you need more plural forms
+	int m_numPlurals; // =1 if the message does not use plural forms
+	char *m_msgstr[MAX_PLURAL_FORMS];
+	bool m_fuzzy;
+};
+
+class Message : public MessageTranslationBase
 {
 public:
 	Message(po_message_t message, int index, const char *filename);
@@ -27,11 +55,7 @@ public:
 	bool isPlural() const;
 	bool isUntranslated() const;
 	bool isTranslated() const;
-	int numPlurals() const;
-	const char *msgstr(int plural_form) const;
 	const char *msgcomments() const;
-
-	void setMsgstr(int index, const char *str);
 
 	// Also sets "m_edited" to true.
 	// Used for patching translation files.
@@ -39,21 +63,13 @@ public:
 	void editMsgstr(int index, const char *str);
 	bool isEdited() const;
 
-	std::string formatPoMessage() const;
-
 protected:
 	void setMsgcomments(const char *str);
 	void clear();
-	void setNPluralsPacked(int n_plurals);
 
 private:
-	const static int MAX_PLURAL_FORMS = 4; // increase this if you need more plural forms
-
 	bool m_plural; // =true if message uses plural forms
-	int m_numPlurals; // =1 if the message does not use plural forms
-	char *m_msgstr[MAX_PLURAL_FORMS];
 	char *m_msgcomments;
-	bool m_fuzzy;
 	bool m_obsolete;
 	bool m_untranslated;
 
@@ -92,4 +108,6 @@ private:
 
 	std::vector<Message *> m_messages;
 };
+
+#endif
 

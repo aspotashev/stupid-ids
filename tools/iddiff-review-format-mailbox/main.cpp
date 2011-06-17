@@ -54,7 +54,7 @@ std::string ReviewMailEntry::generateText(int review_item_index)
 
 	out << review_item_index << ". Строка перевода №" << (m_index + 1) << std::endl;
 
-	out << "   Исходная строка: " << IddiffMessage::formatString(m_messageGroup->msgid()) << std::endl;
+	out << "   Исходная строка: " << Message::formatString(m_messageGroup->msgid()) << std::endl;
 	if (m_messageGroup->msgidPlural())
 		out << "   Множественное число: " << IddiffMessage::formatString(m_messageGroup->msgidPlural()) << std::endl;
 

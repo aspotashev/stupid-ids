@@ -1,33 +1,163 @@
 
+#include <stdio.h>
+
 #include <gettextpo-helper/message.h>
 #include <gettextpo-helper/iddiff.h>
 
 
+MessageTranslationBase::MessageTranslationBase()
+{
+	m_numPlurals = 0;
+	m_fuzzy = false;
+}
+
+MessageTranslationBase::MessageTranslationBase(po_message_t message)
+{
+	for (int i = 0; i < MAX_PLURAL_FORMS; i ++)
+		m_msgstr[i] = 0;
+
+	// set m_numPlurals
+	bool m_plural = setNPluralsPacked(po_message_n_plurals(message));
+
+	for (int i = 0; i < m_numPlurals; i ++)
+	{
+		const char *tmp;
+		if (m_plural)
+		{
+			tmp = po_message_msgstr_plural(message, i);
+		}
+		else
+		{
+			assert(i == 0); // there can be only one form if 'm_plural' is false
+
+			tmp = po_message_msgstr(message);
+		}
+
+		setMsgstr(i, tmp);
+	}
+
+	m_fuzzy = po_message_is_fuzzy(message) != 0;
+}
+
 // "packed" means that 'n_plurals' contains more information than m_numPlurals:
 // 	1. whether the message uses plural forms (n_plurals=0 means that message does not use plural forms)
 // 	2. the number of plural forms
-void Message::setNPluralsPacked(int n_plurals)
+//
+// Returns whether the message uses plural forms (true or false).
+bool MessageTranslationBase::setNPluralsPacked(int n_plurals)
 {
-	m_numPlurals = n_plurals;
-	if (m_numPlurals == 0) // message does not use plural forms
-	{
-		m_numPlurals = 1;
-		m_plural = false;
-	}
-	else
-	{
-		m_plural = true;
-	}
+	assert(n_plurals >= 0);
 
+	// n_plurals=0 means that there is only one form "msgstr"
+	m_numPlurals = std::max(n_plurals, 1); 
 	assert(m_numPlurals <= MAX_PLURAL_FORMS); // limited by the size of m_msgstr
+
+	// Return whether the message uses plural forms
+	return n_plurals > 0;
 }
 
+/**
+ * \static
+ */
+std::string MessageTranslationBase::formatPoMessage(po_message_t message)
+{
+	MessageTranslationBase *msg = new MessageTranslationBase(message);
+	std::string res = msg->formatPoMessage();
+	delete msg;
+
+	return res;
+}
+
+std::string MessageTranslationBase::formatPoMessage() const
+{
+	std::string res;
+
+	if (isFuzzy())
+		res += "f";
+
+	res += formatString(msgstr(0));
+	for (int i = 1; i < numPlurals(); i ++)
+	{
+		res += " "; // separator
+		res += formatString(msgstr(i));
+	}
+
+	return res;
+}
+
+/**
+ * \brief Escape special symbols and put in quotes.
+ *
+ * Escape the following characters: double quote ("), newline, tab, backslash.
+ *
+ * \static
+ */
+std::string MessageTranslationBase::formatString(const char *str)
+{
+	assert(str);
+
+	std::string res;
+
+	res += "\""; // opening quote
+
+	size_t len = strlen(str);
+	for (size_t i = 0; i < len; i ++)
+	{
+		if (str[i] == '\"')
+			res += "\\\""; // escape quote
+		else if (str[i] == '\\')
+			res += "\\\\";
+		else if (str[i] == '\n')
+			res += "\\n";
+		else if (str[i] == '\t')
+			res += "\\t";
+		else if ((unsigned char)str[i] < ' ')
+		{
+			printf("Unescaped special symbol: code = %d\n", (int)str[i]);
+			assert(0);
+		}
+		else
+			res += str[i];
+	}
+
+	res += "\"";
+	return res;
+}
+
+bool MessageTranslationBase::isFuzzy() const
+{
+	return m_fuzzy;
+}
+
+const char *MessageTranslationBase::msgstr(int plural_form) const
+{
+	assert(plural_form >= 0 && plural_form < m_numPlurals);
+
+	return m_msgstr[plural_form];
+}
+
+void MessageTranslationBase::setMsgstr(int index, const char *str)
+{
+	assert(m_msgstr[index] == 0);
+
+	m_msgstr[index] = xstrdup(str);
+}
+
+int MessageTranslationBase::numPlurals() const
+{
+	return m_numPlurals;
+}
+
+//-------------------------------------------------------
+
+// Cannot use simple MessageTranslationBase(po_message_t),
+// because it does not set m_plural.
 Message::Message(po_message_t message, int index, const char *filename):
 	m_index(index),
 	m_filename(xstrdup(filename))
 {
 	clear();
-	setNPluralsPacked(po_message_n_plurals(message));
+	m_plural = setNPluralsPacked(po_message_n_plurals(message));
 
 	for (int i = 0; i < m_numPlurals; i ++)
 	{
@@ -61,13 +191,6 @@ void Message::setMsgcomments(const char *str)
 	assert(m_msgcomments == 0);
 
 	m_msgcomments = xstrdup(str);
-}
-
-void Message::setMsgstr(int index, const char *str)
-{
-	assert(m_msgstr[index] == 0);
-
-	m_msgstr[index] = xstrdup(str);
 }
 
 // TODO: make sure that all instance (m_*) variables are initialized
@@ -104,7 +227,7 @@ Message::Message(bool fuzzy, int n_plurals, const char *msgcomment):
 	clear();
 
 	m_fuzzy = fuzzy;
-	setNPluralsPacked(n_plurals);
+	m_plural = setNPluralsPacked(n_plurals);
 	setMsgcomments(msgcomment);
 }
 
@@ -147,18 +270,6 @@ bool Message::isUntranslated() const
 bool Message::isTranslated() const
 {
 	return !isFuzzy() && !isUntranslated();
-}
-
-int Message::numPlurals() const
-{
-	return m_numPlurals;
-}
-
-const char *Message::msgstr(int plural_form) const
-{
-	assert(plural_form >= 0 && plural_form < m_numPlurals);
-
-	return m_msgstr[plural_form];
 }
 
 const char *Message::msgcomments() const
@@ -209,23 +320,6 @@ void Message::editMsgstr(int index, const char *str)
 bool Message::isEdited() const
 {
 	return m_edited;
-}
-
-std::string Message::formatPoMessage() const
-{
-	std::string res;
-
-	if (isFuzzy())
-		res += "f";
-
-	res += IddiffMessage::formatString(msgstr(0));
-	for (int i = 1; i < numPlurals(); i ++)
-	{
-		res += " "; // separator
-		res += IddiffMessage::formatString(msgstr(i));
-	}
-
-	return res;
 }
 
 //-------------------------------------------------------

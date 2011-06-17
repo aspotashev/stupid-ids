@@ -16,62 +16,19 @@
 /**
  * \brief Constructs an empty IddiffMessage
  */
-IddiffMessage::IddiffMessage()
+IddiffMessage::IddiffMessage():
+	MessageTranslationBase()
 {
-	m_numPlurals = 0;
-	m_fuzzy = false;
 }
 
-IddiffMessage::IddiffMessage(po_message_t message)
+IddiffMessage::IddiffMessage(po_message_t message):
+	MessageTranslationBase(message)
 {
-	for (int i = 0; i < MAX_PLURAL_FORMS; i ++)
-		m_msgstr[i] = 0;
-
-	// set m_numPlurals
-	m_numPlurals = po_message_n_plurals(message);
-	bool m_plural;
-	if (m_numPlurals == 0) // message does not use plural forms
-	{
-		m_numPlurals = 1;
-		m_plural = false;
-	}
-	else
-	{
-		m_plural = true;
-	}
-	assert(m_numPlurals <= MAX_PLURAL_FORMS); // limited by the size of m_msgstr
-
-
-	for (int i = 0; i < m_numPlurals; i ++)
-	{
-		const char *tmp;
-		if (m_plural)
-		{
-			tmp = po_message_msgstr_plural(message, i);
-		}
-		else
-		{
-			assert(i == 0); // there can be only one form if 'm_plural' is false
-
-			tmp = po_message_msgstr(message);
-		}
-
-		setMsgstr(i, tmp);
-	}
-
-	m_fuzzy = po_message_is_fuzzy(message) != 0;
 }
 
 IddiffMessage::~IddiffMessage()
 {
 	// TODO: free memory
-}
-
-void IddiffMessage::setMsgstr(int index, const char *str)
-{
-	assert(m_msgstr[index] == 0);
-
-	m_msgstr[index] = xstrdup(str);
 }
 
 void IddiffMessage::addMsgstr(const char *str)
@@ -82,82 +39,9 @@ void IddiffMessage::addMsgstr(const char *str)
 	m_msgstr[m_numPlurals - 1] = xstrdup(str);
 }
 
-bool IddiffMessage::isFuzzy() const
-{
-	return m_fuzzy;
-}
-
 void IddiffMessage::setFuzzy(bool fuzzy)
 {
 	m_fuzzy = fuzzy;
-}
-
-int IddiffMessage::numPlurals() const
-{
-	return m_numPlurals;
-}
-
-const char *IddiffMessage::msgstr(int plural_form) const
-{
-	assert(plural_form >= 0 && plural_form < m_numPlurals);
-
-	return m_msgstr[plural_form];
-}
-
-std::string IddiffMessage::formatPoMessage() const
-{
-	std::string res;
-
-	if (isFuzzy())
-		res += "f";
-
-	res += formatString(msgstr(0));
-	for (int i = 1; i < numPlurals(); i ++)
-	{
-		res += " "; // separator
-		res += formatString(msgstr(i));
-	}
-
-	return res;
-}
-
-/**
- * \brief Escape special symbols and put in quotes.
- *
- * Escape the following characters: double quote ("), newline, tab, backslash.
- *
- * \static
- */
-std::string IddiffMessage::formatString(const char *str)
-{
-	assert(str);
-
-	std::string res;
-
-	res += "\""; // opening quote
-
-	size_t len = strlen(str);
-	for (size_t i = 0; i < len; i ++)
-	{
-		if (str[i] == '\"')
-			res += "\\\""; // escape quote
-		else if (str[i] == '\\')
-			res += "\\\\";
-		else if (str[i] == '\n')
-			res += "\\n";
-		else if (str[i] == '\t')
-			res += "\\t";
-		else if ((unsigned char)str[i] < ' ')
-		{
-			printf("Unescaped special symbol: code = %d\n", (int)str[i]);
-			assert(0);
-		}
-		else
-			res += str[i];
-	}
-
-	res += "\"";
-	return res;
 }
 
 bool IddiffMessage::equalTranslations(const IddiffMessage *message) const
@@ -230,18 +114,6 @@ Iddiffer::~Iddiffer()
 	std::vector<std::pair<int, IddiffMessage *> > review_list = getReviewVector();
 	for (size_t i = 0; i < review_list.size(); i ++)
 		delete review_list[i].second;
-}
-
-/**
- * \static
- */
-std::string Iddiffer::formatPoMessage(po_message_t message)
-{
-	IddiffMessage *idm = new IddiffMessage(message);
-	std::string res = idm->formatPoMessage();
-	delete idm;
-
-	return res;
 }
 
 void Iddiffer::writeMessageList(std::vector<std::pair<int, IddiffMessage *> > list)

@@ -6,42 +6,31 @@
 
 #include <gettext-po.h>
 
+#include <gettextpo-helper/message.h>
+
+
 class Message;
 class MessageGroup;
 
 // TODO: derive class Message from this class
-class IddiffMessage
+class IddiffMessage : public MessageTranslationBase
 {
 public:
 	IddiffMessage();
 	IddiffMessage(po_message_t message);
 	~IddiffMessage();
 
-	bool isFuzzy() const;
 	void setFuzzy(bool fuzzy);
-	int numPlurals() const;
-	const char *msgstr(int plural_form) const;
 
 	bool isTranslated() const;
 
 	void setMsgstr(int index, const char *str);
 	void addMsgstr(const char *str);
 
-	std::string formatPoMessage() const;
-
 	bool equalTranslations(const IddiffMessage *message) const;
 
 	bool equalTranslations(const Message *message) const;
 	void copyTranslationsToMessage(Message *message) const;
-
-	static std::string formatString(const char *str);
-
-private:
-	const static int MAX_PLURAL_FORMS = 4; // increase this if you need more plural forms
-
-	int m_numPlurals; // =1 if the message does not use plural forms
-	char *m_msgstr[MAX_PLURAL_FORMS];
-	bool m_fuzzy;
 };
 
 //----------------------------------------------
@@ -120,7 +109,6 @@ private:
 	std::pair<int, IddiffMessage *> loadMessageListEntry(const char *line);
 
 	static IddiffMessage *findIddiffMessageList(std::vector<IddiffMessage *> list, const IddiffMessage *item);
-	static std::string formatPoMessage(po_message_t message);
 
 	// Helper functions for minimizeIds()
 	template <typename T> static void substituteMsgId(std::map<int, T> &items, int old_id, int new_id);
