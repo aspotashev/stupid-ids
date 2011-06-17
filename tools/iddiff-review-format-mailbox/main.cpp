@@ -84,7 +84,6 @@ int main(int argc, char *argv[])
 	iddiff->minimizeIds(); // patching should always be done with minimized IDs
 
 	TranslationContent *input_translation = new TranslationContent(input_translation_path);
-	input_translation->setDisplayFilename(input_translation_path); // TODO: do this automatically in TranslationContent ctor
 	std::vector<int> min_ids = input_translation->getMinIds();
 	std::vector<MessageGroup *> messages = input_translation->readMessages();
 	assert(min_ids.size() == messages.size()); // TODO: move this assertion into class TranslationContent

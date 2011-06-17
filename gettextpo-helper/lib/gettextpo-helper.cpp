@@ -729,7 +729,6 @@ std::string Message::formatPoMessage() const
 std::vector<MessageGroup *> read_po_file_messages(const char *filename, bool loadObsolete)
 {
 	TranslationContent *content = new TranslationContent(filename);
-	content->setDisplayFilename(filename);
 	std::vector<MessageGroup *> res = content->readMessages(loadObsolete);
 	delete content;
 

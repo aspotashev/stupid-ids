@@ -22,7 +22,6 @@ StupIdTranslationCollector::~StupIdTranslationCollector()
 void StupIdTranslationCollector::insertPo(const char *filename)
 {
 	TranslationContent *content = new TranslationContent(filename);
-	content->setDisplayFilename(filename);
 	insertPo(content); // takes ownership of "content"
 }
 

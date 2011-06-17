@@ -18,7 +18,6 @@ int main(int argc, char *argv[])
 	const char *input_filename = argv[1];
 
 	TranslationContent *new_content = new TranslationContent(input_filename);
-	new_content->setDisplayFilename(input_filename);
 	const git_oid *tp_hash = new_content->calculateTpHash();
 	assert(tp_hash);
 

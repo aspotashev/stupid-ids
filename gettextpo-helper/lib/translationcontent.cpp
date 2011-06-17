@@ -19,6 +19,7 @@ TranslationContent::TranslationContent(const char *filename)
 
 	m_type = TYPE_FILE;
 	m_filename = xstrdup(filename);
+	setDisplayFilename(filename);
 }
 
 /**
@@ -86,7 +87,8 @@ void TranslationContent::clear()
  */
 void TranslationContent::setDisplayFilename(const char *filename)
 {
-	assert(m_displayFilename == NULL); // can be set only once
+	if (m_displayFilename)
+		delete [] m_displayFilename;
 
 	m_displayFilename = xstrdup(filename);
 }
