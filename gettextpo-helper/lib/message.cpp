@@ -360,6 +360,9 @@ MessageGroup::~MessageGroup()
 	// TODO: free memory. Who takes care of "Message" objects?
 }
 
+/**
+ * Takes ownership of "message".
+ */
 void MessageGroup::addMessage(Message *message)
 {
 	m_messages.push_back(message);
@@ -385,6 +388,7 @@ void MessageGroup::mergeMessageGroup(MessageGroup *other)
 //	assert(!strcmp(msgid(), other->msgid()));
 //	...
 
+	// TODO: rename to "mergeMessageGroupNokeep" or clone messages here:
 	for (int i = 0; i < other->size(); i ++)
 		addMessage(other->message(i));
 }
@@ -396,6 +400,9 @@ void MessageGroup::clear()
 	m_msgctxt = NULL;
 }
 
+/**
+ * Does not take ownership of "str".
+ */
 void MessageGroup::setMsgid(const char *str)
 {
 	assert(m_msgid == NULL);
@@ -403,6 +410,9 @@ void MessageGroup::setMsgid(const char *str)
 	m_msgid = xstrdup(str);
 }
 
+/**
+ * Does not take ownership of "str".
+ */
 void MessageGroup::setMsgidPlural(const char *str)
 {
 	assert(m_msgidPlural == NULL);
@@ -410,6 +420,9 @@ void MessageGroup::setMsgidPlural(const char *str)
 	m_msgidPlural = xstrdup(str);
 }
 
+/**
+ * Does not take ownership of "str".
+ */
 void MessageGroup::setMsgctxt(const char *str)
 {
 	assert(m_msgctxt == NULL);

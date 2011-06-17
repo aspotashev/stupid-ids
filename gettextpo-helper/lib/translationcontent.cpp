@@ -66,6 +66,9 @@ TranslationContent::~TranslationContent()
 		delete m_oid;
 	if (m_displayFilename)
 		delete [] m_displayFilename;
+
+	for (size_t i = 0; i < m_messagesNormal.size(); i ++)
+		delete m_messagesNormal[i];
 }
 
 void TranslationContent::clear()
