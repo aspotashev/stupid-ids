@@ -7,8 +7,7 @@
 
 MessageTranslationBase::MessageTranslationBase()
 {
-	m_numPlurals = 0;
-	m_fuzzy = false;
+	MessageTranslationBase::clear();
 }
 
 MessageTranslationBase::MessageTranslationBase(po_message_t message)
@@ -43,6 +42,15 @@ MessageTranslationBase::~MessageTranslationBase()
 {
 	for (int i = 0; i < m_numPlurals; i ++)
 		delete [] m_msgstr[i];
+}
+
+void MessageTranslationBase::clear()
+{
+	m_numPlurals = 0;
+	for (int i = 0; i < MAX_PLURAL_FORMS; i ++)
+		m_msgstr[i] = NULL;
+
+	m_fuzzy = false;
 }
 
 // "packed" means that 'n_plurals' contains more information than m_numPlurals:
@@ -180,11 +188,12 @@ bool MessageTranslationBase::equalTranslations(const MessageTranslationBase *o) 
 
 // Cannot use simple MessageTranslationBase(po_message_t),
 // because it does not set m_plural.
-Message::Message(po_message_t message, int index, const char *filename):
-	m_index(index),
-	m_filename(xstrdup(filename))
+Message::Message(po_message_t message, int index, const char *filename)
 {
 	clear();
+
+	m_index = index;
+	m_filename = xstrdup(filename);
 	m_plural = setNPluralsPacked(po_message_n_plurals(message));
 
 	for (int i = 0; i < m_numPlurals; i ++)
@@ -221,11 +230,9 @@ void Message::setMsgcomments(const char *str)
 	m_msgcomments = xstrdup(str);
 }
 
-// TODO: make sure that all instance (m_*) variables are initialized
-Message::Message(bool fuzzy, const char *msgcomment, const char *msgstr0, int n_plurals):
-	m_index(-1), m_filename(NULL)
+Message::Message(bool fuzzy, const char *msgcomment, const char *msgstr0, int n_plurals)
 {
-	m_obsolete = false;
+	clear();
 
 	m_fuzzy = fuzzy;
 	setMsgcomments(msgcomment);
@@ -241,16 +248,20 @@ Message::Message(bool fuzzy, const char *msgcomment, const char *msgstr0, int n_
 
 void Message::clear()
 {
-	m_msgcomments = 0;
-	for (int i = 0; i < MAX_PLURAL_FORMS; i ++)
-		m_msgstr[i] = 0;
+	MessageTranslationBase::clear();
+
+	m_plural = false;
+	m_obsolete = false;
+	m_untranslated = false;
+	m_msgcomments = NULL;
+
+	m_index = -1;
+	m_filename = NULL;
 
 	m_edited = false;
 }
 
-// TODO: make sure that all instance (m_*) variables are initialized
-Message::Message(bool fuzzy, int n_plurals, const char *msgcomment):
-	m_index(-1), m_filename(NULL)
+Message::Message(bool fuzzy, int n_plurals, const char *msgcomment)
 {
 	clear();
 

@@ -30,6 +30,7 @@ public:
 	bool equalTranslations(const MessageTranslationBase *o) const;
 
 protected:
+	virtual void clear();
 	bool setNPluralsPacked(int n_plurals);
 
 	static std::string formatPoMessage(po_message_t message);
@@ -67,13 +68,13 @@ public:
 
 protected:
 	void setMsgcomments(const char *str);
-	void clear();
+	virtual void clear();
 
 private:
 	bool m_plural; // =true if message uses plural forms
-	char *m_msgcomments;
 	bool m_obsolete;
 	bool m_untranslated;
+	char *m_msgcomments;
 
 	int m_index;
 	const char *m_filename;
