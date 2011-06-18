@@ -45,6 +45,7 @@ protected:
 class Message : public MessageTranslationBase
 {
 public:
+	Message(const Message &message);
 	Message(po_message_t message, int index, const char *filename);
 	Message(bool fuzzy, const char *msgcomment, const char *msgstr0, int n_plurals = 0);
 //	Message(bool fuzzy, const char *msgcomment, const char *msgstr0, const char *msgstr1, const char *msgstr2, const char *msgstr3);
@@ -92,7 +93,8 @@ public:
 	void addMessage(Message *message);
 	int size() const;
 	Message *message(int index);
-	void mergeMessageGroup(MessageGroup *other);
+	const Message *message(int index) const;
+	void mergeMessageGroup(const MessageGroup *other);
 
 	const char *msgid() const;
 	const char *msgidPlural() const;

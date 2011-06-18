@@ -186,6 +186,33 @@ bool MessageTranslationBase::equalTranslations(const MessageTranslationBase *o) 
 
 //-------------------------------------------------------
 
+Message::Message(const Message &message)
+{
+	clear();
+
+	assert(message.m_numPlurals <= MAX_PLURAL_FORMS);
+
+	// Fields inherited from class MessageTranslationBase
+	m_numPlurals = message.m_numPlurals;
+	for (int i = 0; i < m_numPlurals; i ++)
+	{
+		assert(message.m_msgstr[i]);
+		m_msgstr[i] = xstrdup(message.m_msgstr[i]);
+	}
+	m_fuzzy = message.m_fuzzy;
+
+	// Fields defined in this class
+	m_plural = message.m_plural;
+	m_obsolete = message.m_obsolete;
+	m_untranslated = message.m_untranslated;
+	if (message.m_msgcomments)
+		m_msgcomments = xstrdup(message.m_msgcomments);
+	m_index = message.m_index;
+	if (message.m_filename)
+		m_filename = xstrdup(message.m_filename);
+	m_edited = message.m_edited;
+}
+
 // Cannot use simple MessageTranslationBase(po_message_t),
 // because it does not set m_plural.
 Message::Message(po_message_t message, int index, const char *filename)
@@ -274,8 +301,8 @@ Message::~Message()
 {
 	if (m_filename)
 		delete [] m_filename;
-
-	// TODO: free memory
+	if (m_msgcomments)
+		delete [] m_msgcomments;
 }
 
 int Message::index() const
@@ -368,7 +395,15 @@ MessageGroup::MessageGroup(po_message_t message, int index, const char *filename
 
 MessageGroup::~MessageGroup()
 {
-	// TODO: free memory. Who takes care of "Message" objects?
+	if (m_msgid)
+		delete [] m_msgid;
+	if (m_msgidPlural)
+		delete [] m_msgidPlural;
+	if (m_msgctxt)
+		delete [] m_msgctxt;
+
+	for (size_t i = 0; i < m_messages.size(); i ++)
+		delete m_messages[i];
 }
 
 /**
@@ -391,7 +426,18 @@ Message *MessageGroup::message(int index)
 	return m_messages[index];
 }
 
-void MessageGroup::mergeMessageGroup(MessageGroup *other)
+const Message *MessageGroup::message(int index) const
+{
+	assert(index >= 0 && index < size());
+
+	return m_messages[index];
+}
+
+/**
+ * Does not take ownership of messages from "other" MessageGroup.
+ */
+// TODO: "mergeMessageGroupNokeep" that removed messages from "other" MessageGroup
+void MessageGroup::mergeMessageGroup(const MessageGroup *other)
 {
 	// Only message groups with the same
 	// {msgid, msgid_plural, msgctxt} can be merged.
@@ -399,9 +445,8 @@ void MessageGroup::mergeMessageGroup(MessageGroup *other)
 //	assert(!strcmp(msgid(), other->msgid()));
 //	...
 
-	// TODO: rename to "mergeMessageGroupNokeep" or clone messages here:
 	for (int i = 0; i < other->size(); i ++)
-		addMessage(other->message(i));
+		addMessage(new Message(*other->message(i)));
 }
 
 void MessageGroup::clear()
