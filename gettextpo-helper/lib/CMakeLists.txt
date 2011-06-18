@@ -36,6 +36,7 @@ install(FILES
 	detector.h
 	iddiff.h
 	gitloader.h
+	message.h
 	DESTINATION ${INCLUDE_INSTALL_DIR}/gettextpo-helper COMPONENT Devel
 )
 
