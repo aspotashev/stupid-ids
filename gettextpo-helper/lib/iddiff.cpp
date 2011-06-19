@@ -1025,3 +1025,16 @@ bool Iddiffer::isRejectAlreadyReviewed(int msg_id, IddiffMessage *item)
 	return findRemoved(msg_id, item) != NULL;
 }
 
+void Iddiffer::setCurrentDateTime()
+{
+	m_hasDate = true;
+	m_date = time(NULL);
+
+
+	struct tm *tmtime = localtime(&m_date);
+	int offset = tmtime->tm_gmtoff;
+
+	assert(offset % 3600 == 0);
+	m_timezone = offset / 3600;
+}
+

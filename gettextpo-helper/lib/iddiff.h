@@ -96,6 +96,8 @@ public:
 	bool isAcceptAlreadyReviewed(int msg_id, IddiffMessage *item);
 	bool isRejectAlreadyReviewed(int msg_id, IddiffMessage *item);
 
+	void setCurrentDateTime();
+
 	// TODO: may be remove this?
 	static std::string generateIddiffText(TranslationContent *content_a, TranslationContent *content_b);
 
