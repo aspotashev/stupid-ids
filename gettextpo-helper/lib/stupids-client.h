@@ -5,27 +5,83 @@
 
 #include <git2.h>
 
-//-------- Working with stupids-server.rb over TCP/IP --------
-
+/**
+ * \brief Class for working with stupids-server over TCP/IP
+ */
 class StupidsClient
 {
 public:
+	/**
+	 * \brief Exception raised when the function ::connect fails to connect to the server
+	 */
 	class ExceptionConnectionFailed : public std::exception
 	{
 		virtual const char *what() const throw();
 	};
 
+	/**
+	 * \brief Exception raised when trying to send/receive data to/from the server, but the connection has already been closed
+	 */
 	class ExceptionNoConnection : public std::exception
 	{
 		virtual const char *what() const throw();
 	};
 
+	/**
+	 * \brief Constructs a StupidsClient, but does not connect to a server
+	 */
 	StupidsClient();
+
 	~StupidsClient();
 
+	/**
+	 * \brief Sends the CMD_GET_MIN_ID_ARRAY request to the server and returns the results
+	 *
+	 * \param tp_hash Template-part hash of a translation file
+	 *
+	 * \returns Vector of minimized IDs of all messages from that translation file. IDs in the
+	 * vector go in the same order as the messages in translation file. The size of the
+	 * vector is equal to the number of messages in translation file.
+	 */
 	std::vector<int> getMinIds(const git_oid *tp_hash);
+
+	/**
+	 * \brief Sends the CMD_GET_MIN_IDS request to the server and returns the results
+	 *
+	 * \param msg_ids Vector of IDs you want to calculate minimized IDs for
+	 *
+	 * \returns Vector of minimized IDs for the given IDs. IDs in the output vector go
+	 * in the same order as in the input vector.
+	 */
 	std::vector<int> getMinIds(std::vector<int> msg_ids);
+
+	/**
+	 * \brief Sends the CMD_GET_FIRST_ID request to the server and returns the results
+	 *
+	 * \param tp_hash Template-part hash of a translation file
+	 *
+	 * \returns Non-minimized ID of the first message in the translation file. Non-minimized
+	 * IDs of the next messages from the translation file can be obtained by incrementing
+	 * this value. \n
+	 * For more understanding: the CMD_GET_MIN_ID_ARRAY[tp_hash->min_ids] command can
+	 * be implemented as follows: \n
+	 * 1. run CMD_GET_FIRST_ID command, the result being "first_id", \n
+	 * 2. create a vector with consequent numbers from range [first_id..first_id+num_messages-1],
+	 * where "num_messages" is the number of messages in the translation file, \n
+	 * 3. run CMD_GET_MIN_IDS on that vector.
+	 */
 	int getFirstId(const git_oid *tp_hash);
+
+	/**
+	 * \brief Sends the CMD_GET_FIRST_ID request to the server and returns the results
+	 *
+	 * \param tp_hashes Template-part hashes of translation files
+	 * \param min_ids Minimized IDs that you want to find in those files
+	 *
+	 * \returns Vector of indices in @p tp_hashes of those translation files that contain
+	 * messages with any of the given minimized IDs. The size of the returned vector
+	 * can be between zero and the size of @p tp_hashes.
+	 */
 	std::vector<int> involvedByMinIds(std::vector<const git_oid *> tp_hashes, std::vector<int> min_ids);
 
 	static StupidsClient &instance();
