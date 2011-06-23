@@ -282,6 +282,7 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path, Co
 
 	// NOTE: the trees will be read twice for every commit, because
 	// almost every commit is a parent and is a child at the same time.
+	// TODO: optimize this (according to Callgrind, diffTree() takes 79.76% of time)
 	size_t count1 = tree1 ? git_tree_entrycount(tree1) : 0;
 	size_t count2 = tree2 ? git_tree_entrycount(tree2) : 0;
 	size_t idx1 = 0;
