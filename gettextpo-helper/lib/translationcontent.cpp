@@ -208,7 +208,7 @@ const git_oid *TranslationContent::calculateTpHash()
 	// Cache calculated tp_hashes (it takes some time to
 	// calculate a tp_hash). A singleton class is used for that.
 	const git_oid *oid = gitBlobHash();
-	const git_oid *tp_hash = TphashCache.getTphash(oid);
+	const git_oid *tp_hash = TphashCache.getValue(oid);
 
 	if (tp_hash)
 	{

@@ -12,8 +12,7 @@ public:
 	OidMapCache(const char *filename);
 	~OidMapCache();
 
-	// TODO: rename this function ("getValue"?)
-	const git_oid *getTphash(const git_oid *oid);
+	const git_oid *getValue(const git_oid *oid);
 	void addPair(const git_oid *oid, const git_oid *tp_hash);
 
 private:

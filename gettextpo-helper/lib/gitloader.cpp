@@ -722,7 +722,7 @@ void GitLoader::addRepository(const char *git_dir)
 const git_oid *GitLoader::findOldestByTphash_oid(const git_oid *tp_hash)
 {
 	// Cache results of this function (TODO: may be even create a stupids-server command for this function?)
-	const git_oid *cached_oid = OidMapCacheManager::instance("lang_ru_oldest_oid").getTphash(tp_hash);
+	const git_oid *cached_oid = OidMapCacheManager::instance("lang_ru_oldest_oid").getValue(tp_hash);
 	if (cached_oid)
 		return cached_oid;
 

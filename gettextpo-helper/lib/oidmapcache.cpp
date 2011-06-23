@@ -44,7 +44,7 @@ OidMapCache::~OidMapCache()
 	delete [] m_filename;
 }
 
-const git_oid *OidMapCache::getTphash(const git_oid *oid)
+const git_oid *OidMapCache::getValue(const git_oid *oid)
 {
 	std::map<GitOid, GitOid>::iterator iter = m_cache.find(GitOid(oid));
 	if (iter == m_cache.end())
@@ -56,7 +56,7 @@ const git_oid *OidMapCache::getTphash(const git_oid *oid)
 void OidMapCache::addPair(const git_oid *oid, const git_oid *tp_hash)
 {
 	// Check that we do not have this pair yet
-	assert(getTphash(oid) == NULL);
+	assert(getValue(oid) == NULL);
 
 	// Add pair
 	m_cache[GitOid(oid)] = GitOid(tp_hash);
