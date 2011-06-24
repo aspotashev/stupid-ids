@@ -16,7 +16,23 @@
 int main(int argc, char *argv[])
 {
 	assert(argc == 2); // 1 argument
-	const char *input_filename = argv[1];
+	const char *input_filename_relative = argv[1];
+
+	// Calculate absolute path to file (input_filename might be a
+	// relative path), so that Lokalize can find the file.
+	char input_filename[1000];
+	if (input_filename_relative[0] == '/') // absolute path
+	{
+		strcpy(input_filename, input_filename_relative);
+	}
+	else // relative path
+	{
+		assert(strlen(input_filename_relative) < 495);
+		assert(getcwd(input_filename, 500) != NULL);
+		strcat(input_filename, "/");
+		strcat(input_filename, input_filename_relative);
+	}
+
 
 	TranslationContent *new_content = new TranslationContent(input_filename);
 	const git_oid *tp_hash = new_content->calculateTpHash();
