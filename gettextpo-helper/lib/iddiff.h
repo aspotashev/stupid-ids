@@ -39,13 +39,44 @@ public:
 	Iddiffer();
 	~Iddiffer();
 
+	/**
+	 * \brief Fills "ADDED" section with strings from the given TranslationContent
+	 *
+	 * "REMOVED" and "REVIEW" sections will be cleared.
+	 * Old items from "ADDED" section will be deleted.
+	 */
 	void diffAgainstEmpty(TranslationContent *content_b);
+
+	/**
+	 * \brief Fills "ADDED" and "DELETED" sections according to differences between the two given TranslationContents
+	 *
+	 * "REVIEW" section will be cleared.
+	 * Old items from "REMOVED" and "ADDED" sections will be deleted.
+	 */
 	void diffFiles(TranslationContent *content_a, TranslationContent *content_b);
+
+	/**
+	 * \brief Load iddiff from an .iddiff file
+	 *
+	 * It actually merges the given file with the changes already existing in the current Iddiffer object.
+	 */
 	bool loadIddiff(const char *filename);
 
+	/**
+	 * \brief Replace all message IDs in the Iddiff with minimized IDs
+	 */
 	void minimizeIds();
+
+	/**
+	 * \brief Returns message IDs that exist at least in one section (ADDED, REMOVED or REVIEW).
+	 */
 	std::vector<int> involvedIds();
 
+	/**
+	 * \brief Formats the Iddiff as a text file.
+	 *
+	 * Returns empty string (even without headers) if the Iddiff is empty.
+	 */
 	std::string generateIddiffText();
 
 	std::vector<IddiffMessage *> getIddiffArr(std::vector<std::pair<int, IddiffMessage *> > &section, int msg_id);
@@ -96,6 +127,9 @@ public:
 	bool isAcceptAlreadyReviewed(int msg_id, IddiffMessage *item);
 	bool isRejectAlreadyReviewed(int msg_id, IddiffMessage *item);
 
+	/**
+	 * \brief Sets the "Date:" field of the Iddiff to the current date/time.
+	 */
 	void setCurrentDateTime();
 
 	// TODO: may be remove this?

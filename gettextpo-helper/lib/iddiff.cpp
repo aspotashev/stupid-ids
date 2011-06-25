@@ -117,8 +117,8 @@ void Iddiffer::clearReviewComment(int msg_id)
 	m_reviewComments.erase(msg_id);
 }
 
-// This function fills m_removedItems and m_addedItems.
-// m_reviewComments will be cleared.
+// This function fills m_addedItems.
+// m_removedItems and m_reviewComments will be cleared.
 void Iddiffer::diffAgainstEmpty(TranslationContent *content_b)
 {
 	clearIddiff();
@@ -314,11 +314,6 @@ std::string Iddiffer::generateIddiffText(TranslationContent *content_a, Translat
 	return res;
 }
 
-/**
- * \brief Load iddiff from an .iddiff file
- *
- * It actually merges the given file with the changes already existing in the current Iddiffer object.
- */
 bool Iddiffer::loadIddiff(const char *filename)
 {
 	// TODO: function for reading the whole file
