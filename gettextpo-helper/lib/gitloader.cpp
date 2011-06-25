@@ -244,6 +244,8 @@ Repository::Repository(const char *git_dir)
 
 Repository::~Repository()
 {
+	libgitClose();
+
 	delete [] m_gitDir;
 
 	for (size_t i = 0; i < m_commits.size(); i ++)
@@ -687,9 +689,7 @@ GitLoader::GitLoader()
 GitLoader::~GitLoader()
 {
 	for (size_t i = 0; i < m_repos.size(); i ++)
-	{
-		m_repos[i]->libgitClose();
-	}
+		delete m_repos[i];
 }
 
 /**
