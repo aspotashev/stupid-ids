@@ -114,8 +114,7 @@ private:
 
 private:
 	char *m_gitDir;
-	git_repository *m_repo;
-	git_repository *m_libgitRepo; // TODO: use only one variable for git_repository
+	git_repository *m_libgitRepo;
 
 	std::vector<Commit *> m_commits;
 	bool m_commitsInit;
