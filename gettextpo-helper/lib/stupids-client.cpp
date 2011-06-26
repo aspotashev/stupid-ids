@@ -141,6 +141,8 @@ void StupidsClient::sendLong(uint32_t data)
 
 void StupidsClient::sendOid(const git_oid *oid)
 {
+	assert(oid);
+
 	sendToServer(oid, GIT_OID_RAWSZ);
 }
 
@@ -160,6 +162,8 @@ void StupidsClient::sendLongVector(std::vector<int> vec)
 
 std::vector<int> StupidsClient::getMinIds(const git_oid *tp_hash)
 {
+	assert(tp_hash);
+
 	connect();
 
 	// send command
@@ -190,6 +194,8 @@ std::vector<int> StupidsClient::getMinIds(std::vector<int> msg_ids)
 
 int StupidsClient::getFirstId(const git_oid *tp_hash)
 {
+	assert(tp_hash);
+
 	try
 	{
 		connect();
