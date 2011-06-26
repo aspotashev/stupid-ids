@@ -438,27 +438,32 @@ void Repository::diffCommit(git_commit *commit1, git_commit *commit2)
 		git_tree_close(tree2);
 }
 
+/**
+ * Initializes m_oidMaster.
+ */
+void Repository::initOidMaster()
+{
+	libgitRepo();
+
+	git_reference *ref_master;
+	assert(git_reference_lookup(&ref_master, m_libgitRepo, "refs/heads/master") == 0);
+
+	m_oidMaster = new git_oid;
+	git_oid_cpy(m_oidMaster, git_reference_oid(ref_master));
+}
+
 void Repository::readRepositoryCommits()
 {
 	if (m_commitsInit)
 		return;
 
 	libgitRepo();
-	assert(m_libgitRepo);
-
-	// Open repository
-	assert(git_repository_open(&m_libgitRepo, m_gitDir) == 0);
-
-	git_reference *ref_master;
-	assert(git_reference_lookup(&ref_master, m_libgitRepo, "refs/heads/master") == 0);
-
-	const git_oid *oid_master = git_reference_oid(ref_master);
-	assert(oid_master != NULL);
+	initOidMaster();
 
 	// Read repository
 	git_commit *commit;
 	git_commit *parent;
-	assert(git_commit_lookup(&commit, m_libgitRepo, oid_master) == 0);
+	assert(git_commit_lookup(&commit, m_libgitRepo, m_oidMaster) == 0);
 
 	while (commit != NULL)
 	{
