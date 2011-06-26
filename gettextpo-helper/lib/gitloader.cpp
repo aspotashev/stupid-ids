@@ -462,8 +462,8 @@ void Repository::readRepositoryCommits()
 
 	while (commit != NULL)
 	{
-		char oid_string[GIT_OID_HEXSZ + 1];
-		git_oid_to_string(oid_string, GIT_OID_HEXSZ + 1, git_commit_id(commit));
+//		char oid_string[GIT_OID_HEXSZ + 1];
+//		git_oid_to_string(oid_string, GIT_OID_HEXSZ + 1, git_commit_id(commit));
 //		printf("Current commit's oid: %s\n", oid_string);
 
 		// Moving to parent
