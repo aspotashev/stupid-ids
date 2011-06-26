@@ -341,7 +341,11 @@ std::vector<int> TranslationContent::getMinIds()
 int TranslationContent::getFirstId()
 {
 	if (m_firstId == 0)
-		m_firstId = stupidsClient.getFirstId(calculateTpHash());
+	{
+		const git_oid *tp_hash = calculateTpHash();
+		if (tp_hash)
+			m_firstId = stupidsClient.getFirstId(tp_hash);
+	}
 
 	return m_firstId;
 }
