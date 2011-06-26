@@ -84,6 +84,7 @@ void TranslationContent::clear()
 
 	m_minIdsInit = false;
 	m_messagesNormalInit = false;
+	m_firstId = 0; // 0 = uninitialized or undefined (undefined means that tp_hash is unknown on server)
 }
 
 /**
@@ -335,6 +336,14 @@ std::vector<int> TranslationContent::getMinIds()
 	}
 
 	return m_minIds;
+}
+
+int TranslationContent::getFirstId()
+{
+	if (m_firstId == 0)
+		m_firstId = stupidsClient.getFirstId(calculateTpHash());
+
+	return m_firstId;
 }
 
 void TranslationContent::writeToFile()

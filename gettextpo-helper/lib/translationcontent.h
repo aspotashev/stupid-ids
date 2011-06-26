@@ -39,6 +39,7 @@ public:
 	std::vector<MessageGroup *> readMessages(bool loadObsolete = false);
 
 	std::vector<int> getMinIds();
+	int getFirstId();
 
 	void writeToFile();
 
@@ -80,6 +81,8 @@ private:
 
 	std::vector<MessageGroup *> m_messagesNormal;
 	bool m_messagesNormalInit;
+
+	int m_firstId;
 
 	enum
 	{
