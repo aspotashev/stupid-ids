@@ -155,6 +155,8 @@ private:
 		size_t idx;
 	};
 
+	// TODO: stack is not a good solution when you need to walk from the bottom to the top
+	// (for example, in order to construct the full path for the current entry)
 	std::stack<tree_info> m_stack;
 	git_repository *m_repo; // needed for git_tree_entry_subtree
 };
