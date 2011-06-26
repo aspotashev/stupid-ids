@@ -251,15 +251,23 @@ Repository::~Repository()
 		delete m_commits[i];
 }
 
+/**
+ * \static
+ */
+git_tree *Repository::git_tree_entry_subtree(git_repository *repo, const git_tree_entry *entry)
+{
+	const git_oid *subtree_oid = git_tree_entry_id(entry);
+	git_tree *subtree;
+	assert(git_tree_lookup(&subtree, repo, subtree_oid) == 0);
+
+	return subtree;
+}
+
 git_tree *Repository::git_tree_entry_subtree(const git_tree_entry *entry)
 {
 	assert(m_libgitRepo);
 
-	const git_oid *subtree_oid = git_tree_entry_id(entry);
-	git_tree *subtree;
-	assert(git_tree_lookup(&subtree, m_libgitRepo, subtree_oid) == 0);
-
-	return subtree;
+	return git_tree_entry_subtree(m_libgitRepo, entry);
 }
 
 char *concat_path(const char *path, const char *name)

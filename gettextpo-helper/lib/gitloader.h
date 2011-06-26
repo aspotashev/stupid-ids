@@ -107,6 +107,7 @@ public:
 	const char *gitDir() const;
 
 private:
+	static git_tree *git_tree_entry_subtree(git_repository *repo, const git_tree_entry *entry);
 	git_tree *git_tree_entry_subtree(const git_tree_entry *entry);
 	void initOidMaster();
 
