@@ -27,6 +27,9 @@ void TcpCommandServer::sendToClient(const void *data, size_t len)
 		0, (struct sockaddr *)&m_cliaddr, sizeof(m_cliaddr)) == len);
 }
 
+/**
+ * May throw exceptions if client disconnects.
+ */
 void TcpCommandServer::recvFromClient(void *data, size_t len)
 {
 	if (m_closeConnection)
@@ -73,8 +76,9 @@ void sigchild_handler (int signum)
 		pid = waitpid (-1, &status, WNOHANG);
 		if (pid > 0)
 		{
-			printf ("A child process has terminated (PID = %d, status = %d)\n", pid, status);
-			assert(status == 0);
+			int code = WEXITSTATUS(status); // argument passed to exit() in the child process
+			printf ("A child process has terminated (PID = %d, status = %d, code = %d)\n", pid, status, code);
+			assert(code == 0 || code == 1); // 1 means that excetion has been raised
 		}
 		else if (pid == 0 || (pid < 0 && errno == ECHILD))
 		{

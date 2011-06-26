@@ -194,21 +194,30 @@ void Server::commandHandler()
 		return;
 	}
 
-	if (command == StupidsClient::CMD_EXIT)
-		disconnect();
-	else if (command == StupidsClient::CMD_GET_MIN_ID_ARRAY)
-		handleGetMinIdArray();
-	else if (command == StupidsClient::CMD_GET_FIRST_ID)
-		handleGetFirstId();
-	else if (command == StupidsClient::CMD_GET_MIN_IDS)
-		handleGetMinIds();
-	else if (command == StupidsClient::CMD_INVOLVED_BY_MIN_IDS)
-		handleInvolvedByMinIds();
-	else
+	try
 	{
-		printf("Unknown command code %d.\n", command);
+		if (command == StupidsClient::CMD_EXIT)
+			disconnect();
+		else if (command == StupidsClient::CMD_GET_MIN_ID_ARRAY)
+			handleGetMinIdArray();
+		else if (command == StupidsClient::CMD_GET_FIRST_ID)
+			handleGetFirstId();
+		else if (command == StupidsClient::CMD_GET_MIN_IDS)
+			handleGetMinIds();
+		else if (command == StupidsClient::CMD_INVOLVED_BY_MIN_IDS)
+			handleInvolvedByMinIds();
+		else
+		{
+			printf("Unknown command code %d.\n", command);
+			disconnect();
+			assert(0);
+		}
+	}
+	catch (std::exception &e)
+	{
+		printf("Exception raised while processing client's requests:\n\t%s\n", e.what());
 		disconnect();
-		assert(0);
+		exit(1); // main server process accept this exit code as non-fatal
 	}
 }
 
