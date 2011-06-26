@@ -3,6 +3,7 @@
 #define GITLOADER_H
 
 #include <vector>
+#include <stack>
 
 #include <git2.h>
 
@@ -106,13 +107,18 @@ public:
 
 	const char *gitDir() const;
 
+	std::vector<GitOid> getCurrentOids();
+
 private:
 	static git_tree *git_tree_entry_subtree(git_repository *repo, const git_tree_entry *entry);
 	git_tree *git_tree_entry_subtree(const git_tree_entry *entry);
+
 	void initOidMaster();
 
 	void diffTree(git_tree *tree1, git_tree *tree2, const char *path, Commit *currentCommit);
 	void diffCommit(git_commit *commit1, git_commit *commit2);
+
+	class blob_iterator;
 
 private:
 	char *m_gitDir;
@@ -121,6 +127,36 @@ private:
 
 	std::vector<Commit *> m_commits;
 	bool m_commitsInit;
+};
+
+class Repository::blob_iterator
+{
+public:
+	/**
+	 * Does not take ownership of neither @p repo nor @p commit.
+	 */
+	void initBegin(Repository *repo, git_commit *commit);
+
+	const git_tree_entry *operator*() const;
+	blob_iterator &operator++();
+	blob_iterator operator++(int); // postfix "++"
+	void increment();
+	bool isEnd() const;
+
+private:
+	void enterDir(git_tree *tree);
+	void walkBlob();
+
+
+	struct tree_info
+	{
+		git_tree *tree;
+		size_t count;
+		size_t idx;
+	};
+
+	std::stack<tree_info> m_stack;
+	git_repository *m_repo; // needed for git_tree_entry_subtree
 };
 
 //----------------------------------------
@@ -139,6 +175,12 @@ public:
 	void addRepository(const char *git_dir);
 
 	TranslationContent *findOldestByTphash(const git_oid *tp_hash);
+
+	/**
+	 * \brief Returns an STL vector of IDs of all messages currently
+	 * present in "master" branch in any of the repositories.
+	 */
+	std::vector<int> getCurrentIdsVector();
 
 private:
 	const git_oid *findOldestByTphash_oid(const git_oid *tp_hash);

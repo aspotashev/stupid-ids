@@ -3,6 +3,7 @@
 #include <string.h>
 #include <assert.h>
 #include <vector>
+#include <set>
 #include <algorithm>
 
 #include <git2.h>
@@ -690,6 +691,144 @@ int Repository::commitIndexByOid(const git_oid *oid) const
 	return -1; // commit not found
 }
 
+/**
+ * \brief Returns the list of OIDs of all .po translation files currently
+ * present in "master" branch of this repository.
+ */
+std::vector<GitOid> Repository::getCurrentOids()
+{
+	std::vector<GitOid> res;
+
+	libgitRepo();
+
+	git_commit *commit;
+	initOidMaster();
+	assert(git_commit_lookup(&commit, m_libgitRepo, m_oidMaster) == 0); // TODO: make this a function
+
+	blob_iterator iter;
+	iter.initBegin(this, commit); // TODO: Repository::blob_begin(git_commit *)
+	for (; !iter.isEnd(); iter ++)
+	{
+		const char *name = git_tree_entry_name(*iter);
+		if (strcmp(name + strlen(name) - 3, ".po") != 0)
+			continue;
+
+		res.push_back(git_tree_entry_id(*iter));
+		printf("(((%s)))\n", git_tree_entry_name(*iter));
+	}
+
+	return res;
+}
+
+//---------------------------------------------------------
+
+// "Enters" the directory
+void Repository::blob_iterator::enterDir(git_tree *tree)
+{
+	tree_info ti;
+	ti.tree = tree;
+	ti.count = git_tree_entrycount(tree);
+	ti.idx = 0;
+
+	if (ti.count > 0)
+		m_stack.push(ti);
+	else // empty tree
+		git_tree_close(tree);
+}
+
+void Repository::blob_iterator::initBegin(Repository *repo, git_commit *commit)
+{
+	assert(repo);
+	assert(commit);
+
+	// TODO: guarantee that iterator is deleted
+	// when "Repository" object gets deleted,
+	// otherwise we get a pointer to a destroyed "git_repository" here
+	// after "Repository" object is deleted.
+	m_repo = repo->libgitRepo();
+
+	// root tree
+	git_tree *tree;
+	tree = NULL;
+	assert(git_commit_tree(&tree, commit) == 0);
+
+	enterDir(tree);
+	walkBlob();
+}
+
+void Repository::blob_iterator::walkBlob()
+{
+	if (isEnd())
+		return;
+
+	while (!isEnd())
+	{
+		const git_tree_entry *entry = NULL;
+		tree_info &ti = m_stack.top();
+
+		// We assume that tree entries are sorted by name
+		assert(ti.idx >= ti.count - 1 || git_tree_entry_namecmp(
+			git_tree_entry_byindex(ti.tree, ti.idx),
+			git_tree_entry_byindex(ti.tree, ti.idx + 1)) < 0);
+
+		if (ti.idx == ti.count) // directory ends
+		{
+			// Exit directory
+			git_tree_close(ti.tree);
+			m_stack.pop();
+
+			// Go to the next entry in the parent directory
+			if (!isEnd())
+				m_stack.top().idx ++;
+		}
+		else if (git_tree_entry_attributes(entry = git_tree_entry_byindex(ti.tree, ti.idx)) & REPO_MODE_DIR) // directory
+		{
+			enterDir(Repository::git_tree_entry_subtree(m_repo, entry));
+		}
+		else
+		{
+			break; // blob found
+		}
+	}
+}
+
+void Repository::blob_iterator::increment()
+{
+	assert(!isEnd());
+
+	m_stack.top().idx ++;
+	walkBlob();
+}
+
+const git_tree_entry *Repository::blob_iterator::operator*() const
+{
+	assert(!isEnd());
+
+	const tree_info &ti = m_stack.top();
+	assert(ti.idx >= 0 && ti.idx < ti.count);
+
+	return git_tree_entry_byindex(ti.tree, ti.idx);
+}
+
+Repository::blob_iterator &Repository::blob_iterator::operator++()
+{
+	increment();
+	return *this;
+}
+
+// postfix "++"
+Repository::blob_iterator Repository::blob_iterator::operator++(int)
+{
+	blob_iterator tmp = *this;
+	++(*this);
+	return tmp;
+}
+
+bool Repository::blob_iterator::isEnd() const
+{
+	return m_stack.size() == 0;
+}
+
 //---------------------------------------------------------
 
 GitLoader::GitLoader()
@@ -708,7 +847,8 @@ GitLoader::~GitLoader()
  * \param oid Git object ID of the blob.
  *
  * \returns Blob or NULL, if it was not found in any of the repositories.
- * It is necessary to call this method when you stop using a blob. Failure to do so will cause a memory leak.
+ * It is necessary to call the function "git_blob_close" when you
+ * stop using a blob. Failure to do so will cause a memory leak.
  */
 git_blob *GitLoader::blobLookup(const git_oid *oid)
 {
@@ -783,5 +923,27 @@ TranslationContent *GitLoader::findOldestByTphash(const git_oid *tp_hash)
 {
 	const git_oid *oid = findOldestByTphash_oid(tp_hash);
 	return oid ? new TranslationContent(this, oid) : NULL;
+}
+
+std::vector<int> GitLoader::getCurrentIdsVector()
+{
+	std::vector<int> res;
+	for (size_t i = 0; i < m_repos.size(); i ++)
+	{
+		std::vector<GitOid> cur = m_repos[i]->getCurrentOids();
+		for (size_t j = 0; j < cur.size(); j ++)
+		{
+			TranslationContent *content = new TranslationContent(this, cur[j].oid());
+			content->setDisplayFilename("[git]"); // for readMessages()
+			int first_id = content->getFirstId();
+			int id_count = content->readMessages().size(); // TODO: add a server command for retrieving messages count by tp_hash
+			for (int id = first_id; id < first_id + id_count; id ++)
+				res.push_back(id);
+
+//			printf("sz = %d\n", (int)res.size());
+		}
+	}
+
+	return res;
 }
 
