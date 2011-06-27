@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
+#include <algorithm>
 
 #include "filedbfirstids.h"
 
@@ -40,8 +41,9 @@ FiledbFirstIds::FiledbFirstIds(const char *filename, const char *filename_next_i
 	first_ids.push_back(next_id);
 
 	for (size_t i = 0; i < oids.size(); i ++)
-		m_firstIds[oids[i]] = std::make_pair<int, int>(
-			first_ids[i], first_ids[i + 1] - first_ids[i]);
+		m_firstIds.push_back(std::pair<GitOid, std::pair<int, int> >(oids[i], std::pair<int, int>(
+			first_ids[i], first_ids[i + 1] - first_ids[i])));
+	sort(m_firstIds.begin(), m_firstIds.end());
 }
 
 FiledbFirstIds::~FiledbFirstIds()
@@ -50,12 +52,13 @@ FiledbFirstIds::~FiledbFirstIds()
 
 std::pair<int, int> FiledbFirstIds::getFirstId(const GitOid &tp_hash)
 {
-	std::map<GitOid, std::pair<int, int> >::const_iterator iter;
-	iter = m_firstIds.find(tp_hash);
+	std::vector<std::pair<GitOid, std::pair<int, int> > >::iterator iter = lower_bound(
+		m_firstIds.begin(), m_firstIds.end(),
+		std::pair<GitOid, std::pair<int, int> >(tp_hash, std::pair<int, int>(0, -1)));
 
-	if (iter != m_firstIds.end())
+	if (iter != m_firstIds.end() && tp_hash == iter->first)
 		return iter->second;
 	else
-		return std::make_pair<int, int>(0, 0); // tp_hash not found
+		return std::make_pair<int, int>(0, -1); // tp_hash not found
 }
 

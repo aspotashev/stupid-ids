@@ -12,6 +12,6 @@ public:
 	std::pair<int, int> getFirstId(const GitOid &tp_hash);
 
 private:
-	std::map<GitOid, std::pair<int, int> > m_firstIds;
+	std::vector<std::pair<GitOid, std::pair<int, int> > > m_firstIds;
 };
 
