@@ -12,6 +12,7 @@
 #include <gettextpo-helper/gettextpo-helper.h>
 #include <gettextpo-helper/translationcontent.h>
 #include <gettextpo-helper/oidmapcache.h>
+#include <gettextpo-helper/stupids-client.h>
 
 #define REPO_MODE_DIR 040000
 
@@ -714,7 +715,7 @@ std::vector<GitOid> Repository::getCurrentOids()
 			continue;
 
 		res.push_back(git_tree_entry_id(*iter));
-		printf("(((%s)))\n", git_tree_entry_name(*iter));
+//		printf("(((%s)))\n", git_tree_entry_name(*iter));
 	}
 
 	return res;
@@ -927,21 +928,42 @@ TranslationContent *GitLoader::findOldestByTphash(const git_oid *tp_hash)
 
 std::vector<int> GitLoader::getCurrentIdsVector()
 {
-	std::vector<int> res;
+	std::vector<GitOid> oids;
 	for (size_t i = 0; i < m_repos.size(); i ++)
 	{
 		std::vector<GitOid> cur = m_repos[i]->getCurrentOids();
 		for (size_t j = 0; j < cur.size(); j ++)
-		{
-			TranslationContent *content = new TranslationContent(this, cur[j].oid());
-			content->setDisplayFilename("[git]"); // for readMessages()
-			int first_id = content->getFirstId();
-			int id_count = content->readMessages().size(); // TODO: add a server command for retrieving messages count by tp_hash
-			for (int id = first_id; id < first_id + id_count; id ++)
-				res.push_back(id);
+			oids.push_back(cur[j]);
+	}
 
-//			printf("sz = %d\n", (int)res.size());
+	std::vector<GitOid> tp_hashes;
+	for (size_t i = 0; i < oids.size(); i ++)
+	{
+		TranslationContent *content = new TranslationContent(this, oids[i].oid());
+		const git_oid *tp_hash = content->calculateTpHash();
+		if (tp_hash)
+			tp_hashes.push_back(GitOid(tp_hash));
+		else
+		{
+			printf("Warning: unknown tp-hash\n");
+			assert(0);
 		}
+	}
+
+	std::vector<std::pair<int, int> > first_ids = stupidsClient.getFirstIdPairs(tp_hashes);
+
+	std::vector<int> res;
+	for (size_t i = 0; i < first_ids.size(); i ++)
+	{
+		int first_id = first_ids[i].first;
+		int id_count = first_ids[i].second;
+
+		if (first_id == 0)
+			continue;
+		assert(id_count >= 0);
+
+		for (int id = first_id; id < first_id + id_count; id ++)
+			res.push_back(id);
 	}
 
 	return res;

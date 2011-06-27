@@ -12,6 +12,7 @@
 #include <errno.h>
 
 #include <gettextpo-helper/stupids-client.h>
+#include <gettextpo-helper/detectorbase.h>
 
 //-------- Working with stupids-server.rb over TCP/IP --------
 
@@ -220,6 +221,36 @@ int StupidsClient::getFirstId(const git_oid *tp_hash)
 {
 	std::pair<int, int> res = getFirstIdPair(tp_hash);
 	return res.first; // first_id
+}
+
+std::vector<std::pair<int, int> > StupidsClient::getFirstIdPairs(std::vector<GitOid> tp_hashes)
+{
+	try
+	{
+		connect();
+	}
+	catch (ExceptionConnectionFailed &e)
+	{
+		return std::vector<std::pair<int, int> >();
+	}
+
+	// send command
+	sendLong(CMD_GET_FIRST_ID_MULTI);
+	size_t count = tp_hashes.size();
+	sendLong(count);
+	for (size_t i = 0; i < count; i ++)
+		sendOid(tp_hashes[i].oid());
+
+	// read results
+	std::vector<std::pair<int, int> > res;
+	for (size_t i = 0; i < count; i ++)
+	{
+		int first_id = (int)recvLong();
+		int id_count = (int)recvLong();
+		res.push_back(std::pair<int, int>(first_id, id_count));
+	}
+
+	return res;
 }
 
 std::vector<int> StupidsClient::involvedByMinIds(std::vector<const git_oid *> tp_hashes, std::vector<int> min_ids)

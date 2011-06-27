@@ -5,6 +5,8 @@
 
 #include <git2.h>
 
+#include <gettextpo-helper/detectorbase.h>
+
 /**
  * \brief Class for working with stupids-server over TCP/IP
  */
@@ -57,6 +59,8 @@ public:
 
 	std::pair<int, int> getFirstIdPair(const git_oid *tp_hash);
 
+	std::vector<std::pair<int, int> > getFirstIdPairs(std::vector<GitOid> tp_hashes);
+
 	/**
 	 * \brief Sends the CMD_GET_FIRST_ID request to the server and returns the results
 	 *
@@ -93,8 +97,9 @@ public:
 		CMD_EXIT = 1,
 		CMD_GET_MIN_ID_ARRAY = 2,
 		CMD_GET_FIRST_ID = 3,
-		CMD_GET_MIN_IDS = 4,
-		CMD_INVOLVED_BY_MIN_IDS = 5,
+		CMD_GET_FIRST_ID_MULTI = 4,
+		CMD_GET_MIN_IDS = 5,
+		CMD_INVOLVED_BY_MIN_IDS = 6,
 	};
 
 protected:

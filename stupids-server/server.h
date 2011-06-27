@@ -34,6 +34,7 @@ private:
 
 	void handleGetMinIdArray();
 	void handleGetFirstId();
+	void handleGetFirstIdMulti();
 	void handleGetMinIds();
 	void handleInvolvedByMinIds();
 

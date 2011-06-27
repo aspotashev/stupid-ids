@@ -140,6 +140,31 @@ void Server::handleGetFirstId()
 	sendLong((uint32_t)id_count);
 }
 
+void Server::handleGetFirstIdMulti()
+{
+	size_t count = (size_t)recvLong();
+	for (size_t i = 0; i < count; i ++)
+	{
+		GitOid tp_hash = recvOid();
+
+		std::pair<int, int> first_ids = m_firstIds->getFirstId(tp_hash);
+		int first_id = first_ids.first;
+		int id_count = first_ids.second;
+
+		if (first_id == 0)
+		{
+			char tp_hash_str[GIT_OID_HEXSZ + 1];
+			tp_hash_str[GIT_OID_HEXSZ] = '\0';
+			git_oid_fmt(tp_hash_str, tp_hash.oid());
+			printf("First ID not found for this tp_hash: %s\n", tp_hash_str);
+		}
+
+		// "first_id == 0" means that the given tp_hash is unknown.
+		sendLong((uint32_t)first_id);
+		sendLong((uint32_t)id_count);
+	}
+}
+
 void Server::handleInvolvedByMinIds()
 {
 	// read input data
@@ -203,6 +228,8 @@ void Server::commandHandler()
 			handleGetMinIdArray();
 		else if (command == StupidsClient::CMD_GET_FIRST_ID)
 			handleGetFirstId();
+		else if (command == StupidsClient::CMD_GET_FIRST_ID_MULTI)
+			handleGetFirstIdMulti();
 		else if (command == StupidsClient::CMD_GET_MIN_IDS)
 			handleGetMinIds();
 		else if (command == StupidsClient::CMD_INVOLVED_BY_MIN_IDS)
