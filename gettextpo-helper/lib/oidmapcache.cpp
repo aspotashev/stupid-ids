@@ -3,6 +3,7 @@
 #include <string.h>
 #include <assert.h>
 #include <map>
+#include <algorithm>
 
 #include <git2.h>
 
@@ -33,8 +34,9 @@ OidMapCache::OidMapCache(const char *filename)
 	{
 		assert(fread(&oid, GIT_OID_RAWSZ, 1, f) == 1);
 		assert(fread(&tp_hash, GIT_OID_RAWSZ, 1, f) == 1);
-		m_cache[GitOid(&oid)] = GitOid(&tp_hash);
+		m_cache.push_back(std::pair<GitOid, GitOid>(GitOid(&oid), GitOid(&tp_hash)));
 	}
+	sort(m_cache.begin(), m_cache.end());
 
 	fclose(f);
 }
@@ -46,11 +48,12 @@ OidMapCache::~OidMapCache()
 
 const git_oid *OidMapCache::getValue(const git_oid *oid)
 {
-	std::map<GitOid, GitOid>::iterator iter = m_cache.find(GitOid(oid));
-	if (iter == m_cache.end())
-		return NULL;
-	else
+	std::vector<std::pair<GitOid, GitOid> >::iterator iter = lower_bound(
+		m_cache.begin(), m_cache.end(), std::pair<GitOid, GitOid>(GitOid(oid), GitOid::zero()));
+	if (iter != m_cache.end() && GitOid(oid) == iter->first)
 		return iter->second.oid();
+	else
+		return NULL;
 }
 
 void OidMapCache::addPair(const git_oid *oid, const git_oid *tp_hash)
@@ -59,7 +62,8 @@ void OidMapCache::addPair(const git_oid *oid, const git_oid *tp_hash)
 	assert(getValue(oid) == NULL);
 
 	// Add pair
-	m_cache[GitOid(oid)] = GitOid(tp_hash);
+	m_cache.push_back(std::pair<GitOid, GitOid>(GitOid(oid), GitOid(tp_hash)));
+	sort(m_cache.begin(), m_cache.end());
 
 	// Write into the file.
 	// "a" (append) means that we will write to the end of file.

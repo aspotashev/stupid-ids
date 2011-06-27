@@ -17,7 +17,7 @@ public:
 
 private:
 	char *m_filename;
-	std::map<GitOid, GitOid> m_cache;
+	std::vector<std::pair<GitOid, GitOid> > m_cache;
 };
 
 //---------------------------------------------------
