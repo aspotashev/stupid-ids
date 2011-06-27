@@ -85,6 +85,7 @@ void TranslationContent::clear()
 	m_minIdsInit = false;
 	m_messagesNormalInit = false;
 	m_firstId = 0; // 0 = uninitialized or undefined (undefined means that tp_hash is unknown on server)
+	m_idCount = -1;
 }
 
 /**
@@ -338,16 +339,30 @@ std::vector<int> TranslationContent::getMinIds()
 	return m_minIds;
 }
 
+void TranslationContent::initFirstIdPair()
+{
+	if (m_firstId != 0)
+		return;
+
+	const git_oid *tp_hash = calculateTpHash();
+	if (tp_hash)
+	{
+		std::pair<int, int> res = stupidsClient.getFirstIdPair(tp_hash);
+		m_firstId = res.first;
+		m_idCount = res.second;
+	}
+}
+
 int TranslationContent::getFirstId()
 {
-	if (m_firstId == 0)
-	{
-		const git_oid *tp_hash = calculateTpHash();
-		if (tp_hash)
-			m_firstId = stupidsClient.getFirstId(tp_hash);
-	}
-
+	initFirstIdPair();
 	return m_firstId;
+}
+
+int TranslationContent::getIdCount()
+{
+	initFirstIdPair();
+	return m_idCount;
 }
 
 void TranslationContent::writeToFile()

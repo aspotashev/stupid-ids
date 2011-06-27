@@ -40,6 +40,7 @@ public:
 
 	std::vector<int> getMinIds();
 	int getFirstId();
+	int getIdCount();
 
 	void writeToFile();
 
@@ -60,6 +61,8 @@ private:
 	std::string dumpPoFileTemplate();
 
 	void readMessagesInternal(std::vector<MessageGroup *> &dest, bool &destInit, bool obsolete);
+
+	void initFirstIdPair();
 
 	void assertOk();
 
@@ -83,6 +86,7 @@ private:
 	bool m_messagesNormalInit;
 
 	int m_firstId;
+	int m_idCount;
 
 	enum
 	{
