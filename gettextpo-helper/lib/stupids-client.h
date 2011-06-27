@@ -55,6 +55,8 @@ public:
 	 */
 	std::vector<int> getMinIds(std::vector<int> msg_ids);
 
+	std::pair<int, int> getFirstIdPair(const git_oid *tp_hash);
+
 	/**
 	 * \brief Sends the CMD_GET_FIRST_ID request to the server and returns the results
 	 *

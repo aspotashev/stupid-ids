@@ -192,7 +192,7 @@ std::vector<int> StupidsClient::getMinIds(std::vector<int> msg_ids)
 	return recvLongArray(msg_ids.size());
 }
 
-int StupidsClient::getFirstId(const git_oid *tp_hash)
+std::pair<int, int> StupidsClient::getFirstIdPair(const git_oid *tp_hash)
 {
 	assert(tp_hash);
 
@@ -202,7 +202,7 @@ int StupidsClient::getFirstId(const git_oid *tp_hash)
 	}
 	catch (ExceptionConnectionFailed &e)
 	{
-		return 0;
+		return std::pair<int, int>(0, -1);
 	}
 
 	// send command
@@ -211,9 +211,15 @@ int StupidsClient::getFirstId(const git_oid *tp_hash)
 
 	// read results
 	int first_id = (int)recvLong();
+	int id_count = (int)recvLong();
 
-//	assert(first_id > 0);
-	return first_id;
+	return std::pair<int, int>(first_id, id_count);
+}
+
+int StupidsClient::getFirstId(const git_oid *tp_hash)
+{
+	std::pair<int, int> res = getFirstIdPair(tp_hash);
+	return res.first; // first_id
 }
 
 std::vector<int> StupidsClient::involvedByMinIds(std::vector<const git_oid *> tp_hashes, std::vector<int> min_ids)

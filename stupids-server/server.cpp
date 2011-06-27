@@ -125,7 +125,7 @@ void Server::handleGetFirstId()
 
 	std::pair<int, int> first_ids = m_firstIds->getFirstId(tp_hash);
 	int first_id = first_ids.first;
-//	assert(first_id != 0);
+	int id_count = first_ids.second;
 
 	if (first_id == 0)
 	{
@@ -137,6 +137,7 @@ void Server::handleGetFirstId()
 
 	// "first_id == 0" means that the given tp_hash is unknown.
 	sendLong((uint32_t)first_id);
+	sendLong((uint32_t)id_count);
 }
 
 void Server::handleInvolvedByMinIds()
