@@ -23,6 +23,8 @@ public:
 
 	const git_oid *oid() const;
 
+	static GitOid zero();
+
 private:
 	git_oid m_oid;
 };

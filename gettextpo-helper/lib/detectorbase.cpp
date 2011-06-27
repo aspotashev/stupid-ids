@@ -54,6 +54,18 @@ const git_oid *GitOid::oid() const
 	return &m_oid;
 }
 
+/**
+ * \static
+ */
+GitOid GitOid::zero()
+{
+	unsigned char raw[20] = {0};
+	git_oid oid;
+	git_oid_mkraw(&oid, raw);
+
+	return GitOid(&oid);
+}
+
 //----------------------------------------
 
 GitOid2Change::GitOid2Change():
