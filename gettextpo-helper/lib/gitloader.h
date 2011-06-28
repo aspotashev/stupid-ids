@@ -132,9 +132,6 @@ private:
 class Repository::blob_iterator
 {
 public:
-	/**
-	 * Does not take ownership of neither @p repo nor @p commit.
-	 */
 	void initBegin(Repository *repo, git_commit *commit);
 
 	const git_tree_entry *operator*() const;
@@ -178,10 +175,6 @@ public:
 
 	TranslationContent *findOldestByTphash(const git_oid *tp_hash);
 
-	/**
-	 * \brief Returns an STL vector of IDs of all messages currently
-	 * present in "master" branch in any of the repositories.
-	 */
 	std::vector<int> getCurrentIdsVector();
 
 private:

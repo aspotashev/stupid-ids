@@ -737,6 +737,9 @@ void Repository::blob_iterator::enterDir(git_tree *tree)
 		git_tree_close(tree);
 }
 
+/**
+ * Does not take ownership of neither @p repo nor @p commit.
+ */
 void Repository::blob_iterator::initBegin(Repository *repo, git_commit *commit)
 {
 	assert(repo);
@@ -926,6 +929,10 @@ TranslationContent *GitLoader::findOldestByTphash(const git_oid *tp_hash)
 	return oid ? new TranslationContent(this, oid) : NULL;
 }
 
+/**
+ * \brief Returns an STL vector of IDs of all messages currently
+ * present in "master" branch in any of the repositories.
+ */
 std::vector<int> GitLoader::getCurrentIdsVector()
 {
 	std::vector<GitOid> oids;
