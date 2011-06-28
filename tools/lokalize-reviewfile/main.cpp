@@ -44,6 +44,9 @@ int main(int argc, char *argv[])
 	git_loader->addRepository("/home/sasha/kde-ru/kde-l10n-ru-stable/.git");
 	TranslationContent *old_content = git_loader->findOldestByTphash(tp_hash);
 
+//	std::vector<int> upToDateIds = git_loader->getCurrentIdsVector();
+//	sort(upToDateIds.begin(), upToDateIds.end());
+
 	// Write old_content to temporary file
 	const char *sync_filename = "/tmp/lokalize-sync-file.tmp";
 	if (old_content)
