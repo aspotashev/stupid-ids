@@ -183,7 +183,17 @@ void Server::handleInvolvedByMinIds()
 	std::vector<int> res;
 	for (size_t i = 0; i < tp_hashes.size(); i ++)
 	{
-		std::vector<int> c_ids = getTphashMinIds(tp_hashes[i]);
+		std::vector<int> c_ids;
+		try
+		{
+			c_ids = getTphashMinIds(tp_hashes[i]);
+		}
+		catch (ExceptionTpHashNotFound &e)
+		{
+			sendLongVector(std::vector<int>()); // empty vector
+			throw ExceptionTpHashNotFound();
+		}
+
 		sort(c_ids.begin(), c_ids.end());
 
 		std::vector<int> intersection(min_ids.size());
