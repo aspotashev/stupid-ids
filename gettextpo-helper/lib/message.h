@@ -16,13 +16,51 @@ class IddiffMessage;
 class MessageTranslationBase
 {
 public:
+	/**
+	 * @brief Constructs an empty message (without any translations).
+	 **/
 	MessageTranslationBase();
+
+	/**
+	 * @brief Constructs a message based on a libgettextpo message.
+	 *
+	 * @param message libgettextpo message.
+	 **/
 	MessageTranslationBase(po_message_t message);
+
+	/**
+	 * @brief Frees memory allocated for message translations.
+	 *
+	 **/
 	~MessageTranslationBase();
 
+	/**
+	 * @brief Escape special symbols and put in quotes.
+	 *
+	 * Escape the following characters: double quote ("), newline, tab, backslash.
+	 *
+	 * @param str Input string to escape.
+	 * @return Escaped string.
+	 **/
 	static std::string formatString(const char *str);
+
+	/**
+	 * @brief Format message translations as [f]"form1"[ "form2" ... "formN"]
+	 *
+	 * Special characters like "\t" and "\n" will be escaped.
+	 *
+	 * @return Formatted message (for .iddiff files, etc).
+	 **/
 	std::string formatPoMessage() const;
+
+	/**
+	 * @brief Returns a const pointer to a particular translation form.
+	 *
+	 * @param plural_form Index of translation form.
+	 * @return Pointer to buffer.
+	 **/
 	const char *msgstr(int plural_form) const;
+
 	void setMsgstr(int index, const char *str);
 	int numPlurals() const;
 	bool isFuzzy() const;
@@ -30,7 +68,11 @@ public:
 	bool equalTranslations(const MessageTranslationBase *o) const;
 
 protected:
+	/**
+	 * @brief Initialize an empty message (without any translations).
+	 **/
 	virtual void clear();
+
 	bool setNPluralsPacked(int n_plurals);
 
 	static std::string formatPoMessage(po_message_t message);
@@ -58,7 +100,12 @@ public:
 
 	bool isPlural() const;
 	bool isUntranslated() const;
+
+	/**
+	 * @brief Returns whether not untranslated and not fuzzy.
+	 **/
 	bool isTranslated() const;
+
 	const char *msgcomments() const;
 
 	// Also sets "m_edited" to true.

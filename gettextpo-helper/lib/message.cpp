@@ -70,9 +70,6 @@ bool MessageTranslationBase::setNPluralsPacked(int n_plurals)
 	return n_plurals > 0;
 }
 
-/**
- * \static
- */
 std::string MessageTranslationBase::formatPoMessage(po_message_t message)
 {
 	MessageTranslationBase *msg = new MessageTranslationBase(message);
@@ -99,13 +96,6 @@ std::string MessageTranslationBase::formatPoMessage() const
 	return res;
 }
 
-/**
- * \brief Escape special symbols and put in quotes.
- *
- * Escape the following characters: double quote ("), newline, tab, backslash.
- *
- * \static
- */
 std::string MessageTranslationBase::formatString(const char *str)
 {
 	assert(str);
@@ -325,9 +315,6 @@ bool Message::isUntranslated() const
 	return m_untranslated;
 }
 
-/**
- * \brief Not untranslated and not fuzzy.
- */
 bool Message::isTranslated() const
 {
 	return !isFuzzy() && !isUntranslated();
