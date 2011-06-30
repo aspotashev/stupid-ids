@@ -81,7 +81,7 @@ bool IddiffMessage::isTranslated() const
  * \brief Constructs an empty iddiff
  */
 Iddiffer::Iddiffer():
-	m_output(std::ostringstream::out), m_minimizedIds(false), m_hasDate(false)
+	m_output(std::ostringstream::out), m_minimizedIds(false)
 {
 }
 
@@ -252,23 +252,9 @@ void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *cont
 	po_file_free(file_b);
 }
 
-std::string Iddiffer::dateString()
+std::string Iddiffer::dateString() const
 {
-	if (!m_hasDate)
-		return std::string();
-
-	char str[100];
-	time_t display_time = m_date + 3600 * m_timezone;
-	struct tm *tm = gmtime(&display_time);
-
-	strftime(str, 99, "%Y-%m-%d %H:%M", tm);
-
-	// append timezone
-	sprintf(str + strlen(str), "%c%02d00",
-		m_timezone >= 0 ? '+' : '-',
-		abs(m_timezone));
-
-	return std::string(str);
+	return m_date.dateString();
 }
 
 std::string Iddiffer::generateIddiffText()
@@ -342,7 +328,7 @@ bool Iddiffer::loadIddiff(const char *filename)
 
 	bool has_subject = false;
 	bool has_author = false;
-	m_hasDate = false;
+	m_date.clear();
 	while (line_break)
 	{
 		line_break = strchr(cur_line, '\n');
@@ -400,51 +386,10 @@ bool Iddiffer::loadIddiff(const char *filename)
 		}
 		else if (!strcmp(line, "Date"))
 		{
-			assert(!m_hasDate); // catch duplicate "Date:" fields
+			assert(m_date.isNull()); // catch duplicate "Date:" fields
 
 			std::string date_string = std::string(colon);
-			m_hasDate = !date_string.empty();
-
-			if (m_hasDate)
-			{
-				m_timezone = 0;
-
-				struct tm tm;
-				tm.tm_sec = 0;
-				tm.tm_wday = 0;
-				tm.tm_yday = 0;
-				tm.tm_isdst = 0;
-
-				// Read date/time from string
-				sscanf(date_string.c_str(), "%d-%d-%d %d:%d%d", &tm.tm_year, &tm.tm_mon, &tm.tm_mday, &tm.tm_hour, &tm.tm_min, &m_timezone);
-				tm.tm_year -= 1900;
-				tm.tm_mon --;
-
-				assert(m_timezone % 100 == 0);
-				m_timezone /= 100;
-
-				// Calculate UNIX timestamp
-				const char *old_tz = getenv("TZ");
-				if (old_tz)
-					old_tz = xstrdup(old_tz);
-
-				assert(setenv("TZ", "UTC", 1) == 0); // make mktime() return time in UTC
-				m_date = mktime(&tm) - 3600 * m_timezone; // date/time in UTC
-
-				// Restore "TZ" environment variable
-				if (old_tz)
-				{
-					assert(setenv("TZ", old_tz, 1) == 0);
-					delete [] old_tz;
-				}
-				else
-				{
-					assert(unsetenv("TZ") == 0);
-				}
-
-//				printf("m_date = %Ld, date_str = %s, m_timezone = %d\n", (long long int)m_date, date_str, m_timezone);
-//				std::cout << "dateString: " << dateString() << std::endl;
-			}
+			m_date.fromString(date_string.c_str());
 		}
 		else
 		{
@@ -455,7 +400,7 @@ bool Iddiffer::loadIddiff(const char *filename)
 	// Check that all fields are present (is it really necessary?)
 	assert(has_subject);
 	assert(has_author);
-	if (!m_hasDate)
+	if (m_date.isNull())
 		fprintf(stderr, "Warning: the .iddiff file does not have a \"Date:\" field in the header\n");
 
 
@@ -1028,14 +973,6 @@ bool Iddiffer::isRejectAlreadyReviewed(int msg_id, IddiffMessage *item)
 
 void Iddiffer::setCurrentDateTime()
 {
-	m_hasDate = true;
-	m_date = time(NULL);
-
-
-	struct tm *tmtime = localtime(&m_date);
-	int offset = tmtime->tm_gmtoff;
-
-	assert(offset % 3600 == 0);
-	m_timezone = offset / 3600;
+	m_date.setCurrentDateTime();
 }
 

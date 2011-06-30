@@ -7,6 +7,7 @@
 #include <gettext-po.h>
 
 #include <gettextpo-helper/message.h>
+#include <gettextpo-helper/filedatetime.h>
 
 
 class Message;
@@ -153,7 +154,7 @@ private:
 	std::pair<int, IddiffMessage *> loadMessageListEntry(const char *line);
 
 	static IddiffMessage *findIddiffMessageList(std::vector<IddiffMessage *> list, const IddiffMessage *item);
-	std::string dateString();
+	std::string dateString() const;
 
 	// Helper functions for minimizeIds()
 	template <typename T> static void substituteMsgId(std::map<int, T> &items, int old_id, int new_id);
@@ -168,9 +169,7 @@ private:
 private:
 	std::string m_subject;
 	std::string m_author;
-	bool m_hasDate;
-	time_t m_date; // date/time in UTC
-	int m_timezone; // only for displaying, does not affect actual date/time in UTC
+	FileDateTime m_date;
 
 	std::map<int, std::vector<IddiffMessage *> > m_removedItems;
 	std::map<int, std::vector<IddiffMessage *> > m_addedItems;

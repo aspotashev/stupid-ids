@@ -10,6 +10,7 @@ set(gettextpo_helper_LIB_SRCS
 	oidmapcache.cpp
 	iddiff.cpp
 	message.cpp
+	filedatetime.cpp
 
 	detector.cpp
 	detectorbase.cpp
