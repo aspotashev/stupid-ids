@@ -134,7 +134,9 @@ void Iddiffer::diffAgainstEmpty(TranslationContent *content_b)
 	assert(first_id > 0);
 
 
+	// TODO: function for this
 	m_date = content_b->date();
+	m_author = content_b->author();
 
 	// compare pairs of messages in 2 .po files
 	po_file_t file_b = content_b->poFileRead();
@@ -183,7 +185,9 @@ void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *cont
 	assert(first_id > 0);
 
 
+	// TODO: function for this
 	m_date = content_b->date();
+	m_author = content_b->author();
 
 	// compare pairs of messages in 2 .po files
 	po_file_t file_a = content_a->poFileRead();
@@ -833,6 +837,11 @@ void Iddiffer::merge(Iddiffer *diff)
 	// Keep the most recent date/time
 	if (m_date.isNull() || diff->date() > m_date)
 		m_date = diff->date();
+
+	if (m_author.empty())
+		m_author = diff->m_author;
+	else if (!diff->m_author.empty())
+		m_author += ", " + diff->m_author;
 }
 
 std::vector<IddiffMessage *> Iddiffer::findRemoved(int msg_id)

@@ -63,6 +63,7 @@ public:
 	const git_oid *calculateTpHash();
 	std::vector<MessageGroup *> readMessages();
 	const FileDateTime &date();
+	std::string author() const;
 
 	std::vector<int> getMinIds();
 	int getFirstId();
@@ -112,6 +113,7 @@ private:
 	bool m_messagesNormalInit;
 
 	FileDateTime m_date;
+	std::string m_author;
 
 	int m_firstId;
 	int m_idCount;

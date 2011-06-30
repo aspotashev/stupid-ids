@@ -269,8 +269,18 @@ void TranslationContent::readMessagesInternal(std::vector<MessageGroup *> &dest,
 
 	// TODO: function for this
 	char *date_str = po_header_field(po_file_domain_header(file, NULL), "PO-Revision-Date");
-	m_date.fromString(date_str);
-	delete [] date_str;
+	if (date_str)
+	{
+		m_date.fromString(date_str);
+		delete [] date_str;
+	}
+
+	char *author_str = po_header_field(po_file_domain_header(file, NULL), "Last-Translator");
+	if (author_str)
+	{
+		m_author = std::string(author_str);
+		delete [] author_str;
+	}
 
 	// skipping header
 	po_message_t message = po_next_message(iterator);
@@ -509,6 +519,11 @@ const FileDateTime &TranslationContent::date()
 	}
 
 	return m_date;
+}
+
+std::string TranslationContent::author() const
+{
+	return m_author;
 }
 
 //--------------------------------------------------
