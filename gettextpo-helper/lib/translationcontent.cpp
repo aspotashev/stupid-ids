@@ -345,6 +345,7 @@ int TranslationContent::getIdCount()
 	return m_idCount;
 }
 
+// TODO: do nothing if no messages have been changed
 void TranslationContent::writeToFile()
 {
 	assert(m_type == TYPE_FILE);
