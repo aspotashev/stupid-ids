@@ -1,3 +1,5 @@
+#ifndef STUPIDSCLIENT_H
+#define STUPIDSCLIENT_H
 
 #include <arpa/inet.h>
 #include <exception>
@@ -25,6 +27,14 @@ public:
 	 * \brief Exception raised when trying to send/receive data to/from the server, but the connection has already been closed
 	 */
 	class ExceptionNoConnection : public std::exception
+	{
+		virtual const char *what() const throw();
+	};
+
+	/**
+	 * \brief Exception raised when stupids-server returns non-zero error code in reply.
+	 */
+	class ExceptionRequestFailed : public std::exception
 	{
 		virtual const char *what() const throw();
 	};
@@ -115,6 +125,7 @@ protected:
 	uint32_t recvLong();
 	std::vector<int> recvLongArray(size_t count);
 	std::vector<int> recvLongVector();
+	void checkRecvErrorCode();
 
 private:
 	int m_sockfd;
@@ -123,4 +134,6 @@ private:
 };
 
 #define stupidsClient (StupidsClient::instance())
+
+#endif // STUPIDSCLIENT_H
 

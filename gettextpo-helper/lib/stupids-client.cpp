@@ -171,6 +171,8 @@ std::vector<int> StupidsClient::getMinIds(const git_oid *tp_hash)
 	sendLong(CMD_GET_MIN_ID_ARRAY);
 	sendOid(tp_hash);
 
+	checkRecvErrorCode();
+
 	// read results
 	return recvLongVector();
 
@@ -188,6 +190,8 @@ std::vector<int> StupidsClient::getMinIds(std::vector<int> msg_ids)
 	// send command
 	sendLong(CMD_GET_MIN_IDS);
 	sendLongVector(msg_ids);
+
+	checkRecvErrorCode();
 
 	// read results
 	return recvLongArray(msg_ids.size());
@@ -209,6 +213,8 @@ std::pair<int, int> StupidsClient::getFirstIdPair(const git_oid *tp_hash)
 	// send command
 	sendLong(CMD_GET_FIRST_ID);
 	sendOid(tp_hash);
+
+	checkRecvErrorCode();
 
 	// read results
 	int first_id = (int)recvLong();
@@ -241,6 +247,8 @@ std::vector<std::pair<int, int> > StupidsClient::getFirstIdPairs(std::vector<Git
 	for (size_t i = 0; i < count; i ++)
 		sendOid(tp_hashes[i].oid());
 
+	checkRecvErrorCode();
+
 	// read results
 	std::vector<std::pair<int, int> > res;
 	for (size_t i = 0; i < count; i ++)
@@ -269,6 +277,8 @@ std::vector<int> StupidsClient::involvedByMinIds(std::vector<const git_oid *> tp
 	// send min_ids
 	sendLongVector(min_ids);
 
+	checkRecvErrorCode();
+
 	// read results
 	return recvLongVector();
 }
@@ -283,6 +293,12 @@ StupidsClient &StupidsClient::instance()
 	return *s_instance;
 }
 
+void StupidsClient::checkRecvErrorCode()
+{
+	if (recvLong() != 0) // checking error code
+		throw ExceptionRequestFailed();
+}
+
 //--------------------------------------------
 
 const char *StupidsClient::ExceptionConnectionFailed::what() const throw()
@@ -293,5 +309,10 @@ const char *StupidsClient::ExceptionConnectionFailed::what() const throw()
 const char *StupidsClient::ExceptionNoConnection::what() const throw()
 {
 	return "ExceptionNoConnection (connection has already been closed)";
+}
+
+const char* StupidsClient::ExceptionRequestFailed::what() const throw()
+{
+	return "ExceptionRequestFailed (stupids-server returned non-zero error code)";
 }
 

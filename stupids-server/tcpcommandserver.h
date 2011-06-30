@@ -2,6 +2,7 @@
 #include <exception>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <string>
 
 class TcpCommandServer
 {
@@ -32,10 +33,13 @@ protected:
 	virtual void commandHandler() = 0;
 	void recvFromClient(void *data, size_t len);
 	void sendToClient(const void *data, size_t len);
+	void flushToClient();
+	void flushErrorToClient(uint32_t code);
 	void disconnect();
 
 private:
 	void sessionOpened();
+	void writeToClient(const void *data, size_t len);
 
 
 	int m_connfd;
@@ -43,5 +47,7 @@ private:
 	socklen_t m_clilen;
 
 	bool m_closeConnection;
+
+	std::string m_outputBuffer;
 };
 

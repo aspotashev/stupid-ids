@@ -59,12 +59,26 @@ std::vector<int> Server::recvLongVector()
 
 //-----------------------
 
+/**
+ * @brief Prepares a 32-bit value for sending to client.
+ *
+ * Conversion to network byte order will be done automatically.
+ *
+ * @param data Integer value to send.
+ **/
 void Server::sendLong(uint32_t data)
 {
 	data = htonl(data);
 	sendToClient(&data, sizeof(uint32_t));
 }
 
+/**
+ * @brief Prepares an array of integers (without their count) for sending to client.
+ *
+ * Conversion to network byte order will be done automatically.
+ *
+ * @param arr Array to send.
+ **/
 void Server::sendLongArray(std::vector<int> arr)
 {
 	uint32_t *arr_raw = new uint32_t[(size_t)arr.size()];
@@ -75,6 +89,13 @@ void Server::sendLongArray(std::vector<int> arr)
 	delete [] arr_raw;
 }
 
+/**
+ * @brief Prepares a vector of integers (count + data) for sending to client.
+ *
+ * Conversion to network byte order will be done automatically.
+ *
+ * @param vec Vector to send.
+ **/
 void Server::sendLongVector(std::vector<int> vec)
 {
 	sendLong((uint32_t)vec.size());
@@ -183,17 +204,7 @@ void Server::handleInvolvedByMinIds()
 	std::vector<int> res;
 	for (size_t i = 0; i < tp_hashes.size(); i ++)
 	{
-		std::vector<int> c_ids;
-		try
-		{
-			c_ids = getTphashMinIds(tp_hashes[i]);
-		}
-		catch (ExceptionTpHashNotFound &e)
-		{
-			sendLongVector(std::vector<int>()); // empty vector
-			throw ExceptionTpHashNotFound();
-		}
-
+		std::vector<int> c_ids = getTphashMinIds(tp_hashes[i]);
 		sort(c_ids.begin(), c_ids.end());
 
 		std::vector<int> intersection(min_ids.size());
@@ -210,13 +221,6 @@ void Server::handleInvolvedByMinIds()
 	sendLongVector(res);
 }
 
-// TODO: the first word (4 bytes) in the output should be the error code.
-// How to implement this:
-// 1. "send*" function should only dump the data into a buffer, don't send it immediately (because if an error occurs, the data shouldn't be sent)
-// 2. on errors, "handle*" function throw different exceptions
-// 3. here, in Server::commandHandler(), we catch the exceptions, and:
-// 	3.1. If there was an exception, send only the error code to the client (different exceptions have different error codes)
-// 	3.2. If there were no exceptions, send 0 as the error code (0 = "no error") and the buffered data to the client
 void Server::commandHandler()
 {
 	uint32_t command;
@@ -233,7 +237,11 @@ void Server::commandHandler()
 	try
 	{
 		if (command == StupidsClient::CMD_EXIT)
+		{
+			flushToClient();
 			disconnect();
+			return;
+		}
 		else if (command == StupidsClient::CMD_GET_MIN_ID_ARRAY)
 			handleGetMinIdArray();
 		else if (command == StupidsClient::CMD_GET_FIRST_ID)
@@ -247,16 +255,20 @@ void Server::commandHandler()
 		else
 		{
 			printf("Unknown command code %d.\n", command);
+			flushErrorToClient(1);
 			disconnect();
-			assert(0);
+			return;
 		}
 	}
 	catch (std::exception &e)
 	{
 		printf("Exception raised while processing client's requests:\n\t%s\n", e.what());
+		flushErrorToClient(2);
 		disconnect();
-		exit(1); // main server process accept this exit code as non-fatal
+		return;
 	}
+
+	flushToClient();
 }
 
 //-----------------------------------------------------
