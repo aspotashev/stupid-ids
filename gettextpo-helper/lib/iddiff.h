@@ -15,7 +15,20 @@ class MessageGroup;
 class IddiffMessage : public MessageTranslationBase
 {
 public:
+	/**
+	 * @brief Constructs an empty IddiffMessage.
+	 **/
 	IddiffMessage();
+
+	/**
+	 * @brief Copying constructor.
+	 *
+	 * All internal dynamically allocatable strings will also be duplicated.
+	 *
+	 * @param msg The message to copy from.
+	 **/
+	IddiffMessage(const IddiffMessage &msg);
+
 	IddiffMessage(po_message_t message);
 	~IddiffMessage();
 

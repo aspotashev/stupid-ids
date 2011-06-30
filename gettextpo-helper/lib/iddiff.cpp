@@ -14,12 +14,18 @@
 #include <gettextpo-helper/iddiff.h>
 
 
-/**
- * \brief Constructs an empty IddiffMessage
- */
 IddiffMessage::IddiffMessage():
 	MessageTranslationBase()
 {
+}
+
+IddiffMessage::IddiffMessage (const IddiffMessage &msg)
+{
+	m_fuzzy = msg.m_fuzzy;
+
+	m_numPlurals = msg.m_numPlurals;
+	for (int i = 0; i < m_numPlurals; i ++)
+		m_msgstr[i] = xstrdup(msg.m_msgstr[i]);
 }
 
 IddiffMessage::IddiffMessage(po_message_t message):
