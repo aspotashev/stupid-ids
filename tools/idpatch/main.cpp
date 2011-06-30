@@ -2,7 +2,6 @@
 #include <assert.h>
 #include <iostream>
 
-//#include <gettextpo-helper/translationcontent.h>
 #include <gettextpo-helper/translation-collector.h>
 #include <gettextpo-helper/iddiff.h>
 
