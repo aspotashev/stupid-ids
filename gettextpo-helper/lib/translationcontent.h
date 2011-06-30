@@ -19,12 +19,36 @@ public:
 		virtual const char *what() const throw();
 	};
 
+	/**
+	* \brief Constructs a TranslationContent from a file.
+	*
+	* \param filename File name.
+	*/
 	TranslationContent(const char *filename);
+
+	/**
+	* \brief Constructs a TranslationContent from a Git blob identified by its OID.
+	*
+	* \param git_loader Git repositories list used for searching the blob by OID.
+	* \param oid OID of the blob.
+	*/
 	TranslationContent(GitLoaderBase *git_loader, const git_oid *oid);
+
+	/**
+	* \brief Constructs a TranslationContent using data from a buffer.
+	*
+	* \param buffer Buffer.
+	* \param len Size of the buffer.
+	*/
 	TranslationContent(const void *buffer, size_t len);
+
 	~TranslationContent();
 
+	/**
+	* \brief Set the filename used for Message objects created by readMessages().
+	*/
 	void setDisplayFilename(const char *filename);
+
 	const char *displayFilename() const;
 
 	// Caller should run 'po_file_free'

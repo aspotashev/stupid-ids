@@ -19,28 +19,11 @@ TcpCommandServer::~TcpCommandServer()
 {
 }
 
-/**
- * @brief Prepares a block of data for sending to client.
- *
- * Data will be actually sent to client by flushToClient().
- *
- * @param data Pointer to data buffer.
- * @param len Length of data in buffer in bytes.
- **/
 void TcpCommandServer::sendToClient(const void *data, size_t len)
 {
 	m_outputBuffer.append((const char *)data, len);
 }
 
-/**
- * @brief Actually writes a data block to client.
- *
- * Internal use only, derived classes should use
- * flushToClient() or flushErrorToClient().
- *
- * @param data Pointer to data buffer.
- * @param len Length of data in buffer in bytes.
- **/
 void TcpCommandServer::writeToClient(const void *data, size_t len)
 {
 	assert (!m_closeConnection);
@@ -49,11 +32,6 @@ void TcpCommandServer::writeToClient(const void *data, size_t len)
 		0, (struct sockaddr *)&m_cliaddr, sizeof(m_cliaddr)) == len);
 }
 
-/**
- * @brief Sends data prepared by send*() calls to the client.
- *
- * Output buffer will be cleared afterwards.
- **/
 void TcpCommandServer::flushToClient()
 {
 	// Send error code: 0 = no error
@@ -64,12 +42,6 @@ void TcpCommandServer::flushToClient()
 	m_outputBuffer.clear();
 }
 
-/**
- * @brief Discards data prepared for sending to client
- * and sends the given error code instead.
- *
- * Output buffer will be cleared afterwards.
- **/
 void TcpCommandServer::flushErrorToClient(uint32_t code)
 {
 	code = htonl(code);
@@ -77,14 +49,6 @@ void TcpCommandServer::flushErrorToClient(uint32_t code)
 	m_outputBuffer.clear();
 }
 
-/**
- * @brief Receives of block of data from client.
- *
- * May throw exceptions if client disconnects.
- *
- * @param data Pointer to the buffer to save data to.
- * @param len Length of data to be read (in bytes).
- **/
 void TcpCommandServer::recvFromClient(void *data, size_t len)
 {
 	if (m_closeConnection)

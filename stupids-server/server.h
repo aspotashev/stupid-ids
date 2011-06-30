@@ -25,8 +25,31 @@ private:
 	uint32_t recvLong();
 	std::vector<int> recvLongVector();
 
+	/**
+	* @brief Prepares a 32-bit value for sending to client.
+	*
+	* Conversion to network byte order will be done automatically.
+	*
+	* @param data Integer value to send.
+	**/
 	void sendLong(uint32_t data);
+
+	/**
+	* @brief Prepares an array of integers (without their count) for sending to client.
+	*
+	* Conversion to network byte order will be done automatically.
+	*
+	* @param arr Array to send.
+	**/
 	void sendLongArray(std::vector<int> arr);
+
+	/**
+	* @brief Prepares a vector of integers (count + data) for sending to client.
+	*
+	* Conversion to network byte order will be done automatically.
+	*
+	* @param vec Vector to send.
+	**/
 	void sendLongVector(std::vector<int> vec);
 
 	std::vector<int> getTphashMinIds(GitOid tp_hash);

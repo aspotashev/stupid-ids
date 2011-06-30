@@ -59,26 +59,12 @@ std::vector<int> Server::recvLongVector()
 
 //-----------------------
 
-/**
- * @brief Prepares a 32-bit value for sending to client.
- *
- * Conversion to network byte order will be done automatically.
- *
- * @param data Integer value to send.
- **/
 void Server::sendLong(uint32_t data)
 {
 	data = htonl(data);
 	sendToClient(&data, sizeof(uint32_t));
 }
 
-/**
- * @brief Prepares an array of integers (without their count) for sending to client.
- *
- * Conversion to network byte order will be done automatically.
- *
- * @param arr Array to send.
- **/
 void Server::sendLongArray(std::vector<int> arr)
 {
 	uint32_t *arr_raw = new uint32_t[(size_t)arr.size()];
@@ -89,13 +75,6 @@ void Server::sendLongArray(std::vector<int> arr)
 	delete [] arr_raw;
 }
 
-/**
- * @brief Prepares a vector of integers (count + data) for sending to client.
- *
- * Conversion to network byte order will be done automatically.
- *
- * @param vec Vector to send.
- **/
 void Server::sendLongVector(std::vector<int> vec)
 {
 	sendLong((uint32_t)vec.size());

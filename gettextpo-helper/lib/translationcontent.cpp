@@ -9,11 +9,6 @@
 #include <gettextpo-helper/gitloader.h>
 #include <gettextpo-helper/message.h>
 
-/**
- * \brief Constructs a TranslationContent from a file.
- *
- * \param filename File name.
- */
 TranslationContent::TranslationContent(const char *filename)
 {
 	clear();
@@ -23,12 +18,6 @@ TranslationContent::TranslationContent(const char *filename)
 	setDisplayFilename(filename);
 }
 
-/**
- * \brief Constructs a TranslationContent from a Git blob identified by its OID.
- *
- * \param git_loader Git repositories list used for searching the blob by OID.
- * \param oid OID of the blob.
- */
 TranslationContent::TranslationContent(GitLoaderBase *git_loader, const git_oid *oid)
 {
 	clear();
@@ -39,12 +28,6 @@ TranslationContent::TranslationContent(GitLoaderBase *git_loader, const git_oid 
 	git_oid_cpy(m_oid, oid);
 }
 
-/**
- * \brief Constructs a TranslationContent using data from a buffer.
- *
- * \param buffer Buffer.
- * \param len Size of the buffer.
- */
 TranslationContent::TranslationContent(const void *buffer, size_t len)
 {
 	clear();
@@ -88,9 +71,6 @@ void TranslationContent::clear()
 	m_idCount = -1;
 }
 
-/**
- * \brief Set the filename used for Message objects created by readMessages().
- */
 void TranslationContent::setDisplayFilename(const char *filename)
 {
 	if (m_displayFilename)

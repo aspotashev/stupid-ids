@@ -31,14 +31,56 @@ public:
 
 protected:
 	virtual void commandHandler() = 0;
+
+	/**
+	* @brief Receives of block of data from client.
+	*
+	* May throw exceptions if client disconnects.
+	*
+	* @param data Pointer to the buffer to save data to.
+	* @param len Length of data to be read (in bytes).
+	**/
 	void recvFromClient(void *data, size_t len);
+
+	/**
+	* @brief Prepares a block of data for sending to client.
+	*
+	* Data will be actually sent to client by flushToClient().
+	*
+	* @param data Pointer to data buffer.
+	* @param len Length of data in buffer in bytes.
+	**/
 	void sendToClient(const void *data, size_t len);
+
+	/**
+	* @brief Sends data prepared by send*() calls to the client.
+	*
+	* Output buffer will be cleared afterwards.
+	**/
 	void flushToClient();
+
+	/**
+	* @brief Discards data prepared for sending to client
+	* and sends the given error code instead.
+	*
+	* Output buffer will be cleared afterwards.
+	**/
 	void flushErrorToClient(uint32_t code);
+
 	void disconnect();
 
 private:
 	void sessionOpened();
+
+	/**
+	* @brief Actually writes a data block to client.
+	*
+	* Internal use only, derived classes should use
+	* flushToClient() or flushErrorToClient().
+	*
+	* @param data Pointer to data buffer.
+	* @param len Length of data in buffer in bytes.
+	**/
 	void writeToClient(const void *data, size_t len);
 
 
