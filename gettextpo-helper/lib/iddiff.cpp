@@ -142,6 +142,7 @@ void Iddiffer::diffAgainstEmpty(TranslationContent *content_b)
 	// skipping headers
 	po_message_t message_b = po_next_message(iterator_b);
 
+	// TODO: use data from TranslationContent::readMessages
 	for (int index = 0;
 		(message_b = po_next_message(iterator_b)) &&
 		!po_message_is_obsolete(message_b);
@@ -196,6 +197,7 @@ void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *cont
 	po_message_t message_a = po_next_message(iterator_a);
 	po_message_t message_b = po_next_message(iterator_b);
 
+	// TODO: use data from TranslationContent::readMessages
 	for (int index = 0;
 		(message_a = po_next_message(iterator_a)) &&
 		(message_b = po_next_message(iterator_b)) &&
