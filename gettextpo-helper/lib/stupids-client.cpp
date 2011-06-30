@@ -95,9 +95,9 @@ std::vector<int> StupidsClient::recvLongArray(size_t count)
 	uint32_t *arr = new uint32_t[count];
 	recvFromServer(arr, sizeof(uint32_t) * count);
 
-	std::vector<int> res; // TODO: reserve memory for 'count' elements
+	std::vector<int> res(count);
 	for (size_t i = 0; i < count; i ++)
-		res.push_back((int)ntohl(arr[i]));
+		res[i] = (int)ntohl(arr[i]);
 	delete [] arr;
 
 	return res;
