@@ -42,7 +42,7 @@ bool FileDateTime::isNull() const
 
 void FileDateTime::fromString (const char* str)
 {
-	m_init = (strlen(str) > 0);
+	m_init = str && strlen(str) > 0;
 
 	if (m_init)
 	{
