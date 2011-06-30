@@ -134,6 +134,8 @@ void Iddiffer::diffAgainstEmpty(TranslationContent *content_b)
 	assert(first_id > 0);
 
 
+	m_date = content_b->date();
+
 	// compare pairs of messages in 2 .po files
 	po_file_t file_b = content_b->poFileRead();
 	po_message_iterator_t iterator_b = po_message_iterator(file_b, "messages");
@@ -179,6 +181,8 @@ void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *cont
 	int first_id = stupidsClient.getFirstId(tp_hash);
 	assert(first_id > 0);
 
+
+	m_date = content_b->date();
 
 	// compare pairs of messages in 2 .po files
 	po_file_t file_a = content_a->poFileRead();
@@ -250,6 +254,11 @@ void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *cont
 	po_message_iterator_free(iterator_b);
 	po_file_free(file_a);
 	po_file_free(file_b);
+}
+
+const FileDateTime &Iddiffer::date() const
+{
+	return m_date;
 }
 
 std::string Iddiffer::dateString() const
@@ -818,6 +827,10 @@ void Iddiffer::merge(Iddiffer *diff)
 		insertAddedClone(other_added[i]); // this also clones the IddiffMessage object
 	for (size_t i = 0; i < other_review.size(); i ++)
 		insertReviewClone(other_review[i]); // this also clones the IddiffMessage object
+
+	// Keep the most recent date/time
+	if (m_date.isNull() || diff->date() > m_date)
+		m_date = diff->date();
 }
 
 std::vector<IddiffMessage *> Iddiffer::findRemoved(int msg_id)

@@ -155,6 +155,7 @@ private:
 
 	static IddiffMessage *findIddiffMessageList(std::vector<IddiffMessage *> list, const IddiffMessage *item);
 	std::string dateString() const;
+	const FileDateTime &date() const;
 
 	// Helper functions for minimizeIds()
 	template <typename T> static void substituteMsgId(std::map<int, T> &items, int old_id, int new_id);

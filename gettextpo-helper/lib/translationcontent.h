@@ -7,6 +7,7 @@
 
 #include <gettext-po.h>
 #include <git2.h>
+#include <gettextpo-helper/filedatetime.h>
 
 class MessageGroup;
 class GitLoaderBase;
@@ -61,6 +62,7 @@ public:
 	const git_oid *gitBlobHash();
 	const git_oid *calculateTpHash();
 	std::vector<MessageGroup *> readMessages();
+	const FileDateTime &date();
 
 	std::vector<int> getMinIds();
 	int getFirstId();
@@ -108,6 +110,8 @@ private:
 
 	std::vector<MessageGroup *> m_messagesNormal;
 	bool m_messagesNormalInit;
+
+	FileDateTime m_date;
 
 	int m_firstId;
 	int m_idCount;

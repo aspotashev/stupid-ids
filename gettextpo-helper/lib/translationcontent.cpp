@@ -8,6 +8,7 @@
 #include <gettextpo-helper/stupids-client.h>
 #include <gettextpo-helper/gitloader.h>
 #include <gettextpo-helper/message.h>
+#include "filedatetime.h"
 
 TranslationContent::TranslationContent(const char *filename)
 {
@@ -266,6 +267,11 @@ void TranslationContent::readMessagesInternal(std::vector<MessageGroup *> &dest,
 	po_file_t file = poFileRead();
 	po_message_iterator_t iterator = po_message_iterator(file, "messages");
 
+	// TODO: function for this
+	char *date_str = po_header_field(po_file_domain_header(file, NULL), "PO-Revision-Date");
+	m_date.fromString(date_str);
+	delete [] date_str;
+
 	// skipping header
 	po_message_t message = po_next_message(iterator);
 
@@ -492,6 +498,17 @@ void TranslationContent::assertOk()
 {
 	if (m_minIdsInit && m_messagesNormalInit)
 		assert(m_minIds.size() == m_messagesNormal.size());
+}
+
+const FileDateTime &TranslationContent::date()
+{
+	if (!m_messagesNormalInit)
+	{
+		readMessagesInternal(m_messagesNormal, m_messagesNormalInit);
+		assertOk();
+	}
+
+	return m_date;
 }
 
 //--------------------------------------------------

@@ -11,6 +11,13 @@ FileDateTime::FileDateTime()
 {
 }
 
+FileDateTime::FileDateTime (const FileDateTime &o)
+	: m_init(o.m_init)
+	, m_date(o.m_date)
+	, m_timezone(o.m_timezone)
+{
+}
+
 std::string FileDateTime::dateString() const
 {
 	if (isNull())
@@ -40,7 +47,7 @@ bool FileDateTime::isNull() const
 	return !m_init;
 }
 
-void FileDateTime::fromString (const char* str)
+void FileDateTime::fromString (const char *str)
 {
 	m_init = str && strlen(str) > 0;
 
@@ -97,5 +104,15 @@ void FileDateTime::setCurrentDateTime()
 
 	assert(offset % 3600 == 0);
 	m_timezone = offset / 3600;
+}
+
+bool FileDateTime::operator<(const FileDateTime &o) const
+{
+	return m_date < o.m_date;
+}
+
+bool FileDateTime::operator>(const FileDateTime &o) const
+{
+	return m_date > o.m_date;
 }
 
