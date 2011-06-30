@@ -255,9 +255,8 @@ std::string TranslationContent::dumpPoFileTemplate()
 	return res;
 }
 
-void TranslationContent::readMessagesInternal(std::vector<MessageGroup *> &dest, bool &destInit, bool obsolete)
+void TranslationContent::readMessagesInternal(std::vector<MessageGroup *> &dest, bool &destInit)
 {
-	assert(!obsolete); // what are the use cases?
 	assert(!destInit);
 	assert(dest.size() == 0);
 
@@ -277,7 +276,7 @@ void TranslationContent::readMessagesInternal(std::vector<MessageGroup *> &dest,
 //		assert(index == (int)dest.size());
 		// TODO: check that! (the old check in the line above does not work after implementing caching)
 
-		if (!obsolete == !po_message_is_obsolete(message))
+		if (!po_message_is_obsolete(message))
 			dest.push_back(new MessageGroup(
 				message,
 				po_message_is_obsolete(message) ? -1 : index,
@@ -293,14 +292,11 @@ void TranslationContent::readMessagesInternal(std::vector<MessageGroup *> &dest,
 	destInit = true;
 }
 
-std::vector<MessageGroup *> TranslationContent::readMessages(bool loadObsolete)
+std::vector<MessageGroup *> TranslationContent::readMessages()
 {
-	// loadObsolete is not completely supported yet, because it's non-trivial (ok, it's trivial) to cache readMessages results for both loadObsolete=false and loadObsolete=true
-	assert(loadObsolete == false);
-
 	if (!m_messagesNormalInit)
 	{
-		readMessagesInternal(m_messagesNormal, m_messagesNormalInit, false);
+		readMessagesInternal(m_messagesNormal, m_messagesNormalInit);
 		assertOk();
 	}
 
@@ -510,7 +506,7 @@ const char *TranslationContent::ExceptionNotPo::what() const throw()
 std::vector<MessageGroup *> read_po_file_messages(const char *filename, bool loadObsolete)
 {
 	TranslationContent *content = new TranslationContent(filename);
-	std::vector<MessageGroup *> res = content->readMessages(loadObsolete);
+	std::vector<MessageGroup *> res = content->readMessages();
 	delete content;
 
 	return res;

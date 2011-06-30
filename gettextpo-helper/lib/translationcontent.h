@@ -60,7 +60,7 @@ public:
 
 	const git_oid *gitBlobHash();
 	const git_oid *calculateTpHash();
-	std::vector<MessageGroup *> readMessages(bool loadObsolete = false);
+	std::vector<MessageGroup *> readMessages();
 
 	std::vector<int> getMinIds();
 	int getFirstId();
@@ -84,7 +84,7 @@ private:
 	// for calculateTpHash
 	std::string dumpPoFileTemplate();
 
-	void readMessagesInternal(std::vector<MessageGroup *> &dest, bool &destInit, bool obsolete);
+	void readMessagesInternal(std::vector<MessageGroup *> &dest, bool &destInit);
 
 	void initFirstIdPair();
 
