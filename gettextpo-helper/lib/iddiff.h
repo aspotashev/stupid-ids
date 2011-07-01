@@ -146,9 +146,6 @@ public:
 	 */
 	void setCurrentDateTime();
 
-	// TODO: may be remove this?
-	static std::string generateIddiffText(TranslationContent *content_a, TranslationContent *content_b);
-
 private:
 	void writeMessageList(std::vector<std::pair<int, IddiffMessage *> > list);
 	std::pair<int, IddiffMessage *> loadMessageListEntry(const char *line);

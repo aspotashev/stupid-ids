@@ -307,20 +307,6 @@ std::string Iddiffer::generateIddiffText()
 	return m_output.str();
 }
 
-/**
- * \static
- */
-std::string Iddiffer::generateIddiffText(TranslationContent *content_a, TranslationContent *content_b)
-{
-	Iddiffer *diff = new Iddiffer();
-	diff->diffFiles(content_a, content_b);
-
-	std::string res = diff->generateIddiffText();
-	delete diff;
-
-	return res;
-}
-
 bool Iddiffer::loadIddiff(const char *filename)
 {
 	// TODO: function for reading the whole file
