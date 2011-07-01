@@ -89,7 +89,7 @@ std::vector<int> Server::getTphashMinIds(GitOid tp_hash)
 	int first_id = first_ids.first;
 	int id_count = first_ids.second;
 	if (first_id == 0)
-		throw ExceptionTpHashNotFound();
+		throw ExceptionTpHashNotFound(tp_hash);
 
 	std::vector<int> res(id_count);
 	for (int i = 0; i < id_count; i ++)
@@ -252,8 +252,18 @@ void Server::commandHandler()
 
 //-----------------------------------------------------
 
+Server::ExceptionTpHashNotFound::ExceptionTpHashNotFound(const GitOid &tp_hash)
+	: std::exception()
+	, m_tpHash(tp_hash)
+{
+}
+
+Server::ExceptionTpHashNotFound::~ExceptionTpHashNotFound() throw()
+{
+}
+
 const char *Server::ExceptionTpHashNotFound::what() const throw()
 {
-	return "ExceptionTpHashNotFound (could not find first_id for the given tp_hash)";
+	return ("ExceptionTpHashNotFound (could not find first_id for the given tp_hash: " + m_tpHash.toString() + ")").c_str();
 }
 

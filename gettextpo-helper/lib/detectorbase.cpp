@@ -53,6 +53,15 @@ const git_oid *GitOid::oid() const
 	return &m_oid;
 }
 
+const std::string GitOid::toString() const
+{
+	char oid_str[GIT_OID_HEXSZ + 1];
+	oid_str[GIT_OID_HEXSZ] = '\0';
+	git_oid_fmt(oid_str, &m_oid);
+
+	return std::string(oid_str);
+}
+
 /**
  * \static
  */

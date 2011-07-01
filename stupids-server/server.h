@@ -11,7 +11,14 @@ class Server : public TcpCommandServer
 public:
 	class ExceptionTpHashNotFound : public std::exception
 	{
+	public:
+		ExceptionTpHashNotFound(const GitOid &tp_hash);
+		virtual ~ExceptionTpHashNotFound() throw();
+
+	private:
 		virtual const char *what() const throw();
+
+		GitOid m_tpHash;
 	};
 
 

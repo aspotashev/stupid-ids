@@ -3,6 +3,7 @@
 #define DETECTORBASE_H
 
 #include <vector>
+#include <string>
 
 #include <git2.h>
 
@@ -22,6 +23,8 @@ public:
 	bool operator==(const GitOid &o) const;
 
 	const git_oid *oid() const;
+
+	const std::string toString() const;
 
 	static GitOid zero();
 
