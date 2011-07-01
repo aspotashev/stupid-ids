@@ -5,8 +5,7 @@
 
 GitOid::GitOid()
 {
-	const static unsigned char zero_oid_raw[GIT_OID_RAWSZ] = {0};
-
+	const unsigned char zero_oid_raw[GIT_OID_RAWSZ] = {0};
 	git_oid_mkraw(&m_oid, zero_oid_raw);
 }
 
@@ -59,11 +58,7 @@ const git_oid *GitOid::oid() const
  */
 GitOid GitOid::zero()
 {
-	unsigned char raw[20] = {0};
-	git_oid oid;
-	git_oid_mkraw(&oid, raw);
-
-	return GitOid(&oid);
+	return GitOid();
 }
 
 //----------------------------------------
