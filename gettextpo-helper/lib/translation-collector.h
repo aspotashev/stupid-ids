@@ -17,6 +17,9 @@ public:
 	void insertPo(const void *buffer, size_t len, const char *filename);
 	void insertPoDir(const char *directory_path);
 
+	void insertPoOrTemplate(const char *template_path, const char *translation_path);
+	void insertPoDirOrTemplate(const char *templates_path, const char *translations_path);
+
 	void initTransConfl();
 	// Cannot be 'const', because there is no const 'std::map::operator []'.
 	std::vector<int> listConflicting();

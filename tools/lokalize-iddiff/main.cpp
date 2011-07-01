@@ -12,9 +12,12 @@ int main(int argc, char *argv[])
 	DBusLokalizeInterface lokalize;
 
 	StupIdTranslationCollector collector;
-//	collector.insertPoDir("/home/sasha/kde-ru/kde-ru-trunk.git");
-//	collector.insertPoDir("/home/sasha/kde-ru/kde-l10n-ru-stable");
-	collector.insertPoDir("/home/sasha/kde-ru/kde-ru-trunk.git/messages/extragear-multimedia");
+	collector.insertPoDirOrTemplate(
+		"/home/sasha/kde-ru/xx-numbering/templates",
+		"/home/sasha/kde-ru/kde-ru-trunk.git");
+	collector.insertPoDirOrTemplate(
+		"/home/sasha/kde-ru/xx-numbering/stable-templates",
+		"/home/sasha/kde-ru/kde-l10n-ru-stable");
 
 	Iddiffer *diff = new Iddiffer();
 	diff->loadIddiff("/home/sasha/stupid-ids/tools/iddiff/amarok.iddiff");

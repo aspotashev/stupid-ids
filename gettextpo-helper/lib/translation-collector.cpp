@@ -61,6 +61,60 @@ void StupIdTranslationCollector::insertPoDir(const char *directory_path)
 	closedir(dir);
 }
 
+bool file_exists(const char *filename)
+{
+	FILE *f = fopen(filename, "r");
+	if (f)
+		fclose(f);
+
+	return f != NULL;
+}
+
+void StupIdTranslationCollector::insertPoOrTemplate(
+	const char *template_path, const char *translation_path)
+{
+	TranslationContent *content = NULL;
+
+	if (file_exists(translation_path))
+	{
+		content = new TranslationContent(translation_path);
+	}
+	else
+	{
+		assert(file_exists(template_path));
+		content = new TranslationContent(template_path);
+		content->setDisplayFilename(translation_path);
+	}
+
+	insertPo(content); // takes ownership of "content"
+}
+
+void StupIdTranslationCollector::insertPoDirOrTemplate(
+	const char *templates_path, const char *translations_path)
+{
+	DIR *dir = opendir(templates_path);
+	struct dirent *entry;
+	while (entry = readdir(dir))
+	{
+		const char *d_name = entry->d_name;
+		char *templ_subpath = concat_path(templates_path, d_name);
+		char *trans_subpath = concat_path(translations_path, d_name);
+
+		if (entry->d_type == DT_REG && ends_with(d_name, ".pot"))
+		{
+			trans_subpath[strlen(trans_subpath) - 1] = '\0'; // .pot -> .po
+			insertPoOrTemplate(templ_subpath, trans_subpath);
+		}
+		else if (entry->d_type == DT_DIR && !is_dot_or_dotdot(d_name))
+			insertPoDirOrTemplate(templ_subpath, trans_subpath);
+
+		delete [] templ_subpath;
+		delete [] trans_subpath;
+	}
+
+	closedir(dir);
+}
+
 // Returns 'true' if there are different translations of the message.
 //
 // Cannot be 'const', because there is no const 'std::map::operator []'.
