@@ -664,9 +664,6 @@ void Iddiffer::applyToContent(TranslationContent *content)
 	for (size_t i = 0; i < messages.size(); i ++)
 		if (binary_search(involved_ids.begin(), involved_ids.end(), min_ids[i]))
 			applyToMessage(messages[i], min_ids[i]);
-
-	// Write updated content back to file
-	content->writeToFile(); // TODO: StupIdTranslationCollector::writeChanges() for writing all changes to .po files
 }
 
 // TODO: rewrite using StupIdTranslationCollector::getMessagesByIds(std::vector<MessageGroup *> &messages, std::vector<TranslationContent *> &contents)
@@ -680,7 +677,8 @@ void Iddiffer::applyIddiff(StupIdTranslationCollector *collector)
 	for (size_t i = 0; i < contents.size(); i ++)
 	{
 		printf("Patching %s\n", contents[i]->displayFilename());
-		applyToContent(contents[i]); // writes changes to file
+		applyToContent(contents[i]);
+		contents[i]->writeToFile(); // TODO: StupIdTranslationCollector::writeChanges() for writing all changes to .po files
 	}
 }
 
