@@ -555,7 +555,6 @@ std::pair<int, IddiffMessage *> Iddiffer::loadMessageListEntry(const char *line)
 	return std::make_pair<int, IddiffMessage *>(msg_id, msg);
 }
 
-// Returns _sorted_ vector
 std::vector<int> Iddiffer::involvedIds()
 {
 	std::vector<int> res;

@@ -82,7 +82,7 @@ public:
 	void minimizeIds();
 
 	/**
-	 * \brief Returns message IDs that exist at least in one section (ADDED, REMOVED or REVIEW).
+	 * \brief Returns a _sorted_ vector of message IDs that exist at least in one section (ADDED, REMOVED or REVIEW).
 	 */
 	std::vector<int> involvedIds();
 
