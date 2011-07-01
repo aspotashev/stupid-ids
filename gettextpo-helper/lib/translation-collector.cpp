@@ -9,6 +9,7 @@
 #include <gettextpo-helper/stupids-client.h>
 #include <gettextpo-helper/translationcontent.h>
 #include <gettextpo-helper/message.h>
+#include <gettextpo-helper/gitloader.h>
 
 StupIdTranslationCollector::StupIdTranslationCollector()
 {
@@ -47,21 +48,16 @@ void StupIdTranslationCollector::insertPoDir(const char *directory_path)
 	while (entry = readdir(dir))
 	{
 		const char *d_name = entry->d_name;
-		size_t len = strlen(d_name);
-
-		char *fullpath = new char[strlen(directory_path) + len + 2];
-		strcpy(fullpath, directory_path);
-		strcat(fullpath, "/");
-		strcat(fullpath, d_name);
+		char *fullpath = concat_path(directory_path, d_name);
 
 		if (entry->d_type == DT_REG)
 		{
-			if (len >= 3 && strcmp(d_name + len - 3, ".po") == 0)
+			if (ends_with(d_name, ".po"))
 				insertPo(fullpath);
 		}
 		else if (entry->d_type == DT_DIR)
 		{
-			if (strcmp(d_name, ".") != 0 && strcmp(d_name, "..") != 0)
+			if (!is_dot_or_dotdot(d_name))
 				insertPoDir(fullpath);
 		}
 		else

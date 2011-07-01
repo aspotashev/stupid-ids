@@ -282,6 +282,18 @@ char *concat_path(const char *path, const char *name)
 	return res;
 }
 
+bool ends_with(const char *str, const char *ending)
+{
+	size_t len = strlen(str);
+	size_t ending_len = strlen(ending);
+	return len >= ending_len && strcmp(str + len - ending_len, ending) == 0;
+}
+
+bool is_dot_or_dotdot(const char *str)
+{
+	return strcmp(str, ".") == 0 || strcmp(str, "..") == 0;
+}
+
 void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path, Commit *currentCommit)
 {
 	// This should have been checked earlier

@@ -184,5 +184,10 @@ private:
 	std::vector<Repository *> m_repos;
 };
 
+char *concat_path(const char *path, const char *name);
+bool ends_with(const char *str, const char *ending);
+bool is_dot_or_dotdot(const char *str);
+
+
 #endif // GITLOADER_H
 
