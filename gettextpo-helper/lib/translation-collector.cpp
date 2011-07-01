@@ -232,7 +232,7 @@ void StupIdTranslationCollector::getMessagesByIds(
 	contents = involvedByMinIds(ids);
 	for (size_t i = 0; i < contents.size(); i ++)
 	{
-		printf("Searching for interesting messages in %s\n", contents[i]->displayFilename());
+//		printf("Searching for interesting messages in %s\n", contents[i]->displayFilename());
 
 		TranslationContent *content = contents[i];
 		std::vector<MessageGroup *> content_msgs = content->readMessages();
