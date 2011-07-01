@@ -50,21 +50,10 @@ void StupIdTranslationCollector::insertPoDir(const char *directory_path)
 		const char *d_name = entry->d_name;
 		char *fullpath = concat_path(directory_path, d_name);
 
-		if (entry->d_type == DT_REG)
-		{
-			if (ends_with(d_name, ".po"))
-				insertPo(fullpath);
-		}
-		else if (entry->d_type == DT_DIR)
-		{
-			if (!is_dot_or_dotdot(d_name))
-				insertPoDir(fullpath);
-		}
-		else
-		{
-			// Unhandled or unknown directory entry type
-			assert(0);
-		}
+		if (entry->d_type == DT_REG && ends_with(d_name, ".po"))
+			insertPo(fullpath);
+		else if (entry->d_type == DT_DIR && !is_dot_or_dotdot(d_name))
+			insertPoDir(fullpath);
 
 		delete [] fullpath;
 	}
