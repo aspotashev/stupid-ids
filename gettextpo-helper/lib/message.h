@@ -13,6 +13,9 @@
 
 class IddiffMessage;
 
+/**
+ * @brief Base class for classes that contain message translation (classes IddiffMessage, Message).
+ **/
 class MessageTranslationBase
 {
 public:
@@ -61,10 +64,45 @@ public:
 	 **/
 	const char *msgstr(int plural_form) const;
 
+	/**
+	 * @brief Sets the translation in one of the forms.
+	 *
+	 * @param index Index of plural form.
+	 * @param str Translation text, will be copied to a newly allocated buffer.
+	 **/
 	void setMsgstr(int index, const char *str);
+
+	/**
+	 * @brief Returns the number of plural forms in translation.
+	 *
+	 * @return Number of plural forms in translation.
+	 * Equals 1 if the string does not use plural forms.
+	 **/
 	int numPlurals() const;
+
+	/**
+	 * @brief Returns whether message has the "fuzzy" flag.
+	 *
+	 * @return State of the "fuzzy" flag.
+	 **/
 	bool isFuzzy() const;
+
+	/**
+	 * @brief Returns whether all translations (and their count)
+	 * in two messages are identical.
+	 *
+	 * @param o Other message.
+	 * @return Whether msgstr[*] are equal in two messages.
+	 **/
 	bool equalMsgstr(const MessageTranslationBase *o) const;
+
+	/**
+	 * @brief Returns whether all translations and state of
+	 * the fuzzy flag in two messages are identical.
+	 *
+	 * @param o Other message.
+	 * @return Whether msgstr[*] and "fuzzy" flag are equal in two messages.
+	 **/
 	bool equalTranslations(const MessageTranslationBase *o) const;
 
 protected:
@@ -73,6 +111,16 @@ protected:
 	 **/
 	virtual void clear();
 
+	/**
+	 * @brief Initializes m_numPlurals given the value returned from po_message_n_plurals().
+	 *
+	 * @param n_plurals Return value from po_message_n_plurals().
+	 * "packed" means that 'n_plurals' contains more information than m_numPlurals:\n
+	 * 1. whether the message uses plural forms (n_plurals=0 means that message does not use plural forms)\n
+	 * 2. the number of plural forms
+	 *
+	 * @return Whether the message uses plural forms.
+	 **/
 	bool setNPluralsPacked(int n_plurals);
 
 	static std::string formatPoMessage(po_message_t message);
@@ -87,10 +135,15 @@ protected:
 class Message : public MessageTranslationBase
 {
 public:
+	/**
+	 * @brief Copy constructor.
+	 *
+	 * @param message Message to copy from.
+	 **/
 	Message(const Message &message);
+
 	Message(po_message_t message, int index, const char *filename);
 	Message(bool fuzzy, const char *msgcomment, const char *msgstr0, int n_plurals = 0);
-//	Message(bool fuzzy, const char *msgcomment, const char *msgstr0, const char *msgstr1, const char *msgstr2, const char *msgstr3);
 	Message(bool fuzzy, int n_plurals, const char *msgcomment);
 	~Message();
 
@@ -98,7 +151,11 @@ public:
 	const char *filename() const;
 	bool equalTranslationsComments(const Message *o) const;
 
+	/**
+	 * @brief Returns whether the message uses plural forms.
+	 **/
 	bool isPlural() const;
+
 	bool isUntranslated() const;
 
 	/**
@@ -137,8 +194,20 @@ public:
 	MessageGroup(po_message_t message, int index, const char *filename);
 	~MessageGroup();
 
+	/**
+	 * @brief Add message translation.
+	 *
+	 * @param message Pointer to message to be added.
+	 * This object will be taken ownership of.
+	 * @return void
+	 **/
 	void addMessage(Message *message);
+
+	/**
+	 * @brief Returns the number of translations in the group.
+	 **/
 	int size() const;
+
 	Message *message(int index);
 	const Message *message(int index) const;
 	void mergeMessageGroup(const MessageGroup *other);

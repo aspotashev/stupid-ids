@@ -53,11 +53,6 @@ void MessageTranslationBase::clear()
 	m_fuzzy = false;
 }
 
-// "packed" means that 'n_plurals' contains more information than m_numPlurals:
-// 	1. whether the message uses plural forms (n_plurals=0 means that message does not use plural forms)
-// 	2. the number of plural forms
-//
-// Returns whether the message uses plural forms (true or false).
 bool MessageTranslationBase::setNPluralsPacked(int n_plurals)
 {
 	assert(n_plurals >= 0);
@@ -152,7 +147,6 @@ int MessageTranslationBase::numPlurals() const
 	return m_numPlurals;
 }
 
-// Returns whether msgstr[*] are equal in two messages.
 bool MessageTranslationBase::equalMsgstr(const MessageTranslationBase *o) const
 {
 	// This happens, see messages/kdebase/plasma_applet_trash.po
@@ -167,8 +161,6 @@ bool MessageTranslationBase::equalMsgstr(const MessageTranslationBase *o) const
 	return true;
 }
 
-// Returns whether msgstr[*] are equal in two messages.
-// States of 'fuzzy' flag should also be the same.
 bool MessageTranslationBase::equalTranslations(const MessageTranslationBase *o) const
 {
 	return equalMsgstr(o) && m_fuzzy == o->isFuzzy();
@@ -393,9 +385,6 @@ MessageGroup::~MessageGroup()
 		delete m_messages[i];
 }
 
-/**
- * Takes ownership of "message".
- */
 void MessageGroup::addMessage(Message *message)
 {
 	m_messages.push_back(message);
