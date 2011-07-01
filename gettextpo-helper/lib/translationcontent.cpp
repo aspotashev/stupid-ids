@@ -357,11 +357,8 @@ int TranslationContent::getIdCount()
 	return m_idCount;
 }
 
-// TODO: do nothing if no messages have been changed
-void TranslationContent::writeToFile()
+void TranslationContent::writeToFile(const char *dest_filename, bool force_write)
 {
-	assert(m_type == TYPE_FILE);
-
 	assert(m_messagesNormalInit);
 
 	// Working with file
@@ -415,16 +412,22 @@ void TranslationContent::writeToFile()
 	// free memory
 	po_message_iterator_free(iterator);
 
-	if (madeChanges)
+	if (force_write || madeChanges)
 	{
 //		libgettextpo_message_page_width_set(80);
-		po_file_write(file, m_filename);
+		po_file_write(file, dest_filename);
 	}
 
 	// free memory
 	po_file_free(file);
 
 	// TODO: set m_edited to "false" for all messages
+}
+
+void TranslationContent::writeToFile()
+{
+	assert(m_type == TYPE_FILE);
+	writeToFile(m_filename, false);
 }
 
 const void *TranslationContent::getDataBuffer()

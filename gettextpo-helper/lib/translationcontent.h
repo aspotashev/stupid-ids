@@ -69,6 +69,7 @@ public:
 	int getFirstId();
 	int getIdCount();
 
+	void writeToFile(const char *dest_filename, bool force_write);
 	void writeToFile();
 
 private:
