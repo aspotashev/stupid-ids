@@ -76,6 +76,8 @@ public:
 	 */
 	bool loadIddiff(const char *filename);
 
+	void writeToFile(const char *filename);
+
 	/**
 	 * \brief Replace all message IDs in the Iddiff with minimized IDs
 	 */

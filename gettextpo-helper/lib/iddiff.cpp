@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <algorithm>
 #include <iostream>
+#include <fstream>
 
 #include <git2.h>
 #include <gettextpo-helper/gettextpo-helper.h>
@@ -468,6 +469,17 @@ bool Iddiffer::loadIddiff(const char *filename)
 
 	delete [] buffer;
 	return true; // OK
+}
+
+void Iddiffer::writeToFile(const char *filename)
+{
+	std::string text = generateIddiffText();
+	if (!text.empty())
+	{
+		std::ofstream out(filename, std::ios::out | std::ios::trunc);
+		out << text;
+		out.close();
+	}
 }
 
 /**
