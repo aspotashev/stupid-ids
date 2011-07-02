@@ -599,6 +599,9 @@ void Iddiffer::substituteMsgId(std::map<int, T> &items, int old_id, int new_id)
 
 void Iddiffer::substituteMsgId(int old_id, int new_id)
 {
+	if (old_id == new_id)
+		return;
+
 	substituteMsgId(m_removedItems, old_id, new_id);
 	substituteMsgId(m_addedItems, old_id, new_id);
 	substituteMsgId(m_reviewComments, old_id, new_id);
