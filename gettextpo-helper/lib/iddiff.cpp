@@ -312,11 +312,17 @@ bool Iddiffer::loadIddiff(const char *filename)
 	// TODO: function for reading the whole file
 	FILE *f = fopen(filename, "r");
 	if (!f)
-		return false; // FAIL
+		return false; // file does not exist
 
 	fseek(f, 0, SEEK_END);
 	int file_size = (int)ftell(f);
 	rewind(f);
+
+	if (file_size == 0)
+	{
+		fclose(f);
+		return false; // file is empty
+	}
 
 	char *buffer = new char[file_size + 1];
 	assert(fread(buffer, 1, file_size, f) == file_size);
