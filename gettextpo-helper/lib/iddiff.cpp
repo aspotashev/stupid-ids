@@ -320,6 +320,7 @@ bool Iddiffer::loadIddiff(const char *filename)
 
 	char *buffer = new char[file_size + 1];
 	assert(fread(buffer, 1, file_size, f) == file_size);
+	fclose(f);
 	buffer[file_size] = '\0';
 
 	std::vector<char *> lines;
@@ -460,7 +461,6 @@ bool Iddiffer::loadIddiff(const char *filename)
 
 
 	delete [] buffer;
-	fclose(f);
 	return true; // OK
 }
 
