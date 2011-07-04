@@ -16,12 +16,12 @@ set(gettextpo_helper_LIB_SRCS
 	detectorbase.cpp
 	gitloader.cpp
 	processorphans.cpp
+
+	block-sha1/sha1.cpp
 )
 
 add_library(gettextpo_helper SHARED ${gettextpo_helper_LIB_SRCS})
 target_link_libraries(gettextpo_helper
-	${QT_QTCORE_LIBRARY} # for QCryptographicHash
-	cryptopp
 	gettextpo
 	git2
 )

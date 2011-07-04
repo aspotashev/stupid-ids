@@ -6,6 +6,7 @@
 #include <gettextpo-helper/mappedfile.h>
 #include <gettextpo-helper/translationcontent.h>
 #include <gettextpo-helper/iddiff.h>
+#include "block-sha1/sha1.h"
 
 char *xstrdup(const char *str)
 {
@@ -151,46 +152,29 @@ std::string wrap_string_hex(const char *str)
 
 //----------------------- Calculation of template-part hash ------------------------
 
-#if !defined (QT_VERSION)
-	#define SHA1_USING_CRYPTOPP
-#endif
-
-#if defined (SHA1_USING_CRYPTOPP)
-
-#include <cryptopp/sha.h> // CryptoPP::SHA1
-#include <cryptopp/filters.h> // CryptoPP::StringSource
-#include <cryptopp/hex.h> // CryptoPP::HexEncoder
-
-// http://www.xenoterracide.com/2009/09/quick-sha1sum-with-crypto.html
-// http://groups.google.com/group/cryptopp-users/browse_thread/thread/dfe40b4eed04f03d?pli=1
-std::string sha1_string(std::string input)
+void sha1_buffer(git_oid *oid, const void *buffer, size_t length)
 {
-	std::string res;
+	unsigned char oid_raw[20];
 
-	CryptoPP::SHA1 hash;
-	CryptoPP::StringSink *string_sink = new CryptoPP::StringSink(res);
-	CryptoPP::HexEncoder *hex_encoder = new CryptoPP::HexEncoder(string_sink, false); // hex in lowercase
-	CryptoPP::HashFilter *hash_filter = new CryptoPP::HashFilter(hash, hex_encoder);
-	CryptoPP::StringSource(input, true, hash_filter);
+	blk_SHA_CTX ctx;
+	blk_SHA1_Init(&ctx);
+	blk_SHA1_Update(&ctx, buffer, length);
+	blk_SHA1_Final(oid_raw, &ctx);
 
-	return res;
+	git_oid_mkraw(oid, oid_raw);
 }
-
-#else
-
-#include <QCryptographicHash>
-
-// sha1 using Qt
-// http://www.qtcentre.org/threads/16846-How-to-get-sha1-hash
 
 std::string sha1_string(std::string input)
 {
-	QCryptographicHash hash(QCryptographicHash::Sha1);
-	hash.addData(input.c_str(), (int)input.length());
-	return std::string(hash.result().toHex().data());
-}
+	git_oid oid;
+	sha1_buffer(&oid, input.c_str(), input.size());
 
-#endif
+	char oid_str[GIT_OID_HEXSZ + 1];
+	oid_str[GIT_OID_HEXSZ] = '\0';
+	git_oid_fmt(oid_str, &oid);
+
+	return std::string(oid_str);
+}
 
 std::string wrap_template_header(po_message_t message)
 {
