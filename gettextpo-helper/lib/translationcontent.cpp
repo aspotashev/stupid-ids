@@ -154,7 +154,10 @@ const git_oid *TranslationContent::gitBlobHash()
 		if (!f)
 		{
 			printf("Could not open file %s\n", m_filename);
-			assert(0);
+
+			delete m_oid;
+			m_oid = NULL;
+			return NULL;
 		}
 
 		fseek(f, 0, SEEK_END);
@@ -185,14 +188,15 @@ const git_oid *TranslationContent::calculateTpHash()
 	if (m_tphash)
 		return m_tphash;
 
-
-	m_tphash = new git_oid;
-
 	// Cache calculated tp_hashes (it takes some time to
 	// calculate a tp_hash). A singleton class is used for that.
 	const git_oid *oid = gitBlobHash();
+	if (!oid)
+		return NULL;
+
 	const git_oid *tp_hash = TphashCache.getValue(oid);
 
+	m_tphash = new git_oid;
 	if (tp_hash)
 	{
 		git_oid_cpy(m_tphash, tp_hash);
