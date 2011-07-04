@@ -164,18 +164,6 @@ void sha1_buffer(git_oid *oid, const void *buffer, size_t length)
 	git_oid_mkraw(oid, oid_raw);
 }
 
-std::string sha1_string(std::string input)
-{
-	git_oid oid;
-	sha1_buffer(&oid, input.c_str(), input.size());
-
-	char oid_str[GIT_OID_HEXSZ + 1];
-	oid_str[GIT_OID_HEXSZ] = '\0';
-	git_oid_fmt(oid_str, &oid);
-
-	return std::string(oid_str);
-}
-
 std::string wrap_template_header(po_message_t message)
 {
 	char *header = new char [strlen(po_message_msgstr(message)) + 2];
