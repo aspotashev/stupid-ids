@@ -6,6 +6,7 @@
 #include <map>
 #include <assert.h>
 #include <gettext-po.h>
+#include <git2.h>
 
 #include <sys/wait.h> // for waitpid
 
@@ -36,6 +37,7 @@ std::string wrap_string_hex(const char *str);
 
 //----------------------- Calculation of template-part hash ------------------------
 
+void sha1_buffer(git_oid *oid, const void *buffer, size_t length);
 std::string sha1_string(std::string input);
 
 std::string wrap_template_header(po_message_t message);
