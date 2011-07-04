@@ -56,8 +56,6 @@ int get_pot_length(const char *filename);
 class MappedFileIdMapDb;
 class TranslationContent;
 
-std::vector<std::pair<std::string, int> > dump_po_file_ids(TranslationContent *content, int first_id);
-
 std::vector<std::vector<int> > list_equal_messages_ids(std::vector<std::pair<TranslationContent *, int> > files);
 
 std::vector<std::pair<int, int> > list_equal_messages_ids_2(TranslationContent *file_a, int first_id_a, TranslationContent *file_b, int first_id_b);
