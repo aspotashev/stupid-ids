@@ -588,7 +588,11 @@ template <typename T>
 void Iddiffer::substituteMsgId(std::map<int, T> &items, int old_id, int new_id)
 {
 	// Check that IDs won't collide
-	assert(items.find(new_id) == items.end());
+	if (items.find(new_id) != items.end())
+	{
+		printf("new_id = %d, old_id = %d\n", new_id, old_id);
+		assert(0);
+	}
 
 	if (items.find(old_id) != items.end())
 	{
