@@ -7,10 +7,13 @@ set(GETTEXTPO_HELPER_INCLUDES
 
 include_directories(${GETTEXTPO_HELPER_INCLUDES})
 
+enable_testing()
+
 add_subdirectory(globalize)
 add_subdirectory(gettextpo-helper)
 add_subdirectory(dbuslokalize)
 add_subdirectory(tools)
 add_subdirectory(stupids-server)
 add_subdirectory(examples)
+add_subdirectory(tests)
 
