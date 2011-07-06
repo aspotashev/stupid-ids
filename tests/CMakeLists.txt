@@ -5,9 +5,9 @@ add_definitions(-DFILES_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data/")
 
 ########### next target ###############
 
-add_executable(test-sha1-buffer sha1-buffer.cpp)
-target_link_libraries(test-sha1-buffer gettextpo_helper)
-add_test(test-sha1-buffer ${CMAKE_CURRENT_BINARY_DIR}/test-sha1-buffer)
+add_executable(sha1_buffer sha1_buffer.cpp)
+target_link_libraries(sha1_buffer gettextpo_helper)
+add_test(sha1_buffer ${CMAKE_CURRENT_BINARY_DIR}/sha1_buffer)
 
 ########### next target ###############
 
