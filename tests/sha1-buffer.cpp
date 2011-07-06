@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include <gettextpo-helper/gettextpo-helper.h>
 #include <gettextpo-helper/detectorbase.h>
+#include <gettextpo-helper/sha1.h>
 #include <iostream>
 
 int main()

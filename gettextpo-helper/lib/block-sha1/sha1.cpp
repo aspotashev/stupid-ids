@@ -11,7 +11,20 @@
 #include <string.h>
 #include <arpa/inet.h>
 
+#include <git2.h>
+
 #include "sha1.h"
+
+typedef struct {
+	unsigned long long size;
+	unsigned int H[5];
+	unsigned int W[16];
+} blk_SHA_CTX;
+
+void blk_SHA1_Init(blk_SHA_CTX *ctx);
+void blk_SHA1_Update(blk_SHA_CTX *ctx, const void *dataIn, unsigned long len);
+void blk_SHA1_Final(unsigned char hashout[20], blk_SHA_CTX *ctx);
+
 
 #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 
@@ -282,4 +295,16 @@ void blk_SHA1_Final(unsigned char hashout[20], blk_SHA_CTX *ctx)
 	/* Output hash */
 	for (i = 0; i < 5; i++)
 		put_be32(hashout + i*4, ctx->H[i]);
+}
+
+void sha1_buffer(git_oid *oid, const void *buffer, size_t length)
+{
+	unsigned char oid_raw[20];
+
+	blk_SHA_CTX ctx;
+	blk_SHA1_Init(&ctx);
+	blk_SHA1_Update(&ctx, buffer, length);
+	blk_SHA1_Final(oid_raw, &ctx);
+
+	git_oid_mkraw(oid, oid_raw);
 }

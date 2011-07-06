@@ -8,6 +8,7 @@
 #include <gettextpo-helper/stupids-client.h>
 #include <gettextpo-helper/gitloader.h>
 #include <gettextpo-helper/message.h>
+#include <gettextpo-helper/sha1.h>
 #include "filedatetime.h"
 
 TranslationContent::TranslationContent(const char *filename)

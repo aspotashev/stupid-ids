@@ -37,8 +37,6 @@ std::string wrap_string_hex(const char *str);
 
 //----------------------- Calculation of template-part hash ------------------------
 
-void sha1_buffer(git_oid *oid, const void *buffer, size_t length);
-
 std::string wrap_template_header(po_message_t message);
 std::string dump_filepos_entries(po_message_t message);
 std::string dump_format_types(po_message_t message);

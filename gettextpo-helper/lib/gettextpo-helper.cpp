@@ -152,18 +152,6 @@ std::string wrap_string_hex(const char *str)
 
 //----------------------- Calculation of template-part hash ------------------------
 
-void sha1_buffer(git_oid *oid, const void *buffer, size_t length)
-{
-	unsigned char oid_raw[20];
-
-	blk_SHA_CTX ctx;
-	blk_SHA1_Init(&ctx);
-	blk_SHA1_Update(&ctx, buffer, length);
-	blk_SHA1_Final(oid_raw, &ctx);
-
-	git_oid_mkraw(oid, oid_raw);
-}
-
 std::string wrap_template_header(po_message_t message)
 {
 	char *header = new char [strlen(po_message_msgstr(message)) + 2];
