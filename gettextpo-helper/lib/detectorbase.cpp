@@ -48,6 +48,11 @@ bool GitOid::operator==(const GitOid &o) const
 	return git_oid_cmp(&m_oid, &o.m_oid) == 0;
 }
 
+bool GitOid::operator!=(const GitOid &o) const
+{
+	return git_oid_cmp(&m_oid, &o.m_oid) != 0;
+}
+
 const git_oid *GitOid::oid() const
 {
 	return &m_oid;
