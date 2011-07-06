@@ -1,0 +1,81 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR This_file_is_part_of_KDE
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: http://bugs.kde.org\n"
+"POT-Creation-Date: 2011-05-12 04:10+0200\n"
+"PO-Revision-Date: 2011-07-05 00:35+0400\n"
+"Last-Translator: Alexander Potashev <aspotashev@gmail.com>\n"
+"Language-Team: Russian <kde-russian@lists.kde.ru>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ru\n"
+"X-Generator: Lokalize 1.2\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<"
+"=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: main.cpp:39
+msgid "Maintainer"
+msgid_plural "99 maintainers on the wall"
+msgstr[0] "1"
+msgstr[1] "2"
+msgstr[2] "3"
+msgstr[3] "4"
+
+#: rc.cpp:1
+msgctxt "NAME OF TRANSLATORS + context corruption :)"
+msgid "Your names"
+msgstr ""
+
+#: systray.cpp:46
+msgid "Nepomuk File Indexing"
+msgstr ""
+
+#: systray.cpp:51 systray.cpp:52
+msgid "Suspend File Indexing"
+msgstr ""
+
+#: main.cpp:32
+msgid "Nepomuk Controllerxx"
+msgstr ""
+
+#: main.cpp:34
+msgid "A small tool to monitor and control Nepomuk file indexing"
+msgstr ""
+
+#: main.cpp:36
+msgid "(c) 2008-2011, Sebastian Trüg"
+msgstr ""
+
+#: systray.cpp:53
+msgid "Suspend or resume the file indexer manually"
+msgstr ""
+
+#: systray.cpp:58
+msgid "Configure File Indexing"
+msgstr ""
+
+#: systray.cpp:118
+msgid "Nepomuk File Indexing Service not running"
+msgstr ""
+
+#: systray.cpp:121
+msgid "Search Service"
+msgstr ""
+
+#: rc.cpp:2
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr "I will not tell my e-mail address to anyone"
+
+#: main.cpp:39
+msgid "Sebastian Trüg"
+msgid_plural "There is only one of me // Linus Torvalds"
+msgstr[0] "4343"
+
