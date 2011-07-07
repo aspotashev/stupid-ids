@@ -236,17 +236,6 @@ struct MessageGroupMsgidCompare
 	}
 };
 
-std::vector<std::pair<MessageGroup *, int> > dump_po_file_ids(TranslationContent *content, int first_id)
-{
-	std::vector<std::pair<MessageGroup *, int> > res;
-
-	std::vector<MessageGroup *> messages = content->readMessages();
-	for (size_t i = 0; i < messages.size(); i ++)
-		res.push_back(std::make_pair<MessageGroup *, int>(messages[i], first_id + i));
-
-	return res;
-}
-
 std::vector<std::vector<int> > list_equal_messages_ids(std::vector<std::pair<TranslationContent *, int> > files)
 {
 	std::vector<std::vector<int> > list;
@@ -255,9 +244,12 @@ std::vector<std::vector<int> > list_equal_messages_ids(std::vector<std::pair<Tra
 	msg_ids_map_t msg_ids;
 	for (size_t d = 0; d < files.size(); d ++)
 	{
-		std::vector<std::pair<MessageGroup *, int> > dump = dump_po_file_ids(files[d].first, files[d].second);
-		for (size_t i = 0; i < dump.size(); i ++)
-			msg_ids[dump[i].first].push_back(dump[i].second);
+		TranslationContent *content = files[d].first;
+		int first_id = files[d].second;
+
+		std::vector<MessageGroup *> messages = content->readMessages();
+		for (size_t i = 0; i < messages.size(); i ++)
+			msg_ids[messages[i]].push_back(first_id + i);
 	}
 
 	for (msg_ids_map_t::iterator iter = msg_ids.begin(); iter != msg_ids.end(); iter ++)
