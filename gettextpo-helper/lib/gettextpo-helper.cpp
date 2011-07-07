@@ -322,34 +322,34 @@ int get_pot_length(const char *filename)
 
 //-------- Coupling IDs of equal messages in different .po/.pot files -------
 
+// include_non_id: include 'extracted comments', 'filepos entries', 'format types', 'range'
+std::string wrap_template_msgid(MessageGroup *message)
+{
+	std::string res;
+
+	res += "T"; // "T". May be NULL.
+	res += wrap_string_hex(message->msgctxt());
+
+	res += "M"; // "M". Cannot be NULL or empty.
+	res += wrap_string_hex(message->msgid());
+
+	res += "P"; // "P". May be NULL.
+	res += wrap_string_hex(message->msgidPlural());
+
+	return res;
+}
+
 std::vector<std::pair<std::string, int> > dump_po_file_ids(TranslationContent *content, int first_id)
 {
 	std::vector<std::pair<std::string, int> > res;
 
-	po_file_t file = content->poFileRead(); // all checks and error reporting are done in po_file_read
-
-	assert(file);
-//	if (!file)
-//		return res;
-
-
-	// main cycle
-	po_message_iterator_t iterator = po_message_iterator(file, "messages");
-	po_message_t message; // in fact, this is a pointer
-
-	// skipping header
-	message = po_next_message(iterator);
-
-	for (int index = 0; message = po_next_message(iterator); index ++)
+	std::vector<MessageGroup *> messages = content->readMessages();
+	for (size_t i = 0; i < messages.size(); i ++)
 	{
-		std::string msg_dump = wrap_template_message(message, false);
+		std::string msg_dump = wrap_template_msgid(messages[i]);
 		if (msg_dump.length() > 0)
-			res.push_back(make_pair(msg_dump, first_id + index));
+			res.push_back(make_pair(msg_dump, first_id + i));
 	}
-
-	// free memory
-	po_message_iterator_free(iterator);
-	po_file_free(file);
 
 	return res;
 }
