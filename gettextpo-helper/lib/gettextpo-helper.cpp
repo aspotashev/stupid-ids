@@ -199,34 +199,50 @@ int get_pot_length(const char *filename)
 
 //-------- Coupling IDs of equal messages in different .po/.pot files -------
 
-// include_non_id: include 'extracted comments', 'filepos entries', 'format types', 'range'
-std::string wrap_template_msgid(MessageGroup *message)
+int strcmp_null(const char *a, const char *b)
 {
-	std::string res;
-
-	res += "T"; // "T". May be NULL.
-	res += wrap_string_hex(message->msgctxt());
-
-	res += "M"; // "M". Cannot be NULL or empty.
-	res += wrap_string_hex(message->msgid());
-
-	res += "P"; // "P". May be NULL.
-	res += wrap_string_hex(message->msgidPlural());
-
-	return res;
+	if (a == NULL)
+	{
+		if (b == NULL)
+			return 0; // NULL == NULL
+		else // b != NULL
+			return -1; // NULL is less than any string
+	}
+	else // a != NULL
+	{
+		if (b == NULL)
+			return 1; // NULL is less than any string
+		else // b != NULL
+			return strcmp(a, b);
+	}
 }
 
-std::vector<std::pair<std::string, int> > dump_po_file_ids(TranslationContent *content, int first_id)
+struct MessageGroupMsgidCompare
 {
-	std::vector<std::pair<std::string, int> > res;
+	bool operator() (const MessageGroup *a, const MessageGroup *b) const
+	{
+		int cmp1 = strcmp_null(a->msgctxt(), b->msgctxt());
+		int cmp2 = strcmp_null(a->msgid(), b->msgid());
+		int cmp3 = strcmp_null(a->msgidPlural(), b->msgidPlural());
+
+		if (cmp1 < 0)
+			return true;
+		else if (cmp1 == 0 && cmp2 < 0)
+			return true;
+		else if (cmp1 == 0 && cmp2 == 0 && cmp3 < 0)
+			return true;
+		else
+			return false;
+	}
+};
+
+std::vector<std::pair<MessageGroup *, int> > dump_po_file_ids(TranslationContent *content, int first_id)
+{
+	std::vector<std::pair<MessageGroup *, int> > res;
 
 	std::vector<MessageGroup *> messages = content->readMessages();
 	for (size_t i = 0; i < messages.size(); i ++)
-	{
-		std::string msg_dump = wrap_template_msgid(messages[i]);
-		if (msg_dump.length() > 0)
-			res.push_back(make_pair(msg_dump, first_id + i));
-	}
+		res.push_back(std::make_pair<MessageGroup *, int>(messages[i], first_id + i));
 
 	return res;
 }
@@ -235,11 +251,11 @@ std::vector<std::vector<int> > list_equal_messages_ids(std::vector<std::pair<Tra
 {
 	std::vector<std::vector<int> > list;
 
-	typedef std::map<std::string, std::vector<int> > msg_ids_map_t;
+	typedef std::map<MessageGroup *, std::vector<int>, MessageGroupMsgidCompare > msg_ids_map_t;
 	msg_ids_map_t msg_ids;
 	for (size_t d = 0; d < files.size(); d ++)
 	{
-		std::vector<std::pair<std::string, int> > dump = dump_po_file_ids(files[d].first, files[d].second);
+		std::vector<std::pair<MessageGroup *, int> > dump = dump_po_file_ids(files[d].first, files[d].second);
 		for (size_t i = 0; i < dump.size(); i ++)
 			msg_ids[dump[i].first].push_back(dump[i].second);
 	}
