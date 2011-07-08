@@ -6,8 +6,8 @@
 
 int main(int argc, char *argv[])
 {
-	TranslationContent *file_a = new TranslationContent(FILES_DATA_DIR "dumpids-a.po");
-	TranslationContent *file_b = new TranslationContent(FILES_DATA_DIR "dumpids-b.po");
+	TranslationContent *file_a = new TranslationContent(INPUT_DATA_DIR "dumpids-a.po");
+	TranslationContent *file_b = new TranslationContent(INPUT_DATA_DIR "dumpids-b.po");
 	std::vector<std::pair<int, int> > list = list_equal_messages_ids_2(
 		file_a, 1000,
 		file_b, 101000);
