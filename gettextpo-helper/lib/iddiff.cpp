@@ -829,6 +829,18 @@ std::vector<std::pair<int, IddiffMessage *> > Iddiffer::getReviewVector()
 	return res;
 }
 
+void Iddiffer::mergeHeaders(Iddiffer *diff)
+{
+	// Keep the most recent date/time
+	if (m_date.isNull() || diff->date() > m_date)
+		m_date = diff->date();
+
+	if (m_author.empty())
+		m_author = diff->m_author;
+	else if (!diff->m_author.empty())
+		m_author += ", " + diff->m_author;
+}
+
 // TODO: Iddiffer::mergeNokeep that removes all items from the given Iddiff (and therefore it does not need to clone the IddiffMessage objects)
 void Iddiffer::merge(Iddiffer *diff)
 {
@@ -843,14 +855,7 @@ void Iddiffer::merge(Iddiffer *diff)
 	for (size_t i = 0; i < other_review.size(); i ++)
 		insertReviewClone(other_review[i]); // this also clones the IddiffMessage object
 
-	// Keep the most recent date/time
-	if (m_date.isNull() || diff->date() > m_date)
-		m_date = diff->date();
-
-	if (m_author.empty())
-		m_author = diff->m_author;
-	else if (!diff->m_author.empty())
-		m_author += ", " + diff->m_author;
+	mergeHeaders(diff);
 }
 
 std::vector<IddiffMessage *> Iddiffer::findRemoved(int msg_id)

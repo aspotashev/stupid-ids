@@ -135,6 +135,7 @@ public:
 	std::vector<std::pair<int, IddiffMessage *> > getAddedVector();
 	std::vector<std::pair<int, IddiffMessage *> > getReviewVector();
 
+	void mergeHeaders(Iddiffer *diff);
 	void merge(Iddiffer *diff);
 
 	void acceptTranslation(int msg_id, const IddiffMessage *item);
