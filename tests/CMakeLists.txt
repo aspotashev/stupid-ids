@@ -22,3 +22,7 @@ add_unit_test(sha1_buffer)
 add_unit_test(list_equal_messages_ids)
 add_test(list_equal_messages_ids_diff diff -q ${REF_DATA_DIR}/list_equal_messages_ids.txt ${CMAKE_CURRENT_BINARY_DIR}/result.txt)
 
+########### next target ###############
+
+add_unit_test(tp_hash)
+

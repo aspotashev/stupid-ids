@@ -1,0 +1,54 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2011-07-06 04:15+0200\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: filterbar/filterbar.cpp:39
+msgctxt "@info:tooltip"
+msgid "Hide Filter Bar"
+msgstr ""
+
+#: panels/information/informationpanelcontent.cpp:226
+#, kde-format
+msgctxt "@info"
+msgid "%1 item selected"
+msgid_plural "xx%1 items selectedxx"
+msgstr[0] ""
+msgstr[1] ""
+
+#: settings/viewmodes/columnviewsettingspage.cpp:73
+#: settings/viewmodes/iconsviewsettingspage.cpp:85
+msgctxt "@item:inlistbox Text width"
+msgid "Small"
+msgstr ""
+
+#: settings/viewmodes/columnviewsettingspage.cpp:74
+#: settings/viewmodes/iconsviewsettingspage.cpp:86
+msgid "Medium"
+msgstr ""
+
+#: rc.cpp:1
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr ""
+
+#: rc.cpp:2
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr ""
+
+#. i18n: file: dolphinpart.rc:4
+#. i18n: ectx: Menu (edit)
+#: rc.cpp:5
+msgid "&Edit"
+msgstr ""
+
+#. i18n: file: dolphinpart.rc:14
+#. i18n: ectx: Menu (selection)
+#: rc.cpp:8
+msgctxt "@title:menu"
+msgid "Selection"
+msgstr ""
