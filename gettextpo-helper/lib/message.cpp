@@ -76,6 +76,8 @@ std::string MessageTranslationBase::formatPoMessage(po_message_t message)
 
 std::string MessageTranslationBase::formatPoMessage() const
 {
+	assert(numPlurals() > 0);
+
 	std::string res;
 
 	if (isFuzzy())
