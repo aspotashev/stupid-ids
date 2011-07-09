@@ -560,6 +560,13 @@ std::pair<int, IddiffMessage *> Iddiffer::loadMessageListEntry(const char *line)
 	return std::make_pair<int, IddiffMessage *>(msg_id, msg);
 }
 
+template <typename T>
+void sort_uniq(std::vector<T> &v)
+{
+	sort(v.begin(), v.end());
+	v.resize(unique(v.begin(), v.end()) - v.begin());
+}
+
 std::vector<int> Iddiffer::involvedIds()
 {
 	std::vector<int> res;
@@ -574,11 +581,7 @@ std::vector<int> Iddiffer::involvedIds()
 		iter != m_reviewComments.end(); iter ++)
 		res.push_back(iter->first);
 
-	// sort-uniq
-	// TODO: create a function for this
-	sort(res.begin(), res.end());
-	res.resize(unique(res.begin(), res.end()) - res.begin());
-
+	sort_uniq(res);
 	return res;
 }
 
