@@ -402,7 +402,8 @@ bool Iddiffer::loadIddiff(const char *filename)
 		}
 		else
 		{
-			// Unknown header field
+			printf("Unknown header field: [%s]\n", line);
+			printf("File: [%s]\n", filename);
 			assert(0);
 		}
 	}
