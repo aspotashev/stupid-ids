@@ -211,15 +211,15 @@ void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *cont
 		!po_message_is_obsolete(message_b);
 		index ++)
 	{
-		if (strcmp(po_message_comments(message_a), po_message_comments(message_b)))
-		{
-			fprintf(stderr, "Changes in comments will be ignored!\n");
-			fprintf(stderr, "<<<<<\n");
-			fprintf(stderr, "%s", po_message_comments(message_a)); // "\n" should be included in comments
-			fprintf(stderr, "=====\n");
-			fprintf(stderr, "%s", po_message_comments(message_b)); // "\n" should be included in comments
-			fprintf(stderr, ">>>>>\n");
-		}
+// 		if (strcmp(po_message_comments(message_a), po_message_comments(message_b)))
+// 		{
+// 			fprintf(stderr, "Changes in comments will be ignored!\n");
+// 			fprintf(stderr, "<<<<<\n");
+// 			fprintf(stderr, "%s", po_message_comments(message_a)); // "\n" should be included in comments
+// 			fprintf(stderr, "=====\n");
+// 			fprintf(stderr, "%s", po_message_comments(message_b)); // "\n" should be included in comments
+// 			fprintf(stderr, ">>>>>\n");
+// 		}
 
 
 		// Messages can be:
