@@ -791,7 +791,15 @@ void Iddiffer::applyToMessage(MessageGroup *messageGroup, int min_id)
 	{
 		// We cannot just add the new translation without
 		// "blacklisting" the existing one.
-		assert(!added || added->equalTranslations(message));
+		if (added && !added->equalTranslations(message))
+		{
+			std::cerr << "You have a conflict:" << std::endl <<
+				" * Someone has already translated this message as:" << std::endl <<
+				message->formatPoMessage() << std::endl <<
+				" * And you are suggesting this:" << std::endl <<
+				added->formatPoMessage() << std::endl;
+			assert(0);
+		}
 	}
 }
 
