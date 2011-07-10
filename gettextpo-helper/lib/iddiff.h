@@ -61,6 +61,8 @@ public:
 	 */
 	void diffAgainstEmpty(TranslationContent *content_b);
 
+	void diffTrCommentsAgainstEmpty(TranslationContent *content_b);
+
 	/**
 	 * \brief Fills "ADDED" and "DELETED" sections according to differences between the two given TranslationContents
 	 *
@@ -68,6 +70,8 @@ public:
 	 * Old items from "REMOVED" and "ADDED" sections will be deleted.
 	 */
 	void diffFiles(TranslationContent *content_a, TranslationContent *content_b);
+
+	void diffTrCommentsFiles(TranslationContent *content_a, TranslationContent *content_b);
 
 	/**
 	 * \brief Load iddiff from an .iddiff file
@@ -137,6 +141,7 @@ public:
 
 	void mergeHeaders(Iddiffer *diff);
 	void merge(Iddiffer *diff);
+	void mergeTrComments(Iddiffer *diff);
 
 	void acceptTranslation(int msg_id, const IddiffMessage *item);
 	void rejectTranslation(int msg_id, const IddiffMessage *item);

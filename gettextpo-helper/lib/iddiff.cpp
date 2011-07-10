@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <iostream>
 #include <fstream>
+#include <set>
 
 #include <git2.h>
 #include <gettextpo-helper/gettextpo-helper.h>
@@ -254,6 +255,132 @@ void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *cont
 		//    "B" is translated & there were changes (i.e. message_a != message_b)
 		if (!po_message_is_untranslated(message_b) && !po_message_is_fuzzy(message_b))
 			insertAdded(first_id + index, new IddiffMessage(message_b));
+	}
+
+	// free memory
+	po_message_iterator_free(iterator_a);
+	po_message_iterator_free(iterator_b);
+	po_file_free(file_a);
+	po_file_free(file_b);
+}
+
+// TODO: write and use function split_string()
+std::set<std::string> set_of_lines(const char *input)
+{
+	std::set<std::string> res;
+
+	std::string input_str(input);
+	std::stringstream ss(input_str);
+	std::string item;
+	while (std::getline(ss, item))
+		res.insert(item);
+
+	return res;
+}
+
+template <typename T>
+std::vector<T> set_difference(const std::set<T> &a, const std::set<T> &b)
+{
+	std::vector<T> res(a.size());
+	typename std::vector<T>::iterator it = set_difference(
+		a.begin(), a.end(), b.begin(), b.begin(), res.begin());
+	res.resize(it - res.begin());
+
+	return res;
+}
+
+void Iddiffer::diffTrCommentsAgainstEmpty(TranslationContent *content_b)
+{
+	clearIddiff();
+
+	const git_oid *tp_hash = content_b->calculateTpHash();
+	int first_id = stupidsClient.getFirstId(tp_hash);
+	assert(first_id > 0);
+
+
+	// TODO: function for this
+	m_date = content_b->date();
+	m_author = content_b->author();
+
+	// compare pairs of messages in 2 .po files
+	po_file_t file_b = content_b->poFileRead();
+	po_message_iterator_t iterator_b = po_message_iterator(file_b, "messages");
+	// skipping headers
+	po_message_t message_b = po_next_message(iterator_b);
+
+	// TODO: use data from TranslationContent::readMessages
+	for (int index = 0;
+		(message_b = po_next_message(iterator_b)) &&
+		!po_message_is_obsolete(message_b);
+		index ++)
+	{
+		std::set<std::string> comm_a; // empty
+		std::set<std::string> comm_b = set_of_lines(po_message_comments(message_b));
+
+		std::vector<std::string> added = set_difference(comm_b, comm_a);
+
+		IddiffMessage *diff_message = new IddiffMessage();
+		for (size_t i = 0; i < added.size(); i ++)
+			diff_message->addMsgstr(added[i].c_str());
+		if (added.size() > 0)
+			insertAdded(first_id + index, diff_message);
+	}
+
+	// free memory
+	po_message_iterator_free(iterator_b);
+	po_file_free(file_b);
+}
+
+void Iddiffer::diffTrCommentsFiles(TranslationContent *content_a, TranslationContent *content_b)
+{
+	clearIddiff();
+
+	// .po files should be derived from the same .pot
+	const git_oid *tp_hash = content_a->calculateTpHash();
+	assert(git_oid_cmp(tp_hash, content_b->calculateTpHash()) == 0);
+
+	// first_id is the same for 2 files
+	int first_id = stupidsClient.getFirstId(tp_hash);
+	assert(first_id > 0);
+
+
+	// TODO: function for this
+	m_date = content_b->date();
+	m_author = content_b->author();
+
+	// compare pairs of messages in 2 .po files
+	po_file_t file_a = content_a->poFileRead();
+	po_file_t file_b = content_b->poFileRead();
+
+	po_message_iterator_t iterator_a =
+		po_message_iterator(file_a, "messages");
+	po_message_iterator_t iterator_b =
+		po_message_iterator(file_b, "messages");
+	// skipping headers
+	po_message_t message_a = po_next_message(iterator_a);
+	po_message_t message_b = po_next_message(iterator_b);
+
+	// TODO: use data from TranslationContent::readMessages
+	for (int index = 0;
+		(message_a = po_next_message(iterator_a)) &&
+		(message_b = po_next_message(iterator_b)) &&
+		!po_message_is_obsolete(message_a) &&
+		!po_message_is_obsolete(message_b);
+		index ++)
+	{
+		if (strcmp(po_message_comments(message_a), po_message_comments(message_b)) == 0)
+			continue;
+
+		std::set<std::string> comm_a = set_of_lines(po_message_comments(message_a));
+		std::set<std::string> comm_b = set_of_lines(po_message_comments(message_b));
+
+		std::vector<std::string> added = set_difference(comm_b, comm_a);
+
+		IddiffMessage *diff_message = new IddiffMessage();
+		for (size_t i = 0; i < added.size(); i ++)
+			diff_message->addMsgstr(added[i].c_str());
+		if (added.size() > 0)
+			insertAdded(first_id + index, diff_message);
 	}
 
 	// free memory
@@ -857,6 +984,49 @@ void Iddiffer::merge(Iddiffer *diff)
 		insertAddedClone(other_added[i]); // this also clones the IddiffMessage object
 	for (size_t i = 0; i < other_review.size(); i ++)
 		insertReviewClone(other_review[i]); // this also clones the IddiffMessage object
+
+	mergeHeaders(diff);
+}
+
+void Iddiffer::mergeTrComments(Iddiffer *diff)
+{
+	assert(diff->getReviewVector().empty());
+
+	std::vector<std::pair<int, IddiffMessage *> > other_removed = diff->getRemovedVector();
+	std::vector<std::pair<int, IddiffMessage *> > other_added = diff->getAddedVector();
+
+	assert(other_removed.empty()); // TODO: implement later
+//	for (size_t i = 0; i < other_removed.size(); i ++)
+//		insertRemovedClone(other_removed[i]); // this also clones the IddiffMessage object
+
+	for (size_t i = 0; i < other_added.size(); i ++)
+	{
+		int msg_id = other_added[i].first;
+		IddiffMessage *message = other_added[i].second;
+
+		IddiffMessage *prevMessage = findAddedSingle(msg_id);
+		if (prevMessage)
+		{
+			std::vector<std::string> comments;
+			for (int i = 0; i < message->numPlurals(); i ++)
+				comments.push_back(std::string(message->msgstr(i)));
+			for (int i = 0; i < prevMessage->numPlurals(); i ++)
+				comments.push_back(std::string(prevMessage->msgstr(i)));
+
+			sort_uniq(comments);
+
+			IddiffMessage *new_message = new IddiffMessage();
+			for (size_t i = 0; i < comments.size(); i ++)
+				new_message->addMsgstr(comments[i].c_str());
+
+			eraseAdded(msg_id, prevMessage);
+			insertAddedClone(std::make_pair(msg_id, new_message));
+		}
+		else
+		{
+			insertAddedClone(other_added[i]);
+		}
+	}
 
 	mergeHeaders(diff);
 }
