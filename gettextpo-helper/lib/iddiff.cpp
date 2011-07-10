@@ -1075,6 +1075,11 @@ IddiffMessage *Iddiffer::findRemoved(int msg_id, const IddiffMessage *item)
 	return findIddiffMessageList(findRemoved(msg_id), item);
 }
 
+IddiffMessage *Iddiffer::findRemoved(std::pair<int, IddiffMessage *> item)
+{
+	return findRemoved(item.first, item.second);
+}
+
 IddiffMessage *Iddiffer::findAdded(int msg_id, const IddiffMessage *item)
 {
 	return findIddiffMessageList(findAdded(msg_id), item);
