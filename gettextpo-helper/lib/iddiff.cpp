@@ -1085,6 +1085,11 @@ IddiffMessage *Iddiffer::findAdded(int msg_id, const IddiffMessage *item)
 	return findIddiffMessageList(findAdded(msg_id), item);
 }
 
+IddiffMessage *Iddiffer::findAdded(std::pair<int, IddiffMessage *> item)
+{
+	return findAdded(item.first, item.second);
+}
+
 /**
  * \static
  */
