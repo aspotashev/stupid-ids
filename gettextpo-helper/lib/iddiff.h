@@ -154,6 +154,8 @@ public:
 	 */
 	void setCurrentDateTime();
 
+	void filterTrustedIddiff(Iddiffer *filter, Iddiffer *input_diff);
+
 private:
 	void writeMessageList(std::vector<std::pair<int, IddiffMessage *> > list);
 	std::pair<int, IddiffMessage *> loadMessageListEntry(const char *line);

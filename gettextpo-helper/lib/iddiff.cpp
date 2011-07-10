@@ -1197,3 +1197,32 @@ void Iddiffer::setCurrentDateTime()
 	m_date.setCurrentDateTime();
 }
 
+// Why this is called "trusted" filtering:
+//     If a string was in "ADDED" in "stupids-rerere",
+//     the filter still accepts items from "input_diff" with
+//     the same translation "REMOVED" (and vice versa).
+//     I.e. trusted patches can overwrite data in "stupids-rerere".
+//
+// This is opposite to "3rd-party idpatch filtering".
+void Iddiffer::filterTrustedIddiff(Iddiffer *filter, Iddiffer *input_diff)
+{
+	if (!input_diff->getReviewVector().empty())
+	{
+		fprintf(stderr, "Warning: TODO: filter review items\n");
+		assert(0);
+	}
+
+	std::vector<std::pair<int, IddiffMessage *> > other_removed = input_diff->getRemovedVector();
+	std::vector<std::pair<int, IddiffMessage *> > other_added = input_diff->getAddedVector();
+
+	for (size_t i = 0; i < other_removed.size(); i ++)
+		if (!filter->findRemoved(other_removed[i]))
+			insertRemovedClone(other_removed[i]);
+
+	for (size_t i = 0; i < other_added.size(); i ++)
+		if (!filter->findAdded(other_added[i]))
+			insertAddedClone(other_added[i]);
+
+	mergeHeaders(input_diff);
+}
+
