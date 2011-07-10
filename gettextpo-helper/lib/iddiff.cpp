@@ -761,7 +761,7 @@ bool Iddiffer::canDropMessage(const Message *message, int min_id)
 {
 	std::vector<IddiffMessage *> removed = findRemoved(min_id);
 
-	if (message->isUntranslated())
+	if (message->isFuzzy() || message->isUntranslated())
 		return true;
 
 	for (size_t i = 0; i < removed.size(); i ++) // TODO: implement this through findRemoved (when Message and IddiffMessage will be merged)
