@@ -873,7 +873,6 @@ void Iddiffer::applyToMessageComments(MessageGroup *messageGroup, int min_id)
 }
 
 // TODO: remove this function!
-// TODO: rewrite using StupIdTranslationCollector::getMessagesByIds(std::vector<MessageGroup *> &messages, std::vector<TranslationContent *> &contents)
 // Applies the iddiff to the given TranslationContent and writes changes to file
 void Iddiffer::applyToContent(TranslationContent *content)
 {
@@ -886,7 +885,6 @@ void Iddiffer::applyToContent(TranslationContent *content)
 			applyToMessage(messages[i], min_ids[i]);
 }
 
-// TODO: rewrite using StupIdTranslationCollector::getMessagesByIds(std::vector<MessageGroup *> &messages, std::vector<TranslationContent *> &contents)
 // TODO: Warn about messages that are involved in the Iddiff, but were not found in any of the .po files
 void Iddiffer::applyIddiff(StupIdTranslationCollector *collector, bool applyComments)
 {
