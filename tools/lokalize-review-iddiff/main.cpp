@@ -103,6 +103,7 @@ int main(int argc, char *argv[])
 		tempfile << "_" << GitOid(content->gitBlobHash()).toString();
 		std::string tempfile_str = tempfile.str();
 
+		// TODO: basename should be equal to "content->displayFilename()"
 		const char *file_a = xstrdup((tempfile_str + "_A.po").c_str());
 		const char *file_b = xstrdup((tempfile_str + "_B.po").c_str());
 
