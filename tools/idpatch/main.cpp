@@ -18,8 +18,8 @@ int main(int argc, char *argv[])
 
 	// Apply patch
 	StupIdTranslationCollector collector;
-	collector.insertPoDir("/home/sasha/kde-ru/kde-ru-trunk.git");
-	collector.insertPoDir("/home/sasha/kde-ru/kde-l10n-ru-stable");
+	collector.insertPoDir("/home/sasha/kde-ru/clean-svn/trunk");
+	collector.insertPoDir("/home/sasha/kde-ru/clean-svn/stable");
 
 	differ->applyIddiff(&collector);
 
