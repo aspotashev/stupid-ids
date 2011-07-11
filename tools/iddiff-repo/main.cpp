@@ -18,7 +18,11 @@ void processFile(GitLoader *git_loader, Iddiffer *merged_diff, const char *filen
 		return;
 	if (stupidsClient.getFirstId(tp_hash) == 0)
 	{
-		printf("Unknown tp_hash. Translation file: [%s]\nThis probably means that someone (probably, translator of this file) has generated the translation template by hand, or has changed something in the template.\n", filename);
+		fprintf(stderr,
+			"Unknown tp_hash. Translation file: [%s]\n"
+			"This probably means that someone (probably, translator of this file) "
+			"has generated the translation template by hand, or has changed "
+			"something in the template.\n", filename);
 		return;
 	}
 
