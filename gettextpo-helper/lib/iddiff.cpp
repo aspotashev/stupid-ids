@@ -264,6 +264,46 @@ void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *cont
 	po_file_free(file_b);
 }
 
+// http://www.infosoftcom.ru/article/realizatsiya-funktsii-split-string
+std::vector<std::string> split_string(const std::string &str, const std::string &sep)
+{
+	size_t str_len = (int)str.length();
+	size_t sep_len = (int)sep.length();
+	assert(sep_len > 0);
+
+
+	std::vector<std::string> res;
+
+	int j = 0;
+	int i = str.find(sep, j);
+	while (i != -1)
+	{
+		if (i > j && i <= str_len)
+			res.push_back(str.substr(j, i - j));
+		j = i + sep_len;
+		i = str.find(sep, j);
+	}
+
+	int l = str_len - 1;
+	if (str.substr(j, l - j + 1).length() > 0)
+		res.push_back(str.substr(j, l - j + 1));
+
+	return res;
+}
+
+std::string join_strings(const std::vector<std::string> &str, const std::string &sep)
+{
+	std::string res;
+	for (size_t i = 0; i < str.size(); i ++)
+	{
+		if (i > 0)
+			res += sep;
+		res += str[i];
+	}
+
+	return res;
+}
+
 // TODO: write and use function split_string()
 std::set<std::string> set_of_lines(const char *input)
 {
@@ -973,10 +1013,12 @@ void Iddiffer::mergeHeaders(Iddiffer *diff)
 	if (m_date.isNull() || diff->date() > m_date)
 		m_date = diff->date();
 
-	if (m_author.empty())
-		m_author = diff->m_author;
-	else if (!diff->m_author.empty())
-		m_author += ", " + diff->m_author;
+	std::vector<std::string> authors = split_string(m_author, std::string(", "));
+	std::vector<std::string> added_authors = split_string(diff->m_author, std::string(", "));
+	authors.insert(authors.end(), added_authors.begin(), added_authors.end());
+	sort_uniq(authors);
+
+	m_author = join_strings(authors, std::string(", "));
 }
 
 // TODO: Iddiffer::mergeNokeep that removes all items from the given Iddiff (and therefore it does not need to clone the IddiffMessage objects)
