@@ -100,13 +100,15 @@ public:
 	std::string generateIddiffText();
 
 	bool canDropMessage(const Message *message, int min_id);
-	void applyToMessage(MessageGroup *messageGroup, int min_id);
-	void applyToContent(TranslationContent *content);
-	void applyIddiff(StupIdTranslationCollector *collector);
 
+	void applyToMessage(MessageGroup *messageGroup, int min_id);
 	void applyToMessageComments(MessageGroup *messageGroup, int min_id);
-	void applyToContentComments(TranslationContent *content);
+
+	void applyIddiff(StupIdTranslationCollector *collector, bool applyComments);
+	void applyIddiff(StupIdTranslationCollector *collector);
 	void applyIddiffComments(StupIdTranslationCollector *collector);
+
+	void applyToContent(TranslationContent *content);
 
 	// low-level functions
 	void clearIddiff();

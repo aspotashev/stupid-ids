@@ -844,36 +844,6 @@ void Iddiffer::applyToMessage(MessageGroup *messageGroup, int min_id)
 	}
 }
 
-// TODO: rewrite using StupIdTranslationCollector::getMessagesByIds(std::vector<MessageGroup *> &messages, std::vector<TranslationContent *> &contents)
-// Applies the iddiff to the given TranslationContent and writes changes to file
-void Iddiffer::applyToContent(TranslationContent *content)
-{
-	std::vector<MessageGroup *> messages = content->readMessages();
-	std::vector<int> min_ids = content->getMinIds();
-	std::vector<int> involved_ids = involvedIds();
-
-	for (size_t i = 0; i < messages.size(); i ++)
-		if (binary_search(involved_ids.begin(), involved_ids.end(), min_ids[i]))
-			applyToMessage(messages[i], min_ids[i]);
-}
-
-// TODO: rewrite using StupIdTranslationCollector::getMessagesByIds(std::vector<MessageGroup *> &messages, std::vector<TranslationContent *> &contents)
-// TODO: Warn about messages that are involved in the Iddiff, but were not found in any of the .po files
-void Iddiffer::applyIddiff(StupIdTranslationCollector *collector)
-{
-	// Check that involvedIds() will return minimized IDs
-	assert(m_minimizedIds);
-
-	std::vector<TranslationContent *> contents = collector->involvedByMinIds(involvedIds());
-	printf("involved contents: %d\n", (int)contents.size());
-	for (size_t i = 0; i < contents.size(); i ++)
-	{
-		printf("Patching %s\n", contents[i]->displayFilename());
-		applyToContent(contents[i]);
-		contents[i]->writeToFile(); // TODO: StupIdTranslationCollector::writeChanges() for writing all changes to .po files
-	}
-}
-
 void Iddiffer::applyToMessageComments(MessageGroup *messageGroup, int min_id)
 {
 	assert(messageGroup->size() == 1);
@@ -902,9 +872,10 @@ void Iddiffer::applyToMessageComments(MessageGroup *messageGroup, int min_id)
 	message->editMsgcomments(joined_comments.c_str());
 }
 
+// TODO: remove this function!
 // TODO: rewrite using StupIdTranslationCollector::getMessagesByIds(std::vector<MessageGroup *> &messages, std::vector<TranslationContent *> &contents)
 // Applies the iddiff to the given TranslationContent and writes changes to file
-void Iddiffer::applyToContentComments(TranslationContent *content)
+void Iddiffer::applyToContent(TranslationContent *content)
 {
 	std::vector<MessageGroup *> messages = content->readMessages();
 	std::vector<int> min_ids = content->getMinIds();
@@ -912,24 +883,50 @@ void Iddiffer::applyToContentComments(TranslationContent *content)
 
 	for (size_t i = 0; i < messages.size(); i ++)
 		if (binary_search(involved_ids.begin(), involved_ids.end(), min_ids[i]))
-			applyToMessageComments(messages[i], min_ids[i]);
+			applyToMessage(messages[i], min_ids[i]);
 }
 
 // TODO: rewrite using StupIdTranslationCollector::getMessagesByIds(std::vector<MessageGroup *> &messages, std::vector<TranslationContent *> &contents)
 // TODO: Warn about messages that are involved in the Iddiff, but were not found in any of the .po files
-void Iddiffer::applyIddiffComments(StupIdTranslationCollector *collector)
+void Iddiffer::applyIddiff(StupIdTranslationCollector *collector, bool applyComments)
 {
 	// Check that involvedIds() will return minimized IDs
 	assert(m_minimizedIds);
 
-	std::vector<TranslationContent *> contents = collector->involvedByMinIds(involvedIds());
+	std::map<int, std::vector<MessageGroup *> > messages;
+	std::vector<TranslationContent *> contents;
+	collector->getMessagesByIds(messages, contents, involvedIds());
+
+	std::vector<int> involved_ids = involvedIds();
+	for (size_t i = 0; i < involved_ids.size(); i ++)
+	{
+		int min_id = involved_ids[i];
+		std::vector<MessageGroup *> messageGroups = messages[min_id];
+		for (size_t j = 0; j < messageGroups.size(); j ++)
+		{
+			if (applyComments)
+				applyToMessageComments(messageGroups[j], min_id);
+			else
+				applyToMessage(messageGroups[j], min_id);
+		}
+	}
+
 	printf("involved contents: %d\n", (int)contents.size());
 	for (size_t i = 0; i < contents.size(); i ++)
 	{
-		printf("Patching %s\n", contents[i]->displayFilename());
-		applyToContentComments(contents[i]);
+		printf("Writing %s\n", contents[i]->displayFilename());
 		contents[i]->writeToFile(); // TODO: StupIdTranslationCollector::writeChanges() for writing all changes to .po files
 	}
+}
+
+void Iddiffer::applyIddiff(StupIdTranslationCollector *collector)
+{
+	applyIddiff(collector, false);
+}
+
+void Iddiffer::applyIddiffComments(StupIdTranslationCollector *collector)
+{
+	applyIddiff(collector, true);
 }
 
 /**
