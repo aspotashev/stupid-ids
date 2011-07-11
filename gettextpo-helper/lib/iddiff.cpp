@@ -821,6 +821,7 @@ void Iddiffer::applyToMessage(MessageGroup *messageGroup, int min_id)
 		if (added) // change translation
 		{
 			added->copyTranslationsToMessage(message);
+			message->editFuzzy(false);
 		}
 		else // fuzzy old translation
 		{
