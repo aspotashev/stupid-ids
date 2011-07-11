@@ -113,6 +113,7 @@ public:
 	std::vector<IddiffMessage *> findRemoved(int msg_id);
 	std::vector<IddiffMessage *> findAdded(int msg_id);
 	IddiffMessage *findAddedSingle(int msg_id);
+	IddiffMessage *findRemovedSingle(int msg_id);
 	IddiffMessage *findRemoved(int msg_id, const IddiffMessage *item);
 	IddiffMessage *findRemoved(std::pair<int, IddiffMessage *> item);
 	IddiffMessage *findAdded(int msg_id, const IddiffMessage *item);

@@ -1107,6 +1107,14 @@ IddiffMessage *Iddiffer::findAddedSingle(int msg_id)
 	return arr.size() == 1 ? arr[0] : NULL;
 }
 
+IddiffMessage *Iddiffer::findRemovedSingle(int msg_id)
+{
+	std::vector<IddiffMessage *> arr = findRemoved(msg_id);
+
+	assert(arr.size() <= 1);
+	return arr.size() == 1 ? arr[0] : NULL;
+}
+
 /**
  * \static
  */
