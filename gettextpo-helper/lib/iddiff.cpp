@@ -858,6 +858,7 @@ void Iddiffer::applyToContent(TranslationContent *content)
 }
 
 // TODO: rewrite using StupIdTranslationCollector::getMessagesByIds(std::vector<MessageGroup *> &messages, std::vector<TranslationContent *> &contents)
+// TODO: Warn about messages that are involved in the Iddiff, but were not found in any of the .po files
 void Iddiffer::applyIddiff(StupIdTranslationCollector *collector)
 {
 	// Check that involvedIds() will return minimized IDs
