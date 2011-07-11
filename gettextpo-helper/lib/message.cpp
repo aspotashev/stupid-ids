@@ -341,6 +341,19 @@ void Message::editMsgstr(int index, const char *str)
 	m_edited = true;
 }
 
+void Message::editMsgcomments(const char *str)
+{
+	assert(str);
+
+	if (strcmp(m_msgcomments, str) == 0)
+		return;
+
+	if (m_msgcomments)
+		delete [] m_msgcomments;
+	m_msgcomments = xstrdup(str);
+	m_edited = true;
+}
+
 bool Message::isEdited() const
 {
 	return m_edited;

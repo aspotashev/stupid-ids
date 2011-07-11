@@ -874,6 +874,64 @@ void Iddiffer::applyIddiff(StupIdTranslationCollector *collector)
 	}
 }
 
+void Iddiffer::applyToMessageComments(MessageGroup *messageGroup, int min_id)
+{
+	assert(messageGroup->size() == 1);
+	Message *message = messageGroup->message(0);
+
+	std::set<std::string> comments = set_of_lines(message->msgcomments());
+
+	IddiffMessage *removed = findRemovedSingle(min_id);
+	if (removed)
+		for (int i = 0; i < removed->numPlurals(); i ++)
+			comments.erase(std::string(removed->msgstr(i)));
+
+	IddiffMessage *added = findAddedSingle(min_id);
+	if (added)
+		for (int i = 0; i < added->numPlurals(); i ++)
+			comments.insert(std::string(added->msgstr(i)));
+
+
+	std::vector<std::string> comments_vec;
+	for (std::set<std::string>::iterator it = comments.begin();
+	     it != comments.end(); it ++)
+	     comments_vec.push_back(*it);
+	// TODO: make join_strings accept any container, including std::set (or iterator?)
+	std::string joined_comments = join_strings(comments_vec, std::string("\n"));
+
+	message->editMsgcomments(joined_comments.c_str());
+}
+
+// TODO: rewrite using StupIdTranslationCollector::getMessagesByIds(std::vector<MessageGroup *> &messages, std::vector<TranslationContent *> &contents)
+// Applies the iddiff to the given TranslationContent and writes changes to file
+void Iddiffer::applyToContentComments(TranslationContent *content)
+{
+	std::vector<MessageGroup *> messages = content->readMessages();
+	std::vector<int> min_ids = content->getMinIds();
+	std::vector<int> involved_ids = involvedIds();
+
+	for (size_t i = 0; i < messages.size(); i ++)
+		if (binary_search(involved_ids.begin(), involved_ids.end(), min_ids[i]))
+			applyToMessageComments(messages[i], min_ids[i]);
+}
+
+// TODO: rewrite using StupIdTranslationCollector::getMessagesByIds(std::vector<MessageGroup *> &messages, std::vector<TranslationContent *> &contents)
+// TODO: Warn about messages that are involved in the Iddiff, but were not found in any of the .po files
+void Iddiffer::applyIddiffComments(StupIdTranslationCollector *collector)
+{
+	// Check that involvedIds() will return minimized IDs
+	assert(m_minimizedIds);
+
+	std::vector<TranslationContent *> contents = collector->involvedByMinIds(involvedIds());
+	printf("involved contents: %d\n", (int)contents.size());
+	for (size_t i = 0; i < contents.size(); i ++)
+	{
+		printf("Patching %s\n", contents[i]->displayFilename());
+		applyToContentComments(contents[i]);
+		contents[i]->writeToFile(); // TODO: StupIdTranslationCollector::writeChanges() for writing all changes to .po files
+	}
+}
+
 /**
  * \brief Add translation version to the "REMOVED" section ensuring that it does not conflict with existing Iddiff entries.
  *

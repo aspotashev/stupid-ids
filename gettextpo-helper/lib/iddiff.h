@@ -104,6 +104,10 @@ public:
 	void applyToContent(TranslationContent *content);
 	void applyIddiff(StupIdTranslationCollector *collector);
 
+	void applyToMessageComments(MessageGroup *messageGroup, int min_id);
+	void applyToContentComments(TranslationContent *content);
+	void applyIddiffComments(StupIdTranslationCollector *collector);
+
 	// low-level functions
 	void clearIddiff();
 	void clearReviewComments();

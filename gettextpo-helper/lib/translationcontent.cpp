@@ -530,6 +530,9 @@ void TranslationContent::writeToFile(const char *dest_filename, bool force_write
 
 				po_message_set_msgstr(message, messageObj->msgstr(0));
 			}
+
+			po_message_set_comments(message, messageObj->msgcomments() ? messageObj->msgcomments() : "");
+
 			madeChanges = true;
 		}
 

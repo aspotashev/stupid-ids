@@ -169,6 +169,7 @@ public:
 	// Used for patching translation files.
 	void editFuzzy(bool fuzzy);
 	void editMsgstr(int index, const char *str);
+	void editMsgcomments(const char *str);
 	bool isEdited() const;
 
 protected:
