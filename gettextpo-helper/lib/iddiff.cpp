@@ -917,8 +917,9 @@ void Iddiffer::applyIddiff(StupIdTranslationCollector *collector, bool applyComm
 	printf("involved contents: %d\n", (int)contents.size());
 	for (size_t i = 0; i < contents.size(); i ++)
 	{
-		printf("Writing %s\n", contents[i]->displayFilename());
-		contents[i]->writeToFile(); // TODO: StupIdTranslationCollector::writeChanges() for writing all changes to .po files
+		TranslationContent *content = contents[i];
+		printf("Writing %s\n", content->displayFilename());
+		content->writeToFile(content->displayFilename(), true); // TODO: StupIdTranslationCollector::writeChanges() for writing all changes to .po files
 	}
 }
 

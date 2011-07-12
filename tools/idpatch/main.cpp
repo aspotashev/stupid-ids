@@ -18,8 +18,8 @@ int main(int argc, char *argv[])
 
 	// Apply patch
 	StupIdTranslationCollector collector;
-	collector.insertPoDir("/home/sasha/kde-ru/clean-svn/trunk");
-	collector.insertPoDir("/home/sasha/kde-ru/clean-svn/stable");
+	collector.insertPoDirOrTemplate("/home/sasha/kde-ru/xx-numbering/templates", "/home/sasha/kde-ru/clean-svn/trunk");
+	collector.insertPoDirOrTemplate("/home/sasha/kde-ru/xx-numbering/stable-templates", "/home/sasha/kde-ru/clean-svn/stable");
 
 	differ->applyIddiff(&collector);
 
