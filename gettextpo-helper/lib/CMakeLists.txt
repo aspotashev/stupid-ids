@@ -39,6 +39,7 @@ install(FILES
 	gitloader.h
 	message.h
 	filedatetime.h
+	oidmapcache.h
 	DESTINATION ${INCLUDE_INSTALL_DIR}/gettextpo-helper COMPONENT Devel
 )
 

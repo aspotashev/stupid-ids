@@ -56,6 +56,16 @@ const git_oid *OidMapCache::getValue(const git_oid *oid)
 		return NULL;
 }
 
+std::vector<GitOid> OidMapCache::reverseGetValues(const git_oid *oid)
+{
+	std::vector<GitOid> res;
+	for (size_t i = 0; i < m_cache.size(); i ++)
+		if (m_cache[i].second == GitOid(oid))
+			res.push_back(m_cache[i].first);
+
+	return res;
+}
+
 void OidMapCache::addPair(const git_oid *oid, const git_oid *tp_hash)
 {
 	// Check that we do not have this pair yet

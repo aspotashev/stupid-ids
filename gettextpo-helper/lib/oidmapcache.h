@@ -1,5 +1,6 @@
 
 #include <string>
+#include <map>
 
 #include <gettextpo-helper/detectorbase.h>
 
@@ -13,6 +14,7 @@ public:
 	~OidMapCache();
 
 	const git_oid *getValue(const git_oid *oid);
+	std::vector<GitOid> reverseGetValues(const git_oid *oid);
 	void addPair(const git_oid *oid, const git_oid *tp_hash);
 
 private:
