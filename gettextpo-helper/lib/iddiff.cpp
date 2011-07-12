@@ -907,6 +907,11 @@ void Iddiffer::applyIddiff(StupIdTranslationCollector *collector, bool applyComm
 			else
 				applyToMessage(messageGroups[j], min_id);
 		}
+
+		if (messageGroups.size() == 0)
+			fprintf(stderr,
+				"Message has not been found nowhere by its ID (%d):\t%s\n",
+				min_id, findAddedSingle(min_id)->formatPoMessage().c_str());
 	}
 
 	printf("involved contents: %d\n", (int)contents.size());
