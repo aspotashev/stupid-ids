@@ -243,7 +243,7 @@ void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *cont
 		//     f"abc" -> f"def" : REMOVED
 
 		// If there were no changes (i.e. message_a == message_b)
-		if (!compare_po_message_msgstr(message_a, message_b))
+		if (!compare_po_message_msgstr(message_a, message_b) && po_message_is_fuzzy(message_a) == po_message_is_fuzzy(message_b))
 			continue;
 
 		// Adding to "REMOVED" if:
