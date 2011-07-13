@@ -956,7 +956,14 @@ void Iddiffer::insertRemoved(int msg_id, IddiffMessage *item)
  */
 void Iddiffer::insertAdded(int msg_id, IddiffMessage *item)
 {
-	assert(findRemoved(msg_id, item) == NULL); // conflict: trying to "REMOVE" a translation already existing in "ADDED"
+	if (findRemoved(msg_id, item) != NULL) // conflict: trying to "ADD" a translation already existing in "REMOVED"
+	{
+		fprintf(stderr,
+			"Conflict: removing previously added translation\n"
+			"\tmsg_id = %d\n"
+			"\tmessage translation: %s\n", msg_id, item->formatPoMessage().c_str());
+		assert(0);
+	}
 
 	std::vector<IddiffMessage *> added_this_id = findAdded(msg_id);
 	for (size_t i = 0; i < added_this_id.size(); i ++)
