@@ -240,7 +240,7 @@ void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *cont
 		//     "abc"  -> "def"  : REMOVED, ADDED
 		//     "abc"  -> f"def" : REMOVED
 		//     f"abc" -> "def"  : REMOVED, ADDED
-		//     f"abc" -> f"def" : REMOVED
+		//     f"abc" -> f"def" : - (fuzzy messages are "weak", you should write in comments instead what you are not sure in)
 
 		// If there were no changes (i.e. message_a == message_b)
 		if (!compare_po_message_msgstr(message_a, message_b) && po_message_is_fuzzy(message_a) == po_message_is_fuzzy(message_b))
@@ -248,7 +248,7 @@ void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *cont
 
 		// Adding to "REMOVED" if:
 		//    "A" is not untranslated & there were changes (i.e. message_a != message_b)
-		if (!po_message_is_untranslated(message_a))
+		if (!po_message_is_untranslated(message_a) && (!po_message_is_fuzzy(message_a) || !po_message_is_fuzzy(message_b)))
 			insertRemoved(first_id + index, new IddiffMessage(message_a));
 
 		// Adding to "ADDED" if:
