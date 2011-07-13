@@ -1,3 +1,4 @@
 1. Eliminate usage of temporary files in the whole 'stupid-ids' project. (use "grep tempfile")
 2. Which version of Gettext is required for po_message_is_range()? Add a dependency to CMakeLists.txt
+3. Add obsolete messages to .po files when .iddiff does not completely apply
 
