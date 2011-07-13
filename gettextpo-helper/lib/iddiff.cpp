@@ -761,6 +761,9 @@ void Iddiffer::substituteMsgId(std::map<int, T> &items, int old_id, int new_id)
 	// Check that IDs won't collide
 	if (items.find(new_id) != items.end())
 	{
+		// TODO: if there is no real conflict, this should not fail
+		// (e.g. when the same string was changed in the same way via two different msg_IDs,
+		// this often happens if you enable parallel branches in Lokalize)
 		printf("new_id = %d, old_id = %d\n", new_id, old_id);
 		assert(0);
 	}

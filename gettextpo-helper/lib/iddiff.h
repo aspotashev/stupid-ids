@@ -186,6 +186,7 @@ private:
 	std::string m_author;
 	FileDateTime m_date;
 
+	// TODO: class IddiffChange
 	std::map<int, std::vector<IddiffMessage *> > m_removedItems;
 	std::map<int, std::vector<IddiffMessage *> > m_addedItems;
 	std::map<int, IddiffMessage *> m_reviewComments;
