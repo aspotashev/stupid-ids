@@ -44,6 +44,27 @@ public:
 
 //----------------------------------------------
 
+class IddiffChange
+{
+public:
+	IddiffChange();
+
+	bool empty() const;
+	bool emptyRemoved() const;
+	bool emptyAdded() const;
+	bool emptyReview() const;
+	void clearReviewComment();
+
+	static void eraseItem(std::vector<IddiffMessage *> &list, const IddiffMessage *item);
+	void eraseRemoved(const IddiffMessage *item);
+	void eraseAdded(const IddiffMessage *item);
+
+//private:
+	std::vector<IddiffMessage *> m_removedItems;
+	std::vector<IddiffMessage *> m_addedItems;
+	IddiffMessage *m_reviewComment;
+};
+
 class TranslationContent;
 class StupIdTranslationCollector;
 
@@ -172,24 +193,15 @@ private:
 	const FileDateTime &date() const;
 
 	// Helper functions for minimizeIds()
-	template <typename T> static void substituteMsgId(std::map<int, T> &items, int old_id, int new_id);
+	void cleanupMsgIdData(int msg_id);
 	void substituteMsgId(int old_id, int new_id);
-
-	// Helper function for getRemovedVector() and getAddedVector()
-	static std::vector<std::pair<int, IddiffMessage *> > getItemsVector(std::map<int, std::vector<IddiffMessage *> > &items);
-
-	// Helper function for eraseRemoved() and eraseAdded()
-	static void eraseItem(std::map<int, std::vector<IddiffMessage *> > &items, int msg_id, const IddiffMessage *item);
 
 private:
 	std::string m_subject;
 	std::string m_author;
 	FileDateTime m_date;
 
-	// TODO: class IddiffChange
-	std::map<int, std::vector<IddiffMessage *> > m_removedItems;
-	std::map<int, std::vector<IddiffMessage *> > m_addedItems;
-	std::map<int, IddiffMessage *> m_reviewComments;
+	std::map<int, IddiffChange> m_items;
 	bool m_minimizedIds;
 
 	std::ostringstream m_output;
