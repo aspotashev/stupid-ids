@@ -48,7 +48,7 @@ void MappedFile::detectFileSize()
 	int ret = stat(m_filename, &sb);
 	if (ret == -1)
 	{
-		if (errno == ENOENT) // file does not exists
+		if (errno == ENOENT) // file does not exist
 		{
 			m_fileLength = 0;
 			return;
