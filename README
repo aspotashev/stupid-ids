@@ -41,3 +41,6 @@ Chooses IDs for .pot templates. Maintains the map [tp_hash] -> [first ID in .pot
 
 == transition-detector ==
 
+
+Dependencies:
+* >=libgettextpo-0.18 (for "po_message_is_range")
