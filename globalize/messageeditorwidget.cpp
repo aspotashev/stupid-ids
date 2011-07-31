@@ -3,6 +3,8 @@
 #include "messageheaderwidget.h"
 #include <gettextpo-helper/gettextpo-helper.h>
 
+#include <QtGui/QHBoxLayout>
+
 MessageEditorWidget::MessageEditorWidget(MessageGroup *messageGroup):
     QWidget()
 {

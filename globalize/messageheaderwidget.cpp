@@ -2,6 +2,10 @@
 
 #include <gettextpo-helper/message.h>
 
+#include <QtGui/QGridLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QPainter>
+
 MessageHeaderWidget::MessageHeaderWidget(MessageEditorWidget *editor, MessageGroup *messageGroup):
     QWidget(), m_editor(editor), m_messageGroup(messageGroup)
 {

@@ -1,13 +1,15 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QtGui>
+#include <QtGui/QMainWindow>
 
 #include "messageeditorwidget.h"
 
 namespace Ui {
     class MainWindow;
 }
+
+class QVBoxLayout;
 
 class MainWindow : public QMainWindow
 {

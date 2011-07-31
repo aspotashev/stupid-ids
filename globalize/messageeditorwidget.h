@@ -1,12 +1,13 @@
 #ifndef MESSAGEEDITORWIDGET_H
 #define MESSAGEEDITORWIDGET_H
 
-#include <QtGui>
+#include <QtGui/QWidget>
 
 class Message;
 class MessageGroup;
 class MessageTranslationOption;
 class MessageHeaderWidget;
+class QHBoxLayout;
 
 class MessageEditorWidget : public QWidget
 {

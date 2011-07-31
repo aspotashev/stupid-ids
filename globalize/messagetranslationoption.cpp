@@ -5,6 +5,10 @@
 #include <gettextpo-helper/detectorbase.h>
 #include <gettextpo-helper/message.h>
 
+#include <QtGui/QGridLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QPainter>
+
 MessageTranslationOption::MessageTranslationOption(MessageEditorWidget *editor, Message *message):
     QWidget(), m_editor(editor), m_message(message)
 {

@@ -1,12 +1,13 @@
 #ifndef MESSAGEHEADERWIDGET_H
 #define MESSAGEHEADERWIDGET_H
 
-#include <QtGui>
+#include <QtGui/QWidget>
 
 
 class MessageEditorWidget;
 class Message;
 class MessageGroup;
+class QPaintEvent;
 
 class MessageHeaderWidget : public QWidget
 {

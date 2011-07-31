@@ -3,6 +3,8 @@
 
 #include "messageeditorwidget.h"
 
+#include <stdio.h>
+
 #include <gettextpo-helper/gettextpo-helper.h>
 #include <gettextpo-helper/iddiff.h>
 #include <gettextpo-helper/message.h>

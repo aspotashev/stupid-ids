@@ -3,9 +3,9 @@
 
 #include <assert.h>
 
-#include <QFile>
-#include <QDataStream>
-#include <QDirIterator>
+#include <QtCore/QFile>
+#include <QtCore/QDataStream>
+#include <QtCore/QDirIterator>
 
 void TranslationCollector::insertPo(QString path)
 {

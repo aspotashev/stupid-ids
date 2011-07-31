@@ -1,7 +1,7 @@
 #ifndef MESSAGETRANSLATIONOPTION_H
 #define MESSAGETRANSLATIONOPTION_H
 
-#include <QtGui>
+#include <QtGui/QWidget>
 
 class Message;
 class MessageEditorWidget;

@@ -1,7 +1,7 @@
 
 #include <gettextpo-helper/translation-collector.h>
 
-#include <QString>
+#include <QtCore/QString>
 
 class TranslationCollector : public StupIdTranslationCollector
 {
