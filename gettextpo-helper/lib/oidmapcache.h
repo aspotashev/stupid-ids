@@ -13,12 +13,17 @@ public:
 	OidMapCache(const char *filename);
 	~OidMapCache();
 
+	void loadCache();
+	void createDir(const char *pathname);
+	void createPathDirectories();
+
 	const git_oid *getValue(const git_oid *oid);
 	std::vector<GitOid> reverseGetValues(const git_oid *oid);
 	void addPair(const git_oid *oid, const git_oid *tp_hash);
 
 private:
 	char *m_filename;
+	bool m_fileExists;
 	std::vector<std::pair<GitOid, GitOid> > m_cache;
 };
 

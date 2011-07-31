@@ -4,6 +4,9 @@
 #include <assert.h>
 #include <map>
 #include <algorithm>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <errno.h>
 
 #include <git2.h>
 
@@ -16,10 +19,31 @@ std::map<std::string, OidMapCache *> OidMapCacheManager::s_instances = std::map<
 OidMapCache::OidMapCache(const char *filename)
 {
 	m_filename = xstrdup(filename);
+	m_fileExists = false;
+
+	loadCache();
+}
+
+OidMapCache::~OidMapCache()
+{
+	delete [] m_filename;
+}
+
+void OidMapCache::loadCache()
+{
+	assert(m_cache.empty());
 
 	// Read the contents of the file
 	FILE *f = fopen(m_filename, "a+b");
-	assert(f);
+	if (!f)
+	{
+		m_fileExists = false;
+		return;
+	}
+	else
+	{
+		m_fileExists = true;
+	}
 
 	fseek(f, 0, SEEK_END);
 	long file_size = ftell(f);
@@ -41,9 +65,35 @@ OidMapCache::OidMapCache(const char *filename)
 	fclose(f);
 }
 
-OidMapCache::~OidMapCache()
+void OidMapCache::createDir(const char *pathname)
 {
-	delete [] m_filename;
+	DIR *dir = opendir(pathname);
+	if (dir) // directory exists
+		assert(closedir(dir) == 0);
+	else if (errno == ENOENT)
+		assert(mkdir(pathname, 0777) == 0);
+	else
+		assert(0); // unexpected error
+}
+
+void OidMapCache::createPathDirectories()
+{
+	// "a/b" is the minimum directory+file name.
+	if (strlen(m_filename) < 3)
+		return;
+
+	char *filename = xstrdup(m_filename);
+
+	// Not taking the root slash.
+	char *cur_slash = filename;
+	while (cur_slash = strchr(cur_slash + 1, '/'))
+	{
+		*cur_slash = '\0';
+		createDir(filename);
+		*cur_slash = '/';
+	}
+
+	delete [] filename;
 }
 
 const git_oid *OidMapCache::getValue(const git_oid *oid)
@@ -74,6 +124,9 @@ void OidMapCache::addPair(const git_oid *oid, const git_oid *tp_hash)
 	// Add pair
 	m_cache.push_back(std::pair<GitOid, GitOid>(GitOid(oid), GitOid(tp_hash)));
 	sort(m_cache.begin(), m_cache.end());
+
+	if (!m_fileExists)
+		createPathDirectories();
 
 	// Write into the file.
 	// "a" (append) means that we will write to the end of file.
