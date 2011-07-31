@@ -6,6 +6,7 @@
 #include <errno.h>
 #include <assert.h>
 #include <stdio.h>
+#include <sys/stat.h>
 
 #include <gettextpo-helper/mappedfile.h>
 
