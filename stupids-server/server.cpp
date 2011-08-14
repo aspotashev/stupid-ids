@@ -5,6 +5,7 @@
 
 #include <gettextpo-helper/stupids-client.h>
 #include <gettextpo-helper/mappedfile.h>
+#include <gettextpo-helper/config.h>
 
 #include "server.h"
 #include "filedbfirstids.h"
@@ -12,9 +13,10 @@
 Server::Server()
 {
 	m_firstIds = new FiledbFirstIds(
-		"/home/sasha/stupid-ids/stupid-id-filler/ids/first_ids.txt",
-		"/home/sasha/stupid-ids/stupid-id-filler/ids/next_id.txt");
-	m_idMapDb = new MappedFileIdMapDb("/home/sasha/stupid-ids/transition-detector/idmap.mmapdb");
+		expand_path(StupidsConf("server.first_ids_db_path.first_ids")).c_str(),
+		expand_path(StupidsConf("server.first_ids_db_path.next_id")).c_str());
+	m_idMapDb = new MappedFileIdMapDb(
+		expand_path(StupidsConf("server.idmapdb")).c_str());
 }
 
 Server::~Server()

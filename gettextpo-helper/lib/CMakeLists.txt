@@ -11,6 +11,7 @@ set(gettextpo_helper_LIB_SRCS
 	iddiff.cpp
 	message.cpp
 	filedatetime.cpp
+	config.cpp
 
 	detector.cpp
 	detectorbase.cpp
