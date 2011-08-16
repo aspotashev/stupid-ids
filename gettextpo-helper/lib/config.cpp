@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #include "config.h"
 
@@ -67,7 +68,7 @@ StupidsConfig &StupidsConfig::defaultInstance()
 	if (!s_instance)
 	{
 		s_instance = new StupidsConfig();
-		s_instance->loadConfig("/home/sasha/.stupids.conf");
+		s_instance->loadConfig(expand_path("~/.stupids.conf").c_str());
 	}
 
 	return *s_instance;
