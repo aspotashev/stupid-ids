@@ -30,8 +30,12 @@ int main(int argc, char *argv[])
 
 	// Apply patch
 	StupIdTranslationCollector collector;
-	collector.insertPoDirOrTemplate("/home/sasha/kde-ru/xx-numbering/templates", "/home/sasha/kde-ru/clean-svn/trunk");
-	collector.insertPoDirOrTemplate("/home/sasha/kde-ru/xx-numbering/stable-templates", "/home/sasha/kde-ru/clean-svn/stable");
+	collector.insertPoDirOrTemplate(
+		expand_path(StupidsConf("apply.templates_path.trunk")).c_str(),
+		expand_path(StupidsConf("apply.translations_path.trunk")).c_str());
+	collector.insertPoDirOrTemplate(
+		expand_path(StupidsConf("apply.templates_path.stable")).c_str(),
+		expand_path(StupidsConf("apply.translations_path.stable")).c_str());
 
 	if (comments)
 		differ->applyIddiffComments(&collector);
