@@ -5,6 +5,7 @@
 
 #include <gettextpo-helper/translation-collector.h>
 #include <gettextpo-helper/iddiff.h>
+#include <gettextpo-helper/config.h>
 
 
 int main(int argc, char *argv[])
