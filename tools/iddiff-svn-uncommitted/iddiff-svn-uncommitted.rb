@@ -1,5 +1,7 @@
 #!/usr/bin/ruby19
 
+require 'tempfile'
+
 PATHS = [
   "/home/sasha/messages",
   "/home/sasha/docmessages",
@@ -19,13 +21,11 @@ end
 file_list = file_list.select {|x| x[1].match(/\.po$/) }
 
 
-tempfile = `tempfile`.strip
-`rm -f "#{tempfile}"`
-pofile_a = tempfile + "_a.po"
-iddiff_next = tempfile + "_next.iddiff"
-iddiff_merged = tempfile + "_merged.iddiff"
-trcomm_next = tempfile + "_next.iddiff-trcomm"
-trcomm_merged = tempfile + "_merged.iddiff-trcomm"
+pofile_a      = Tempfile.new(['', '_a.po']).path
+iddiff_next   = Tempfile.new(['', '_next.iddiff']).path
+iddiff_merged = Tempfile.new(['', '_merged.iddiff']).path
+trcomm_next   = Tempfile.new(['', '_next.iddiff-trcomm']).path
+trcomm_merged = Tempfile.new(['', '_merged.iddiff-trcomm']).path
 
 file_list.each do |file|
 	mode, filename = file
@@ -54,7 +54,7 @@ file_list.each do |file|
 	`mv /tmp/11235.iddiff-tr-comments #{trcomm_next}` if File.exists?("/tmp/11235.iddiff-tr-comments")
 	`iddiff-merge-trcomm "#{trcomm_next}" "#{trcomm_merged}"`
 
-	`rm -f #{trcomm_next} #{iddiff_next} #{pofile_a} #{tempfile}`
+	`rm -f #{trcomm_next} #{iddiff_next} #{pofile_a}`
 end
 
 puts iddiff_merged if File.exists?(iddiff_merged)

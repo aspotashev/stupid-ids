@@ -1,5 +1,7 @@
 #!/usr/bin/ruby
 
+require 'tempfile'
+
 require './sif-lib.rb'
 require './check-lib.rb'
 require '../gettextpo-helper/ruby-helpers/ruby-helpers.rb'
@@ -35,7 +37,7 @@ inc_proc = IncrementalCommitProcessing.new($SRC_DIR, $IDS_DIR)
 commits_to_process = inc_proc.commits_to_process
 
 sif = Sif.new($IDS_DIR)
-tempfile_pot = `tempfile --suffix=.pot`.strip
+tempfile_pot = Tempfile.new(['', '.pot']).path
 commits_to_process.each_with_index do |commit_sha1, index|
 	puts ">>> Processing commit #{commit_sha1} (#{index + 1}/#{commits_to_process.size})"
 	contents = contents_of_commit(commit_sha1)

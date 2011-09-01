@@ -8,6 +8,7 @@ ActiveRecord::Base.class_eval do
 	end
 end
 
+require 'tempfile'
 require './filler-models.rb'
 require 'stupidsruby'
 require '../../gettextpo-helper/ruby-helpers/ruby-helpers'
@@ -108,7 +109,7 @@ def git_diff_lines(ref1, ref2, filename)
 end
 
 def get_id_count(tp_hash)
-	tempfile_pot = `tempfile --suffix=.pot`.strip
+	tempfile_pot = Tempfile.new(['', '.pot']).path
 	extract_pot_to_file(tp_hash, tempfile_pot)
 
 	id_count = GettextpoHelper.get_pot_length(tempfile_pot)
