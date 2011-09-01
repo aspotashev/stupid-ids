@@ -36,14 +36,19 @@ std::string strip_string(std::string str)
 
 void StupidsConfig::loadLine(char *buffer)
 {
-	if (buffer[0] == '#') // comment
-		return;
-
 	// remove possible newline character at the end
 	while (buffer[strlen(buffer) - 1] == '\r' || buffer[strlen(buffer) - 1] == '\n')
 		buffer[strlen(buffer) - 1] = '\0';
 
+	if (buffer[0] == '#' || buffer[0] == '\0') // comment or empty line
+		return;
+
 	char *eq_sign = strchr(buffer, '=');
+	if (!eq_sign)
+	{
+		assert(0); // TODO: handle this error
+	}
+
 	*eq_sign = '\0';
 	std::string key = strip_string(std::string(buffer));
 	std::string value = strip_string(std::string(eq_sign + 1));
