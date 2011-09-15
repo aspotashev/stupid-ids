@@ -346,6 +346,7 @@ extern "C" {
 /* Function called at module loading */
 void Init_stupidsruby()
 {
+	// Out-of-class methods
 	VALUE GettextpoHelper = rb_define_module("GettextpoHelper");
 	rb_define_singleton_method(GettextpoHelper, "calculate_tp_hash", RUBY_METHOD_FUNC(wrap_calculate_tp_hash), 1);
 	rb_define_singleton_method(GettextpoHelper, "get_pot_length", RUBY_METHOD_FUNC(wrap_get_pot_length), 1);
@@ -353,15 +354,19 @@ void Init_stupidsruby()
 //	rb_define_singleton_method(GettextpoHelper, "get_min_ids_by_tp_hash", RUBY_METHOD_FUNC(wrap_get_min_ids_by_tp_hash), 1);
 	rb_define_singleton_method(GettextpoHelper, "detect_transitions_inc", RUBY_METHOD_FUNC(wrap_detect_transitions_inc), 4);
 	rb_define_singleton_method(GettextpoHelper, "append_processed_pairs", RUBY_METHOD_FUNC(wrap_append_processed_pairs), 2);
+	rb_define_singleton_method(GettextpoHelper, "read_po_file_messages", RUBY_METHOD_FUNC(wrap_read_po_file_messages), 1);
 
+	// class GitLoader
 	cGitLoader = rb_define_class_under(GettextpoHelper, "GitLoader", rb_cObject);
 	rb_define_singleton_method(cGitLoader, "new", RUBY_METHOD_FUNC(cGitLoader_new), 0);
 	rb_define_method(cGitLoader, "add_repository", RUBY_METHOD_FUNC(cGitLoader_add_repository), 1);
 
+	// class TranslationContent
 	cTranslationContent = rb_define_class_under(GettextpoHelper, "TranslationContent", rb_cObject);
 	rb_define_singleton_method(cTranslationContent, "new", RUBY_METHOD_FUNC(cTranslationContent_new_file), 1);
 	rb_define_singleton_method(cTranslationContent, "new", RUBY_METHOD_FUNC(cTranslationContent_new_git), 2);
 
+	// class IdMapDb
 	cIdMapDb = rb_define_class_under(GettextpoHelper, "IdMapDb", rb_cObject);
 	rb_define_singleton_method(cIdMapDb, "new", RUBY_METHOD_FUNC(cIdMapDb_new), 1);
 	rb_define_method(cIdMapDb, "create", RUBY_METHOD_FUNC(cIdMapDb_create), 1);
@@ -369,8 +374,7 @@ void Init_stupidsruby()
 	rb_define_method(cIdMapDb, "get_min_id", RUBY_METHOD_FUNC(cIdMapDb_get_min_id), 1);
 	rb_define_method(cIdMapDb, "get_min_id_array", RUBY_METHOD_FUNC(cIdMapDb_get_min_id_array), 2);
 
-	rb_define_singleton_method(GettextpoHelper, "read_po_file_messages", RUBY_METHOD_FUNC(wrap_read_po_file_messages), 1);
-
+	// class Message
 	cMessage = rb_define_class_under(GettextpoHelper, "Message", rb_cObject);
 	rb_define_method(cMessage, "num_plurals", RUBY_METHOD_FUNC(cMessage_num_plurals), 0);
 	rb_define_method(cMessage, "equal_translations", RUBY_METHOD_FUNC(cMessage_equal_translations), 1);
