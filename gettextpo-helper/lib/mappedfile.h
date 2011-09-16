@@ -1,4 +1,7 @@
+#ifndef MAPPEDFILE_H
+#define MAPPEDFILE_H
 
+#include <stdlib.h>
 #include <vector>
 
 class MappedFile
@@ -77,4 +80,6 @@ public:
 
 	std::vector<int> getMinIdArray(int first_msg_id, int num);
 };
+
+#endif // MAPPEDFILE_H
 
