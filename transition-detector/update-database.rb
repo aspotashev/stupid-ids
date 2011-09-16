@@ -25,13 +25,13 @@ end
 
 
 git_loader = GettextpoHelper::GitLoader.new
-git_loader.add_repository("/home/sasha/kde-ru/xx-numbering/templates/.git/")
-git_loader.add_repository("/home/sasha/kde-ru/xx-numbering/stable-templates/.git/")
+git_loader.add_repository(GettextpoHelper.stupids_conf_path("generator.templates_git_repo.trunk"))
+git_loader.add_repository(GettextpoHelper.stupids_conf_path("generator.templates_git_repo.stable"))
 
 pairs = GettextpoHelper.detect_transitions_inc(
-  "/home/sasha/kde-ru/xx-numbering/templates/.git/",
-  "/home/sasha/kde-ru/xx-numbering/stable-templates/.git/",
-  "/home/sasha/l10n-kde4/scripts/process_orphans.txt",
+  GettextpoHelper.stupids_conf_path("generator.templates_git_repo.trunk"),
+  GettextpoHelper.stupids_conf_path("generator.templates_git_repo.stable"),
+  GettextpoHelper.stupids_conf_path("generator.process_orphans_txt"),
   "./processed-sha1-pairs.dat")
 
 puts "Unprocessed pairs: #{pairs.size}"

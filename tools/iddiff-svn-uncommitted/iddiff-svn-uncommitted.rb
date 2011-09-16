@@ -3,10 +3,10 @@
 require 'tempfile'
 
 PATHS = [
-  "/home/sasha/messages",
-  "/home/sasha/docmessages",
-  "/home/sasha/stable-messages",
-  "/home/sasha/stable-docmessages",
+  GettextpoHelper.stupids_conf_path("translation_editing.svn.gui_trunk"),
+  GettextpoHelper.stupids_conf_path("translation_editing.svn.doc_trunk"),
+  GettextpoHelper.stupids_conf_path("translation_editing.svn.gui_stable"),
+  GettextpoHelper.stupids_conf_path("translation_editing.svn.doc_stable"),
 ]
 
 file_list = `svn status #{PATHS.map {|x| "\"#{x}\"" }.join(' ') }`.

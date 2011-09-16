@@ -8,6 +8,7 @@
 #include <gettextpo-helper/stupids-client.h>
 #include <gettextpo-helper/gitloader.h>
 #include <gettextpo-helper/message.h>
+#include <gettextpo-helper/config.h>
 
 void init_search(const char *f_dump, const char *f_index, const char *f_map);
 const char *find_string_id_by_str_multiple(char *s, int n);
@@ -341,6 +342,19 @@ VALUE wrap_read_po_file_messages(VALUE self, VALUE filename)
 	return res;
 }
 
+//------- stupids_conf --------
+
+VALUE wrap_stupids_conf(VALUE self, VALUE key)
+{
+	return rb_str_new2(StupidsConf(StringValuePtr(key)).c_str());
+}
+
+VALUE wrap_stupids_conf_path(VALUE self, VALUE key)
+{
+	return rb_str_new2(expand_path(StupidsConf(StringValuePtr(key))).c_str());
+}
+
+
 extern "C" {
 
 /* Function called at module loading */
@@ -355,6 +369,8 @@ void Init_stupidsruby()
 	rb_define_singleton_method(GettextpoHelper, "detect_transitions_inc", RUBY_METHOD_FUNC(wrap_detect_transitions_inc), 4);
 	rb_define_singleton_method(GettextpoHelper, "append_processed_pairs", RUBY_METHOD_FUNC(wrap_append_processed_pairs), 2);
 	rb_define_singleton_method(GettextpoHelper, "read_po_file_messages", RUBY_METHOD_FUNC(wrap_read_po_file_messages), 1);
+	rb_define_singleton_method(GettextpoHelper, "stupids_conf", RUBY_METHOD_FUNC(wrap_stupids_conf), 1);
+	rb_define_singleton_method(GettextpoHelper, "stupids_conf_path", RUBY_METHOD_FUNC(wrap_stupids_conf_path), 1);
 
 	// class GitLoader
 	cGitLoader = rb_define_class_under(GettextpoHelper, "GitLoader", rb_cObject);
