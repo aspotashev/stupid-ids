@@ -4,6 +4,7 @@
 #include <gettextpo-helper/message.h>
 #include <gettextpo-helper/translationcontent.h>
 #include <gettextpo-helper/config.h>
+#include <gettextpo-helper/oidmapcache.h>
 
 #include "module.h"
 #include "message.h"
@@ -151,6 +152,18 @@ VALUE wrap_stupids_conf_path(VALUE self, VALUE key)
 	return rb_str_new2(expand_path(StupidsConf(StringValuePtr(key))).c_str());
 }
 
+//----------------------------
+
+VALUE wrap_tphash_cache(VALUE self, VALUE oid_str)
+{
+	GitOid oid(StringValuePtr(oid_str));
+	const git_oid *tp_hash_raw = TphashCache.getValue(oid.oid());
+	if (tp_hash_raw)
+		return rb_str_new2(GitOid(tp_hash_raw).toString().c_str());
+	else
+		return Qnil;
+}
+
 
 // init
 void init_globals()
@@ -164,5 +177,6 @@ void init_globals()
 	rb_define_singleton_method(GettextpoHelper, "read_po_file_messages", RUBY_METHOD_FUNC(wrap_read_po_file_messages), 1);
 	rb_define_singleton_method(GettextpoHelper, "stupids_conf", RUBY_METHOD_FUNC(wrap_stupids_conf), 1);
 	rb_define_singleton_method(GettextpoHelper, "stupids_conf_path", RUBY_METHOD_FUNC(wrap_stupids_conf_path), 1);
+	rb_define_singleton_method(GettextpoHelper, "tphash_cache", RUBY_METHOD_FUNC(wrap_tphash_cache), 1);
 }
 

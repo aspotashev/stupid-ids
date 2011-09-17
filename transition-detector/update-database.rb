@@ -24,7 +24,12 @@ id_map_db = GettextpoHelper::IdMapDb.new('idmap.mmapdb')
 def oid_to_tp_hash(sha1)
   # TODO: create a database index to make this work faster
   x = TphashPotsha.find(:first, :conditions => {:potsha => sha1})
-  x.nil? ? nil : x.tp_hash
+  res1 = (x.nil? ? nil : x.tp_hash)
+
+#  res2 = GettextpoHelper.tphash_cache(sha1)
+#  raise "#{res1.inspect}  --vs--  #{res2.inspect}" if res1 != res2
+
+  res1
 end
 
 
