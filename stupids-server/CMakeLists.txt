@@ -5,7 +5,6 @@ set (stupids_server_SRCS
 	main.cpp
 	tcpcommandserver.cpp
 	server.cpp
-	filedbfirstids.cpp
 )
 
 add_executable (stupids-server ${stupids_server_SRCS})

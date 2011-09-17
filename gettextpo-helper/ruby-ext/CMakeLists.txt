@@ -10,6 +10,7 @@ set(stupidsruby_LIB_SRCS
 
 	module.cpp
 
+	filedbfirstids.cpp
 	gitloader.cpp
 	globals.cpp
 	idmapdb.cpp

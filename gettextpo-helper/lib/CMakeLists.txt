@@ -12,6 +12,7 @@ set(gettextpo_helper_LIB_SRCS
 	message.cpp
 	filedatetime.cpp
 	config.cpp
+	filedbfirstids.cpp
 
 	detector.cpp
 	detectorbase.cpp
@@ -40,6 +41,7 @@ install(FILES
 	gitloader.h
 	message.h
 	filedatetime.h
+	filedbfirstids.h
 	oidmapcache.h
 	DESTINATION ${INCLUDE_INSTALL_DIR}/gettextpo-helper COMPONENT Devel
 )

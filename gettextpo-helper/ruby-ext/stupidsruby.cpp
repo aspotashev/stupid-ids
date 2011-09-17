@@ -7,6 +7,7 @@
 #include "translationcontent.h"
 #include "idmapdb.h"
 #include "message.h"
+#include "filedbfirstids.h"
 
 
 extern "C" {
@@ -20,6 +21,7 @@ void Init_stupidsruby()
 	init_TranslationContent();
 	init_IdMapDb();
 	init_Message();
+	init_FiledbFirstIds();
 }
 
 }

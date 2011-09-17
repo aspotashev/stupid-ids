@@ -11,8 +11,12 @@ end
 require 'stupidsruby'
 require '../stupid-id-filler/database/filler-models.rb'
 
+$first_ids = GettextpoHelper::FiledbFirstIds.new(
+  GettextpoHelper.stupids_conf_path("server.first_ids_db_path.first_ids"),
+  GettextpoHelper.stupids_conf_path("server.first_ids_db_path.next_id"))
+
 def get_pot_first_id(tp_hash)
-  TphashFirstId.find(:first, :conditions => {:tp_hash => tp_hash}).first_id
+  $first_ids.get_first_id(tp_hash).first
 end
 
 id_map_db = GettextpoHelper::IdMapDb.new('idmap.mmapdb')

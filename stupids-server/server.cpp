@@ -6,9 +6,9 @@
 #include <gettextpo-helper/stupids-client.h>
 #include <gettextpo-helper/mappedfile.h>
 #include <gettextpo-helper/config.h>
+#include <gettextpo-helper/filedbfirstids.h>
 
 #include "server.h"
-#include "filedbfirstids.h"
 
 Server::Server()
 {
