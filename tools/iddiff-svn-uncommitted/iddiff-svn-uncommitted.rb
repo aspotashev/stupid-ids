@@ -1,6 +1,7 @@
 #!/usr/bin/ruby19
 
 require 'tempfile'
+require 'stupidsruby'
 
 PATHS = [
   GettextpoHelper.stupids_conf_path("translation_editing.svn.gui_trunk"),
@@ -53,9 +54,12 @@ file_list.each do |file|
 
 	`mv /tmp/11235.iddiff-tr-comments #{trcomm_next}` if File.exists?("/tmp/11235.iddiff-tr-comments")
 	`iddiff-merge-trcomm "#{trcomm_next}" "#{trcomm_merged}"`
-
-	`rm -f #{trcomm_next} #{iddiff_next} #{pofile_a}`
 end
 
-puts iddiff_merged if File.exists?(iddiff_merged)
-puts trcomm_merged if File.exists?(trcomm_merged)
+iddiff_res = '/tmp/res-iddiff'
+trcomm_res = '/tmp/res-iddiff-trcomm'
+`mv "#{iddiff_merged}" "#{iddiff_res}"` if File.exists?(iddiff_merged)
+`mv "#{trcomm_merged}" "#{trcomm_res}"` if File.exists?(trcomm_merged)
+
+puts iddiff_res if File.exists?(iddiff_res)
+puts trcomm_res if File.exists?(trcomm_res)
