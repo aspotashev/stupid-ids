@@ -1033,7 +1033,9 @@ void Iddiffer::applyIddiffComments(StupIdTranslationCollector *collector)
  */
 void Iddiffer::insertRemoved(int msg_id, IddiffMessage *item)
 {
-	assert(findRemoved(msg_id, item) == NULL); // duplicate in "REMOVED"
+	if (findRemoved(msg_id, item) != NULL) // duplicate in "REMOVED"
+		return;
+
 	assert(findAdded(msg_id, item) == NULL); // conflict: trying to "REMOVE" a translation already existing in "ADDED"
 
 	m_items[msg_id].m_removedItems.push_back(item);
@@ -1059,7 +1061,7 @@ void Iddiffer::insertAdded(int msg_id, IddiffMessage *item)
 	for (size_t i = 0; i < added_this_id.size(); i ++)
 	{
 		if (added_this_id[i]->equalMsgstr(item))
-			assert(0); // duplicate in "ADDED"
+			return; // duplicate in "ADDED"
 		else
 			assert(0); // conflict: two different translations in "ADDED"
 	}
