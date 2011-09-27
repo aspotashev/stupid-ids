@@ -918,6 +918,7 @@ void Iddiffer::applyToMessage(MessageGroup *messageGroup, int min_id)
 		}
 		else // fuzzy old translation
 		{
+			//printf("Marking as FUZZY!!!\n");
 			message->editFuzzy(true);
 		}
 	}
