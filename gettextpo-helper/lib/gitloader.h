@@ -89,6 +89,7 @@ public:
 	void readRepositoryCommits();
 
 	int nCommits() const;
+	/// In the order from repository root (index = 0) to HEAD (index = nCommits - 1)
 	const Commit *commit(int index) const;
 	int commitIndexByOid(const git_oid *oid) const;
 
@@ -173,6 +174,7 @@ public:
 	virtual git_blob *blobLookup(const git_oid *oid);
 	void addRepository(const char *git_dir);
 
+	// Finds the oldest (in Git repositories' histories) .po file with the given tp_hash.
 	TranslationContent *findOldestByTphash(const git_oid *tp_hash);
 
 	std::vector<int> getCurrentIdsVector();

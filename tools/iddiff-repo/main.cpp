@@ -18,6 +18,11 @@ void processFile(GitLoader *git_loader, Iddiffer *merged_diff, const char *filen
 		return;
 	if (stupidsClient.getFirstId(tp_hash) == 0)
 	{
+		// TODO: (kind of?) run mergemsg against the official
+		// .pot template at "lower_bound(<date of current .po>)"
+		// with the same file basename as the given .po file
+		// (dolphin.po -> dolphin.pot).
+
 		fprintf(stderr,
 			"Unknown tp_hash. Translation file: [%s]\n"
 			"This probably means that someone (probably, translator of this file) "
@@ -27,6 +32,10 @@ void processFile(GitLoader *git_loader, Iddiffer *merged_diff, const char *filen
 	}
 
 	Iddiffer *diff = new Iddiffer();
+
+	// If there are more than one .po with the given tp_hash in the
+	// official repositories, we should compare against the oldest
+	// .po file, because ... (So, why? -- Because some info may be lost?)
 	TranslationContent *old_content = git_loader->findOldestByTphash(tp_hash);
 	if (old_content)
 		diff->diffFiles(old_content, new_content);
@@ -37,6 +46,8 @@ void processFile(GitLoader *git_loader, Iddiffer *merged_diff, const char *filen
 	delete diff;
 }
 
+// Creates an "iddiff" for all given .po files against respective .po
+// files in the official translations repository.
 int main(int argc, char *argv[])
 {
 	// For loading blobs by their OIDs
