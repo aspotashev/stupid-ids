@@ -50,6 +50,14 @@ void processFile(GitLoader *git_loader, Iddiffer *merged_diff, const char *filen
 // files in the official translations repository.
 int main(int argc, char *argv[])
 {
+	if (argc == 1)
+	{
+		fprintf(stderr, "Usage: iddiff-repo [file1.po] [file2.po] [...] [fileN.po]\n"
+			"\n"
+			"At least one .po file should be given.\n");
+		return 1;
+	}
+
 	// For loading blobs by their OIDs
 	GitLoader *git_loader = new GitLoader();
 	git_loader->addRepository("/home/sasha/kde-ru/kde-ru-trunk.git/.git");
