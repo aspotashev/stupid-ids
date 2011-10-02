@@ -8,6 +8,13 @@
 #include <gettextpo-helper/gitloader.h>
 #include <gettextpo-helper/stupids-client.h>
 
+struct
+{
+	const char *branch;
+
+	int numInputFiles;
+	char **inputFiles;
+} static globalArgs;
 
 void processFile(GitLoader *git_loader, Iddiffer *merged_diff, const char *filename)
 {
@@ -50,7 +57,31 @@ void processFile(GitLoader *git_loader, Iddiffer *merged_diff, const char *filen
 // files in the official translations repository.
 int main(int argc, char *argv[])
 {
-	if (argc == 1)
+	// List of options:
+	//     b <branch> -- "trunk" or "stable", necessary when tp_hash was not found.
+	const char opt_string[] = "b:";
+
+	// Initialize globalArgs
+	globalArgs.branch = NULL;
+
+	int opt = 0;
+	while ((opt = getopt(argc, argv, opt_string)) != -1)
+	{
+		switch(opt)
+		{
+		case 'b':
+			globalArgs.branch = optarg;
+			break;
+		default:
+			assert(0);
+			break;
+		}
+	}
+
+	globalArgs.numInputFiles = argc - optind;
+	globalArgs.inputFiles = argv + optind;
+
+	if (globalArgs.numInputFiles == 0)
 	{
 		fprintf(stderr, "Usage: iddiff-repo [file1.po] [file2.po] [...] [fileN.po]\n"
 			"\n"
@@ -65,8 +96,8 @@ int main(int argc, char *argv[])
 
 	Iddiffer *merged_diff = new Iddiffer();
 
-	for (int i = 1; i < argc; i ++)
-		processFile(git_loader, merged_diff, argv[i]);
+	for (int i = 0; i < globalArgs.numInputFiles; i ++)
+		processFile(git_loader, merged_diff, globalArgs.inputFiles[i]);
 
 	std::cout << merged_diff->generateIddiffText();
 
