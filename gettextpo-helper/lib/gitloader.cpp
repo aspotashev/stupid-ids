@@ -177,6 +177,9 @@ void CommitFileChange::print() const
 	}
 }
 
+/**
+ * Writes "#{path}/#{name}" into \a dest.
+ */
 void build_pathname(char *dest, const char *path, const char *name)
 {
 	strcpy(dest, path);
@@ -600,7 +603,6 @@ const git_oid *Repository::findLastUpdateOid(int from_commit, const char *name, 
 	return NULL;
 }
 
-// Return the latest commit done before the given time.
 int Repository::lastCommitByTime(git_time_t time) const
 {
 	if (nCommits() == 0 || time < commit(0)->time())

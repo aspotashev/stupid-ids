@@ -25,8 +25,22 @@ public:
 	int nChanges() const;
 	const CommitFileChange *change(int index) const;
 
+    /**
+     * Returns the change (if any) to the file specified by "#{path}/#{name}"
+     * in this commit.
+     */
 	const CommitFileChange *findChange(const char *name, const char *path) const;
+
+    /**
+     * Returns the change to the file specified by "#{path}/#{name}"
+     * in this commit if that file was _removed_ here.
+     */
 	const git_oid *findRemovalOid(const char *name, const char *path) const;
+
+    /**
+     * Returns the change to the file specified by "#{path}/#{name}"
+     * in this commit if that file was _added_ or _modified_ here.
+     */
 	const git_oid *findUpdateOid(const char *name, const char *path) const;
 
 public:
@@ -97,7 +111,12 @@ public:
 	const git_oid *findNextUpdateOid(int from_commit, const char *name, const char *path) const;
 	const git_oid *findLastUpdateOid(int from_commit, const char *name, const char *path) const;
 
+    /**
+     * Returns the latest commit done as of the given time
+     * (before the given time or exactly at the given time).
+     */
 	int lastCommitByTime(git_time_t time) const;
+
 	const git_oid *findFileOidByTime(git_time_t time, const char *name, const char *path) const;
 
 	void dumpOids(std::vector<GitOid2Change> &dest) const;
