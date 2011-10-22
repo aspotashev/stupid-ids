@@ -16,15 +16,6 @@ struct
     char **inputFiles;
 } static globalArgs;
 
-std::string path_to_basename(std::string path)
-{
-    size_t pos = path.rfind('/');
-    if (pos == std::string::npos) // no '/' in the path
-        return path;
-    else
-        return path.substr(pos + 1);
-}
-
 void processFile(GitLoader *git_loader, Iddiffer *merged_diff, const char *filename)
 {
     TranslationContent *input_content = new TranslationContent(filename);

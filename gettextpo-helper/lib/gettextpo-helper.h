@@ -64,3 +64,6 @@ int po_message_n_plurals(po_message_t message);
 // Returns 0 when msgstr (or all msgstr[i]) are the same in two messages.
 int compare_po_message_msgstr(po_message_t message_a, po_message_t message_b);
 
+// Operations with std::string
+std::string path_to_basename(std::string path);
+

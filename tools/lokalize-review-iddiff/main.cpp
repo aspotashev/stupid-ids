@@ -9,6 +9,7 @@
 #include <gettextpo-helper/translationcontent.h>
 #include <gettextpo-helper/detectorbase.h>
 #include <dbuslokalize.h>
+#include <sys/stat.h>
 
 class GreedySetCover
 {
@@ -98,14 +99,15 @@ int main(int argc, char *argv[])
 	{
 		printf("Reviewing content: %s\n", content->displayFilename());
 
-		std::ostringstream tempfile;
-		tempfile << "/tmp/lk-iddiff-" << (int)time(NULL);
-		tempfile << "_" << GitOid(content->gitBlobHash()).toString();
-		std::string tempfile_str = tempfile.str();
+		std::ostringstream tempdir;
+		tempdir << "/tmp/lk-iddiff-" << (int)time(NULL);
+		tempdir << "_" << GitOid(content->gitBlobHash()).toString();
+		std::string tempdir_str = tempdir.str();
 
-		// TODO: basename should be equal to "content->displayFilename()"
-		const char *file_a = xstrdup((tempfile_str + "_A.po").c_str());
-		const char *file_b = xstrdup((tempfile_str + "_B.po").c_str());
+        assert(mkdir(tempdir_str.c_str(), 0777) == 0);
+
+		const char *file_a = xstrdup((tempdir_str + std::string("/") + path_to_basename(content->displayFilename())).c_str());
+		const char *file_b = xstrdup((tempdir_str + "/merge_from.po").c_str());
 
 		content->writeToFile(file_a, true);
 		diff->applyToContent(content);

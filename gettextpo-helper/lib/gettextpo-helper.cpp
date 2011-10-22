@@ -352,3 +352,12 @@ int compare_po_message_msgstr(po_message_t message_a, po_message_t message_b)
 	}
 }
 
+std::string path_to_basename(std::string path)
+{
+    size_t pos = path.rfind('/');
+    if (pos == std::string::npos) // no '/' in the path
+        return path;
+    else
+        return path.substr(pos + 1);
+}
+
