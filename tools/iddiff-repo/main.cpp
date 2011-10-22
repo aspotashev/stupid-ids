@@ -18,24 +18,71 @@ struct
 
 void processFile(GitLoader *git_loader, Iddiffer *merged_diff, const char *filename)
 {
-    TranslationContent *new_content = new TranslationContent(filename);
+    TranslationContent *input_content = new TranslationContent(filename);
 
-    const git_oid *tp_hash = new_content->calculateTpHash();
+    const git_oid *tp_hash = input_content->calculateTpHash();
     if (!tp_hash) // not a .po file
         return;
-    if (stupidsClient.getFirstId(tp_hash) == 0)
+
+    int first_id = stupidsClient.getFirstId(tp_hash);
+    if (first_id == -1) // couldn't connect to the server
+        assert(0);
+    else if (first_id == 0)
     {
         // TODO: (kind of?) run mergemsg against the official
         // .pot template at "lower_bound(<date of current .po>)"
         // with the same file basename as the given .po file
         // (dolphin.po -> dolphin.pot).
 
-        fprintf(stderr,
-                "Unknown tp_hash. Translation file: [%s]\n"
-                "This probably means that someone (probably, translator of this file) "
-                "has generated the translation template by hand, or has changed "
-                "something in the template.\n", filename);
-        return;
+        if (globalArgs.branch &&
+            strcmp(globalArgs.branch, "trunk") != 0 &&
+            strcmp(globalArgs.branch, "stable") != 0)
+        {
+            globalArgs.branch = NULL;
+
+            fprintf(stderr,
+                    "Unknown value for option \'branch\': %s\n"
+                    "Must be \'trunk\' or \'stable\'\n", globalArgs.branch);
+            return;
+        }
+
+        if (globalArgs.branch == NULL)
+        {
+            fprintf(stderr,
+                    "Branch (\'trunk\' or \'stable\') required, but not given\n");
+            return;
+        }
+
+        assert(strcmp(globalArgs.branch, "stable") == 0); // FIXME (temporary hack)
+
+        Repository *repo = new Repository("/home/sasha/kde-ru/xx-numbering/stable-templates/.git"); // FIXME (temporary hack)
+        const git_oid *best_pot_oid = repo->findRelevantPot((std::string(filename) + "t").c_str(), input_content->potDate());
+        if (!best_pot_oid)
+        {
+            fprintf(stderr,
+                    "Unknown tp_hash. Translation file: [%s]\n"
+                    "This probably means that someone (probably, translator of this file) "
+                    "has generated the translation template by hand, or has changed "
+                    "something in the template.\n", filename);
+            assert(0);
+        }
+
+        TranslationContent *pot_content = new TranslationContent(repo, best_pot_oid);
+        pot_content->setDisplayFilename(filename);
+        tp_hash = pot_content->calculateTpHash();
+
+        //printf("filename=%s, oid=%s, tphash=%s\n", filename, GitOid(best_pot_oid).toString().c_str(), GitOid(tp_hash).toString().c_str());
+
+        first_id = stupidsClient.getFirstId(tp_hash);
+        if (first_id == -1)
+            assert(0);
+        if (first_id == 0)
+            assert(0); // you need to update the first_id database
+
+        // Fill "pot_content" with translations from "input_content"
+        pot_content->copyTranslationsFrom(input_content);
+        pot_content->setAuthor(""); // TODO: class TranslationContent should automatically remove the author name if it is "FULL NAME <EMAIL@ADDRESS>"
+        input_content = pot_content;
     }
 
     Iddiffer *diff = new Iddiffer();
@@ -44,10 +91,11 @@ void processFile(GitLoader *git_loader, Iddiffer *merged_diff, const char *filen
     // official repositories, we should compare against the oldest
     // .po file, because ... (So, why? -- Because some info may be lost?)
     TranslationContent *old_content = git_loader->findOldestByTphash(tp_hash);
+    old_content->setDisplayFilename(filename);
     if (old_content)
-        diff->diffFiles(old_content, new_content);
+        diff->diffFiles(old_content, input_content);
     else
-        diff->diffAgainstEmpty(new_content); // diff against /dev/null
+        diff->diffAgainstEmpty(input_content); // diff against /dev/null
 
     merged_diff->merge(diff);
     delete diff;

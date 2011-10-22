@@ -3,6 +3,7 @@
 
 #include <time.h>
 #include <string>
+#include <git2.h>
 
 class FileDateTime
 {
@@ -16,6 +17,8 @@ public:
 	 **/
 	FileDateTime(const FileDateTime &o);
 
+    FileDateTime(git_time_t date);
+
 	std::string dateString() const;
 	void clear();
 	bool isNull() const;
@@ -23,6 +26,15 @@ public:
 	void setCurrentDateTime();
 	bool operator<(const FileDateTime &o) const;
 	bool operator>(const FileDateTime &o) const;
+
+    void addSeconds(int seconds);
+    FileDateTime plusSeconds(int seconds) const;
+    FileDateTime plusHours(int hours) const;
+    FileDateTime plusDays(int days) const;
+
+    operator git_time_t() const;
+
+    bool isBetween(const FileDateTime &a, const FileDateTime &b) const;
 
 private:
 	bool m_init;

@@ -21,13 +21,22 @@ IddiffMessage::IddiffMessage():
 {
 }
 
-IddiffMessage::IddiffMessage (const IddiffMessage &msg)
+IddiffMessage::IddiffMessage(const IddiffMessage &msg)
 {
-	m_fuzzy = msg.m_fuzzy;
+	m_fuzzy = msg.isFuzzy();
 
-	m_numPlurals = msg.m_numPlurals;
+	m_numPlurals = msg.numPlurals();
 	for (int i = 0; i < m_numPlurals; i ++)
-		m_msgstr[i] = xstrdup(msg.m_msgstr[i]);
+		m_msgstr[i] = xstrdup(msg.msgstr(i));
+}
+
+IddiffMessage::IddiffMessage(const Message &msg)
+{
+    m_fuzzy = msg.isFuzzy();
+
+    m_numPlurals = msg.numPlurals();
+    for (int i = 0; i < m_numPlurals; i ++)
+        m_msgstr[i] = xstrdup(msg.msgstr(i));
 }
 
 IddiffMessage::IddiffMessage(po_message_t message):
@@ -246,25 +255,33 @@ void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *cont
 	m_author = content_b->author();
 
 	// compare pairs of messages in 2 .po files
-	po_file_t file_a = content_a->poFileRead();
-	po_file_t file_b = content_b->poFileRead();
+// 	po_file_t file_a = content_a->poFileRead();
+// 	po_file_t file_b = content_b->poFileRead();
+//
+// 	po_message_iterator_t iterator_a =
+// 		po_message_iterator(file_a, "messages");
+// 	po_message_iterator_t iterator_b =
+// 		po_message_iterator(file_b, "messages");
+// 	// skipping headers
+// 	po_message_t message_a = po_next_message(iterator_a);
+// 	po_message_t message_b = po_next_message(iterator_b);
+//
+// 	// TODO: use data from TranslationContent::readMessages
+// 	for (int index = 0;
+// 		(message_a = po_next_message(iterator_a)) &&
+// 		(message_b = po_next_message(iterator_b)) &&
+// 		!po_message_is_obsolete(message_a) &&
+// 		!po_message_is_obsolete(message_b);
+// 		index ++)
+// 	{
 
-	po_message_iterator_t iterator_a =
-		po_message_iterator(file_a, "messages");
-	po_message_iterator_t iterator_b =
-		po_message_iterator(file_b, "messages");
-	// skipping headers
-	po_message_t message_a = po_next_message(iterator_a);
-	po_message_t message_b = po_next_message(iterator_b);
+    std::vector<MessageGroup *> messages_a = content_a->readMessages();
+    std::vector<MessageGroup *> messages_b = content_b->readMessages();
+    for (size_t index = 0; index < messages_a.size(); index ++)
+    {
+        Message *message_a = messages_a[index]->message(0);
+        Message *message_b = messages_b[index]->message(0);
 
-	// TODO: use data from TranslationContent::readMessages
-	for (int index = 0;
-		(message_a = po_next_message(iterator_a)) &&
-		(message_b = po_next_message(iterator_b)) &&
-		!po_message_is_obsolete(message_a) &&
-		!po_message_is_obsolete(message_b);
-		index ++)
-	{
 // 		if (strcmp(po_message_comments(message_a), po_message_comments(message_b)))
 // 		{
 // 			fprintf(stderr, "Changes in comments will be ignored!\n");
@@ -339,27 +356,32 @@ void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *cont
 		const int needRemoved[] = FORMAT_IDDIFF_BITARRAY(1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0);
 
 		int indexCode = 0;
-		indexCode |= po_message_is_untranslated(message_a) ? 1 : 0;
-		indexCode |= po_message_is_untranslated(message_b) ? 2 : 0;
-		indexCode |= compare_po_message_msgstr(message_a, message_b) ? 0 : 4;
-		indexCode |= po_message_is_fuzzy(message_a) ? 8 : 0;
-		indexCode |= po_message_is_fuzzy(message_b) ? 16 : 0;
+// 		indexCode |= po_message_is_untranslated(message_a) ? 1 : 0;
+// 		indexCode |= po_message_is_untranslated(message_b) ? 2 : 0;
+// 		indexCode |= compare_po_message_msgstr(message_a, message_b) ? 0 : 4;
+// 		indexCode |= po_message_is_fuzzy(message_a) ? 8 : 0;
+// 		indexCode |= po_message_is_fuzzy(message_b) ? 16 : 0;
+        indexCode |= message_a->isUntranslated() ? 1 : 0;
+        indexCode |= message_b->isUntranslated() ? 2 : 0;
+        indexCode |= message_a->equalMsgstr(message_b) ? 4 : 0;
+        indexCode |= message_a->isFuzzy() ? 8 : 0;
+        indexCode |= message_b->isFuzzy() ? 16 : 0;
 
 		assert(indexCode >= 0 && indexCode < 32);
 		assert(needRemoved[indexCode] != -1);
 		assert(needAdded[indexCode] != -1);
 
 		if (needRemoved[indexCode])
-			insertRemoved(first_id + index, new IddiffMessage(message_a));
+			insertRemoved(first_id + index, new IddiffMessage(*message_a));
 		if (needAdded[indexCode])
-			insertAdded(first_id + index, new IddiffMessage(message_b));
+			insertAdded(first_id + index, new IddiffMessage(*message_b));
 	}
 
 	// free memory
-	po_message_iterator_free(iterator_a);
-	po_message_iterator_free(iterator_b);
-	po_file_free(file_a);
-	po_file_free(file_b);
+// 	po_message_iterator_free(iterator_a);
+// 	po_message_iterator_free(iterator_b);
+// 	po_file_free(file_a);
+// 	po_file_free(file_b);
 }
 
 // http://www.infosoftcom.ru/article/realizatsiya-funktsii-split-string
@@ -1054,7 +1076,11 @@ void Iddiffer::insertAdded(int msg_id, IddiffMessage *item)
 		fprintf(stderr,
 			"Conflict: removing previously added translation\n"
 			"\tmsg_id = %d\n"
-			"\tmessage translation: %s\n", msg_id, item->formatPoMessage().c_str());
+            "\told message translation: %s\n"
+			"\tnew message translation: %s\n",
+            msg_id,
+            findRemoved(msg_id, item)->formatPoMessage().c_str(),
+            item->formatPoMessage().c_str());
 		assert(0);
 	}
 

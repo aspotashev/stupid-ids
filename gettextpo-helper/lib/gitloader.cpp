@@ -215,6 +215,16 @@ const CommitFileChange *Commit::findChange(const char *name, const char *path) c
 	return NULL;
 }
 
+std::vector<const CommitFileChange *> Commit::findChangesByBasename(const char *basename) const
+{
+    std::vector<const CommitFileChange *> res;
+    for (int i = 0; i < nChanges(); i ++)
+        if (!strcmp(basename, change(i)->name()))
+            res.push_back(change(i));
+
+    return res;
+}
+
 const git_oid *Commit::findRemovalOid(const char *name, const char *path) const
 {
 	const CommitFileChange *change = findChange(name, path);
@@ -234,6 +244,18 @@ const git_oid *Commit::findUpdateOid(const char *name, const char *path) const
 		return change->oid2();
 	else
 		return NULL;
+}
+
+std::vector<const git_oid *> Commit::findUpdateOidsByBasename(const char *basename) const
+{
+    std::vector<const CommitFileChange *> changes = findChangesByBasename(basename);
+
+    std::vector<const git_oid *> res;
+    for (size_t i = 0; i < changes.size(); i ++)
+        if (changes[i]->type() == CommitFileChange::ADD || changes[i]->type() == CommitFileChange::MOD)
+            res.push_back(changes[i]->oid2());
+
+    return res;
 }
 
 //---------------------------------------
@@ -606,7 +628,7 @@ const git_oid *Repository::findLastUpdateOid(int from_commit, const char *name, 
 int Repository::lastCommitByTime(git_time_t time) const
 {
 	if (nCommits() == 0 || time < commit(0)->time())
-		return -1; // No such commit
+		return -1; // Nothing was commited before the given time
 
 	int l = 0;
 	int r = nCommits() - 1;
@@ -626,7 +648,7 @@ int Repository::lastCommitByTime(git_time_t time) const
 		if (time >= commit(r)->time())
 			return r;
 
-	assert(0); // Could not find the commit, but it must be between 'l' and 'r'
+	assert(0); // This cannot happen. Could not find the commit, but it must be between 'l' and 'r'.
 	return -1;
 }
 
@@ -645,6 +667,67 @@ const git_oid *Repository::findFileOidByTime(git_time_t time, const char *name, 
 	}
 
 	return NULL;
+}
+
+int Repository::nearestCommitByTime(git_time_t time) const
+{
+    int commit = lastCommitByTime(time);
+    return commit == -1 ? 0 : commit;
+}
+
+std::vector<int> Repository::listCommitsBetweenDates(const FileDateTime &date_a, const FileDateTime &date_b)
+{
+    readRepositoryCommits();
+
+    bool backward = date_b < date_a;
+
+//    printf("date_a=%s, date_b=%s\n", date_a.dateString().c_str(), date_b.dateString().c_str());
+    int less = nearestCommitByTime((git_time_t)date_a);
+    int more = nearestCommitByTime((git_time_t)date_b);
+    if (backward)
+        std::swap(less, more);
+
+    less = std::max(less - 5, 0);
+    more = std::min(more + 5, nCommits() - 1);
+    std::vector<int> res;
+    for (int i = less; i <= more; i ++)
+        if (FileDateTime(commit(i)->time()).isBetween(date_a, date_b))
+            res.push_back(i);
+
+    // Sort "res" by date ("backward" => accending or descending order)
+    sort(res.begin(), res.end(), Repository::compare_commits_by_date(this, backward));
+
+    return res;
+}
+
+const git_oid *Repository::findRelevantPot(const char *basename, const FileDateTime &date)
+{
+//    printf("Repository::findRelevantPot: filename=%s, date=%s\n", basename, date.dateString().c_str());
+
+    // Between NOW-3hours and NOW+14days
+    std::vector<int> commits = listCommitsBetweenDates(date.plusHours(-3), date.plusDays(14));
+    // Before NOW-3hours
+    std::vector<int> commits_prev = listCommitsBetweenDates(date.plusHours(-3).plusSeconds(-1), FileDateTime(0)); // TODO: replace "FileDateTime(0)" with "FileDateTime::MinDate" (needs to be implemented firstly)
+
+    // Append "commits_prev" at the end of "commits".
+    size_t commits_size = commits.size();
+    commits.resize(commits.size() + commits_prev.size());
+    std::copy(commits_prev.begin(), commits_prev.end(), commits.begin() + commits_size);
+
+    const git_oid *best_po_oid = NULL;
+    for (int i = 0; i < commits.size(); i ++)
+    {
+        std::vector<const git_oid *> po_oids = commit(commits[i])->findUpdateOidsByBasename(basename);
+        assert(po_oids.size() <= 1); // too strange to have 2 files with the same name changed in one commit
+
+        if (!po_oids.empty())
+        {
+            best_po_oid = po_oids[0];
+            break;
+        }
+    }
+
+    return best_po_oid;
 }
 
 void Repository::dumpOids(std::vector<GitOid2Change> &dest) const
@@ -733,6 +816,16 @@ std::vector<GitOid> Repository::getCurrentOids()
 	}
 
 	return res;
+}
+
+bool Repository::compareCommitsByDate(int a, int b, bool descending) const
+{
+    assert(a >= 0 && a < nCommits() && b >= 0 && b < nCommits());
+
+    if (descending)
+        return commit(a)->time() > commit(b)->time();
+    else
+        return commit(a)->time() < commit(b)->time();
 }
 
 //---------------------------------------------------------
@@ -845,6 +938,19 @@ Repository::blob_iterator Repository::blob_iterator::operator++(int)
 bool Repository::blob_iterator::isEnd() const
 {
 	return m_stack.size() == 0;
+}
+
+//---------------------------------------------------------
+
+Repository::compare_commits_by_date::compare_commits_by_date(const Repository *repo, bool descending)
+    : m_repo(repo)
+    , m_descending(descending)
+{
+}
+
+bool Repository::compare_commits_by_date::operator()(int a, int b) const
+{
+    m_repo->compareCommitsByDate(a, b, m_descending);
 }
 
 //---------------------------------------------------------

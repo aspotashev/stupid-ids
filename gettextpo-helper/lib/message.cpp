@@ -114,7 +114,7 @@ std::string MessageTranslationBase::formatString(const char *str)
 			res += "\\t";
 		else if ((unsigned char)str[i] < ' ')
 		{
-			printf("Unescaped special symbol: code = %d\n", (int)str[i]);
+			printf("Unescaped special symbol: code = %d\nstr = %s\n", (int)str[i], str);
 			assert(0);
 		}
 		else
@@ -503,5 +503,27 @@ const char *MessageGroup::msgctxt() const
 	assert(m_msgid);
 
 	return m_msgctxt;
+}
+
+bool equalPossiblyNullStrings(const char *a, const char *b)
+{
+    return (a == NULL && b == NULL) ||
+        (a != NULL && b != NULL && !strcmp(a, b));
+}
+
+bool MessageGroup::equalOrigText(const MessageGroup *other) const
+{
+    return !strcmp(msgid(), other->msgid()) &&
+        equalPossiblyNullStrings(msgctxt(), other->msgctxt()) &&
+        equalPossiblyNullStrings(msgidPlural(), other->msgidPlural());
+}
+
+void MessageGroup::updateTranslationFrom(const MessageGroup *from)
+{
+    assert(size() == 1);
+    assert(from->size() == 1);
+
+    delete m_messages[0];
+    m_messages[0] = new Message(*(from->message(0)));
 }
 

@@ -8,6 +8,7 @@
 #include <git2.h>
 
 #include <gettextpo-helper/detectorbase.h>
+#include <gettextpo-helper/filedatetime.h>
 
 class CommitFileChange;
 
@@ -18,6 +19,9 @@ public:
 	~Commit();
 
 	const git_oid *oid() const;
+
+    // TODO: rename to "date"
+    // TODO: git_time_t -> FileDateTime
 	git_time_t time() const;
 
 	void addChange(CommitFileChange *change);
@@ -31,6 +35,8 @@ public:
      */
 	const CommitFileChange *findChange(const char *name, const char *path) const;
 
+    std::vector<const CommitFileChange *> findChangesByBasename(const char *basename) const;
+
     /**
      * Returns the change to the file specified by "#{path}/#{name}"
      * in this commit if that file was _removed_ here.
@@ -42,6 +48,8 @@ public:
      * in this commit if that file was _added_ or _modified_ here.
      */
 	const git_oid *findUpdateOid(const char *name, const char *path) const;
+
+    std::vector<const git_oid *> findUpdateOidsByBasename(const char *basename) const;
 
 public:
 	git_oid m_oid;
@@ -117,7 +125,24 @@ public:
      */
 	int lastCommitByTime(git_time_t time) const;
 
+    int nearestCommitByTime(git_time_t time) const;
+
 	const git_oid *findFileOidByTime(git_time_t time, const char *name, const char *path) const;
+
+    /**
+     * Finds the appropriate version of #{filename}.pot in the following order:
+     *    1. Forward on the timeline up to 2 weeks after the given date
+     *         (because sometimes "scripty" is shut down for some time)
+     *    2. If nothing has been found between the given date and 2 weeks
+     *         after it, use backward search (just find the "current"
+     *         version of the .pot).
+     *
+     * \param filename File basename (without ".pot" or ".po" extension)
+     * \param date Search around this date
+     */
+    const git_oid *findRelevantPot(const char *basename, const FileDateTime &date);
+
+    std::vector<int> listCommitsBetweenDates(const FileDateTime &date_a, const FileDateTime &date_b);
 
 	void dumpOids(std::vector<GitOid2Change> &dest) const;
 
@@ -129,6 +154,9 @@ public:
 
 	std::vector<GitOid> getCurrentOids();
 
+    // Returns "true" if "a.date" is less (i.e. older) than "b.date" (if "descending" is false)
+    bool compareCommitsByDate(int a, int b, bool descending) const;
+
 private:
 	static git_tree *git_tree_entry_subtree(git_repository *repo, const git_tree_entry *entry);
 	git_tree *git_tree_entry_subtree(const git_tree_entry *entry);
@@ -139,6 +167,7 @@ private:
 	void diffCommit(git_commit *commit1, git_commit *commit2);
 
 	class blob_iterator;
+    class compare_commits_by_date;
 
 private:
 	char *m_gitDir;
@@ -176,6 +205,19 @@ private:
 	// (for example, in order to construct the full path for the current entry)
 	std::stack<tree_info> m_stack;
 	git_repository *m_repo; // needed for git_tree_entry_subtree
+};
+
+class Repository::compare_commits_by_date
+{
+public:
+    compare_commits_by_date(const Repository *repo, bool descending);
+
+    // Returns "true" if "a" is less than "b".
+    bool operator()(int a, int b) const;
+
+private:
+    const Repository *m_repo;
+    bool m_descending;
 };
 
 //----------------------------------------

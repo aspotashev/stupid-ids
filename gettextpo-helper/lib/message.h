@@ -217,6 +217,10 @@ public:
 	const char *msgidPlural() const;
 	const char *msgctxt() const;
 
+    bool equalOrigText(const MessageGroup *other) const;
+
+    void updateTranslationFrom(const MessageGroup *from);
+
 protected:
 	void clear();
 	void setMsgid(const char *str);

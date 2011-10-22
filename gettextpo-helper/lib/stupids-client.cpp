@@ -207,7 +207,7 @@ std::pair<int, int> StupidsClient::getFirstIdPair(const git_oid *tp_hash)
 	}
 	catch (ExceptionConnectionFailed &e)
 	{
-		return std::pair<int, int>(0, -1);
+		return std::pair<int, int>(-1, -1);
 	}
 
 	// send command

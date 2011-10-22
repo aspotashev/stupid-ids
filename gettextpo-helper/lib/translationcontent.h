@@ -63,7 +63,9 @@ public:
 	const git_oid *calculateTpHash();
 	std::vector<MessageGroup *> readMessages();
 	const FileDateTime &date();
+    const FileDateTime &potDate();
 	std::string author() const;
+    void setAuthor(std::string author);
 
 	std::vector<int> getMinIds();
 	int getFirstId();
@@ -71,6 +73,9 @@ public:
 
 	void writeToFile(const char *dest_filename, bool force_write);
 	void writeToFile();
+
+    // Does the same as "msgmerge"
+    void copyTranslationsFrom(TranslationContent *from);
 
 private:
 	void clear();
@@ -94,6 +99,8 @@ private:
 
 	void assertOk();
 
+    MessageGroup *findMessageGroupByOrig(const MessageGroup *msg);
+
 private:
 	char *m_filename;
 	char *m_displayFilename;
@@ -114,6 +121,7 @@ private:
 	bool m_messagesNormalInit;
 
 	FileDateTime m_date;
+    FileDateTime m_potDate;
 	std::string m_author;
 
 	int m_firstId;
@@ -124,7 +132,8 @@ private:
 		TYPE_UNKNOWN = 0,
 		TYPE_FILE = 1,
 		TYPE_GIT = 2,
-		TYPE_BUFFER = 3
+		TYPE_BUFFER = 3,
+        TYPE_DYNAMIC = 4 // the content of .po file can't be re-read from any other sources, only "m_messagesNormal" is valid
 	};
 };
 

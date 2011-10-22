@@ -96,6 +96,8 @@ po_file_t TranslationContent::poFileRead()
 		return poreadGit();
 	case TYPE_BUFFER:
 		return poreadBuffer();
+    case TYPE_DYNAMIC:
+        assert(0); // There is no file to read, only "m_messagesNormal" contains valid data.
 	default:
 		printf("m_type = %d\n", m_type);
 		assert(0);
@@ -401,6 +403,14 @@ void TranslationContent::readMessagesInternal(std::vector<MessageGroup *> &dest,
 		delete [] date_str;
 	}
 
+    // TODO: function for this
+    char *pot_date_str = po_header_field(po_file_domain_header(file, NULL), "POT-Creation-Date");
+    if (pot_date_str)
+    {
+        m_potDate.fromString(pot_date_str);
+        delete [] pot_date_str;
+    }
+
 	char *author_str = po_header_field(po_file_domain_header(file, NULL), "Last-Translator");
 	if (author_str)
 	{
@@ -653,9 +663,72 @@ const FileDateTime &TranslationContent::date()
 	return m_date;
 }
 
+const FileDateTime &TranslationContent::potDate()
+{
+    if (!m_messagesNormalInit)
+    {
+        readMessagesInternal(m_messagesNormal, m_messagesNormalInit);
+        assertOk();
+    }
+
+    return m_potDate;
+}
+
 std::string TranslationContent::author() const
 {
 	return m_author;
+}
+
+void TranslationContent::setAuthor(std::string author)
+{
+    m_author = author;
+}
+
+MessageGroup *TranslationContent::findMessageGroupByOrig(const MessageGroup *msg)
+{
+    readMessages(); // "m_messagesNormal" should be initialized
+
+    for (size_t i = 0; i < m_messagesNormal.size(); i ++)
+        if (m_messagesNormal[i]->equalOrigText(msg))
+            return m_messagesNormal[i];
+
+    return NULL;
+}
+
+void TranslationContent::copyTranslationsFrom(TranslationContent *from_content)
+{
+    // Read the current list of messages now, because we won't be able
+    // read them after we set "m_type" to "TYPE_DYNAMIC".
+    readMessages();
+
+    // "m_tphash" is still valid
+    // "m_minIdsInit", "m_firstId" and "m_idCount" are still valid
+
+    // "m_oid" will (most likely) change
+    if (m_oid)
+    {
+        delete m_oid;
+        m_oid = NULL;
+    }
+
+    m_date = from_content->date();
+
+    m_type = TYPE_DYNAMIC;
+    m_gitLoader = NULL;
+    m_buffer = NULL;
+    m_bufferLen = 0;
+    m_filename = NULL;
+
+
+    std::vector<MessageGroup *> from = from_content->readMessages();
+    for (size_t i = 0; i < from.size(); i ++)
+    {
+        MessageGroup *to = findMessageGroupByOrig(from[i]);
+        if (to)
+            to->updateTranslationFrom(from[i]);
+        else
+            assert(0); // not found in template, i.e. translation from "from_content" will be lost!
+    }
 }
 
 //--------------------------------------------------

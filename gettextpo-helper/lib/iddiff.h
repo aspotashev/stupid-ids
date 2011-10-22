@@ -30,6 +30,8 @@ public:
 	 **/
 	IddiffMessage(const IddiffMessage &msg);
 
+    IddiffMessage(const Message &msg);
+
 	IddiffMessage(po_message_t message);
 	~IddiffMessage();
 

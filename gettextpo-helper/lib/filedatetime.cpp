@@ -18,6 +18,13 @@ FileDateTime::FileDateTime (const FileDateTime &o)
 {
 }
 
+FileDateTime::FileDateTime(git_time_t date)
+    : m_init(true)
+    , m_date(date)
+    , m_timezone(0)
+{
+}
+
 std::string FileDateTime::dateString() const
 {
 	if (isNull())
@@ -47,7 +54,7 @@ bool FileDateTime::isNull() const
 	return !m_init;
 }
 
-void FileDateTime::fromString (const char *str)
+void FileDateTime::fromString(const char *str)
 {
 	m_init = str && strlen(str) > 0;
 
@@ -114,5 +121,41 @@ bool FileDateTime::operator<(const FileDateTime &o) const
 bool FileDateTime::operator>(const FileDateTime &o) const
 {
 	return m_date > o.m_date;
+}
+
+void FileDateTime::addSeconds(int seconds)
+{
+    if (!isNull())
+        m_date += seconds;
+}
+
+FileDateTime FileDateTime::plusSeconds(int seconds) const
+{
+    FileDateTime o(*this);
+    o.addSeconds(seconds);
+    return o;
+}
+
+FileDateTime FileDateTime::plusHours(int hours) const
+{
+    return plusSeconds(hours * 3600);
+}
+
+FileDateTime FileDateTime::plusDays(int days) const
+{
+    return plusSeconds(days * 24 * 3600);
+}
+
+FileDateTime::operator git_time_t() const
+{
+    return isNull() ? 0 : m_date;
+}
+
+bool FileDateTime::isBetween(const FileDateTime &a, const FileDateTime &b) const
+{
+    if (a <= b)
+        return *this >= a && *this <= b; // a <= this <= b
+    else // a > b
+        return *this >= b && *this <= a; // b <= this <= a
 }
 
