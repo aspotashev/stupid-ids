@@ -16,6 +16,15 @@ struct
     char **inputFiles;
 } static globalArgs;
 
+std::string path_to_basename(std::string path)
+{
+    size_t pos = path.rfind('/');
+    if (pos == std::string::npos) // no '/' in the path
+        return path;
+    else
+        return path.substr(pos + 1);
+}
+
 void processFile(GitLoader *git_loader, Iddiffer *merged_diff, const char *filename)
 {
     TranslationContent *input_content = new TranslationContent(filename);
@@ -56,14 +65,15 @@ void processFile(GitLoader *git_loader, Iddiffer *merged_diff, const char *filen
         assert(strcmp(globalArgs.branch, "stable") == 0); // FIXME (temporary hack)
 
         Repository *repo = new Repository("/home/sasha/kde-ru/xx-numbering/stable-templates/.git"); // FIXME (temporary hack)
-        const git_oid *best_pot_oid = repo->findRelevantPot((std::string(filename) + "t").c_str(), input_content->potDate());
+        const git_oid *best_pot_oid = repo->findRelevantPot((path_to_basename(filename) + "t").c_str(), input_content->potDate());
         if (!best_pot_oid)
         {
             fprintf(stderr,
-                    "Unknown tp_hash. Translation file: [%s]\n"
+                    "Unknown tp_hash. Translation file: [%s], basename: [%s]\n"
                     "This probably means that someone (probably, translator of this file) "
                     "has generated the translation template by hand, or has changed "
-                    "something in the template.\n", filename);
+                    "something in the template.\n",
+                    filename, (path_to_basename(filename) + "t").c_str());
             assert(0);
         }
 
