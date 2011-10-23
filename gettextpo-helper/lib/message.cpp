@@ -168,6 +168,15 @@ bool MessageTranslationBase::equalTranslations(const MessageTranslationBase *o) 
 	return equalMsgstr(o) && m_fuzzy == o->isFuzzy();
 }
 
+bool MessageTranslationBase::isUntranslated() const
+{
+    for (int i = 0; i < numPlurals(); i ++)
+        if (strlen(msgstr(i)) > 0)
+            return false;
+
+    return true;
+}
+
 //-------------------------------------------------------
 
 Message::Message(const Message &message)

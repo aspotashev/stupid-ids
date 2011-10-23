@@ -105,6 +105,8 @@ public:
 	 **/
 	bool equalTranslations(const MessageTranslationBase *o) const;
 
+    virtual bool isUntranslated() const;
+
 protected:
 	/**
 	 * @brief Initialize an empty message (without any translations).
@@ -156,7 +158,7 @@ public:
 	 **/
 	bool isPlural() const;
 
-	bool isUntranslated() const;
+	virtual bool isUntranslated() const;
 
 	/**
 	 * @brief Returns whether not untranslated and not fuzzy.
