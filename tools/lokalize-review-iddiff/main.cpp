@@ -14,21 +14,34 @@
 class GreedySetCover
 {
 public:
+    /**
+    * From all \a TranslationContent objects from \a collector selects a
+    * minimal set of them that contains messages with all IDs mentioned in
+    * \a diff.
+    */
 	GreedySetCover(StupIdTranslationCollector *collector, Iddiffer *diff);
 
+    /**
+     * Performs the next step of the greedy algorithm.
+     */
 	TranslationContent *nextContent();
 
 private:
-	// TODO: use std::list instead of std::vector
-	std::vector<TranslationContent *> m_invContents; // involved contents
+    // TranslationContent-s that can still be returned by "nextContent()".
+    // TODO: use std::list instead of std::vector
+	std::vector<TranslationContent *> m_invContents;
+
+    // Minimized IDs that have not been covered yet by
+    // any TranslationContent already returned by "nextContent()".
 	std::set<int> m_ids;
 };
 
 GreedySetCover::GreedySetCover(StupIdTranslationCollector *collector, Iddiffer *diff)
 {
+    // Minimizing "ids". See comment in nextContent() after "if (m_ids.find(c_ids[j]) != m_ids.end())".
 	diff->minimizeIds();
 
-	// initialize "m_ids"
+	// Initializing "m_ids".
 	std::vector<int> ids = diff->involvedIds();
 	m_ids = std::set<int>(ids.begin(), ids.end());
 
@@ -48,8 +61,8 @@ TranslationContent *GreedySetCover::nextContent()
 
 		int covered = 0;
 		for (int j = 0; j < c_ids.size(); j ++)
-			if (m_ids.find(c_ids[j]) != m_ids.end())
-				covered ++;
+			if (m_ids.find(c_ids[j]) != m_ids.end()) // We are searching for a _minimized_ ID "c_ids[j]",
+				covered ++;                          // therefore all IDs in "m_ids" should also be minimized.
 
 		if (covered > best_covered)
 		{

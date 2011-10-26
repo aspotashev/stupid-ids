@@ -89,16 +89,16 @@ public:
 	int getFirstId(const git_oid *tp_hash);
 
 	/**
-	 * \brief Sends the CMD_GET_FIRST_ID request to the server and returns the results
+	 * \brief Sends the CMD_INVOLVED_BY_MIN_IDS request to the server and returns the results
 	 *
 	 * \param tp_hashes Template-part hashes of translation files
-	 * \param min_ids Minimized IDs that you want to find in those files
+	 * \param ids IDs that you want to find in those files (not necessarily minimized)
 	 *
 	 * \returns Vector of indices in @p tp_hashes of those translation files that contain
-	 * messages with any of the given minimized IDs. The size of the returned vector
-	 * can be between zero and the size of @p tp_hashes.
+	 * messages with any of the given IDs (IDs will be firstly minimized).
+     * The size of the returned vector can be between zero and the size of @p tp_hashes.
 	 */
-	std::vector<int> involvedByMinIds(std::vector<const git_oid *> tp_hashes, std::vector<int> min_ids);
+	std::vector<int> involvedByMinIds(std::vector<const git_oid *> tp_hashes, std::vector<int> ids);
 
 	static StupidsClient &instance();
 

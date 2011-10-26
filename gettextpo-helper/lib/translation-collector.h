@@ -26,7 +26,7 @@ public:
 	std::vector<int> listConflicting();
 	MessageGroup *listVariants(int min_id);
 
-	std::vector<TranslationContent *> involvedByMinIds(std::vector<int> min_ids);
+	std::vector<TranslationContent *> involvedByMinIds(std::vector<int> ids);
 
 	void getMessagesByIds(
 		std::map<int, std::vector<MessageGroup *> > &messages,

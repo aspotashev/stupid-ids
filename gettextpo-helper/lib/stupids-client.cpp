@@ -261,21 +261,21 @@ std::vector<std::pair<int, int> > StupidsClient::getFirstIdPairs(std::vector<Git
 	return res;
 }
 
-std::vector<int> StupidsClient::involvedByMinIds(std::vector<const git_oid *> tp_hashes, std::vector<int> min_ids)
+std::vector<int> StupidsClient::involvedByMinIds(std::vector<const git_oid *> tp_hashes, std::vector<int> ids)
 {
 	connect();
 
 	// send command
 	sendLong(CMD_INVOLVED_BY_MIN_IDS);
 
-	// send tp_hashes
+	// send "tp_hashes"
 	// TODO: StupidsClient::sendOidVector
 	sendLong(tp_hashes.size());
 	for (size_t i = 0; i < tp_hashes.size(); i ++)
 		sendOid(tp_hashes[i]);
 
-	// send min_ids
-	sendLongVector(min_ids);
+	// send "ids"
+	sendLongVector(ids);
 
 	checkRecvErrorCode();
 
