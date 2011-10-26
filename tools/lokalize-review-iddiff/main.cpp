@@ -11,7 +11,7 @@
 #include <dbuslokalize.h>
 #include <sys/stat.h>
 
-class GreedySetCover
+class GreedyIddiffCoverage
 {
 public:
     /**
@@ -19,7 +19,7 @@ public:
     * minimal set of them that contains messages with all IDs mentioned in
     * \a diff.
     */
-	GreedySetCover(StupIdTranslationCollector *collector, Iddiffer *diff);
+	GreedyIddiffCoverage(StupIdTranslationCollector *collector, Iddiffer *diff);
 
     /**
      * Performs the next step of the greedy algorithm.
@@ -36,7 +36,7 @@ private:
 	std::set<int> m_ids;
 };
 
-GreedySetCover::GreedySetCover(StupIdTranslationCollector *collector, Iddiffer *diff)
+GreedyIddiffCoverage::GreedyIddiffCoverage(StupIdTranslationCollector *collector, Iddiffer *diff)
 {
     // Minimizing "ids". See comment in nextContent() after "if (m_ids.find(c_ids[j]) != m_ids.end())".
 	diff->minimizeIds();
@@ -49,7 +49,7 @@ GreedySetCover::GreedySetCover(StupIdTranslationCollector *collector, Iddiffer *
 	m_invContents = collector->involvedByMinIds(ids);
 }
 
-TranslationContent *GreedySetCover::nextContent()
+TranslationContent *GreedyIddiffCoverage::nextContent()
 {
 	int best_index = -1;
 	int best_covered = 0;
@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
 
 	Iddiffer *diff = new Iddiffer();
 	diff->loadIddiff(input_iddiff);
-	GreedySetCover cover(&collector, diff);
+	GreedyIddiffCoverage cover(&collector, diff);
 
 	TranslationContent *content = NULL;
 	while (content = cover.nextContent())
