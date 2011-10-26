@@ -32,9 +32,8 @@ GreedySetCover::GreedySetCover(StupIdTranslationCollector *collector, Iddiffer *
 	std::vector<int> ids = diff->involvedIds();
 	m_ids = std::set<int>(ids.begin(), ids.end());
 
-	// initialize "m_invContents"
-	std::map<int, std::vector<MessageGroup *> > inv_messages; // involved messages
-	collector->getMessagesByIds(inv_messages, m_invContents, ids);
+	// Initializing "m_invContents".
+	m_invContents = collector->involvedByMinIds(ids);
 }
 
 TranslationContent *GreedySetCover::nextContent()
