@@ -70,6 +70,7 @@ public:
 class TranslationContent;
 class StupIdTranslationCollector;
 
+// TODO: rename to Iddiff
 class Iddiffer
 {
 public:
