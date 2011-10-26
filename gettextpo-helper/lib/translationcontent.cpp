@@ -495,61 +495,66 @@ int TranslationContent::getIdCount()
 
 void TranslationContent::writeToFile(const char *dest_filename, bool force_write)
 {
-	assert(m_messagesNormalInit);
-
 	// Working with file
 	po_file_t file = poFileRead();
-	po_message_iterator_t iterator = po_message_iterator(file, "messages");
 
-	// skipping header
-	po_message_t message = po_next_message(iterator);
+    bool madeChanges = false;
+    if (m_messagesNormalInit)
+    {
+        po_message_iterator_t iterator = po_message_iterator(file, "messages");
 
-	bool madeChanges = false;
-	for (int index = 0; message = po_next_message(iterator); )
-	{
-		if (po_message_is_obsolete(message))
-			continue;
+        // skipping header
+        po_message_t message = po_next_message(iterator);
 
-		assert(index >= 0 && index < m_messagesNormal.size());
-		MessageGroup *messageGroup = m_messagesNormal[index];
+        for (int index = 0; message = po_next_message(iterator); )
+        {
+            if (po_message_is_obsolete(message))
+                continue;
 
-		assert(messageGroup->size() == 1);
-		Message *messageObj = messageGroup->message(0);
+            assert(index >= 0 && index < m_messagesNormal.size());
+            MessageGroup *messageGroup = m_messagesNormal[index];
 
-		// TODO: check that msgids have not changed
+            assert(messageGroup->size() == 1);
+            Message *messageObj = messageGroup->message(0);
 
-		if (messageObj->isEdited())
-		{
-			po_message_set_fuzzy(message, messageObj->isFuzzy() ? 1 : 0);
-			if (po_message_msgid_plural(message))
-			{ // with plural forms
-				for (int i = 0; i < messageObj->numPlurals(); i ++)
-				{
-					// Check that the number of plural forms has not changed
-					assert(po_message_msgstr_plural(message, i) != NULL);
+            // TODO: check that msgids have not changed
 
-					po_message_set_msgstr_plural(message, i, messageObj->msgstr(i));
-				}
+            if (messageObj->isEdited())
+            {
+                po_message_set_fuzzy(message, messageObj->isFuzzy() ? 1 : 0);
+                if (po_message_msgid_plural(message))
+                { // with plural forms
+                    for (int i = 0; i < messageObj->numPlurals(); i ++)
+                    {
+                        // Check that the number of plural forms has not changed
+                        assert(po_message_msgstr_plural(message, i) != NULL);
 
-				// Check that the number of plural forms has not changed
-				assert(po_message_msgstr_plural(message, messageObj->numPlurals()) == NULL);
-			}
-			else
-			{ // without plural forms
-				assert(messageObj->numPlurals() == 1);
+                        po_message_set_msgstr_plural(message, i, messageObj->msgstr(i));
 
-				po_message_set_msgstr(message, messageObj->msgstr(0));
-			}
+                        // TODO: Linus Torvalds says I should fix my program.
+                        // See linux-2.6/Documentation/CodingStyle
+                    }
 
-			po_message_set_comments(message, messageObj->msgcomments() ? messageObj->msgcomments() : "");
+                    // Check that the number of plural forms has not changed
+                    assert(po_message_msgstr_plural(message, messageObj->numPlurals()) == NULL);
+                }
+                else
+                { // without plural forms
+                    assert(messageObj->numPlurals() == 1);
 
-			madeChanges = true;
-		}
+                    po_message_set_msgstr(message, messageObj->msgstr(0));
+                }
 
-		index ++;
-	}
-	// free memory
-	po_message_iterator_free(iterator);
+                po_message_set_comments(message, messageObj->msgcomments() ? messageObj->msgcomments() : "");
+
+                madeChanges = true;
+            }
+
+            index ++;
+        }
+        // free memory
+        po_message_iterator_free(iterator);
+    }
 
 	if (force_write || madeChanges)
 	{
