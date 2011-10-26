@@ -67,7 +67,7 @@ public:
 	std::string author() const;
     void setAuthor(std::string author);
 
-	std::vector<int> getMinIds();
+	const std::vector<int> &getMinIds();
 	int getFirstId();
 	int getIdCount();
 

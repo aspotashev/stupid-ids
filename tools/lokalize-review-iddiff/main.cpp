@@ -44,7 +44,7 @@ TranslationContent *GreedySetCover::nextContent()
 	for (size_t i = 0; i < m_invContents.size(); i ++)
 	{
 		TranslationContent *content = m_invContents[i];
-		std::vector<int> c_ids = content->getMinIds();
+		const std::vector<int> &c_ids = content->getMinIds();
 
 		int covered = 0;
 		for (int j = 0; j < c_ids.size(); j ++)

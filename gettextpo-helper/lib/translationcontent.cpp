@@ -455,7 +455,7 @@ std::vector<MessageGroup *> TranslationContent::readMessages()
 	return m_messagesNormal;
 }
 
-std::vector<int> TranslationContent::getMinIds()
+const std::vector<int> &TranslationContent::getMinIds()
 {
 	if (!m_minIdsInit)
 	{
