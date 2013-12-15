@@ -1,4 +1,3 @@
-
 #include <string>
 #include <vector>
 #include <sstream>
@@ -209,4 +208,3 @@ private:
 
 	std::ostringstream m_output;
 };
-
