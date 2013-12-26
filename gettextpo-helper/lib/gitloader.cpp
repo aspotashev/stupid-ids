@@ -369,7 +369,7 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path, Co
 
 				diffTree(subtree1, NULL, subtree_path, currentCommit);
 				delete [] subtree_path;
-				git_tree_close(subtree1);
+				git_tree_free(subtree1);
 			}
 			else
 			{
@@ -391,7 +391,7 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path, Co
 
 				diffTree(NULL, subtree2, subtree_path, currentCommit);
 				delete [] subtree_path;
-				git_tree_close(subtree2);
+				git_tree_free(subtree2);
 			}
 			else
 			{
@@ -430,8 +430,8 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path, Co
 
 					diffTree(subtree1, subtree2, subtree_path, currentCommit);
 					delete [] subtree_path;
-					git_tree_close(subtree1);
-					git_tree_close(subtree2);
+					git_tree_free(subtree1);
+					git_tree_free(subtree2);
 				}
 				else // blob
 				{
@@ -480,9 +480,9 @@ void Repository::diffCommit(git_commit *commit1, git_commit *commit2)
 	m_commits.push_back(currentCommit);
 
 	if (tree1)
-		git_tree_close(tree1);
+		git_tree_free(tree1);
 	if (tree2)
-		git_tree_close(tree2);
+		git_tree_free(tree2);
 }
 
 /**
@@ -530,7 +530,7 @@ void Repository::readRepositoryCommits()
 		// Calculate changes made by this commit
 		diffCommit(parent, commit);
 
-		git_commit_close(commit);
+		git_commit_free(commit);
 		commit = parent;
 	}
 
@@ -841,7 +841,7 @@ void Repository::blob_iterator::enterDir(git_tree *tree)
 	if (ti.count > 0)
 		m_stack.push(ti);
 	else // empty tree
-		git_tree_close(tree);
+		git_tree_free(tree);
 }
 
 /**
@@ -885,7 +885,7 @@ void Repository::blob_iterator::walkBlob()
 		if (ti.idx == ti.count) // directory ends
 		{
 			// Exit directory
-			git_tree_close(ti.tree);
+			git_tree_free(ti.tree);
 			m_stack.pop();
 
 			// Go to the next entry in the parent directory
@@ -971,7 +971,7 @@ GitLoader::~GitLoader()
  * \param oid Git object ID of the blob.
  *
  * \returns Blob or NULL, if it was not found in any of the repositories.
- * It is necessary to call the function "git_blob_close" when you
+ * It is necessary to call the function "git_blob_free" when you
  * stop using a blob. Failure to do so will cause a memory leak.
  */
 git_blob *GitLoader::blobLookup(const git_oid *oid)

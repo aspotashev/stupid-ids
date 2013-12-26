@@ -127,7 +127,7 @@ po_file_t TranslationContent::poreadGit()
 	int rawsize = git_blob_rawsize(blob);
 	po_file_t file = po_buffer_read((const char *)rawcontent, (size_t)rawsize);
 
-	git_blob_close(blob);
+	git_blob_free(blob);
 
 	return file;
 }
@@ -613,7 +613,7 @@ void TranslationContent::loadToBufferGit()
 	assert(rawcontent_copy);
 	memcpy(rawcontent_copy, rawcontent, (size_t)rawsize);
 
-	git_blob_close(blob);
+	git_blob_free(blob);
 
 
 	m_buffer = rawcontent_copy;
