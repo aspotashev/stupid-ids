@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 	repo->readRepositoryCommits();
 
 	git_oid input_oid;
-	assert(git_oid_mkstr(&input_oid, input_oid_str) == GIT_SUCCESS);
+	assert(git_oid_fromstr(&input_oid, input_oid_str) == GIT_SUCCESS);
 
 	int commit_index = repo->commitIndexByOid(&input_oid);
 	if (commit_index < 0)

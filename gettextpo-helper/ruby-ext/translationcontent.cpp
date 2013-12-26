@@ -23,7 +23,7 @@ VALUE cTranslationContent_new_file(VALUE klass, VALUE filename)
 VALUE cTranslationContent_new_git(VALUE klass, VALUE git_loader, VALUE oid_str)
 {
 	git_oid oid;
-	assert(git_oid_mkstr(&oid, StringValuePtr(oid_str)) == GIT_SUCCESS);
+	assert(git_oid_fromstr(&oid, StringValuePtr(oid_str)) == GIT_SUCCESS);
 
 	TranslationContent *content = new TranslationContent(rb_get_git_loader(git_loader), &oid);
 	content->setDisplayFilename("/[git]");

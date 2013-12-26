@@ -113,8 +113,8 @@ VALUE wrap_append_processed_pairs(VALUE self, VALUE file_processed, VALUE pairs)
 		oid1_str = StringValuePtr(p0);
 		oid2_str = StringValuePtr(p1);
 
-		assert(git_oid_mkstr(&oid1, oid1_str) == GIT_SUCCESS);
-		assert(git_oid_mkstr(&oid2, oid2_str) == GIT_SUCCESS);
+		assert(git_oid_fromstr(&oid1, oid1_str) == GIT_SUCCESS);
+		assert(git_oid_fromstr(&oid2, oid2_str) == GIT_SUCCESS);
 
 		// TODO: "git_oid_fmtraw" needed (for full portability)
 

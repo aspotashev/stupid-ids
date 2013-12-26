@@ -339,8 +339,8 @@ void filterProcessedTransitions(const char *file_processed, std::vector<GitOidPa
 		assert(fread(oid1_raw, GIT_OID_RAWSZ, 1, f) == 1);
 		assert(fread(oid2_raw, GIT_OID_RAWSZ, 1, f) == 1);
 
-		git_oid_mkraw(&oid1, oid1_raw);
-		git_oid_mkraw(&oid2, oid2_raw);
+		git_oid_fromraw(&oid1, oid1_raw);
+		git_oid_fromraw(&oid2, oid2_raw);
 
 		processed.insert(GitOidPair(&oid1, &oid2));
 	}

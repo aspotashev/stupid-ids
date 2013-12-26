@@ -6,7 +6,7 @@
 GitOid::GitOid()
 {
 	const unsigned char zero_oid_raw[GIT_OID_RAWSZ] = {0};
-	git_oid_mkraw(&m_oid, zero_oid_raw);
+	git_oid_fromraw(&m_oid, zero_oid_raw);
 }
 
 GitOid::GitOid(const git_oid *oid)
@@ -30,12 +30,12 @@ void GitOid::setOid(const git_oid *oid)
 
 void GitOid::setOidStr(const char *oid_str)
 {
-	assert(git_oid_mkstr(&m_oid, oid_str) == GIT_SUCCESS);
+	assert(git_oid_fromstr(&m_oid, oid_str) == 0);
 }
 
 void GitOid::setOidRaw(const unsigned char *oid_raw)
 {
-	git_oid_mkraw(&m_oid, oid_raw);
+	git_oid_fromraw(&m_oid, oid_raw);
 }
 
 bool GitOid::operator<(const GitOid &o) const
@@ -102,8 +102,8 @@ GitOidPair::GitOidPair()
 {
 	const static unsigned char zero_oid_raw[GIT_OID_RAWSZ] = {0};
 
-	git_oid_mkraw(&m_oid1, zero_oid_raw);
-	git_oid_mkraw(&m_oid2, zero_oid_raw);
+	git_oid_fromraw(&m_oid1, zero_oid_raw);
+	git_oid_fromraw(&m_oid2, zero_oid_raw);
 }
 
 GitOidPair::GitOidPair(const git_oid *oid1, const git_oid *oid2)

@@ -306,5 +306,5 @@ void sha1_buffer(git_oid *oid, const void *buffer, size_t length)
 	blk_SHA1_Update(&ctx, buffer, length);
 	blk_SHA1_Final(oid_raw, &ctx);
 
-	git_oid_mkraw(oid, oid_raw);
+	git_oid_fromraw(oid, oid_raw);
 }
