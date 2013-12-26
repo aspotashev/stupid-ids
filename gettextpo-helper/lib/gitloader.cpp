@@ -496,7 +496,7 @@ void Repository::initOidMaster()
 	assert(git_reference_lookup(&ref_master, m_libgitRepo, "refs/heads/master") == 0);
 
 	m_oidMaster = new git_oid;
-	git_oid_cpy(m_oidMaster, git_reference_oid(ref_master));
+	git_oid_cpy(m_oidMaster, git_reference_target(ref_master));
 }
 
 void Repository::readRepositoryCommits()
