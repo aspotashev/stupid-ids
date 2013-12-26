@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include <unistd.h>
 
 #include <gettextpo-helper/translation-collector.h>
 #include <gettextpo-helper/translationcontent.h>

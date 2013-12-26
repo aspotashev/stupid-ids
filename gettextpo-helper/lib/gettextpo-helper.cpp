@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <gettextpo-helper/gettextpo-helper.h>
 #include <gettextpo-helper/mappedfile.h>

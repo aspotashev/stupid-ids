@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <git2.h>
 
 #include <gettextpo-helper/gettextpo-helper.h>
 #include <gettextpo-helper/translationcontent.h>
