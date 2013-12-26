@@ -23,9 +23,9 @@ int git_tree_entry_namecmp(const git_tree_entry *entry1, const git_tree_entry *e
 	static char name2[5000];
 	strcpy(name1, git_tree_entry_name(entry1));
 	strcpy(name2, git_tree_entry_name(entry2));
-	if (git_tree_entry_attributes(entry1) & REPO_MODE_DIR)
+	if (git_tree_entry_filemode(entry1) & REPO_MODE_DIR)
 		strcat(name1, "/");
-	if (git_tree_entry_attributes(entry2) & REPO_MODE_DIR)
+	if (git_tree_entry_filemode(entry2) & REPO_MODE_DIR)
 		strcat(name2, "/");
 
 	return strcmp(name1, name2);
@@ -362,7 +362,7 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path, Co
 		if (idx2 >= count2 || cmp < 0) // entry1 goes first, i.e. the entry is being removed in this commit
 		{
 			const char *name = git_tree_entry_name(entry1);
-			if (git_tree_entry_attributes(entry1) & REPO_MODE_DIR)
+			if (git_tree_entry_filemode(entry1) & REPO_MODE_DIR)
 			{
 				git_tree *subtree1 = git_tree_entry_subtree(entry1);
 				char *subtree_path = concat_path(path, name);
@@ -384,7 +384,7 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path, Co
 		else if (idx1 >= count1 || cmp > 0) // entry2 goes first, i.e. the entry is being added in this commit
 		{
 			const char *name = git_tree_entry_name(entry2);
-			if (git_tree_entry_attributes(entry2) & REPO_MODE_DIR)
+			if (git_tree_entry_filemode(entry2) & REPO_MODE_DIR)
 			{
 				git_tree *subtree2 = git_tree_entry_subtree(entry2);
 				char *subtree_path = concat_path(path, name);
@@ -411,8 +411,8 @@ void Repository::diffTree(git_tree *tree1, git_tree *tree2, const char *path, Co
 			}
 			else
 			{
-				unsigned int attr1 = git_tree_entry_attributes(entry1);
-				unsigned int attr2 = git_tree_entry_attributes(entry2);
+				unsigned int attr1 = git_tree_entry_filemode(entry1);
+				unsigned int attr2 = git_tree_entry_filemode(entry2);
 				if (attr1 != attr2 && !(attr1 == 0100755 && attr2 == 0100644))
 				{
 					printf("Git tree entry attributes are changing in this commit: time = %lld\n", (long long int)currentCommit->time());
@@ -892,7 +892,7 @@ void Repository::blob_iterator::walkBlob()
 			if (!isEnd())
 				m_stack.top().idx ++;
 		}
-		else if (git_tree_entry_attributes(entry = git_tree_entry_byindex(ti.tree, ti.idx)) & REPO_MODE_DIR) // directory
+		else if (git_tree_entry_filemode(entry = git_tree_entry_byindex(ti.tree, ti.idx)) & REPO_MODE_DIR) // directory
 		{
 			enterDir(Repository::git_tree_entry_subtree(m_repo, entry));
 		}
