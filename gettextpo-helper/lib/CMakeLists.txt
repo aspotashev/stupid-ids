@@ -22,10 +22,15 @@ set(gettextpo_helper_LIB_SRCS
 	block-sha1/sha1.cpp
 )
 
+
 add_library(gettextpo_helper SHARED ${gettextpo_helper_LIB_SRCS})
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
+find_package(Libgit2 REQUIRED)
+include_directories(${LIBGIT2_INCLUDE_DIR})
 target_link_libraries(gettextpo_helper
 	gettextpo
-	git2
+    ${LIBGIT2_LIBRARIES}
 )
 
 SET(INCLUDE_INSTALL_DIR include) # what's the full path?
