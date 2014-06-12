@@ -33,6 +33,11 @@ def is_virgin_pot_content(content)
 		return :has_translations # .POT contains translations in 'msgstr' fields
 	end
 
+  if not content.match(/"POT-Creation-Date:\ /)
+    puts "POT-Creation-Date is missing in the POT header"
+    return :creation_date_missing
+  end
+
 	:ok # All tests passed
 end
 
