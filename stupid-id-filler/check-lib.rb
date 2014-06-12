@@ -20,7 +20,13 @@ def is_virgin_pot_content(content)
 		return :po_summit # files from PO Summit ( see http://techbase.kde.org/Localization/Workflows/PO_Summit )
 	end
 
-	if lines[lines.find_index("msgid \"\"") - 1] != "#, fuzzy"
+  header_msgid_index = lines.find_index("msgid \"\"")
+  if header_msgid_index.nil?
+    puts "POT header is missing"
+    return :header_missing
+  end
+
+	if lines[header_msgid_index - 1] != "#, fuzzy"
 		puts "Header of POT is not fuzzy"
 		return :non_fuzzy_header # header of .POT should be fuzzy
 	end
