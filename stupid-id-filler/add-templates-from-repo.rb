@@ -1,10 +1,12 @@
 #!/usr/bin/ruby
 
+$:.unshift(File.join(File.dirname(__FILE__)))
+
 require 'tempfile'
 
-require './sif-lib.rb'
-require './check-lib.rb'
-require '../gettextpo-helper/ruby-helpers/ruby-helpers.rb'
+require 'sif-lib.rb'
+require 'check-lib.rb'
+require './gettextpo-helper/ruby-helpers/ruby-helpers.rb'
 
 if ARGV.size != 2
 	puts "Usage: add-templates-from-repo.rb <path-to-git-repo-with-templates> <ids-dir>"
@@ -36,47 +38,54 @@ end
 inc_proc = IncrementalCommitProcessing.new($SRC_DIR, $IDS_DIR)
 commits_to_process = inc_proc.commits_to_process
 
+known_broken_pots = []
+begin
+  File.open("#{$IDS_DIR}/broken.txt", "r") do |f|
+    f.readlines.each do |line|
+      if line[0..0] != '#' and line.match(/^[0-9a-f]{40}/)
+        known_broken_pots << line[0...40]
+      end
+    end
+  end
+rescue Errno::ENOENT
+  # File was not found, but it's OK
+end
+
 sif = Sif.new($IDS_DIR)
 tempfile_pot = Tempfile.new(['', '.pot']).path
 commits_to_process.each_with_index do |commit_sha1, index|
 	puts ">>> Processing commit #{commit_sha1} (#{index + 1}/#{commits_to_process.size})"
 	contents = contents_of_commit(commit_sha1)
+  broken_in_commit = []
+
 	contents.each do |content_sha1|
 		# content_sha1 is the sha1 of blob (e.g. 963a86ab2a7f24ba4400eace2e713c5bb8a5bad4)
 
 		p content_sha1
 		`cd #{$SRC_DIR} ; git show #{content_sha1} > "#{tempfile_pot}"`
-		if is_virgin_pot(tempfile_pot) == :ok
+
+    pot_status = is_virgin_pot(tempfile_pot)
+		if pot_status == :ok
 			sif.add(tempfile_pot, :pot_hash => content_sha1)
+    elsif known_broken_pots.include?(content_sha1)
+      puts "Repeated broken POT: #{content_sha1}"
 		else
-			white_list = [ # known really broken POTs
-				'c858f9fb3d0879344e020e8da6e75b49ec69f422', # POTs with translations
-				'367d7b7c18ba66a6d308a92401f79e96a8b50e0c',
-				'ed6cfadfaa021938da118044555e7f0112bb32cd',
-				'72358faf60b872e2113041a5ecaa1b0c8ae9bf73',
-				'4c1c3e3ff0c853256401dbc910cbc70050904cce',
-				'941f68ea0de6e37d3bbec96720ee4a5929b589a1',
-				'dfc6efaec41640efd65f08105b32d9cd3e5c6493',
-				'7102486a99154cf41d21ee8c29475bfc263c17fc',
-				'92fa2380247f1445123c79d1b0562bdb40758e26',
-				'7ead16f41b58e4e4b63473c8b84664d90ac79255',
-				'66767c4cfc5e349d78da99c9fa4fb88d9edd0a79',
-				'39794651da0335a6017f6b8d94a3e292fce106a5',
-				'f59b8f79171b52986d8b44e98117b398fafa8384',
-                                '58d344f95f01276192dcf6e0390065f0d519724e',
-                                'ea4e2e0fe3a0b99b31a957406ffb83f04b688f5d',
+      # Newly appeared broken POT
+      puts "Another broken POT: #{content_sha1}"
 
-				'24c554289355b4b805ab1654fbe5c52ebe02f905', # header is not clean
-				'62e7afe093409b51fb688484e1f44ad3d6dfc336',
-
-				'b5fbe988b1355356528c10fd3c55041928a6afa6', # broken header
-			]
-
-			if is_virgin_pot(tempfile_pot) != :po_summit and not white_list.include?(content_sha1)
-				raise "Broken .pot (content sha1: #{content_sha1})"
-			end
+      known_broken_pots << content_sha1
+      broken_in_commit << "#{content_sha1}, :status => :#{pot_status}"
 		end
 	end
+
+  if broken_in_commit.size > 0
+    File.open("#{$IDS_DIR}/broken.txt", "a") do |f|
+      f.puts "# From commit #{commit_sha1} in #{$SRC_DIR}"
+      broken_in_commit.each do |item|
+        f.puts item
+      end
+    end
+  end
 
 	sif.commit
 
