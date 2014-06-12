@@ -1,5 +1,6 @@
 
 require 'stupidsruby'
+require 'set'
 
 class Sif
 	# http://www.oreillynet.com/ruby/blog/2007/01/nubygems_dont_use_class_variab_1.html
@@ -23,8 +24,8 @@ class Sif
 
 		@next_id = IO.read(next_id_txt).strip.to_i
 
-		@commited_tp_hashes = IO.read(first_ids_txt).split("\n").map {|x| x[0...40] }
-		@commited_sha1s = IO.read(pot_origins_txt).split("\n").map {|x| x[0...40] }
+		@commited_tp_hashes = IO.read(first_ids_txt).split("\n").map {|x| x[0...40] }.to_set
+		@commited_sha1s = IO.read(pot_origins_txt).split("\n").map {|x| x[0...40] }.to_set
 
 		@new_firstids = [] # pairs: (tp_hash, first_id)
 		@new_origins  = [] # pairs: (sha1, tp_hash)
@@ -76,10 +77,10 @@ class Sif
 		puts `cd "#{@ids_dir}" ; git commit -m upd -- first_ids.txt next_id.txt pot_origins.txt`
 
 		# data is already committed
-		@commited_tp_hashes.concat(@new_firstids.map(&:first))
+		@commited_tp_hashes.merge(@new_firstids.map(&:first))
 		@new_firstids = []
 
-		@commited_sha1s.concat(@new_origins.map(&:first))
+		@commited_sha1s.merge(@new_origins.map(&:first))
 		@new_origins = []
 
 		@dirty = false
