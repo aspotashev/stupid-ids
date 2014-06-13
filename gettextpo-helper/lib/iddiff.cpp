@@ -837,7 +837,7 @@ std::pair<int, IddiffMessage *> Iddiffer::loadMessageListEntry(const char *line)
 	}
 
 	delete [] msgstr_buf;
-	return std::make_pair<int, IddiffMessage *>(msg_id, msg);
+	return std::pair<int, IddiffMessage *>(msg_id, msg);
 }
 
 template <typename T>
@@ -1158,7 +1158,7 @@ std::vector<std::pair<int, IddiffMessage *> > Iddiffer::getRemovedVector()
 	{
 		std::vector<IddiffMessage *> id_items = iter->second.m_removedItems;
 		for (size_t i = 0; i < id_items.size(); i ++)
-			res.push_back(std::make_pair<int, IddiffMessage *>(iter->first, id_items[i]));
+			res.push_back(std::pair<int, IddiffMessage *>(iter->first, id_items[i]));
 	}
 
 	return res;
@@ -1172,7 +1172,7 @@ std::vector<std::pair<int, IddiffMessage *> > Iddiffer::getAddedVector()
 	{
 		std::vector<IddiffMessage *> id_items = iter->second.m_addedItems;
 		for (size_t i = 0; i < id_items.size(); i ++)
-			res.push_back(std::make_pair<int, IddiffMessage *>(iter->first, id_items[i]));
+			res.push_back(std::pair<int, IddiffMessage *>(iter->first, id_items[i]));
 	}
 
 	return res;
@@ -1185,7 +1185,7 @@ std::vector<std::pair<int, IddiffMessage *> > Iddiffer::getReviewVector()
 		iter != m_items.end(); iter ++)
 	{
 		if (iter->second.m_reviewComment)
-			res.push_back(std::make_pair<int, IddiffMessage *>(iter->first, iter->second.m_reviewComment));
+			res.push_back(std::pair<int, IddiffMessage *>(iter->first, iter->second.m_reviewComment));
 	}
 
 	return res;

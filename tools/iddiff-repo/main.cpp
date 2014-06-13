@@ -1,12 +1,12 @@
-
-#include <assert.h>
-#include <stdio.h>
-#include <iostream>
-
 #include <gettextpo-helper/translationcontent.h>
 #include <gettextpo-helper/iddiff.h>
 #include <gettextpo-helper/gitloader.h>
 #include <gettextpo-helper/stupids-client.h>
+
+#include <getopt.h>
+#include <cassert>
+#include <cstdio>
+#include <iostream>
 
 struct
 {

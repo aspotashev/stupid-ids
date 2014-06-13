@@ -1,13 +1,13 @@
-
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
+#include "block-sha1/sha1.h"
 
 #include <gettextpo-helper/gettextpo-helper.h>
 #include <gettextpo-helper/mappedfile.h>
 #include <gettextpo-helper/translationcontent.h>
 #include <gettextpo-helper/iddiff.h>
-#include "block-sha1/sha1.h"
+
+#include <cstdio>
+#include <cstring>
+#include <unistd.h>
 
 char *xstrdup(const char *str)
 {
