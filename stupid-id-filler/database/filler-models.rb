@@ -6,7 +6,7 @@ class FillerBase < ActiveRecord::Base
 
 	# 'data' should be a Hash
 	def self.find_or_create(data)
-		if find(:first, :conditions => data).nil?
+		if where(data).count == 0
 			create(data)
 		end
 	end
@@ -37,11 +37,11 @@ end
 # last_sha1.value = sha1 of the last processed Git commit (string)
 class FillerLastSha1 < FillerBase
 	def self.value
-		find(:first).value
+		first.value
 	end
 
 	def self.value=(new_value)
-		x = find(:first)
+		x = first
 		x.value = new_value
 		x.save!
 	end

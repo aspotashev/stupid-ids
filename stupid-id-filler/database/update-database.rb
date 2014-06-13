@@ -53,6 +53,8 @@ class CreateDb < ActiveRecord::Migration
 	end
 end
 
+ActiveRecord::Base.establish_connection_filler
+
 if not FillerLastSha1.table_exists?
 	CreateDb.migrate(:down)
 	CreateDb.migrate(:up)
@@ -121,16 +123,16 @@ require 'open3'
 # Returns the Git hash of a .pot file by its tp_hash.
 def get_pot_git_hash(tp_hash)
   # perform checks
-  all_rows = TphashPotsha.find(:all, :conditions => {:tp_hash => tp_hash})
+  all_rows = TphashPotsha.where(:tp_hash => tp_hash)
   if all_rows.size > 1
-    p all_rows
+    p all_rows.to_a
     raise "There should not be more than one .pot file with the same tp_hash"
   elsif all_rows.size == 0
     raise "tp_hash not found: tp_hash = #{tp_hash}"
   end
 
   # simply do the job
-  TphashPotsha.find(:first, :conditions => {:tp_hash => tp_hash}).potsha
+  TphashPotsha.where(:tp_hash => tp_hash).first.potsha
 end
 
 def try_extract_pot_to_file(git_dir, git_hash, filename)
@@ -158,7 +160,9 @@ def extract_pot_to_file(tp_hash, filename)
     map {|path| File.expand_path(path) }.
     any? do |git_dir|
 
-    try_extract_pot_to_file(git_dir, git_hash, filename)
+    if not try_extract_pot_to_file(git_dir, git_hash, filename)
+      raise "Git object not found"
+    end
   end
 end
 
