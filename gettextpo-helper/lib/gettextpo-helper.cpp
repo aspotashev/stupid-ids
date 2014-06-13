@@ -9,6 +9,8 @@
 #include <cstring>
 #include <unistd.h>
 
+#include <stdexcept>
+
 char *xstrdup(const char *str)
 {
 	size_t len = strlen(str);
@@ -20,25 +22,127 @@ char *xstrdup(const char *str)
 
 //------------------------------
 
-static void xerror_handler(
-	int severity,
-	po_message_t message, const char *filename, size_t lineno,
-	size_t column, int multiline_p, const char *message_text)
+class ExceptionMessageInfo
 {
-	printf("filename = %s, lineno = %lu, column = %lu\n", filename, lineno, column);
-//	assert(0);
+public:
+    ExceptionMessageInfo();
+    ExceptionMessageInfo(
+        const std::string& filename, size_t lineno, size_t column,
+        bool multilineP, const std::string& messageText);
+
+    std::string toString() const;
+
+private:
+    std::string m_filename;
+    size_t m_lineno;
+    size_t m_column;
+    bool m_multilineP;
+    std::string m_messageText;
+};
+
+ExceptionMessageInfo::ExceptionMessageInfo(
+    const std::string& filename, size_t lineno, size_t column,
+    bool multilineP, const std::string& messageText):
+    m_filename(filename), m_lineno(lineno), m_column(column),
+    m_multilineP(multilineP), m_messageText(messageText)
+{
+}
+
+ExceptionMessageInfo::ExceptionMessageInfo():
+    m_filename(), m_lineno(0), m_column(0),
+    m_multilineP(false), m_messageText("<none>")
+{
+}
+
+std::string ExceptionMessageInfo::toString() const
+{
+    std::stringstream ss;
+    ss << "at " << m_filename <<
+        "[L" << m_lineno << ":C" << m_column << "] " <<
+        (m_multilineP ? "<multiline>" : "<single line>") <<
+        " Error: " << m_messageText;
+
+    return ss.str();
+}
+
+class GettextParserException : public std::exception
+{
+public:
+    GettextParserException(int severity, ExceptionMessageInfo msg1);
+    GettextParserException(int severity, ExceptionMessageInfo msg1, ExceptionMessageInfo msg2);
+    virtual ~GettextParserException() noexcept;
+
+    void buildWhatString();
+
+    virtual const char* what() const noexcept;
+
+private:
+    int m_severity;
+
+    bool m_twoMessages;
+    ExceptionMessageInfo m_msg1;
+    ExceptionMessageInfo m_msg2;
+
+    std::string m_what;
+};
+
+GettextParserException::GettextParserException(int severity, ExceptionMessageInfo msg1):
+    std::exception(),
+    m_severity(severity),
+    m_twoMessages(false), m_msg1(msg1)
+{
+    buildWhatString();
+}
+
+GettextParserException::GettextParserException(int severity, ExceptionMessageInfo msg1, ExceptionMessageInfo msg2):
+    std::exception(),
+    m_severity(severity),
+    m_twoMessages(true), m_msg1(msg1), m_msg2(msg2)
+{
+    buildWhatString();
+}
+
+GettextParserException::~GettextParserException() noexcept
+{
+}
+
+void GettextParserException::buildWhatString()
+{
+    std::stringstream ss;
+    ss << "GettextParserException: severity = " << m_severity << std::endl;
+    ss << "    message 1: " << m_msg1.toString() << std::endl;
+    if (m_twoMessages)
+        ss << "    message 2: " << m_msg2.toString() << std::endl;
+
+    m_what = ss.str();
+}
+
+const char* GettextParserException::what() const throw()
+{
+    return m_what.c_str();
+}
+
+static void xerror_handler(
+    int severity,
+    po_message_t message, const char *filename, size_t lineno,
+    size_t column, int multiline_p, const char *message_text)
+{
+    throw GettextParserException(
+        severity,
+        ExceptionMessageInfo(filename, lineno, column, multiline_p, message_text));
 }
 
 static void xerror2_handler(
-	int severity,
-	po_message_t message1, const char *filename1, size_t lineno1,
-	size_t column1, int multiline_p1, const char *message_text1,
-	po_message_t message2, const char *filename2, size_t lineno2,
-	size_t column2, int multiline_p2, const char *message_text2)
+    int severity,
+    po_message_t message1, const char *filename1, size_t lineno1,
+    size_t column1, int multiline_p1, const char *message_text1,
+    po_message_t message2, const char *filename2, size_t lineno2,
+    size_t column2, int multiline_p2, const char *message_text2)
 {
-	printf("filename1 = %s, lineno1 = %lu, column1 = %lu, message_text1 = %s\n", filename1, lineno1, column1, message_text1);
-	printf("filename2 = %s, lineno2 = %lu, column2 = %lu, message_text2 = %s\n", filename2, lineno2, column2, message_text2);
-//	assert(0);
+    throw GettextParserException(
+        severity,
+        ExceptionMessageInfo(filename1, lineno1, column1, multiline_p1, message_text1),
+        ExceptionMessageInfo(filename2, lineno2, column2, multiline_p2, message_text2));
 }
 
 // overloaded function, without 'xerror_handlers' argument
