@@ -1,5 +1,10 @@
 #!/usr/bin/ruby19
 
+$STUPIDS_PATH=File.expand_path(File.join(File.dirname(__FILE__)) + "/../..")
+
+$:.unshift(File.join(File.dirname(__FILE__)))
+$:.unshift($STUPIDS_PATH + "/b/gettextpo-helper/ruby-ext")
+
 require 'active_record'
 
 ActiveRecord::Base.class_eval do
@@ -9,9 +14,10 @@ ActiveRecord::Base.class_eval do
 end
 
 require 'tempfile'
-require './filler-models.rb'
+
 require 'stupidsruby'
 require '../../gettextpo-helper/ruby-helpers/ruby-helpers'
+require './filler-models.rb'
 
 class CreateDb < ActiveRecord::Migration
 	def self.connection
@@ -52,7 +58,7 @@ if not FillerLastSha1.table_exists?
 	CreateDb.migrate(:up)
 end
 
-$DIR = "../ids"
+$DIR = $STUPIDS_PATH + "/xx-numbering/ids"
 
 Array.class_eval do
 	def is_uniq
@@ -148,7 +154,7 @@ end
 def extract_pot_to_file(tp_hash, filename)
   git_hash = get_pot_git_hash(tp_hash)
 
-  ['~/kde-ru/xx-numbering/templates', '~/kde-ru/xx-numbering/stable-templates'].
+  [$STUPIDS_PATH + '/xx-numbering/templates', $STUPIDS_PATH + '/xx-numbering/stable-templates'].
     map {|path| File.expand_path(path) }.
     any? do |git_dir|
 

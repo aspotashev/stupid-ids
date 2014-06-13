@@ -1,4 +1,6 @@
 
+$:.unshift(File.join(File.dirname(__FILE__)) + "/../b/gettextpo-helper/ruby-ext")
+
 require 'stupidsruby'
 require 'set'
 
