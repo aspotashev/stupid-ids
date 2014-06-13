@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
 	repo->readRepositoryCommits();
 
 	git_oid input_oid;
+    // TBD: avoid usage of libgit2 directly, better use gettextpo-helper
 	assert(git_oid_fromstr(&input_oid, input_oid_str) == 0);
 
 	int commit_index = repo->commitIndexByOid(&input_oid);
