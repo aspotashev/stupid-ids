@@ -44,5 +44,5 @@ Chooses IDs for .pot templates. Maintains the map [tp_hash] -> [first ID in .pot
 
 Dependencies:
 * >=libgettextpo-0.18 (for "po_message_is_range")
-* libgit2
+* libgit2-0.16.0 (for "*_free" functions)
 * dbus-glib (for interaction with Lokalize)
