@@ -3,13 +3,15 @@
 #include <assert.h>
 #include <string.h>
 #include <algorithm>
+#include <stdexcept>
 
 #include "filedbfirstids.h"
 
 FiledbFirstIds::FiledbFirstIds(const char *filename, const char *filename_next_id)
 {
 	FILE *f = fopen(filename, "r");
-	assert(f);
+        if (!f)
+            throw std::runtime_error("Failed to open file " + std::string(filename));
 
 	std::vector<GitOid> oids;
 	std::vector<int> first_ids;
@@ -18,7 +20,10 @@ FiledbFirstIds::FiledbFirstIds(const char *filename, const char *filename_next_i
 	while (fgets(line, 60, f))
 	{
 		// tp_hash(40) + space(1) + first_id(1)
-		assert(strlen(line) >= 42);
+		if (strlen(line) < 42) {
+                    throw std::runtime_error("Line is too short: " + std::string(line));
+                }
+
 		// space between tp_hash and first_id
 		assert(line[40] == ' ');
 

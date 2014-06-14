@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <stdexcept>
 
 #include "config.h"
 
@@ -61,7 +62,10 @@ void StupidsConfig::loadConfig(const char *filename)
 	char buffer[2000];
 
 	FILE *f = fopen(filename, "r");
-	assert(f);
+        if (!f) {
+            throw std::runtime_error("Failed to open config file " + std::string(filename));
+        }
+
 	while (fgets(buffer, 2000, f))
 		loadLine(buffer);
 	fclose(f);
