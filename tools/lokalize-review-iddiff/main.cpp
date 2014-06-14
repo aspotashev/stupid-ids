@@ -60,7 +60,7 @@ TranslationContent *GreedyIddiffCoverage::nextContent()
 		const std::vector<int> &c_ids = content->getMinIds();
 
 		int covered = 0;
-		for (int j = 0; j < c_ids.size(); j ++)
+		for (size_t j = 0; j < c_ids.size(); j ++)
 			if (m_ids.find(c_ids[j]) != m_ids.end()) // We are searching for a _minimized_ ID "c_ids[j]",
 				covered ++;                          // therefore all IDs in "m_ids" should also be minimized.
 
@@ -77,7 +77,7 @@ TranslationContent *GreedyIddiffCoverage::nextContent()
 	// Remove handled IDs from m_ids
 	TranslationContent *content = m_invContents[best_index];
 	std::vector<int> c_ids = content->getMinIds();
-	for (int i = 0; i < c_ids.size(); i ++)
+	for (size_t i = 0; i < c_ids.size(); i ++)
 		m_ids.erase(c_ids[i]);
 
 	// Remove handled content from the list

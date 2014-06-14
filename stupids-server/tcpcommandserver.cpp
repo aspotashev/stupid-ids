@@ -28,8 +28,10 @@ void TcpCommandServer::writeToClient(const void *data, size_t len)
 {
 	assert (!m_closeConnection);
 
-	assert(sendto(m_connfd, data, len,
-		0, (struct sockaddr *)&m_cliaddr, sizeof(m_cliaddr)) == len);
+    ssize_t ret = sendto(
+        m_connfd, data, len,
+        0, (struct sockaddr *)&m_cliaddr, sizeof(m_cliaddr));
+    assert(ret == static_cast<ssize_t>(len));
 }
 
 void TcpCommandServer::flushToClient()

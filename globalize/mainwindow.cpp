@@ -62,7 +62,7 @@ MainWindow::MainWindow(QWidget *parent) :
         for (size_t i = 0; i < removed.size(); i ++)
         {
             Message *msg = new Message(false, messages[0]->size(), "");
-            for (size_t j = 0; j < messages[0]->size(); j ++)
+            for (int j = 0; j < messages[0]->size(); j ++)
                 msg->setMsgstr(j, "");
             removed[i]->copyTranslationsToMessage(msg);
 
@@ -73,7 +73,7 @@ MainWindow::MainWindow(QWidget *parent) :
         if (added)
         {
             Message *msg = new Message(false, messages[0]->size(), "");
-            for (size_t j = 0; j < messages[0]->size(); j ++)
+            for (int j = 0; j < messages[0]->size(); j ++)
                 msg->setMsgstr(j, "");
             added->copyTranslationsToMessage(msg);
 

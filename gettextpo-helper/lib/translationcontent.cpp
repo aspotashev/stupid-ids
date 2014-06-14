@@ -12,6 +12,8 @@
 #include <gettextpo-helper/sha1.h>
 #include "filedatetime.h"
 
+#include <stdexcept>
+
 TranslationContent::TranslationContent(const char *filename)
 {
 	clear();
@@ -166,10 +168,12 @@ const git_oid *TranslationContent::gitBlobHash()
 
 		fseek(f, 0, SEEK_END);
 		file_size = ftell(f);
+        if (file_size < 0)
+            throw std::runtime_error("ftell() failed");
 		rewind(f);
 
 		temp_buffer = new char[file_size];
-		assert(fread(temp_buffer, 1, file_size, f) == file_size);
+		assert(fread(temp_buffer, 1, file_size, f) == static_cast<size_t>(file_size));
 		fclose(f);
 
 		assert(git_odb_hash(m_oid, temp_buffer, file_size, GIT_OBJ_BLOB) == 0);
@@ -507,12 +511,12 @@ void TranslationContent::writeToFile(const char *dest_filename, bool force_write
         // skipping header
         po_message_t message = po_next_message(iterator);
 
-        for (int index = 0; (message = po_next_message(iterator)); )
+        for (size_t index = 0; (message = po_next_message(iterator)); )
         {
             if (po_message_is_obsolete(message))
                 continue;
 
-            assert(index >= 0 && index < m_messagesNormal.size());
+            assert(index < m_messagesNormal.size());
             MessageGroup *messageGroup = m_messagesNormal[index];
 
             assert(messageGroup->size() == 1);

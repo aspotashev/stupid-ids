@@ -167,7 +167,7 @@ void StupIdTranslationCollector::initTransConfl()
 		return;
 
 	m_transInit = true;
-	for (int content_i = 0; content_i < m_contents.size(); content_i ++)
+	for (size_t content_i = 0; content_i < m_contents.size(); content_i ++)
 	{
 		TranslationContent *content = m_contents[content_i];
 
@@ -208,8 +208,10 @@ std::vector<TranslationContent *> StupIdTranslationCollector::involvedByMinIds(s
 	std::vector<TranslationContent *> res;
 	for (size_t i = 0; i < res_indices.size(); i ++)
 	{
-		assert(res_indices[i] >= 0 && res_indices[i] < m_contents.size());
-		res.push_back(m_contents[res_indices[i]]);
+            size_t index = static_cast<size_t>(res_indices[i]);
+
+            assert(index >= 0 && index < m_contents.size());
+            res.push_back(m_contents[index]);
 	}
 
 	return res;

@@ -380,8 +380,8 @@ void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *cont
 // http://www.infosoftcom.ru/article/realizatsiya-funktsii-split-string
 std::vector<std::string> split_string(const std::string &str, const std::string &sep)
 {
-	size_t str_len = (int)str.length();
-	size_t sep_len = (int)sep.length();
+	int str_len = str.size();
+	int sep_len = sep.size();
 	assert(sep_len > 0);
 
 

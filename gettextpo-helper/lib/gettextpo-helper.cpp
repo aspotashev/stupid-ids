@@ -211,7 +211,7 @@ po_file_t po_buffer_read(const char *buffer, size_t length)
 		close(0);
 
 		// TODO: report errors from "write()" to the parent process (using a buffer + semaphore?)
-		assert(write(pipe_fd[1], buffer, length) == length);
+		assert(write(pipe_fd[1], buffer, length) == static_cast<ssize_t>(length));
 
 		exit(0); // terminate child process
 	}

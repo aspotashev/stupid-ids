@@ -715,7 +715,7 @@ const git_oid *Repository::findRelevantPot(const char *basename, const FileDateT
     std::copy(commits_prev.begin(), commits_prev.end(), commits.begin() + commits_size);
 
     const git_oid *best_po_oid = NULL;
-    for (int i = 0; i < commits.size(); i ++)
+    for (size_t i = 0; i < commits.size(); i ++)
     {
         std::vector<const git_oid *> po_oids = commit(commits[i])->findUpdateOidsByBasename(basename);
         assert(po_oids.size() <= 1); // too strange to have 2 files with the same name changed in one commit
