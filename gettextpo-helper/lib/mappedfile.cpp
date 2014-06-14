@@ -138,7 +138,7 @@ const MappedFileIdMapDb::IdMapDb_row *MappedFileIdMapDb::getRowConst(int msg_id)
 int MappedFileIdMapDb::getRecursiveMinId(int msg_id) const
 {
 	int prev_id;
-	while (msg_id = getRowConst(prev_id = msg_id)->min_id)
+	while ((msg_id = getRowConst(prev_id = msg_id)->min_id))
 		assert(msg_id < prev_id); // avoiding infinite loop
 
 	return prev_id;

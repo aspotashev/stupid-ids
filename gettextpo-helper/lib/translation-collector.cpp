@@ -45,7 +45,7 @@ void StupIdTranslationCollector::insertPoDir(const char *directory_path)
 {
 	DIR *dir = opendir(directory_path);
 	struct dirent *entry;
-	while (entry = readdir(dir))
+	while ((entry = readdir(dir)))
 	{
 		const char *d_name = entry->d_name;
 		char *fullpath = concat_path(directory_path, d_name);
@@ -94,7 +94,7 @@ void StupIdTranslationCollector::insertPoDirOrTemplate(
 {
 	DIR *dir = opendir(templates_path);
 	struct dirent *entry;
-	while (entry = readdir(dir))
+	while ((entry = readdir(dir)))
 	{
 		const char *d_name = entry->d_name;
 		char *templ_subpath = concat_path(templates_path, d_name);

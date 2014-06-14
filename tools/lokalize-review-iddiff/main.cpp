@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
 	GreedyIddiffCoverage cover(&collector, diff);
 
 	TranslationContent *content = NULL;
-	while (content = cover.nextContent())
+	while ((content = cover.nextContent()))
 	{
 		printf("Reviewing content: %s\n", content->displayFilename());
 

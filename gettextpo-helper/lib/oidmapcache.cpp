@@ -86,7 +86,7 @@ void OidMapCache::createPathDirectories()
 
 	// Not taking the root slash.
 	char *cur_slash = filename;
-	while (cur_slash = strchr(cur_slash + 1, '/'))
+	while ((cur_slash = strchr(cur_slash + 1, '/')))
 	{
 		*cur_slash = '\0';
 		createDir(filename);

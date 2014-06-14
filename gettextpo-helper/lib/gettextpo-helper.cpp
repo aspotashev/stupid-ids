@@ -291,7 +291,7 @@ int get_pot_length(const char *filename)
 
 	int length = 0;
 	// ordinary .po messages (not header)
-	while (message = po_next_message(iterator))
+	while ((message = po_next_message(iterator)))
 		if (!po_message_is_obsolete(message)) // in fact, if we're processing a .pot, there can't be any obsolete messages
 			length ++;
 

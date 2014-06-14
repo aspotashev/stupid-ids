@@ -640,7 +640,7 @@ bool Iddiffer::loadIddiff(const char *filename)
 
 	// Reading header
 	size_t index = 0;
-	for (index; index < lines.size(); index ++)
+	for (; index < lines.size(); index ++)
 	{
 		char *line = lines[index];
 
@@ -705,7 +705,7 @@ bool Iddiffer::loadIddiff(const char *filename)
 	bool has_removed = false;
 	bool has_added = false;
 	bool has_review = false;
-	for (index; index < lines.size(); index ++)
+	for (; index < lines.size(); index ++)
 	{
 		char *line = lines[index];
 

@@ -267,7 +267,7 @@ std::string dump_filepos_entries(po_message_t message)
 	char filepos_start_line[20];
 	// FIXME: "filepos" entries should probably be sorted alphabetically
 	// (because PO editors might reorder them).
-	for (int i = 0; filepos = po_message_filepos(message, i); i ++)
+	for (int i = 0; (filepos = po_message_filepos(message, i)); i ++)
 	{
 		res += po_filepos_file(filepos);
 		res += '\n';
@@ -368,7 +368,7 @@ std::string TranslationContent::dumpPoFileTemplate()
 	// Assuming that PO editors do not change the order of messages.
 	// Sorting messages in alphabetical order would be wrong, because for every template,
 	// we store only the ID of the first message. The IDs of other messages should be deterministic.
-	while (message = po_next_message(iterator))
+	while ((message = po_next_message(iterator)))
 	{
 		std::string msg_dump = wrap_template_message(message, true);
 		if (msg_dump.length() > 0) // non-obsolete
@@ -423,7 +423,7 @@ void TranslationContent::readMessagesInternal(std::vector<MessageGroup *> &dest,
 	po_message_t message = po_next_message(iterator);
 
 	int index = 0;
-	while (message = po_next_message(iterator))
+	while ((message = po_next_message(iterator)))
 	{
 		// Checking that obsolete messages go after all normal messages
 //		assert(index == (int)dest.size());
@@ -507,7 +507,7 @@ void TranslationContent::writeToFile(const char *dest_filename, bool force_write
         // skipping header
         po_message_t message = po_next_message(iterator);
 
-        for (int index = 0; message = po_next_message(iterator); )
+        for (int index = 0; (message = po_next_message(iterator)); )
         {
             if (po_message_is_obsolete(message))
                 continue;

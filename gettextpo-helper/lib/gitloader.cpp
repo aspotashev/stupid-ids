@@ -978,7 +978,7 @@ git_blob *GitLoader::blobLookup(const git_oid *oid)
 {
 	git_blob *blob;
 	for (size_t i = 0; i < m_repos.size(); i ++)
-		if (blob = m_repos[i]->blobLookup(oid))
+		if ((blob = m_repos[i]->blobLookup(oid)))
 			return blob;
 
 	return NULL;
