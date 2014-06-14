@@ -15,19 +15,11 @@ bool strstartswith(const char *str, const char *pattern)
 	return strncmp(str, pattern, strlen(pattern)) == 0;
 }
 
-bool DBusLokalizeInterface::s_gTypeInit = false;
-
 DBusLokalizeInterface::DBusLokalizeInterface()
 {
 	m_connection = NULL;
 	m_proxy = NULL;
 	m_lokalizeInstance = NULL;
-
-	if (!s_gTypeInit)
-	{
-		g_type_init();
-		s_gTypeInit = true;
-	}
 }
 
 DBusLokalizeInterface::~DBusLokalizeInterface()
