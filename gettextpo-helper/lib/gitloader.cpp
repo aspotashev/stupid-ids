@@ -950,7 +950,7 @@ Repository::compare_commits_by_date::compare_commits_by_date(const Repository *r
 
 bool Repository::compare_commits_by_date::operator()(int a, int b) const
 {
-    m_repo->compareCommitsByDate(a, b, m_descending);
+    return m_repo->compareCommitsByDate(a, b, m_descending);
 }
 
 //---------------------------------------------------------
