@@ -10,7 +10,8 @@ public:
 		COPY = 2,
 		DELETE = 4,
 		MERGE = 8,
-		ALL = MOVE | COPY | DELETE | MERGE
+		MERGEKEEP = 16,
+		ALL = MOVE | COPY | DELETE | MERGE | MERGEKEEP
 	};
 
 

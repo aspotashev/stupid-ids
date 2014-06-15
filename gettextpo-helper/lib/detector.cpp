@@ -72,6 +72,7 @@ void DetectorSuccessors::processChange(int commit_index, int change_index, const
 			}
 		}
 		break;
+    // TBD: handle "mergekeep" command somehow
 	default:
 		assert(0);
 	}

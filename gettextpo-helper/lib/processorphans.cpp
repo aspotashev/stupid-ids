@@ -6,6 +6,8 @@
 #include <gettextpo-helper/processorphans.h>
 #include <gettextpo-helper/gettextpo-helper.h>
 
+#include <stdexcept>
+
 ProcessOrphansTxtEntry::ProcessOrphansTxtEntry(const char *cmd, const char *origin, const char *destination)
 {
 	if (!strcmp(cmd, "move"))
@@ -16,8 +18,10 @@ ProcessOrphansTxtEntry::ProcessOrphansTxtEntry(const char *cmd, const char *orig
 		m_type = DELETE;
 	else if (!strcmp(cmd, "merge"))
 		m_type = MERGE;
+	else if (!strcmp(cmd, "mergekeep"))
+		m_type = MERGEKEEP;
 	else
-		assert(0); // Unknown command
+        throw std::runtime_error("unexpected command: " + std::string(cmd));
 
 
 	assert(origin);
