@@ -45,6 +45,7 @@ class Sif
 			@dirty = true # there are now changes to commit
 
 			tp_hash = GettextpoHelper.calculate_tp_hash(pot_path)
+      raise if tp_hash.size != 40
 			@new_origins << [pot_hash, tp_hash]
 
 			# Prepare new data for first_ids.txt
