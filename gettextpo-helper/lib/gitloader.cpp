@@ -5,6 +5,7 @@
 #include <vector>
 #include <set>
 #include <algorithm>
+#include <stdexcept>
 
 #include <git2.h>
 
@@ -758,12 +759,14 @@ void Repository::libgitClose()
 
 git_repository *Repository::libgitRepo()
 {
-	if (!m_libgitRepo)
-	{
-		assert(git_repository_open(&m_libgitRepo, m_gitDir) == 0);
-	}
+    if (!m_libgitRepo)
+    {
+        int ret = git_repository_open(&m_libgitRepo, m_gitDir);
+        if (ret != 0)
+            throw std::runtime_error("Failed to open Git repository at " + std::string(m_gitDir));
+    }
 
-	return m_libgitRepo;
+    return m_libgitRepo;
 }
 
 const char *Repository::gitDir() const
