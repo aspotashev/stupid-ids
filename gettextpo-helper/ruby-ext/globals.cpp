@@ -15,8 +15,14 @@
 
 VALUE wrap_calculate_tp_hash(VALUE self, VALUE filename)
 {
-	std::string res = calculate_tp_hash(StringValuePtr(filename));
-	return rb_str_new2(res.c_str());
+    try {
+        std::string res = calculate_tp_hash(StringValuePtr(filename));
+        return rb_str_new2(res.c_str());
+    }
+    catch (TranslationContent::ExceptionNotPo& e) {
+        // TBD: throw exception instead of returning empty string
+        return rb_str_new2("");
+    }
 }
 
 VALUE wrap_get_pot_length(VALUE self, VALUE filename)

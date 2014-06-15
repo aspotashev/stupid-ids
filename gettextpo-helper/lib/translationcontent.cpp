@@ -211,17 +211,10 @@ const git_oid *TranslationContent::calculateTpHash()
 	}
 	else
 	{
-		try
-		{
-			std::string dump = dumpPoFileTemplate();
-			sha1_buffer(m_tphash, dump.c_str(), dump.size());
-		}
-		catch (std::exception &e)
-		{
-			return NULL;
-		}
+            std::string dump = dumpPoFileTemplate();
+            sha1_buffer(m_tphash, dump.c_str(), dump.size());
 
-		TphashCache.addPair(oid, m_tphash);
+            TphashCache.addPair(oid, m_tphash);
 	}
 
 	return m_tphash;
