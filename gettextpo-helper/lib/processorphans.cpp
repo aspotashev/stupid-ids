@@ -150,7 +150,7 @@ ProcessOrphansTxt::ProcessOrphansTxt(const char *filename)
 		if (!fgets(line, 10000, f))
 			break;
 
-		if (line[0] == '\0' || line[0] == '\n' || line[0] == '\r') // empty line
+		if (line[0] == '\0' || line[0] == '\n' || line[0] == '\r' || !strcmp(line, " \n")) // empty line
 			continue;
 		if (line[0] == '#') // comment
 			continue;
