@@ -147,6 +147,8 @@ const char *ProcessOrphansTxtEntry::origPath() const
 ProcessOrphansTxt::ProcessOrphansTxt(const char *filename)
 {
 	FILE *f = fopen(filename, "r");
+    if (!f)
+        throw std::runtime_error("Could not open file " + std::string(filename));
 
 	static char line[10000];
 	while (1)
