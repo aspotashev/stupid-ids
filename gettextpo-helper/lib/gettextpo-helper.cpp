@@ -10,6 +10,7 @@
 #include <unistd.h>
 
 #include <stdexcept>
+#include <memory>
 
 char *xstrdup(const char *str)
 {
@@ -261,7 +262,7 @@ std::string calculate_tp_hash(const char *filename)
 {
 	std::string res; // return empty string is tp_hash could not be calculated
 
-	TranslationContent *content = new TranslationContent(filename);
+    std::unique_ptr<TranslationContent> content(new TranslationContent(filename));
 	const git_oid *tp_hash = content->calculateTpHash();
 	if (tp_hash)
 	{
@@ -271,8 +272,6 @@ std::string calculate_tp_hash(const char *filename)
 
 		res = std::string(res_str);
 	}
-
-	delete content;
 
 	return res;
 }
