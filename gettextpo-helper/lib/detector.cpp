@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <map>
 #include <set>
+#include <stdexcept>
 
 #include <gettextpo-helper/detector.h>
 #include <gettextpo-helper/gitloader.h>
@@ -323,8 +324,10 @@ void detectTransitions(std::vector<GitOidPair> &dest, const char *path_trunk, co
 
 void filterProcessedTransitions(const char *file_processed, std::vector<GitOidPair> &input, std::vector<GitOidPair> &output)
 {
-	FILE *f = fopen(file_processed, "rb");
-	assert(f);
+    FILE *f = fopen(file_processed, "rb");
+    if (!f)
+        throw std::runtime_error("Failed to open file " + std::string(file_processed));
+
 	fseek(f, 0, SEEK_END);
 	int n_processed = ftell(f) / (2 * GIT_OID_RAWSZ);
 	rewind(f);
