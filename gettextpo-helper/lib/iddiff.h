@@ -88,6 +88,8 @@ public:
 
 	/**
 	 * \brief Fills "ADDED" and "DELETED" sections according to differences between the two given TranslationContents
+     *
+     * The two TranslationContents should have same tp_hash, i.e. be derived from the same POT template.
 	 *
 	 * "REVIEW" section will be cleared.
 	 * Old items from "REMOVED" and "ADDED" sections will be deleted.
