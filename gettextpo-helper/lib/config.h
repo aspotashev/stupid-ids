@@ -5,21 +5,21 @@
 class StupidsConfig
 {
 public:
-	StupidsConfig();
-	~StupidsConfig();
+    StupidsConfig();
+    ~StupidsConfig();
 
-	void loadConfig(const char *filename);
+    void loadConfig(const char *filename);
 
-	static StupidsConfig &defaultInstance();
+    static StupidsConfig &defaultInstance();
 
-	std::string operator()(const std::string &key);
+    std::string operator()(const std::string &key);
 
 private:
-	void loadLine(char *buffer);
+    void loadLine(char *buffer);
 
-	std::map<std::string, std::string> m_config;
+    std::map<std::string, std::string> m_config;
 
-	static StupidsConfig *s_instance;
+    static StupidsConfig *s_instance;
 };
 
 #define StupidsConf (StupidsConfig::defaultInstance())

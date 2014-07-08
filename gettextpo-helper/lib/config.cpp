@@ -19,82 +19,82 @@ StupidsConfig::~StupidsConfig()
 
 std::string strip_string(std::string str)
 {
-	int len = (int)str.size();
+    int len = (int)str.size();
 
-	int begin = 0;
-	while (begin < len && isspace(str[begin]))
-		begin ++;
+    int begin = 0;
+    while (begin < len && isspace(str[begin]))
+        begin ++;
 
-	int end = len - 1;
-	while (end >= 0 && isspace(str[end]))
-		end --;
+    int end = len - 1;
+    while (end >= 0 && isspace(str[end]))
+        end --;
 
-	if (begin > end) // no value, only spaces
-		return std::string();
+    if (begin > end) // no value, only spaces
+        return std::string();
 
-	return str.substr(begin, end - begin + 1);
+    return str.substr(begin, end - begin + 1);
 }
 
 void StupidsConfig::loadLine(char *buffer)
 {
-	// remove possible newline character at the end
-	while (buffer[strlen(buffer) - 1] == '\r' || buffer[strlen(buffer) - 1] == '\n')
-		buffer[strlen(buffer) - 1] = '\0';
+    // remove possible newline character at the end
+    while (buffer[strlen(buffer) - 1] == '\r' || buffer[strlen(buffer) - 1] == '\n')
+        buffer[strlen(buffer) - 1] = '\0';
 
-	if (buffer[0] == '#' || buffer[0] == '\0') // comment or empty line
-		return;
+    if (buffer[0] == '#' || buffer[0] == '\0') // comment or empty line
+        return;
 
-	char *eq_sign = strchr(buffer, '=');
-	if (!eq_sign)
-	{
-		assert(0); // TODO: handle this error
-	}
+    char *eq_sign = strchr(buffer, '=');
+    if (!eq_sign)
+    {
+        assert(0); // TODO: handle this error
+    }
 
-	*eq_sign = '\0';
-	std::string key = strip_string(std::string(buffer));
-	std::string value = strip_string(std::string(eq_sign + 1));
+    *eq_sign = '\0';
+    std::string key = strip_string(std::string(buffer));
+    std::string value = strip_string(std::string(eq_sign + 1));
 
-	m_config[key] = value;
+    m_config[key] = value;
 }
 
 void StupidsConfig::loadConfig(const char *filename)
 {
-	char buffer[2000];
+    char buffer[2000];
 
-	FILE *f = fopen(filename, "r");
+    FILE *f = fopen(filename, "r");
         if (!f) {
             throw std::runtime_error("Failed to open config file " + std::string(filename));
         }
 
-	while (fgets(buffer, 2000, f))
-		loadLine(buffer);
-	fclose(f);
+    while (fgets(buffer, 2000, f))
+        loadLine(buffer);
+    fclose(f);
 }
 
 // static
 StupidsConfig &StupidsConfig::defaultInstance()
 {
-	if (!s_instance)
-	{
-		s_instance = new StupidsConfig();
-		s_instance->loadConfig(expand_path("~/.stupids.conf").c_str());
-	}
+    if (!s_instance)
+    {
+        s_instance = new StupidsConfig();
+        s_instance->loadConfig(expand_path("~/.stupids.conf").c_str());
+    }
 
-	return *s_instance;
+    return *s_instance;
 }
 
 std::string StupidsConfig::operator()(const std::string &key)
 {
-	return m_config[key];
+    return m_config[key];
 }
 
 std::string expand_path(std::string path)
 {
-	if (path == std::string("~"))
-		return std::string(getenv("HOME"));
-	else if (path.size() >= 2 && path.substr(0, 2) == std::string("~/"))
-		return std::string(getenv("HOME")) + path.substr(1);
-	else
-		return path;
+    if (path == std::string("~"))
+        return std::string(getenv("HOME"));
+    else if (path.size() >= 2 && path.substr(0, 2) == std::string("~/"))
+        return std::string(getenv("HOME")) + path.substr(1);
+    else
+        return path;
 }
 

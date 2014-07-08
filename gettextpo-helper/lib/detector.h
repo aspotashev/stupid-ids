@@ -10,16 +10,16 @@ class ProcessOrphansTxt;
 class DetectorSuccessors : public DetectorBase
 {
 public:
-	DetectorSuccessors(Repository *repo, ProcessOrphansTxt *transitions);
-	~DetectorSuccessors();
+    DetectorSuccessors(Repository *repo, ProcessOrphansTxt *transitions);
+    ~DetectorSuccessors();
 
 protected:
-	void processChange(int commit_index, int change_index, const CommitFileChange *change);
-	virtual void doDetect();
+    void processChange(int commit_index, int change_index, const CommitFileChange *change);
+    virtual void doDetect();
 
 private:
-	Repository *m_repo;
-	ProcessOrphansTxt *m_transitions;
+    Repository *m_repo;
+    ProcessOrphansTxt *m_transitions;
 };
 
 //-------------------------------------------------------
@@ -27,18 +27,18 @@ private:
 class DetectorInterBranch : public DetectorBase
 {
 public:
-	DetectorInterBranch(Repository *repo_a, Repository *repo_b);
-	~DetectorInterBranch();
+    DetectorInterBranch(Repository *repo_a, Repository *repo_b);
+    ~DetectorInterBranch();
 
 protected:
-	void processChange(
-		Repository *repo, Repository *other_repo,
-		int commit_index, int change_index, const CommitFileChange *change);
-	virtual void doDetect();
+    void processChange(
+        Repository *repo, Repository *other_repo,
+        int commit_index, int change_index, const CommitFileChange *change);
+    virtual void doDetect();
 
 private:
-	Repository *m_repoA;
-	Repository *m_repoB;
+    Repository *m_repoA;
+    Repository *m_repoB;
 };
 
 //-------------------------------------------------------
@@ -46,16 +46,16 @@ private:
 class GraphCondenser
 {
 public:
-	GraphCondenser(int n);
-	~GraphCondenser();
+    GraphCondenser(int n);
+    ~GraphCondenser();
 
-	void addEdge(int i, int j);
-	void dumpCluster(std::vector<int> &dest, int start);
+    void addEdge(int i, int j);
+    void dumpCluster(std::vector<int> &dest, int start);
 
 private:
-	int m_n;
-	std::vector<int> *m_edges;
-	bool *m_vis;
+    int m_n;
+    std::vector<int> *m_edges;
+    bool *m_vis;
 };
 
 //-------------------------------------------------------
