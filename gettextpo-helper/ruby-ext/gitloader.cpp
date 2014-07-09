@@ -1,7 +1,7 @@
 
 #include <assert.h>
 
-#include <gettextpo-helper/gitloader.h>
+#include <gtpo/gitloader.h>
 
 #include "module.h"
 

@@ -1,10 +1,10 @@
 
-#include <gettextpo-helper/gettextpo-helper.h>
-#include <gettextpo-helper/detector.h>
-#include <gettextpo-helper/message.h>
-#include <gettextpo-helper/translationcontent.h>
-#include <gettextpo-helper/config.h>
-#include <gettextpo-helper/oidmapcache.h>
+#include <gtpo/gettextpo-helper.h>
+#include <gtpo/detector.h>
+#include <gtpo/message.h>
+#include <gtpo/translationcontent.h>
+#include <gtpo/config.h>
+#include <gtpo/oidmapcache.h>
 
 #include "module.h"
 #include "message.h"

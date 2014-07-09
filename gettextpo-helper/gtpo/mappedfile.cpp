@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <sys/stat.h>
 
-#include <gettextpo-helper/mappedfile.h>
+#include "mappedfile.h"
 
 MappedFile::MappedFile(const char *filename)
 {

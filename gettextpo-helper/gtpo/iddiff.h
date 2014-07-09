@@ -5,8 +5,8 @@
 
 #include <gettext-po.h>
 
-#include <gettextpo-helper/message.h>
-#include <gettextpo-helper/filedatetime.h>
+#include <gtpo/message.h>
+#include <gtpo/filedatetime.h>
 
 
 class Message;

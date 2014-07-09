@@ -7,7 +7,7 @@
 
 #include <git2.h>
 
-#include <gettextpo-helper/detectorbase.h>
+#include <gtpo/detectorbase.h>
 
 /**
  * \brief Class for working with stupids-server over TCP/IP

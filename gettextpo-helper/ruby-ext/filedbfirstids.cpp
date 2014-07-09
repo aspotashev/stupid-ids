@@ -1,6 +1,6 @@
 
 #include <assert.h>
-#include <gettextpo-helper/filedbfirstids.h>
+#include <gtpo/filedbfirstids.h>
 
 #include "module.h"
 

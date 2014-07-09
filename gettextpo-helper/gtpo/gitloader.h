@@ -7,8 +7,8 @@
 
 #include <git2.h>
 
-#include <gettextpo-helper/detectorbase.h>
-#include <gettextpo-helper/filedatetime.h>
+#include <gtpo/detectorbase.h>
+#include <gtpo/filedatetime.h>
 
 class CommitFileChange;
 

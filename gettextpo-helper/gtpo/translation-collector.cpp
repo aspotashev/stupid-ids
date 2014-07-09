@@ -4,12 +4,12 @@
 #include <dirent.h>
 #include <algorithm>
 
-#include <gettextpo-helper/translation-collector.h>
-#include <gettextpo-helper/gettextpo-helper.h>
-#include <gettextpo-helper/stupids-client.h>
-#include <gettextpo-helper/translationcontent.h>
-#include <gettextpo-helper/message.h>
-#include <gettextpo-helper/gitloader.h>
+#include "translation-collector.h"
+#include "gettextpo-helper.h"
+#include "stupids-client.h"
+#include "translationcontent.h"
+#include "message.h"
+#include "gitloader.h"
 
 StupIdTranslationCollector::StupIdTranslationCollector()
 {

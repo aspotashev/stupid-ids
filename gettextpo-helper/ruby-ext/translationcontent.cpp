@@ -1,8 +1,8 @@
 // class TranslationContent
 
 #include <assert.h>
-#include <gettextpo-helper/translationcontent.h>
-#include <gettextpo-helper/gitloader.h>
+#include <gtpo/translationcontent.h>
+#include <gtpo/gitloader.h>
 
 #include "module.h"
 #include "gitloader.h"

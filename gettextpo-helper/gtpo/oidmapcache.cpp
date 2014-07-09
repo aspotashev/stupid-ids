@@ -10,8 +10,7 @@
 
 #include <git2.h>
 
-#include <gettextpo-helper/gettextpo-helper.h>
-
+#include "gettextpo-helper.h"
 #include "oidmapcache.h"
 
 std::map<std::string, OidMapCache *> OidMapCacheManager::s_instances = std::map<std::string, OidMapCache *>();

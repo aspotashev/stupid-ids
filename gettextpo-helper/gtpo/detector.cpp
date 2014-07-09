@@ -6,9 +6,9 @@
 #include <set>
 #include <stdexcept>
 
-#include <gettextpo-helper/detector.h>
-#include <gettextpo-helper/gitloader.h>
-#include <gettextpo-helper/processorphans.h>
+#include "detector.h"
+#include "gitloader.h"
+#include "processorphans.h"
 
 DetectorSuccessors::DetectorSuccessors(Repository *repo, ProcessOrphansTxt *transitions = NULL):
     m_repo(repo), m_transitions(transitions)

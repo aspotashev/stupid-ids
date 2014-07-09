@@ -7,8 +7,8 @@
 
 #include <gettext-po.h>
 
-#include <gettextpo-helper/gettextpo-helper.h>
-#include <gettextpo-helper/messagetranslationbase.h>
+#include <gtpo/gettextpo-helper.h>
+#include <gtpo/messagetranslationbase.h>
 
 class IddiffMessage;
 

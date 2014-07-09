@@ -1,7 +1,7 @@
 
 #include <map>
 
-#include <gettextpo-helper/detectorbase.h>
+#include <gtpo/detectorbase.h>
 
 class FiledbFirstIds
 {

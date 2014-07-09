@@ -11,8 +11,8 @@
 #include <unistd.h>
 #include <errno.h>
 
-#include <gettextpo-helper/stupids-client.h>
-#include <gettextpo-helper/detectorbase.h>
+#include "stupids-client.h"
+#include "detectorbase.h"
 
 //-------- Working with stupids-server.rb over TCP/IP --------
 

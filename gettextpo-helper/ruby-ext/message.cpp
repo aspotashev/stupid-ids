@@ -1,7 +1,7 @@
 
 // class Message
 
-#include <gettextpo-helper/message.h>
+#include <gtpo/message.h>
 
 #include "module.h"
 

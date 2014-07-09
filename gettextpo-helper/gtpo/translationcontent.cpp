@@ -3,13 +3,13 @@
 #include <string.h>
 #include <git2.h>
 
-#include <gettextpo-helper/gettextpo-helper.h>
-#include <gettextpo-helper/translationcontent.h>
-#include <gettextpo-helper/oidmapcache.h>
-#include <gettextpo-helper/stupids-client.h>
-#include <gettextpo-helper/gitloader.h>
-#include <gettextpo-helper/message.h>
-#include <gettextpo-helper/sha1.h>
+#include "gettextpo-helper.h"
+#include "translationcontent.h"
+#include "oidmapcache.h"
+#include "stupids-client.h"
+#include "gitloader.h"
+#include "message.h"
+#include "block-sha1/sha1.h"
 #include "filedatetime.h"
 
 #include <stdexcept>

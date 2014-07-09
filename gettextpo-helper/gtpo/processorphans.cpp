@@ -3,8 +3,8 @@
 #include <string.h>
 #include <assert.h>
 
-#include <gettextpo-helper/processorphans.h>
-#include <gettextpo-helper/gettextpo-helper.h>
+#include "processorphans.h"
+#include "gettextpo-helper.h"
 
 #include <stdexcept>
 

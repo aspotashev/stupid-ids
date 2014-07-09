@@ -9,11 +9,11 @@
 
 #include <git2.h>
 
-#include <gettextpo-helper/gitloader.h>
-#include <gettextpo-helper/gettextpo-helper.h>
-#include <gettextpo-helper/translationcontent.h>
-#include <gettextpo-helper/oidmapcache.h>
-#include <gettextpo-helper/stupids-client.h>
+#include "gitloader.h"
+#include "gettextpo-helper.h"
+#include "translationcontent.h"
+#include "oidmapcache.h"
+#include "stupids-client.h"
 
 #define REPO_MODE_DIR 040000
 

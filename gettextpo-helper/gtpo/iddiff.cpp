@@ -8,12 +8,13 @@
 #include <set>
 
 #include <git2.h>
-#include <gettextpo-helper/gettextpo-helper.h>
-#include <gettextpo-helper/translationcontent.h>
-#include <gettextpo-helper/stupids-client.h>
-#include <gettextpo-helper/translation-collector.h>
-#include <gettextpo-helper/message.h>
-#include <gettextpo-helper/iddiff.h>
+
+#include "gettextpo-helper.h"
+#include "translationcontent.h"
+#include "stupids-client.h"
+#include "translation-collector.h"
+#include "message.h"
+#include "iddiff.h"
 
 
 IddiffMessage::IddiffMessage():

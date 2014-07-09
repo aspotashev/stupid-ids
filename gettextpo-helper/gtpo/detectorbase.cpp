@@ -1,7 +1,7 @@
 
 #include <assert.h>
 
-#include <gettextpo-helper/detectorbase.h>
+#include "detectorbase.h"
 
 GitOid::GitOid()
 {

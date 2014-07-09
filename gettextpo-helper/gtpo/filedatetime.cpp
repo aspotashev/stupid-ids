@@ -3,8 +3,8 @@
 #include <assert.h>
 #include <stdlib.h>
 
-#include <gettextpo-helper/filedatetime.h>
-#include <gettextpo-helper/gettextpo-helper.h>
+#include "filedatetime.h"
+#include "gettextpo-helper.h"
 
 FileDateTime::FileDateTime()
     : m_init(false)

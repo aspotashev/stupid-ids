@@ -7,7 +7,8 @@
 
 #include <gettext-po.h>
 #include <git2.h>
-#include <gettextpo-helper/filedatetime.h>
+
+#include <gtpo/filedatetime.h>
 
 class MessageGroup;
 class GitLoaderBase;

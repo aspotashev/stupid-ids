@@ -1,7 +1,7 @@
 // class IdMapDb
 
 #include <assert.h>
-#include <gettextpo-helper/mappedfile.h>
+#include <gtpo/mappedfile.h>
 
 #include "module.h"
 

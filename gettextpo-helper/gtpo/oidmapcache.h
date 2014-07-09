@@ -2,7 +2,7 @@
 #include <string>
 #include <map>
 
-#include <gettextpo-helper/detectorbase.h>
+#include <gtpo/detectorbase.h>
 
 // TODO: cache-*.dat files should have a header with:
 // 1. format version number (what if we will want to change the format)
