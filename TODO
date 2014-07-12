@@ -3,4 +3,6 @@
 3. Add obsolete messages to .po files when .iddiff does not completely apply
 4. Script that reverts all files changes in an SVN working copy that are already "diffed" into "stupids-rerere/"
 5. Initialize credits in comments in the beginning of .po file with patching a clean .pot, add new credits when patching existing .po file. Initialize "Last-Translator:" and "PO-Revision-Date:" header fields.
-
+6. Switch from libgit2 to libqgit2 (Qt-based) ?
+7. For command line applications, use a C++ library (look for those!) for parsing command line options.
+8. Rewrite TCP/IP server in Apache Thrift.
