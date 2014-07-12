@@ -1,4 +1,5 @@
 #include "gitoid.h"
+
 #include <stdexcept>
 
 GitOid::GitOid()

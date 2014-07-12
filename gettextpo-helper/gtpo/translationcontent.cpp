@@ -115,7 +115,7 @@ po_file_t TranslationContent::poreadGit()
     assert(m_gitLoader);
     assert(m_oid);
 
-    git_blob *blob = m_gitLoader->blobLookup(m_oid);
+    git_blob *blob = m_gitLoader->blobLookup(GitOid(m_oid));
     if (!blob)
         return NULL;
 

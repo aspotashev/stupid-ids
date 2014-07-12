@@ -542,19 +542,19 @@ std::string Repository::gitDir() const
     return m_gitDir;
 }
 
-git_blob* Repository::blobLookup(const git_oid* oid)
+git_blob* Repository::blobLookup(const GitOid& oid)
 {
     git_blob* blob;
-    if (git_blob_lookup(&blob, libgitRepo(), oid) == 0)
+    if (git_blob_lookup(&blob, libgitRepo(), oid.oid()) == 0)
         return blob;
     else
         return NULL;
 }
 
-int Repository::commitIndexByOid(const git_oid *oid) const
+int Repository::commitIndexByOid(const GitOid& oid) const
 {
     for (int i = 0; i < nCommits(); i ++)
-        if (git_oid_cmp(oid, commit(i)->oid()) == 0)
+        if (oid == commit(i)->oid())
             return i;
 
     return -1; // commit not found

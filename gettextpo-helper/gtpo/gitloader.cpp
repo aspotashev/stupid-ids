@@ -39,7 +39,7 @@ GitLoader::~GitLoader()
  * It is necessary to call the function "git_blob_free" when you
  * stop using a blob. Failure to do so will cause a memory leak.
  */
-git_blob *GitLoader::blobLookup(const git_oid *oid)
+git_blob *GitLoader::blobLookup(const GitOid& oid)
 {
     git_blob *blob;
     for (size_t i = 0; i < m_repos.size(); i ++)

@@ -16,7 +16,7 @@ class GitLoaderBase
 public:
     virtual ~GitLoaderBase();
 
-    virtual git_blob* blobLookup(const git_oid *oid) = 0;
+    virtual git_blob* blobLookup(const GitOid& oid) = 0;
 };
 
 //----------------------------------------
@@ -31,7 +31,7 @@ public:
     GitLoader();
     ~GitLoader();
 
-    virtual git_blob *blobLookup(const git_oid *oid);
+    virtual git_blob *blobLookup(const GitOid& oid);
     void addRepository(const char *git_dir);
 
     // Finds the oldest (in Git repositories' histories) .po file with the given tp_hash.

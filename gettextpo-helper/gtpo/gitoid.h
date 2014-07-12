@@ -13,15 +13,15 @@ public:
     GitOid(const char* oid_str);
     ~GitOid();
 
-    void setOid(const git_oid *oid);
-    void setOidStr(const char *oid_str);
-    void setOidRaw(const unsigned char *oid_raw);
+    void setOid(const git_oid* oid);
+    void setOidStr(const char* oid_str);
+    void setOidRaw(const unsigned char* oid_raw);
 
-    bool operator<(const GitOid &o) const;
-    bool operator==(const GitOid &o) const;
-    bool operator!=(const GitOid &o) const;
+    bool operator<(const GitOid& o) const;
+    bool operator==(const GitOid& o) const;
+    bool operator!=(const GitOid& o) const;
 
-    const git_oid *oid() const;
+    const git_oid* oid() const;
 
     std::string toString() const;
 

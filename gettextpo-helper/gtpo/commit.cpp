@@ -8,9 +8,8 @@
 #include <cassert>
 
 Commit::Commit(git_commit *commit)
+    : m_oid(git_commit_id(commit))
 {
-    git_oid_cpy(&m_oid, git_commit_id(commit));
-
     // TODO: how to handle git_commit_time_offset?
     m_time = git_commit_time(commit);
 }
@@ -43,9 +42,9 @@ git_time_t Commit::time() const
     return m_time;
 }
 
-const git_oid *Commit::oid() const
+const GitOid& Commit::oid() const
 {
-    return &m_oid;
+    return m_oid;
 }
 
 /**

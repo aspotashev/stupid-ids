@@ -16,7 +16,7 @@ public:
     int nCommits() const;
     /// In the order from repository root (index = 0) to HEAD (index = nCommits - 1)
     const Commit* commit(int index) const;
-    int commitIndexByOid(const git_oid* oid) const;
+    int commitIndexByOid(const GitOid& oid) const;
 
     const git_oid* findLastRemovalOid(
         int from_commit,
@@ -59,7 +59,7 @@ public:
 
     void libgitClose();
     git_repository *libgitRepo();
-    virtual git_blob *blobLookup(const git_oid *oid);
+    virtual git_blob *blobLookup(const GitOid& oid);
 
     std::string gitDir() const;
 

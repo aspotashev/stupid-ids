@@ -1,6 +1,8 @@
 #ifndef COMMIT_H
 #define COMMIT_H
 
+#include <gtpo/gitoid.h>
+
 #include <git2/types.h>
 #include <git2/oid.h>
 
@@ -15,7 +17,7 @@ public:
     Commit(git_commit* commit);
     ~Commit();
 
-    const git_oid* oid() const;
+    const GitOid& oid() const;
 
     // TODO: rename to "date"
     // TODO: git_time_t -> FileDateTime
@@ -54,10 +56,10 @@ public:
         const std::string& basename) const;
 
 public:
-    git_oid m_oid;
+    GitOid m_oid;
     git_time_t m_time;
 
-    std::vector<CommitFileChange *> m_changes;
+    std::vector<CommitFileChange*> m_changes;
 };
 
 #endif // COMMIT_H
