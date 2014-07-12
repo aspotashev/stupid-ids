@@ -63,3 +63,6 @@ int compare_po_message_msgstr(po_message_t message_a, po_message_t message_b);
 // Operations with std::string
 std::string path_to_basename(std::string path);
 
+//------- Miscellaneous functions for tools ------
+
+std::vector<std::string> parseArgs(int argc, char *argv[]);

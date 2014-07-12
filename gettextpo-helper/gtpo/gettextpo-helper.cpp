@@ -422,3 +422,11 @@ std::string path_to_basename(std::string path)
         return path.substr(pos + 1);
 }
 
+std::vector<std::string> parseArgs(int argc, char *argv[])
+{
+    std::vector<std::string> args;
+    for (int i = 1; i < argc; ++i)
+        args.push_back(argv[i]);
+
+    return args;
+}
