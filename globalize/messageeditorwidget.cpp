@@ -1,7 +1,7 @@
 #include "messageeditorwidget.h"
 #include "messagetranslationoption.h"
 #include "messageheaderwidget.h"
-#include <gettextpo-helper/gettextpo-helper.h>
+#include <gtpo/gettextpo-helper.h>
 
 #include <QtGui/QHBoxLayout>
 

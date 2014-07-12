@@ -1,33 +1,40 @@
 #include "messagetranslationbase.h"
+#include "gettextpo-helper.h"
+
+#include <algorithm>
+#include <iostream>
 
 MessageTranslationBase::MessageTranslationBase()
+    : m_plural(false)
+    , m_fuzzy(false)
+    , m_msgstr()
 {
-    MessageTranslationBase::clear();
 }
 
 MessageTranslationBase::MessageTranslationBase(po_message_t message)
 {
-    for (int i = 0; i < MAX_PLURAL_FORMS; i ++)
-        m_msgstr[i] = 0;
+    // TBD: optimize - calling po_message_n_plurals() is not required
+    int n_plurals = po_message_n_plurals(message);
 
-    // set m_numPlurals
-    bool m_plural = setNPluralsPacked(po_message_n_plurals(message));
+    m_plural = n_plurals > 0;
 
-    for (int i = 0; i < m_numPlurals; i ++)
-    {
+    if (n_plurals < 1)
+        n_plurals = 1;
+
+    m_msgstr.resize(n_plurals, OptString(nullptr));
+
+    for (int i = 0; i < n_plurals; ++i) {
         const char *tmp;
-        if (m_plural)
-        {
+        if (m_plural) {
             tmp = po_message_msgstr_plural(message, i);
         }
-        else
-        {
+        else {
             assert(i == 0); // there can be only one form if 'm_plural' is false
 
             tmp = po_message_msgstr(message);
         }
 
-        setMsgstr(i, tmp);
+        setMsgstr(i, OptString(tmp));
     }
 
     m_fuzzy = po_message_is_fuzzy(message) != 0;
@@ -35,19 +42,17 @@ MessageTranslationBase::MessageTranslationBase(po_message_t message)
 
 MessageTranslationBase::~MessageTranslationBase()
 {
-    for (int i = 0; i < m_numPlurals; i ++)
-        delete [] m_msgstr[i];
 }
 
-void MessageTranslationBase::clear()
-{
-    m_numPlurals = 0;
-    for (int i = 0; i < MAX_PLURAL_FORMS; i ++)
-        m_msgstr[i] = NULL;
-
-    m_fuzzy = false;
-}
-
+// void MessageTranslationBase::clear()
+// {
+//     m_numPlurals = 0;
+//     for (int i = 0; i < MAX_PLURAL_FORMS; i ++)
+//         m_msgstr[i] = NULL;
+//
+//     m_fuzzy = false;
+// }
+/*
 bool MessageTranslationBase::setNPluralsPacked(int n_plurals)
 {
     assert(n_plurals >= 0);
@@ -58,7 +63,7 @@ bool MessageTranslationBase::setNPluralsPacked(int n_plurals)
 
     // Return whether the message uses plural forms
     return n_plurals > 0;
-}
+}*/
 
 std::string MessageTranslationBase::formatPoMessage(po_message_t message)
 {
@@ -88,15 +93,13 @@ std::string MessageTranslationBase::formatPoMessage() const
     return res;
 }
 
-std::string MessageTranslationBase::formatString(const char *str)
+std::string MessageTranslationBase::formatString(const std::string& str)
 {
-    assert(str);
-
     std::string res;
 
     res += "\""; // opening quote
 
-    size_t len = strlen(str);
+    size_t len = str.size();
     for (size_t i = 0; i < len; i ++)
     {
         if (str[i] == '\"')
@@ -107,9 +110,9 @@ std::string MessageTranslationBase::formatString(const char *str)
             res += "\\n";
         else if (str[i] == '\t')
             res += "\\t";
-        else if ((unsigned char)str[i] < ' ')
-        {
-            printf("Unescaped special symbol: code = %d\nstr = %s\n", (int)str[i], str);
+        else if ((unsigned char)str[i] < ' ') {
+            std::cout << "Unescaped special symbol: code = " << (int)str[i] << std::endl <<
+                "str = " << str << std::endl;
             assert(0);
         }
         else
@@ -125,49 +128,49 @@ bool MessageTranslationBase::isFuzzy() const
     return m_fuzzy;
 }
 
-const char *MessageTranslationBase::msgstr(int plural_form) const
+OptString MessageTranslationBase::msgstr(size_t index) const
 {
-    assert(plural_form >= 0 && plural_form < m_numPlurals);
+    assert(index < m_msgstr.size());
 
-    return m_msgstr[plural_form];
+    return m_msgstr[index];
 }
 
-void MessageTranslationBase::setMsgstr(int index, const char *str)
+void MessageTranslationBase::setMsgstr(size_t index, const OptString& str)
 {
-    assert(m_msgstr[index] == 0);
+    assert(index < m_msgstr.size());
+    assert(m_msgstr[index].isNull());
 
-    m_msgstr[index] = xstrdup(str);
+    m_msgstr[index] = str;
 }
 
 int MessageTranslationBase::numPlurals() const
 {
-    return m_numPlurals;
+    return m_msgstr.size();
 }
 
-bool MessageTranslationBase::equalMsgstr(const MessageTranslationBase *o) const
+bool MessageTranslationBase::isPlural() const
+{
+    return m_plural;
+}
+
+bool MessageTranslationBase::equalMsgstr(const MessageTranslationBase* o) const
 {
     // This happens, see messages/kdebase/plasma_applet_trash.po
     // from http://websvn.kde.org/?view=revision&revision=825044
-    if (m_numPlurals != o->numPlurals())
+    if (numPlurals() != o->numPlurals())
         return false;
 
-    for (int i = 0; i < m_numPlurals; i ++)
-        if (strcmp(m_msgstr[i], o->msgstr(i)))
-            return false;
-
-    return true;
+    return m_msgstr == o->m_msgstr; // TBD: check that this compares each msgstr[i]
 }
 
-bool MessageTranslationBase::equalTranslations(const MessageTranslationBase *o) const
+bool MessageTranslationBase::equalTranslations(const MessageTranslationBase* o) const
 {
-    return equalMsgstr(o) && m_fuzzy == o->isFuzzy();
+    return equalMsgstr(o) && m_fuzzy == o->m_fuzzy;
 }
 
 bool MessageTranslationBase::isUntranslated() const
 {
-    for (int i = 0; i < numPlurals(); i ++)
-        if (strlen(msgstr(i)) > 0)
-            return false;
-
-    return true;
+    return std::all_of(
+        m_msgstr.begin(), m_msgstr.end(),
+        [](const OptString& s) { return s.empty(); });
 }

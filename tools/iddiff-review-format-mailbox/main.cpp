@@ -1,16 +1,19 @@
-// TODO: i18n of labels in the output (e.g. "Suggested translation:")
+#include <gtpo/translationcontent.h>
+#include <gtpo/gettextpo-helper.h>
+#include <gtpo/iddiff.h>
+#include <gtpo/gitloader.h>
+#include <gtpo/message.h>
+#include <gtpo/iddiffmessage.h>
+#include <gtpo/messagegroup.h>
 
-#include <assert.h>
-#include <stdio.h>
-#include <iostream>
 #include <sstream>
 #include <algorithm>
+#include <iostream>
 
-#include <gettextpo-helper/translationcontent.h>
-#include <gettextpo-helper/gettextpo-helper.h>
-#include <gettextpo-helper/iddiff.h>
-#include <gettextpo-helper/gitloader.h>
-#include <gettextpo-helper/message.h>
+#include <cassert>
+#include <cstdio>
+
+// TODO: i18n of labels in the output (e.g. "Suggested translation:")
 
 class ReviewMailEntry
 {
@@ -58,14 +61,14 @@ std::string ReviewMailEntry::generateText(int review_item_index)
 	out << review_item_index << ". Строка перевода №" << (m_index + 1) << std::endl;
 
 	out << "   Исходная строка: " << Message::formatString(m_messageGroup->msgid()) << std::endl;
-	if (m_messageGroup->msgidPlural())
+	if (!m_messageGroup->msgidPlural().isNull())
 		out << "   Множественное число: " << IddiffMessage::formatString(m_messageGroup->msgidPlural()) << std::endl;
 
 	out << "   Предложенный перевод: " << message->formatPoMessage() << std::endl;
 	if (added)
 		out << "   Исправленный перевод: " << added->formatPoMessage() << std::endl;
 
-	if (m_iddiff->reviewCommentText(m_minId))
+	if (!m_iddiff->reviewCommentText(m_minId).isNull())
 		out << std::endl << "   " << m_iddiff->reviewCommentText(m_minId) << std::endl;
 
 	return out.str();

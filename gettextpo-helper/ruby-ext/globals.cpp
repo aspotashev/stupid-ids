@@ -1,10 +1,10 @@
-
 #include <gtpo/gettextpo-helper.h>
 #include <gtpo/detector.h>
 #include <gtpo/message.h>
 #include <gtpo/translationcontent.h>
 #include <gtpo/config.h>
 #include <gtpo/oidmapcache.h>
+#include <gtpo/messagegroup.h>
 
 #include "module.h"
 #include "message.h"
@@ -137,7 +137,7 @@ VALUE wrap_append_processed_pairs(VALUE self, VALUE file_processed, VALUE pairs)
 // TODO: provide options[:load_obsolete] option
 VALUE wrap_read_po_file_messages(VALUE self, VALUE filename)
 {
-	std::vector<MessageGroup *> messages = read_po_file_messages(StringValuePtr(filename), false);
+	std::vector<MessageGroup*> messages = read_po_file_messages(StringValuePtr(filename), false);
 
 	VALUE res = rb_ary_new();
 	for (size_t i = 0; i < messages.size(); i ++)

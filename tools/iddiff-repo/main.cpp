@@ -1,12 +1,15 @@
-#include <gettextpo-helper/translationcontent.h>
-#include <gettextpo-helper/iddiff.h>
-#include <gettextpo-helper/gitloader.h>
-#include <gettextpo-helper/stupids-client.h>
+#include <gtpo/translationcontent.h>
+#include <gtpo/iddiff.h>
+#include <gtpo/gitloader.h>
+#include <gtpo/stupids-client.h>
+#include <gtpo/repository.h>
 
 #include <getopt.h>
+
+#include <iostream>
 #include <cassert>
 #include <cstdio>
-#include <iostream>
+#include <cstring>
 
 struct
 {

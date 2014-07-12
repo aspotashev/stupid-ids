@@ -1,8 +1,6 @@
+#include <gtpo/iddiff.h>
 
-#include <assert.h>
-
-#include <gettextpo-helper/iddiff.h>
-
+#include <cassert>
 
 int main(int argc, char *argv[])
 {

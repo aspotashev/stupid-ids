@@ -1,10 +1,8 @@
+#include <gtpo/translationcontent.h>
+#include <gtpo/iddiff.h>
 
-#include <assert.h>
 #include <iostream>
-
-#include <gettextpo-helper/translationcontent.h>
-#include <gettextpo-helper/iddiff.h>
-
+#include <cassert>
 
 int main(int argc, char *argv[])
 {

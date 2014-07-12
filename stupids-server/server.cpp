@@ -1,14 +1,13 @@
+#include "server.h"
+
+#include <gtpo/stupids-client.h>
+#include <gtpo/mappedfile.h>
+#include <gtpo/config.h>
+#include <gtpo/filedbfirstids.h>
 
 #include <stdio.h>
 #include <assert.h>
 #include <algorithm>
-
-#include <gettextpo-helper/stupids-client.h>
-#include <gettextpo-helper/mappedfile.h>
-#include <gettextpo-helper/config.h>
-#include <gettextpo-helper/filedbfirstids.h>
-
-#include "server.h"
 
 Server::Server()
 {

@@ -1,6 +1,7 @@
+#include <gtpo/translationcontent.h>
+#include <gtpo/detectorbase.h>
+
 #include <iostream>
-#include <gettextpo-helper/translationcontent.h>
-#include <gettextpo-helper/detectorbase.h>
 
 // TODO: use in "sha1_buffer" test
 void assertEqualOids(GitOid a, GitOid b, const char *testname)
@@ -45,4 +46,3 @@ int main()
 
 	return 0; // ok
 }
-

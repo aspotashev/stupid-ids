@@ -3,12 +3,15 @@
 
 #include "messageeditorwidget.h"
 
-#include <stdio.h>
-
-#include <gettextpo-helper/gettextpo-helper.h>
-#include <gettextpo-helper/iddiff.h>
-#include <gettextpo-helper/message.h>
 #include "lib/qtranslationcollector.h"
+
+#include <gtpo/gettextpo-helper.h>
+#include <gtpo/iddiff.h>
+#include <gtpo/message.h>
+#include <gtpo/messagegroup.h>
+#include <gtpo/iddiffmessage.h>
+
+#include <iostream>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -50,20 +53,19 @@ MainWindow::MainWindow(QWidget *parent) :
         }
         MessageEditorWidget *editor = addMessageEditor(messages[0]);
 
-        for (size_t i = 0; i < messages.size(); i ++)
-        {
+        for (size_t i = 0; i < messages.size(); i ++) {
             assert(messages[i]->size() == 1);
-            Message *msg = messages[i]->message(i);
+            Message* msg = messages[i]->message(i);
 
             editor->addTranslationOption(msg);
         }
 
-        std::vector<IddiffMessage *> removed = diff->findRemoved(id);
+        std::vector<IddiffMessage*> removed = diff->findRemoved(id);
         for (size_t i = 0; i < removed.size(); i ++)
         {
             Message *msg = new Message(false, messages[0]->size(), "");
             for (int j = 0; j < messages[0]->size(); j ++)
-                msg->setMsgstr(j, "");
+                msg->setMsgstr(j, std::string(""));
             removed[i]->copyTranslationsToMessage(msg);
 
             editor->addTranslationOption(msg);
@@ -74,7 +76,7 @@ MainWindow::MainWindow(QWidget *parent) :
         {
             Message *msg = new Message(false, messages[0]->size(), "");
             for (int j = 0; j < messages[0]->size(); j ++)
-                msg->setMsgstr(j, "");
+                msg->setMsgstr(j, std::string(""));
             added->copyTranslationsToMessage(msg);
 
             editor->addTranslationOption(msg);
@@ -87,7 +89,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-MessageEditorWidget* MainWindow::addMessageEditor(MessageGroup *messageGroup)
+MessageEditorWidget* MainWindow::addMessageEditor(MessageGroup* messageGroup)
 {
     MessageEditorWidget *editor = new MessageEditorWidget(messageGroup);
     m_layout->addWidget(editor);
@@ -106,25 +108,27 @@ void MainWindow::loadConflicting()
     std::vector<int> list = collector.listConflicting();
     for (int i = 0; i < (int)list.size(); i ++)
     {
-        MessageGroup *variants = collector.listVariants(list[i]);
-        printf("%d      msgid = [%s], msgid_plural = [%s], msgctxt = [%s]\n",
-            list[i], variants->msgid(), variants->msgidPlural(),
-            variants->msgctxt());
+        MessageGroup* variants = collector.listVariants(list[i]);
+        std::cout << list[i] << "      msgid = [" << variants->msgid() <<
+            "], msgid_plural = [" << variants->msgidPlural() <<
+            "], msgctxt = [" << variants->msgctxt() << "]" << std::endl;
 
-        MessageEditorWidget *editor = addMessageEditor(variants);
+        MessageEditorWidget* editor = addMessageEditor(variants);
 
         for (int i = 0; i < variants->size(); i ++)
         {
             Message *msg = variants->message(i);
-            printf("Variant %d: (from %s, #%d)\n", (int)i + 1, msg->filename(), msg->index() + 1);
+            std::cout << "Variant " << i + 1 <<
+                ": (from " << msg->filename() <<
+                ", #" << msg->index() + 1 <<")" << std::endl;
             if (msg->isFuzzy())
-                    printf("\tfuzzy\n");
-            printf("\tmsgcomments: %s\n", msg->msgcomments());
-            printf("\tmsgstr: %s\n", msg->msgstr(0));
+                    std::cout << "\tfuzzy" << std::endl;
+            std::cout << "\tmsgcomments: " << msg->msgcomments() << std::endl;
+            std::cout << "\tmsgstr: " << msg->msgstr(0) << std::endl;
 
             editor->addTranslationOption(msg);
         }
 
-        printf("----------------\n");
+        std::cout << "----------------" << std::endl;
     }
 }

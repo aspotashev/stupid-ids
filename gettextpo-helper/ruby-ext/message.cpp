@@ -54,12 +54,12 @@ VALUE cMessage_is_untranslated(VALUE self)
 
 VALUE cMessage_msgstr(VALUE self, VALUE plural_form)
 {
-	return rb_str_new2(rb_get_message(self)->msgstr(FIX2INT(plural_form)));
+    return rb_str_new2(rb_get_message(self)->msgstr(FIX2INT(plural_form)).c_str());
 }
 
 VALUE cMessage_msgcomments(VALUE self)
 {
-	return rb_str_new2(rb_get_message(self)->msgcomments());
+    return rb_str_new2(rb_get_message(self)->msgcomments().c_str());
 }
 
 // init

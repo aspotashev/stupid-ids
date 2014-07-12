@@ -1,72 +1,15 @@
+#include <gtpo/message.h>
+#include <gtpo/filedatetime.h>
+#include <gtpo/iddiffchange.h>
+
+#include <gettext-po.h>
+
 #include <string>
 #include <vector>
 #include <sstream>
 #include <map>
 
-#include <gettext-po.h>
-
-#include <gtpo/message.h>
-#include <gtpo/filedatetime.h>
-
-
-class Message;
 class MessageGroup;
-
-class IddiffMessage : public MessageTranslationBase
-{
-public:
-    /**
-     * @brief Constructs an empty IddiffMessage.
-     **/
-    IddiffMessage();
-
-    /**
-     * @brief Copying constructor.
-     *
-     * All internal dynamically allocatable strings will also be duplicated.
-     *
-     * @param msg The message to copy from.
-     **/
-    IddiffMessage(const IddiffMessage &msg);
-
-    IddiffMessage(const Message &msg);
-
-    IddiffMessage(po_message_t message);
-    ~IddiffMessage();
-
-    void setFuzzy(bool fuzzy);
-
-    bool isTranslated() const;
-
-    void addMsgstr(const char *str);
-
-    void copyTranslationsToMessage(Message *message) const;
-};
-
-//----------------------------------------------
-
-class IddiffChange
-{
-public:
-    IddiffChange();
-
-    bool empty() const;
-    bool emptyRemoved() const;
-    bool emptyAdded() const;
-    bool emptyReview() const;
-    void clearReviewComment();
-
-    static void eraseItem(std::vector<IddiffMessage *> &list, const IddiffMessage *item);
-    void eraseRemoved(const IddiffMessage *item);
-    void eraseAdded(const IddiffMessage *item);
-
-//private:
-    std::vector<IddiffMessage *> m_removedItems;
-    std::vector<IddiffMessage *> m_addedItems;
-    IddiffMessage *m_reviewComment;
-};
-
-class TranslationContent;
 class StupIdTranslationCollector;
 
 // TODO: rename to Iddiff
@@ -82,9 +25,9 @@ public:
      * "REMOVED" and "REVIEW" sections will be cleared.
      * Old items from "ADDED" section will be deleted.
      */
-    void diffAgainstEmpty(TranslationContent *content_b);
+    void diffAgainstEmpty(TranslationContent* content_b);
 
-    void diffTrCommentsAgainstEmpty(TranslationContent *content_b);
+    void diffTrCommentsAgainstEmpty(TranslationContent* content_b);
 
     /**
      * \brief Fills "ADDED" and "DELETED" sections according to differences between the two given TranslationContents
@@ -94,18 +37,18 @@ public:
      * "REVIEW" section will be cleared.
      * Old items from "REMOVED" and "ADDED" sections will be deleted.
      */
-    void diffFiles(TranslationContent *content_a, TranslationContent *content_b);
+    void diffFiles(TranslationContent* content_a, TranslationContent* content_b);
 
-    void diffTrCommentsFiles(TranslationContent *content_a, TranslationContent *content_b);
+    void diffTrCommentsFiles(TranslationContent* content_a, TranslationContent* content_b);
 
     /**
      * \brief Load iddiff from an .iddiff file
      *
      * It actually merges the given file with the changes already existing in the current Iddiffer object.
      */
-    bool loadIddiff(const char *filename);
+    bool loadIddiff(const char* filename);
 
-    void writeToFile(const char *filename);
+    void writeToFile(const char* filename);
 
     /**
      * \brief Replace all message IDs in the Iddiff with minimized IDs
@@ -124,16 +67,16 @@ public:
      */
     std::string generateIddiffText();
 
-    bool canDropMessage(const Message *message, int min_id);
+    bool canDropMessage(const Message* message, int min_id);
 
-    void applyToMessage(MessageGroup *messageGroup, int min_id);
-    void applyToMessageComments(MessageGroup *messageGroup, int min_id);
+    void applyToMessage(MessageGroup* messageGroup, int min_id);
+    void applyToMessageComments(MessageGroup* messageGroup, int min_id);
 
-    void applyIddiff(StupIdTranslationCollector *collector, bool applyComments);
-    void applyIddiff(StupIdTranslationCollector *collector);
+    void applyIddiff(StupIdTranslationCollector* collector, bool applyComments);
+    void applyIddiff(StupIdTranslationCollector* collector);
     void applyIddiffComments(StupIdTranslationCollector *collector);
 
-    void applyToContent(TranslationContent *content);
+    void applyToContent(TranslationContent* content);
 
     // low-level functions
     void clearIddiff();
@@ -141,60 +84,61 @@ public:
     void clearReviewComment(int msg_id);
 
     // low-level functions
-    std::vector<IddiffMessage *> findRemoved(int msg_id);
-    std::vector<IddiffMessage *> findAdded(int msg_id);
-    IddiffMessage *findAddedSingle(int msg_id);
-    IddiffMessage *findRemovedSingle(int msg_id);
-    IddiffMessage *findRemoved(int msg_id, const IddiffMessage *item);
-    IddiffMessage *findRemoved(std::pair<int, IddiffMessage *> item);
-    IddiffMessage *findAdded(int msg_id, const IddiffMessage *item);
-    IddiffMessage *findAdded(std::pair<int, IddiffMessage *> item);
-    void eraseRemoved(int msg_id, const IddiffMessage *item);
-    void eraseAdded(int msg_id, const IddiffMessage *item);
+    std::vector<IddiffMessage*> findRemoved(int msg_id);
+    std::vector<IddiffMessage*> findAdded(int msg_id);
+    IddiffMessage* findAddedSingle(int msg_id);
+    IddiffMessage* findRemovedSingle(int msg_id);
+    IddiffMessage* findRemoved(int msg_id, const IddiffMessage* item);
+    IddiffMessage* findRemoved(std::pair<int, IddiffMessage*> item);
+    IddiffMessage* findAdded(int msg_id, const IddiffMessage* item);
+    IddiffMessage* findAdded(std::pair<int, IddiffMessage*> item);
+    void eraseRemoved(int msg_id, const IddiffMessage* item);
+    void eraseAdded(int msg_id, const IddiffMessage* item);
 
-    const char *reviewCommentText(int msg_id);
+    OptString reviewCommentText(int msg_id);
 
     // These functions take ownership of "item"
-    void insertRemoved(int msg_id, IddiffMessage *item);
-    void insertAdded(int msg_id, IddiffMessage *item);
-    void insertReview(int msg_id, IddiffMessage *item);
-    void insertRemoved(std::pair<int, IddiffMessage *> item);
-    void insertAdded(std::pair<int, IddiffMessage *> item);
-    void insertReview(std::pair<int, IddiffMessage *> item);
+    void insertRemoved(int msg_id, IddiffMessage* item);
+    void insertAdded(int msg_id, IddiffMessage* item);
+    void insertReview(int msg_id, IddiffMessage* item);
+    void insertRemoved(std::pair<int, IddiffMessage*> item);
+    void insertAdded(std::pair<int, IddiffMessage*> item);
+    void insertReview(std::pair<int, IddiffMessage*> item);
 
-    void insertRemovedClone(std::pair<int, IddiffMessage *> item);
-    void insertAddedClone(std::pair<int, IddiffMessage *> item);
-    void insertReviewClone(std::pair<int, IddiffMessage *> item);
+    void insertRemovedClone(std::pair<int, IddiffMessage*> item);
+    void insertAddedClone(std::pair<int, IddiffMessage*> item);
+    void insertReviewClone(std::pair<int, IddiffMessage*> item);
 
     // low-level functions
-    std::vector<std::pair<int, IddiffMessage *> > getRemovedVector();
-    std::vector<std::pair<int, IddiffMessage *> > getAddedVector();
-    std::vector<std::pair<int, IddiffMessage *> > getReviewVector();
+    std::vector<std::pair<int, IddiffMessage*>> getRemovedVector();
+    std::vector<std::pair<int, IddiffMessage*>> getAddedVector();
+    std::vector<std::pair<int, IddiffMessage*>> getReviewVector();
 
-    void mergeHeaders(Iddiffer *diff);
-    void merge(Iddiffer *diff);
-    void mergeTrComments(Iddiffer *diff);
+    void mergeHeaders(Iddiffer* diff);
+    void merge(Iddiffer* diff);
+    void mergeTrComments(Iddiffer* diff);
 
-    void acceptTranslation(int msg_id, const IddiffMessage *item);
-    void rejectTranslation(int msg_id, const IddiffMessage *item);
+    void acceptTranslation(int msg_id, const IddiffMessage* item);
+    void rejectTranslation(int msg_id, const IddiffMessage* item);
 
-    bool isAcceptAlreadyReviewed(int msg_id, IddiffMessage *item);
-    bool isRejectAlreadyReviewed(int msg_id, IddiffMessage *item);
+    bool isAcceptAlreadyReviewed(int msg_id, IddiffMessage* item);
+    bool isRejectAlreadyReviewed(int msg_id, IddiffMessage* item);
 
     /**
      * \brief Sets the "Date:" field of the Iddiff to the current date/time.
      */
     void setCurrentDateTime();
 
-    void filterTrustedIddiff(Iddiffer *filter, Iddiffer *input_diff);
+    void filterTrustedIddiff(Iddiffer* filter, Iddiffer* input_diff);
 
 private:
-    void writeMessageList(std::vector<std::pair<int, IddiffMessage *> > list);
-    std::pair<int, IddiffMessage *> loadMessageListEntry(const char *line);
+    void writeMessageList(std::vector<std::pair<int, IddiffMessage*>> list);
+    std::pair<int, IddiffMessage*> loadMessageListEntry(const char* line);
 
-    static IddiffMessage *findIddiffMessageList(std::vector<IddiffMessage *> list, const IddiffMessage *item);
+    static IddiffMessage* findIddiffMessageList(
+        std::vector<IddiffMessage*> list, const IddiffMessage* item);
     std::string dateString() const;
-    const FileDateTime &date() const;
+    const FileDateTime& date() const;
 
     // Helper functions for minimizeIds()
     void cleanupMsgIdData(int msg_id);

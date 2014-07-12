@@ -1,8 +1,8 @@
-#include <iostream>
+#include <gtpo/gettextpo-helper.h>
+#include <gtpo/detectorbase.h>
+#include <gtpo/block-sha1/sha1.h>
 
-#include <gettextpo-helper/gettextpo-helper.h>
-#include <gettextpo-helper/detectorbase.h>
-#include <gettextpo-helper/sha1.h>
+#include <iostream>
 
 int main()
 {
@@ -23,4 +23,3 @@ int main()
 
 	return 0; // ok
 }
-

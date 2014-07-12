@@ -1,13 +1,15 @@
-project (iddiff)
-cmake_minimum_required (VERSION 2.8.0)
+project(iddiff)
+cmake_minimum_required(VERSION 2.8.0)
 
-set (iddiff_SRCS
-	main.cpp
+set(iddiff_SRCS
+    main.cpp
 )
 
-add_executable (iddiff ${iddiff_SRCS})
-target_link_libraries (iddiff gettextpo_helper)
+include_directories(${CMAKE_SOURCE_DIR}/gettextpo-helper)
 
-set_target_properties (iddiff PROPERTIES COMPILE_FLAGS "-ggdb")
+add_executable(iddiff ${iddiff_SRCS})
+target_link_libraries(iddiff gettextpo_helper)
 
-install (TARGETS iddiff DESTINATION bin)
+set_target_properties(iddiff PROPERTIES COMPILE_FLAGS "-ggdb")
+
+install(TARGETS iddiff DESTINATION bin)

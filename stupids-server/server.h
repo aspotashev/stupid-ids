@@ -1,5 +1,4 @@
-
-#include <gettextpo-helper/detectorbase.h>
+#include <gtpo/detectorbase.h>
 
 #include "tcpcommandserver.h"
 

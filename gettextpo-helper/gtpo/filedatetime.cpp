@@ -5,13 +5,14 @@
 
 #include "filedatetime.h"
 #include "gettextpo-helper.h"
+#include "optstring.h"
 
 FileDateTime::FileDateTime()
     : m_init(false)
 {
 }
 
-FileDateTime::FileDateTime (const FileDateTime &o)
+FileDateTime::FileDateTime(const FileDateTime& o)
     : m_init(o.m_init)
     , m_date(o.m_date)
     , m_timezone(o.m_timezone)
@@ -54,9 +55,9 @@ bool FileDateTime::isNull() const
     return !m_init;
 }
 
-void FileDateTime::fromString(const char *str)
+void FileDateTime::fromString(const std::string& str)
 {
-    m_init = str && strlen(str) > 0;
+    m_init = str.size() > 0;
 
     if (m_init)
     {
@@ -69,7 +70,7 @@ void FileDateTime::fromString(const char *str)
         tm.tm_isdst = 0;
 
         // Read date/time from string
-        sscanf(str, "%d-%d-%d %d:%d%d", &tm.tm_year, &tm.tm_mon, &tm.tm_mday, &tm.tm_hour, &tm.tm_min, &m_timezone);
+        sscanf(str.c_str(), "%d-%d-%d %d:%d%d", &tm.tm_year, &tm.tm_mon, &tm.tm_mday, &tm.tm_hour, &tm.tm_min, &m_timezone);
         tm.tm_year -= 1900;
         tm.tm_mon --;
 
@@ -77,22 +78,17 @@ void FileDateTime::fromString(const char *str)
         m_timezone /= 100;
 
         // Calculate UNIX timestamp
-        const char *old_tz = getenv("TZ");
-        if (old_tz)
-            old_tz = xstrdup(old_tz);
+        OptString old_tz(getenv("TZ"));
 
         assert(setenv("TZ", "UTC", 1) == 0); // make mktime() return time in UTC
         m_date = mktime(&tm) - 3600 * m_timezone; // date/time in UTC
 
         // Restore "TZ" environment variable
-        if (old_tz)
-        {
-            assert(setenv("TZ", old_tz, 1) == 0);
-            delete [] old_tz;
-        }
-        else
-        {
+        if (old_tz.isNull()) {
             assert(unsetenv("TZ") == 0);
+        }
+        else {
+            assert(setenv("TZ", old_tz.c_str(), 1) == 0);
         }
 
 //      printf("m_date = %Ld, date_str = %s, m_timezone = %d\n", (long long int)m_date, date_str, m_timezone);
@@ -113,12 +109,12 @@ void FileDateTime::setCurrentDateTime()
     m_timezone = offset / 3600;
 }
 
-bool FileDateTime::operator<(const FileDateTime &o) const
+bool FileDateTime::operator<(const FileDateTime& o) const
 {
     return m_date < o.m_date;
 }
 
-bool FileDateTime::operator>(const FileDateTime &o) const
+bool FileDateTime::operator>(const FileDateTime& o) const
 {
     return m_date > o.m_date;
 }
@@ -151,11 +147,10 @@ FileDateTime::operator git_time_t() const
     return isNull() ? 0 : m_date;
 }
 
-bool FileDateTime::isBetween(const FileDateTime &a, const FileDateTime &b) const
+bool FileDateTime::isBetween(const FileDateTime& a, const FileDateTime& b) const
 {
     if (a <= b)
         return *this >= a && *this <= b; // a <= this <= b
     else // a > b
         return *this >= b && *this <= a; // b <= this <= a
 }
-

@@ -1,14 +1,14 @@
+#include "dbuslokalize.h"
+
+#include <gtpo/gettextpo-helper.h>
 
 // http://dbus.freedesktop.org/doc/dbus-tutorial.html
+// TBD: use a C++ wrapper library to communicate over D-Bus
+#include <dbus/dbus-glib.h>
 
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
-
-#include <gettextpo-helper/gettextpo-helper.h>
-
-#include "dbuslokalize.h"
-#include <dbus/dbus-glib.h>
 
 bool strstartswith(const char *str, const char *pattern)
 {
@@ -16,10 +16,10 @@ bool strstartswith(const char *str, const char *pattern)
 }
 
 DBusLokalizeInterface::DBusLokalizeInterface()
+    : m_lokalizeInstance()
+    , m_connection(nullptr)
+    , m_proxy(nullptr)
 {
-	m_connection = NULL;
-	m_proxy = NULL;
-	m_lokalizeInstance = NULL;
 }
 
 DBusLokalizeInterface::~DBusLokalizeInterface()
@@ -32,9 +32,9 @@ void DBusLokalizeInterface::connect()
 	if (m_connection)
 		return;
 
-	assert(m_connection == NULL);
-	assert(m_proxy == NULL);
-	assert(m_lokalizeInstance == NULL);
+	assert(m_connection == nullptr);
+	assert(m_proxy == nullptr);
+	assert(m_lokalizeInstance.empty());
 
 	GError *error = NULL;
 	m_connection = dbus_g_bus_get(DBUS_BUS_SESSION, &error);
@@ -54,7 +54,7 @@ void DBusLokalizeInterface::connect()
 	for (int i = 0; name_list[i]; i ++)
 		if (strstartswith(name_list[i], "org.kde.lokalize"))
 		{
-			m_lokalizeInstance = xstrdup(name_list[i]);
+			m_lokalizeInstance = std::string(name_list[i]);
 			break;
 		}
 	g_strfreev(name_list);
@@ -70,30 +70,24 @@ void DBusLokalizeInterface::disconnect()
 
 	assert(m_connection);
 	assert(m_proxy);
-	assert(m_lokalizeInstance);
+	assert(!m_lokalizeInstance.empty());
 
-	if (m_lokalizeInstance)
-	{
-		delete [] m_lokalizeInstance;
-		m_lokalizeInstance = NULL;
-	}
+        m_lokalizeInstance = "";
 
-	if (m_proxy)
-	{
+	if (m_proxy) {
 		g_object_unref(m_proxy);
 		m_proxy = NULL;
 	}
 
-	if (m_connection)
-	{
+	if (m_connection) {
 		// TODO: how to disconnect?
 		m_connection = NULL;
 	}
 }
 
-DBusGProxy *DBusLokalizeInterface::createProxy(const char *service, const char *path, const char *interface)
+DBusGProxy *DBusLokalizeInterface::createProxy(const std::string& service, const char* path, const char* interface)
 {
-	return dbus_g_proxy_new_for_name(m_connection, service, path, interface);
+	return dbus_g_proxy_new_for_name(m_connection, service.c_str(), path, interface);
 }
 
 DBusGProxy *DBusLokalizeInterface::createEditorProxy(int index)
@@ -121,7 +115,7 @@ int DBusLokalizeInterface::getPid()
 	return pid;
 }
 
-DBusLokalizeEditor *DBusLokalizeInterface::openFileInEditor(const char *filename)
+DBusLokalizeEditor *DBusLokalizeInterface::openFileInEditor(const std::string& filename)
 {
 	connect();
 
@@ -129,7 +123,7 @@ DBusLokalizeEditor *DBusLokalizeInterface::openFileInEditor(const char *filename
 	int index = -1;
 	assert(dbus_g_proxy_call(
 		m_proxy, "openFileInEditor", &error,
-		G_TYPE_STRING, filename, G_TYPE_INVALID,
+		G_TYPE_STRING, filename.c_str(), G_TYPE_INVALID,
 		G_TYPE_INT, &index, G_TYPE_INVALID));
 
 	return new DBusLokalizeEditor(createEditorProxy(index));
@@ -198,12 +192,12 @@ void DBusLokalizeEditor::clearTemporaryEntryNotes(int entry)
 #endif
 }
 
-void DBusLokalizeEditor::openSyncSource(const char *filename)
+void DBusLokalizeEditor::openSyncSource(const std::string& filename)
 {
 	GError *error = NULL;
 	assert(dbus_g_proxy_call(
 		m_proxy, "openSyncSource", &error,
-		G_TYPE_STRING, filename, G_TYPE_INVALID,
+		G_TYPE_STRING, filename.c_str(), G_TYPE_INVALID,
 		G_TYPE_INVALID));
 }
 

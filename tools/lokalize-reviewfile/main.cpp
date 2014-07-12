@@ -1,15 +1,18 @@
+#include "dbuslokalize.h"
 
-#include <stdio.h>
+#include <gtpo/translation-collector.h>
+#include <gtpo/translationcontent.h>
+#include <gtpo/gitloader.h>
+#include <gtpo/iddiff.h>
+#include <gtpo/gettextpo-helper.h>
+#include <gtpo/message.h>
+#include <gtpo/messagegroup.h>
+#include <gtpo/iddiffmessage.h>
+
 #include <unistd.h>
 
-#include <gettextpo-helper/translation-collector.h>
-#include <gettextpo-helper/translationcontent.h>
-#include <gettextpo-helper/gitloader.h>
-#include <gettextpo-helper/iddiff.h>
-#include <gettextpo-helper/gettextpo-helper.h>
-#include <gettextpo-helper/message.h>
-
-#include "dbuslokalize.h"
+#include <cstdio>
+#include <cstring>
 
 // 1. Find the original .po from KDE SVN (GitLoader::findOldestByTphash, see also "tools/iddiff-repo")
 // 2. Open the input .po file in Lokalize, select the original .po file for syncing (Lokalize D-Bus: openSyncSource)
@@ -66,8 +69,8 @@ int main(int argc, char *argv[])
 	if (!old_content)
 		return 0;
 
-	std::vector<MessageGroup *> old_messages = old_content->readMessages();
-	std::vector<MessageGroup *> new_messages = new_content->readMessages();
+	std::vector<MessageGroup*> old_messages = old_content->readMessages();
+	std::vector<MessageGroup*> new_messages = new_content->readMessages();
 	size_t msg_count = old_messages.size();
 	assert(msg_count == new_messages.size());
 
@@ -76,8 +79,8 @@ int main(int argc, char *argv[])
 
 	for (size_t i = 0; i < msg_count; i ++)
 	{
-		Message *old_msg = old_messages[i]->message(0);
-		Message *new_msg = new_messages[i]->message(0);
+		Message* old_msg = old_messages[i]->message(0);
+		Message* new_msg = new_messages[i]->message(0);
 
 		if (!old_msg->equalTranslationsComments(new_msg) && (old_msg->isTranslated() || new_msg->isTranslated()))
 		{
@@ -90,7 +93,7 @@ int main(int argc, char *argv[])
 			editor->setEntryFilteredOut(i, false);
 			editor->clearTemporaryEntryNotes(i);
 
-			IddiffMessage *iddiff_msg = new IddiffMessage();
+			IddiffMessage* iddiff_msg = new IddiffMessage();
 			for (int j = 0; j < old_msg->numPlurals(); j ++)
 				iddiff_msg->addMsgstr(old_msg->msgstr(j));
 

@@ -1,63 +1,35 @@
 #include "message.h"
 #include "iddiff.h"
 
-#include <stdio.h>
-
-Message::Message(const Message &message)
+Message::Message(const Message& message)
+    : MessageTranslationBase(message) // TBD: make sure this copy ctor works!
+    , m_obsolete(false)
+    , m_untranslated(false)
+    , m_msgcomments(nullptr)
+    , m_index(-1)
+    , m_filename()
+    , m_edited(false)
 {
-    clear();
-
-    assert(message.m_numPlurals <= MAX_PLURAL_FORMS);
-
-    // Fields inherited from class MessageTranslationBase
-    m_numPlurals = message.m_numPlurals;
-    for (int i = 0; i < m_numPlurals; i ++)
-    {
-        assert(message.m_msgstr[i]);
-        m_msgstr[i] = xstrdup(message.m_msgstr[i]);
-    }
-    m_fuzzy = message.m_fuzzy;
-
     // Fields defined in this class
-    m_plural = message.m_plural;
     m_obsolete = message.m_obsolete;
     m_untranslated = message.m_untranslated;
-    if (message.m_msgcomments)
-        m_msgcomments = xstrdup(message.m_msgcomments);
+    m_msgcomments = message.m_msgcomments;
     m_index = message.m_index;
-    if (message.m_filename)
-        m_filename = xstrdup(message.m_filename);
+    m_filename = message.m_filename;
     m_edited = message.m_edited;
 }
 
 // Cannot use simple MessageTranslationBase(po_message_t),
 // because it does not set m_plural.
-Message::Message(po_message_t message, int index, const char *filename)
+Message::Message(po_message_t message, int index, const std::string& filename)
+    : MessageTranslationBase(message)
+    , m_obsolete(false)
+    , m_untranslated(false)
+    , m_msgcomments(nullptr)
+    , m_index(index)
+    , m_filename(filename)
+    , m_edited(false)
 {
-    clear();
-
-    m_index = index;
-    m_filename = xstrdup(filename);
-    m_plural = setNPluralsPacked(po_message_n_plurals(message));
-
-    for (int i = 0; i < m_numPlurals; i ++)
-    {
-        const char *tmp;
-        if (m_plural)
-        {
-            tmp = po_message_msgstr_plural(message, i);
-        }
-        else
-        {
-            assert(i == 0); // there can be only one form if 'm_plural' is false
-
-            tmp = po_message_msgstr(message);
-        }
-
-        setMsgstr(i, tmp);
-    }
-
-    m_fuzzy = po_message_is_fuzzy(message) != 0;
     m_obsolete = po_message_is_obsolete(message) != 0;
 
     // TODO: write and use another Message:: function for this (should not use 'po_message_t message')
@@ -66,18 +38,19 @@ Message::Message(po_message_t message, int index, const char *filename)
     setMsgcomments(po_message_comments(message));
 }
 
-// translators' comments
-void Message::setMsgcomments(const char *str)
+Message::Message(
+    bool fuzzy,
+    const std::string& msgcomment,
+    const std::string& msgstr0,
+    int n_plurals)
+    : MessageTranslationBase()
+    , m_obsolete(false)
+    , m_untranslated(false)
+    , m_msgcomments(nullptr)
+    , m_index(-1)
+    , m_filename()
+    , m_edited(false)
 {
-    assert(m_msgcomments == 0);
-
-    m_msgcomments = xstrdup(str);
-}
-
-Message::Message(bool fuzzy, const char *msgcomment, const char *msgstr0, int n_plurals)
-{
-    clear();
-
     m_fuzzy = fuzzy;
     setMsgcomments(msgcomment);
 
@@ -85,56 +58,58 @@ Message::Message(bool fuzzy, const char *msgcomment, const char *msgstr0, int n_
     // n_plurals=0 means that there is only msgstr (and the message is not pluralized)
     assert(n_plurals == 0 || n_plurals == 1);
 
-    m_numPlurals = 1;
-    m_plural = (n_plurals == 1);
-    setMsgstr(0, msgstr0);
+    m_plural = n_plurals > 0;
+    m_msgstr.push_back(msgstr0);
 }
 
-void Message::clear()
+Message::Message(bool fuzzy, int n_plurals, const std::string& msgcomment)
+    : MessageTranslationBase()
+    , m_obsolete(false)
+    , m_untranslated(false)
+    , m_msgcomments(msgcomment)
+    , m_index(-1)
+    , m_filename()
+    , m_edited(false)
 {
-    MessageTranslationBase::clear();
-
-    m_plural = false;
-    m_obsolete = false;
-    m_untranslated = false;
-    m_msgcomments = NULL;
-
-    m_index = -1;
-    m_filename = NULL;
-
-    m_edited = false;
-}
-
-Message::Message(bool fuzzy, int n_plurals, const char *msgcomment)
-{
-    clear();
-
     m_fuzzy = fuzzy;
-    m_plural = setNPluralsPacked(n_plurals);
-    setMsgcomments(msgcomment);
+    m_plural = n_plurals > 0;
 }
 
 Message::~Message()
 {
-    if (m_filename)
-        delete [] m_filename;
-    if (m_msgcomments)
-        delete [] m_msgcomments;
 }
+
+// translators' comments
+void Message::setMsgcomments(const std::string& str)
+{
+    assert(m_msgcomments.isNull());
+
+    m_msgcomments = str;
+}
+
+// void Message::clear()
+// {
+//     MessageTranslationBase::clear();
+//
+//     m_plural = false;
+//     m_obsolete = false;
+//     m_untranslated = false;
+//     m_msgcomments = NULL;
+//
+//     m_index = -1;
+//     m_filename = NULL;
+//
+//     m_edited = false;
+// }
 
 int Message::index() const
 {
     return m_index;
 }
 
-const char *Message::filename() const
+std::string Message::filename() const
 {
     return m_filename;
-}
-
-bool Message::isPlural() const
-{
-    return m_plural;
 }
 
 bool Message::isUntranslated() const
@@ -147,7 +122,7 @@ bool Message::isTranslated() const
     return !isFuzzy() && !isUntranslated();
 }
 
-const char *Message::msgcomments() const
+OptString Message::msgcomments() const
 {
     return m_msgcomments;
 }
@@ -161,29 +136,24 @@ void Message::editFuzzy(bool fuzzy)
     m_edited = true;
 }
 
-void Message::editMsgstr(int index, const char *str)
+void Message::editMsgstr(int index, const std::string& str)
 {
     assert(index >= 0 && index < numPlurals());
-    assert(m_msgstr[index]);
+    assert(!m_msgstr[index].isNull());
 
-    if (strcmp(m_msgstr[index], str) == 0)
+    if (m_msgstr[index] == str)
         return;
 
-    delete [] m_msgstr[index];
-    m_msgstr[index] = xstrdup(str);
+    m_msgstr[index] = str;
     m_edited = true;
 }
 
-void Message::editMsgcomments(const char *str)
+void Message::editMsgcomments(const OptString& str)
 {
-    assert(str);
-
-    if (strcmp(m_msgcomments, str) == 0)
+    if (m_msgcomments == str)
         return;
 
-    if (m_msgcomments)
-        delete [] m_msgcomments;
-    m_msgcomments = xstrdup(str);
+    m_msgcomments = str;
     m_edited = true;
 }
 
@@ -194,169 +164,9 @@ bool Message::isEdited() const
 
 // Returns whether msgstr[*] and translator's comments are equal in two messages.
 // States of 'fuzzy' flag should also be the same.
-bool Message::equalTranslationsComments(const Message *o) const
+bool Message::equalTranslationsComments(const Message* o) const
 {
     assert(m_plural == o->isPlural());
 
-    return MessageTranslationBase::equalTranslations(o) && !strcmp(m_msgcomments, o->msgcomments());
+    return MessageTranslationBase::equalTranslations(o) && m_msgcomments == o->msgcomments();
 }
-
-//-------------------------------------------------------
-
-MessageGroup::MessageGroup()
-{
-    clear();
-}
-
-MessageGroup::MessageGroup(po_message_t message, int index, const char *filename)
-{
-    clear();
-    setMsgid(po_message_msgid(message));
-    if (po_message_msgid_plural(message))
-        setMsgidPlural(po_message_msgid_plural(message));
-    if (po_message_msgctxt(message))
-        setMsgctxt(po_message_msgctxt(message));
-
-    addMessage(new Message(message, index, filename));
-}
-
-MessageGroup::~MessageGroup()
-{
-    if (m_msgid)
-        delete [] m_msgid;
-    if (m_msgidPlural)
-        delete [] m_msgidPlural;
-    if (m_msgctxt)
-        delete [] m_msgctxt;
-
-    for (size_t i = 0; i < m_messages.size(); i ++)
-        delete m_messages[i];
-}
-
-void MessageGroup::addMessage(Message *message)
-{
-    m_messages.push_back(message);
-}
-
-int MessageGroup::size() const
-{
-    return (int)m_messages.size();
-}
-
-Message *MessageGroup::message(int index)
-{
-    assert(index >= 0 && index < size());
-
-    return m_messages[index];
-}
-
-const Message *MessageGroup::message(int index) const
-{
-    assert(index >= 0 && index < size());
-
-    return m_messages[index];
-}
-
-/**
- * Does not take ownership of messages from "other" MessageGroup.
- */
-// TODO: "mergeMessageGroupNokeep" that removed messages from "other" MessageGroup
-void MessageGroup::mergeMessageGroup(const MessageGroup *other)
-{
-    // Only message groups with the same
-    // {msgid, msgid_plural, msgctxt} can be merged.
-//  TODO:
-//  assert(!strcmp(msgid(), other->msgid()));
-//  ...
-
-    for (int i = 0; i < other->size(); i ++)
-        addMessage(new Message(*other->message(i)));
-}
-
-void MessageGroup::clear()
-{
-    m_msgid = NULL;
-    m_msgidPlural = NULL;
-    m_msgctxt = NULL;
-}
-
-/**
- * Does not take ownership of "str".
- */
-void MessageGroup::setMsgid(const char *str)
-{
-    assert(m_msgid == NULL);
-
-    m_msgid = xstrdup(str);
-}
-
-/**
- * Does not take ownership of "str".
- */
-void MessageGroup::setMsgidPlural(const char *str)
-{
-    assert(m_msgidPlural == NULL);
-
-    m_msgidPlural = xstrdup(str);
-}
-
-/**
- * Does not take ownership of "str".
- */
-void MessageGroup::setMsgctxt(const char *str)
-{
-    assert(m_msgctxt == NULL);
-
-    m_msgctxt = xstrdup(str);
-}
-
-const char *MessageGroup::msgid() const
-{
-    assert(m_msgid);
-
-    return m_msgid;
-}
-
-/**
- * \brief Returns NULL for messages without plural forms.
- */
-const char *MessageGroup::msgidPlural() const
-{
-    // Checking that m_msgid is initialized. This should mean
-    // that m_msgidPlural is also set (probably, set to NULL).
-    assert(m_msgid);
-
-    return m_msgidPlural;
-}
-
-const char *MessageGroup::msgctxt() const
-{
-    // Checking that m_msgid is initialized. This should mean
-    // that m_msgctxt is also set (probably, set to NULL).
-    assert(m_msgid);
-
-    return m_msgctxt;
-}
-
-bool equalPossiblyNullStrings(const char *a, const char *b)
-{
-    return (a == NULL && b == NULL) ||
-        (a != NULL && b != NULL && !strcmp(a, b));
-}
-
-bool MessageGroup::equalOrigText(const MessageGroup *other) const
-{
-    return !strcmp(msgid(), other->msgid()) &&
-        equalPossiblyNullStrings(msgctxt(), other->msgctxt()) &&
-        equalPossiblyNullStrings(msgidPlural(), other->msgidPlural());
-}
-
-void MessageGroup::updateTranslationFrom(const MessageGroup *from)
-{
-    assert(size() == 1);
-    assert(from->size() == 1);
-
-    delete m_messages[0];
-    m_messages[0] = new Message(*(from->message(0)));
-}
-

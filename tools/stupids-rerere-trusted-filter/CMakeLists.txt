@@ -5,6 +5,8 @@ set (stupids_rerere_trusted_filter_SRCS
 	main.cpp
 )
 
+include_directories(${CMAKE_SOURCE_DIR}/gettextpo-helper)
+
 add_executable (stupids-rerere-trusted-filter ${stupids_rerere_trusted_filter_SRCS})
 target_link_libraries (stupids-rerere-trusted-filter gettextpo_helper)
 

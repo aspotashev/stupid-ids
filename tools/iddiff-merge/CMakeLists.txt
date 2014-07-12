@@ -5,6 +5,8 @@ set (iddiff_merge_SRCS
 	main.cpp
 )
 
+include_directories(${CMAKE_SOURCE_DIR}/gettextpo-helper)
+
 add_executable (iddiff-merge ${iddiff_merge_SRCS})
 target_link_libraries (iddiff-merge gettextpo_helper)
 

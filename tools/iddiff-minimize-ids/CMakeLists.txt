@@ -5,6 +5,8 @@ set (iddiff_minimize_ids_SRCS
 	main.cpp
 )
 
+include_directories(${CMAKE_SOURCE_DIR}/gettextpo-helper)
+
 add_executable (iddiff-minimize-ids ${iddiff_minimize_ids_SRCS})
 target_link_libraries (iddiff-minimize-ids gettextpo_helper)
 

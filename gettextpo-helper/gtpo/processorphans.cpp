@@ -8,66 +8,37 @@
 
 #include <stdexcept>
 
-ProcessOrphansTxtEntry::ProcessOrphansTxtEntry(const char *cmd, const char *origin, const char *destination)
+ProcessOrphansTxtEntry::ProcessOrphansTxtEntry(
+    const std::string& cmd, const std::string& origin, const OptString& destination)
 {
-    if (!strcmp(cmd, "move"))
+    if (cmd == "move")
         m_type = MOVE;
-    else if (!strcmp(cmd, "copy"))
+    else if (cmd == "copy")
         m_type = COPY;
-    else if (!strcmp(cmd, "delete"))
+    else if (cmd == "delete")
         m_type = DELETE;
-    else if (!strcmp(cmd, "merge"))
+    else if (cmd == "merge")
         m_type = MERGE;
-    else if (!strcmp(cmd, "mergekeep"))
+    else if (cmd == "mergekeep")
         m_type = MERGEKEEP;
     else
         throw std::runtime_error("unexpected command: " + std::string(cmd));
-
-
-    assert(origin);
 
     // If command is not "delete", destination must be specified.
     //
     // If command is "delete", destination may
     // contain garbage (for example, SVN revision number).
-    assert(m_type == DELETE || destination != NULL);
+    assert(m_type == DELETE || !destination.isNull());
 
+    m_origin = origin;
+    std::tie(m_origPath, m_origNamePot) = splitFullnamePot(m_origin);
 
-    m_origin = xstrdup(origin);
-    splitFullnamePot(m_origin, &m_origPath, &m_origNamePot);
-
-    m_destination = NULL;
-    m_destPath = NULL;
-    m_destNamePot = NULL;
-    if (m_type != DELETE)
-    {
-        m_destination = xstrdup(destination);
-        splitFullnamePot(m_destination, &m_destPath, &m_destNamePot);
-    }
+    m_destination = destination;
+    std::tie(m_destPath, m_destNamePot) = splitFullnamePot(m_destination);
 }
 
 ProcessOrphansTxtEntry::~ProcessOrphansTxtEntry()
 {
-    delete [] m_origin;
-    m_origin = NULL;
-
-    delete [] m_origPath;
-    m_origPath = NULL;
-
-    delete [] m_origNamePot;
-    m_origNamePot = NULL;
-
-    if (m_type != DELETE)
-    {
-        delete [] m_destination;
-        m_destination = NULL;
-
-        delete [] m_destPath;
-        m_destPath = NULL;
-
-        delete [] m_destNamePot;
-        m_destNamePot = NULL;
-    }
 }
 
 int ProcessOrphansTxtEntry::type() const
@@ -106,47 +77,46 @@ void ProcessOrphansTxtEntry::splitFullname(const char *fullname, char **path, ch
 */
 
 // Adds letter "t" to the end of file name
-void ProcessOrphansTxtEntry::splitFullnamePot(const char *fullname, char **path, char **name)
+//
+// static
+std::pair<std::string, std::string> ProcessOrphansTxtEntry::splitFullnamePot(
+    const std::string& fullname)
 {
-    const char *slash = strrchr(fullname, '/');
-    int path_len = slash - fullname;
+    size_t slashPos = fullname.rfind('/');
+    if (slashPos == std::string::npos)
+        throw std::runtime_error("Not slash found in the whole path to file");
 
-    *path = new char[path_len + 1]; // "+1" for '\0'
-    memcpy(*path, fullname, path_len * sizeof(char));
-    (*path)[path_len] = '\0';
-
-    int name_len = (int)strlen(slash + 1);
-    *name = new char[name_len + 2]; // "+2" for 't' and '\0'
-    memcpy(*name, slash + 1, name_len * sizeof(char));
-    (*name)[name_len] = 't'; // .po -> .pot
-    (*name)[name_len + 1] = '\0';
+    // Make change in basename: .po -> .pot
+    return std::make_pair(
+        fullname.substr(0, slashPos),
+        fullname.substr(slashPos + 1) + std::string("t"));
 }
 
-const char *ProcessOrphansTxtEntry::destNamePot() const
+std::string ProcessOrphansTxtEntry::destNamePot() const
 {
     return m_destNamePot;
 }
 
-const char *ProcessOrphansTxtEntry::destPath() const
+std::string ProcessOrphansTxtEntry::destPath() const
 {
     return m_destPath;
 }
 
-const char *ProcessOrphansTxtEntry::origNamePot() const
+std::string ProcessOrphansTxtEntry::origNamePot() const
 {
     return m_origNamePot;
 }
 
-const char *ProcessOrphansTxtEntry::origPath() const
+std::string ProcessOrphansTxtEntry::origPath() const
 {
     return m_origPath;
 }
 
 //-------------------------------------------------------
 
-ProcessOrphansTxt::ProcessOrphansTxt(const char *filename)
+ProcessOrphansTxt::ProcessOrphansTxt(const std::string& filename)
 {
-    FILE *f = fopen(filename, "r");
+    FILE *f = fopen(filename.c_str(), "r");
     if (!f)
         throw std::runtime_error("Could not open file " + std::string(filename));
 
@@ -184,7 +154,7 @@ ProcessOrphansTxt::ProcessOrphansTxt(const char *filename)
         }
 
 //      printf("cmd = [%s]\norigin = [%s]\ndest = [%s]\n\n", line, origin, destination);
-        m_entries.push_back(new ProcessOrphansTxtEntry(line, origin, destination));
+        m_entries.push_back(new ProcessOrphansTxtEntry(line, origin, OptString(destination)));
     }
 }
 
@@ -197,25 +167,30 @@ ProcessOrphansTxt::~ProcessOrphansTxt()
     }
 }
 
-void ProcessOrphansTxt::findByOrigin(std::vector<const ProcessOrphansTxtEntry *> &dest, const char *name, const char *path, int types = ProcessOrphansTxtEntry::ALL) const
+void ProcessOrphansTxt::findByOrigin(
+    std::vector<const ProcessOrphansTxtEntry*>& dest,
+    const std::string& name, const std::string& path, int types) const
 {
     for (size_t i = 0; i < m_entries.size(); i ++)
         if ((m_entries[i]->type() & types) &&
-            !strcmp(path, m_entries[i]->origPath()) &&
-            !strcmp(name, m_entries[i]->origNamePot()))
+            path == m_entries[i]->origPath() &&
+            name == m_entries[i]->origNamePot())
         {
             dest.push_back(m_entries[i]);
         }
 }
 
-void ProcessOrphansTxt::findByDestination(std::vector<const ProcessOrphansTxtEntry *> &dest, const char *name, const char *path, int types = ProcessOrphansTxtEntry::ALL) const
+void ProcessOrphansTxt::findByDestination(
+    std::vector<const ProcessOrphansTxtEntry*> &dest,
+    const std::string& name,
+    const std::string& path,
+    int types = ProcessOrphansTxtEntry::ALL) const
 {
     for (size_t i = 0; i < m_entries.size(); i ++)
         if ((m_entries[i]->type() & types) &&
-            !strcmp(path, m_entries[i]->destPath()) &&
-            !strcmp(name, m_entries[i]->destNamePot()))
+            path == m_entries[i]->destPath() &&
+            name == m_entries[i]->destNamePot())
         {
             dest.push_back(m_entries[i]);
         }
 }
-

@@ -7,6 +7,8 @@ set (stupids_server_SRCS
 	server.cpp
 )
 
+include_directories(${CMAKE_SOURCE_DIR}/gettextpo-helper)
+
 add_executable (stupids-server ${stupids_server_SRCS})
 target_link_libraries (stupids-server gettextpo_helper)
 

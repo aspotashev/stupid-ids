@@ -1,14 +1,13 @@
-
 #ifndef TRANSLATIONCONTENT_H
 #define TRANSLATIONCONTENT_H
 
-#include <vector>
-#include <string>
+#include <gtpo/filedatetime.h>
 
 #include <gettext-po.h>
 #include <git2.h>
 
-#include <gtpo/filedatetime.h>
+#include <vector>
+#include <string>
 
 class MessageGroup;
 class GitLoaderBase;
@@ -26,7 +25,7 @@ public:
     *
     * \param filename File name.
     */
-    TranslationContent(const char *filename);
+    TranslationContent(const std::string& filename);
 
     /**
     * \brief Constructs a TranslationContent from a Git blob identified by its OID.
@@ -42,37 +41,37 @@ public:
     * \param buffer Buffer.
     * \param len Size of the buffer.
     */
-    TranslationContent(const void *buffer, size_t len);
+    TranslationContent(const void* buffer, size_t len);
 
     ~TranslationContent();
 
     /**
     * \brief Set the filename used for Message objects created by readMessages().
     */
-    void setDisplayFilename(const char *filename);
+    void setDisplayFilename(const std::string& filename);
 
-    const char *displayFilename() const;
+    std::string displayFilename() const;
 
     // Caller should run 'po_file_free'
     po_file_t poFileRead();
 
     const void *getDataBuffer();
     size_t getDataBufferLength();
-    void writeBufferToFile(const char *filename);
+    void writeBufferToFile(const std::string& filename);
 
     const git_oid *gitBlobHash();
     const git_oid *calculateTpHash();
     std::vector<MessageGroup *> readMessages();
-    const FileDateTime &date();
-    const FileDateTime &potDate();
+    const FileDateTime& date();
+    const FileDateTime& potDate();
     std::string author() const;
-    void setAuthor(std::string author);
+    void setAuthor(const std::string& author);
 
     const std::vector<int> &getMinIds();
     int getFirstId();
     int getIdCount();
 
-    void writeToFile(const char *dest_filename, bool force_write);
+    void writeToFile(const std::string& destFilename, bool force_write);
     void writeToFile();
 
     // Does the same as "msgmerge"
@@ -94,23 +93,23 @@ private:
     // for calculateTpHash
     std::string dumpPoFileTemplate();
 
-    void readMessagesInternal(std::vector<MessageGroup *> &dest, bool &destInit);
+    void readMessagesInternal(std::vector<MessageGroup *>& dest, bool& destInit);
 
     void initFirstIdPair();
 
     void assertOk();
 
-    MessageGroup *findMessageGroupByOrig(const MessageGroup *msg);
+    MessageGroup* findMessageGroupByOrig(const MessageGroup* msg);
 
 private:
-    char *m_filename;
-    char *m_displayFilename;
+    std::string m_filename;
+    std::string m_displayFilename;
 
-    GitLoaderBase *m_gitLoader;
-    git_oid *m_oid;
-    git_oid *m_tphash;
+    GitLoaderBase* m_gitLoader;
+    git_oid* m_oid;
+    git_oid* m_tphash;
 
-    const void *m_buffer;
+    const void* m_buffer;
     size_t m_bufferLen;
 
     int m_type;
@@ -141,4 +140,3 @@ private:
 std::vector<MessageGroup *> read_po_file_messages(const char *filename, bool loadObsolete);
 
 #endif // TRANSLATIONCONTENT_H
-

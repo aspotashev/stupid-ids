@@ -1,8 +1,3 @@
-
-#include <stdio.h>
-#include <string.h>
-#include <git2.h>
-
 #include "gettextpo-helper.h"
 #include "translationcontent.h"
 #include "oidmapcache.h"
@@ -11,15 +6,21 @@
 #include "message.h"
 #include "block-sha1/sha1.h"
 #include "filedatetime.h"
+#include "messagegroup.h"
+
+#include <git2.h>
 
 #include <stdexcept>
 
-TranslationContent::TranslationContent(const char *filename)
+#include <stdio.h>
+#include <string.h>
+
+TranslationContent::TranslationContent(const std::string& filename)
 {
     clear();
 
     m_type = TYPE_FILE;
-    m_filename = xstrdup(filename);
+    m_filename = filename;
     setDisplayFilename(filename);
 }
 
@@ -44,16 +45,12 @@ TranslationContent::TranslationContent(const void *buffer, size_t len)
 
 TranslationContent::~TranslationContent()
 {
-    if (m_filename)
-        delete [] m_filename;
     if (m_buffer)
         delete [] (char *)m_buffer;
     if (m_tphash)
         delete m_tphash;
     if (m_oid)
         delete m_oid;
-    if (m_displayFilename)
-        delete [] m_displayFilename;
 
     for (size_t i = 0; i < m_messagesNormal.size(); i ++)
         delete m_messagesNormal[i];
@@ -67,8 +64,8 @@ void TranslationContent::clear()
     m_buffer = NULL;
     m_bufferLen = 0;
     m_tphash = NULL;
-    m_filename = NULL;
-    m_displayFilename = NULL;
+    m_filename = "";
+    m_displayFilename = "";
 
     m_minIdsInit = false;
     m_messagesNormalInit = false;
@@ -76,15 +73,12 @@ void TranslationContent::clear()
     m_idCount = -1;
 }
 
-void TranslationContent::setDisplayFilename(const char *filename)
+void TranslationContent::setDisplayFilename(const std::string& filename)
 {
-    if (m_displayFilename)
-        delete [] m_displayFilename;
-
-    m_displayFilename = xstrdup(filename);
+    m_displayFilename = filename;
 }
 
-const char *TranslationContent::displayFilename() const
+std::string TranslationContent::displayFilename() const
 {
     return m_displayFilename;
 }
@@ -110,9 +104,9 @@ po_file_t TranslationContent::poFileRead()
 
 po_file_t TranslationContent::poreadFile()
 {
-    assert(m_filename);
+    assert(!m_filename.empty());
 
-    return po_file_read(m_filename);
+    return po_file_read(m_filename.c_str());
 }
 
 // TODO: use m_buffer if it is initialized
@@ -156,10 +150,10 @@ const git_oid *TranslationContent::gitBlobHash()
     switch (m_type)
     {
     case TYPE_FILE:
-        f = fopen(m_filename, "r");
+        f = fopen(m_filename.c_str(), "r");
         if (!f)
         {
-            printf("Could not open file %s\n", m_filename);
+            printf("Could not open file %s\n", m_filename.c_str());
 
             delete m_oid;
             m_oid = NULL;
@@ -382,13 +376,13 @@ std::string TranslationContent::dumpPoFileTemplate()
     return res;
 }
 
-void TranslationContent::readMessagesInternal(std::vector<MessageGroup *> &dest, bool &destInit)
+void TranslationContent::readMessagesInternal(std::vector<MessageGroup*> &dest, bool &destInit)
 {
     assert(!destInit);
     assert(dest.size() == 0);
 
     // m_displayFilename will be used as "filename" for all messages
-    assert(m_displayFilename);
+    assert(!m_displayFilename.empty());
 
     po_file_t file = poFileRead();
     po_message_iterator_t iterator = po_message_iterator(file, "messages");
@@ -491,7 +485,7 @@ int TranslationContent::getIdCount()
     return m_idCount;
 }
 
-void TranslationContent::writeToFile(const char *dest_filename, bool force_write)
+void TranslationContent::writeToFile(const std::string& destFilename, bool force_write)
 {
     // Working with file
     po_file_t file = poFileRead();
@@ -527,7 +521,7 @@ void TranslationContent::writeToFile(const char *dest_filename, bool force_write
                         // Check that the number of plural forms has not changed
                         assert(po_message_msgstr_plural(message, i) != NULL);
 
-                        po_message_set_msgstr_plural(message, i, messageObj->msgstr(i));
+                        po_message_set_msgstr_plural(message, i, messageObj->msgstr(i).c_str());
 
                         // TODO: Linus Torvalds says I should fix my program.
                         // See linux-2.6/Documentation/CodingStyle
@@ -540,10 +534,11 @@ void TranslationContent::writeToFile(const char *dest_filename, bool force_write
                 { // without plural forms
                     assert(messageObj->numPlurals() == 1);
 
-                    po_message_set_msgstr(message, messageObj->msgstr(0));
+                    po_message_set_msgstr(message, messageObj->msgstr(0).c_str());
                 }
 
-                po_message_set_comments(message, messageObj->msgcomments() ? messageObj->msgcomments() : "");
+                OptString comments = messageObj->msgcomments();
+                po_message_set_comments(message, comments.isNull() ? "" : comments.c_str());
 
                 madeChanges = true;
             }
@@ -557,7 +552,7 @@ void TranslationContent::writeToFile(const char *dest_filename, bool force_write
     if (force_write || madeChanges)
     {
 //      libgettextpo_message_page_width_set(80);
-        po_file_write(file, dest_filename);
+        po_file_write(file, destFilename.c_str());
     }
 
     // free memory
@@ -639,11 +634,11 @@ void TranslationContent::loadToBuffer()
     }
 }
 
-void TranslationContent::writeBufferToFile(const char *filename)
+void TranslationContent::writeBufferToFile(const std::string& filename)
 {
     loadToBuffer();
 
-    FILE *f = fopen(filename, "w");
+    FILE *f = fopen(filename.c_str(), "w");
     assert(f);
     assert(fwrite(m_buffer, 1, m_bufferLen, f) == m_bufferLen);
     fclose(f);
@@ -655,7 +650,7 @@ void TranslationContent::assertOk()
         assert(m_minIds.size() == m_messagesNormal.size());
 }
 
-const FileDateTime &TranslationContent::date()
+const FileDateTime& TranslationContent::date()
 {
     if (!m_messagesNormalInit)
     {
@@ -666,7 +661,7 @@ const FileDateTime &TranslationContent::date()
     return m_date;
 }
 
-const FileDateTime &TranslationContent::potDate()
+const FileDateTime& TranslationContent::potDate()
 {
     if (!m_messagesNormalInit)
     {
@@ -682,7 +677,7 @@ std::string TranslationContent::author() const
     return m_author;
 }
 
-void TranslationContent::setAuthor(std::string author)
+void TranslationContent::setAuthor(const std::string& author)
 {
     m_author = author;
 }
@@ -720,7 +715,7 @@ void TranslationContent::copyTranslationsFrom(TranslationContent *from_content)
     m_gitLoader = NULL;
     m_buffer = NULL;
     m_bufferLen = 0;
-    m_filename = NULL;
+    m_filename = "";
 
 
     std::vector<MessageGroup *> from = from_content->readMessages();

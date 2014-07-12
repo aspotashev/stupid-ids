@@ -77,7 +77,7 @@ class DetectorBase
 {
 public:
     DetectorBase();
-    ~DetectorBase();
+    virtual ~DetectorBase();
 
     void detect();
 
@@ -86,14 +86,13 @@ public:
     void dumpPairs(std::vector<GitOidPair> &dest) const;
 
 protected:
-    void addOidPair(const git_oid *oid1, const git_oid *oid2);
+    void addOidPair(const git_oid* oid1, const git_oid* oid2);
     virtual void doDetect() = 0;
 
 private:
-    GitOidPair *m_oidPairs;
+    GitOidPair* m_oidPairs;
     int m_maxPairs;
     int m_nPairs;
 };
 
 #endif // DETECTORBASE_H
-

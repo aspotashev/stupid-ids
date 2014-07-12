@@ -10,11 +10,11 @@
 class OidMapCache
 {
 public:
-    OidMapCache(const char *filename);
+    OidMapCache(const std::string& filename);
     ~OidMapCache();
 
     void loadCache();
-    void createDir(const char *pathname);
+    void createDir(const std::string& pathname);
     void createPathDirectories();
 
     const git_oid *getValue(const git_oid *oid);
@@ -22,7 +22,7 @@ public:
     void addPair(const git_oid *oid, const git_oid *tp_hash);
 
 private:
-    char *m_filename;
+    std::string m_filename;
     bool m_fileExists;
     std::vector<std::pair<GitOid, GitOid> > m_cache;
 };

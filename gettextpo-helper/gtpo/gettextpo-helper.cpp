@@ -4,6 +4,7 @@
 #include "mappedfile.h"
 #include "translationcontent.h"
 #include "iddiff.h"
+#include "messagegroup.h"
 
 #include <cstdio>
 #include <cstring>
@@ -11,17 +12,6 @@
 
 #include <stdexcept>
 #include <memory>
-
-char *xstrdup(const char *str)
-{
-    size_t len = strlen(str);
-    char *dup = new char [len + 1];
-    strcpy(dup, str);
-
-    return dup;
-}
-
-//------------------------------
 
 class ExceptionMessageInfo
 {
@@ -299,40 +289,11 @@ int get_pot_length(const char *filename)
 
 //-------- Coupling IDs of equal messages in different .po/.pot files -------
 
-int strcmp_null(const char *a, const char *b)
-{
-    if (a == NULL)
-    {
-        if (b == NULL)
-            return 0; // NULL == NULL
-        else // b != NULL
-            return -1; // NULL is less than any string
-    }
-    else // a != NULL
-    {
-        if (b == NULL)
-            return 1; // NULL is less than any string
-        else // b != NULL
-            return strcmp(a, b);
-    }
-}
-
 struct MessageGroupMsgidCompare
 {
-    bool operator() (const MessageGroup *a, const MessageGroup *b) const
+    bool operator() (const MessageGroup* a, const MessageGroup* b) const
     {
-        int cmp1 = strcmp_null(a->msgctxt(), b->msgctxt());
-        int cmp2 = strcmp_null(a->msgid(), b->msgid());
-        int cmp3 = strcmp_null(a->msgidPlural(), b->msgidPlural());
-
-        if (cmp1 < 0)
-            return true;
-        else if (cmp1 == 0 && cmp2 < 0)
-            return true;
-        else if (cmp1 == 0 && cmp2 == 0 && cmp3 < 0)
-            return true;
-        else
-            return false;
+        return a->compareByMsgid(*b);
     }
 };
 

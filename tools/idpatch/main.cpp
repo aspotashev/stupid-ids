@@ -1,12 +1,11 @@
+#include <gtpo/translation-collector.h>
+#include <gtpo/iddiff.h>
+#include <gtpo/config.h>
 
-#include <assert.h>
-#include <stdio.h>
 #include <iostream>
-
-#include <gettextpo-helper/translation-collector.h>
-#include <gettextpo-helper/iddiff.h>
-#include <gettextpo-helper/config.h>
-
+#include <cassert>
+#include <cstdio>
+#include <cstring>
 
 int main(int argc, char *argv[])
 {

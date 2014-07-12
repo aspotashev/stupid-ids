@@ -1,12 +1,14 @@
+#include <gtpo/translationcontent.h>
+#include <gtpo/iddiff.h>
+#include <gtpo/gitloader.h>
+#include <gtpo/repository.h>
+#include <gtpo/commit.h>
+#include <gtpo/commitfilechange.h>
+
+#include <iostream>
 
 #include <assert.h>
 #include <stdio.h>
-#include <iostream>
-
-#include <gettextpo-helper/translationcontent.h>
-#include <gettextpo-helper/iddiff.h>
-#include <gettextpo-helper/gitloader.h>
-
 
 int main(int argc, char *argv[])
 {
@@ -16,7 +18,7 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	Repository *repo = new Repository(argv[1]);
+	Repository* repo = new Repository(argv[1]);
 	const char *input_oid_str = argv[2];
 	repo->readRepositoryCommits();
 
@@ -27,7 +29,8 @@ int main(int argc, char *argv[])
 	int commit_index = repo->commitIndexByOid(&input_oid);
 	if (commit_index < 0)
 	{
-		printf("No commit with OID %s in the Git repository at %s\n", input_oid_str, repo->gitDir());
+		printf("No commit with OID %s in the Git repository at %s\n",
+                       input_oid_str, repo->gitDir().c_str());
 		assert(0);
 	}
 

@@ -1,6 +1,12 @@
 #ifndef MESSAGETRANSLATIONBASE_H
 #define MESSAGETRANSLATIONBASE_H
 
+#include <gtpo/optstring.h>
+
+#include <gettext-po.h>
+
+#include <vector>
+
 /**
  * @brief Base class for classes that contain message translation (classes IddiffMessage, Message).
  **/
@@ -23,7 +29,7 @@ public:
      * @brief Frees memory allocated for message translations.
      *
      **/
-    ~MessageTranslationBase();
+    virtual ~MessageTranslationBase();
 
     /**
      * @brief Escape special symbols and put in quotes.
@@ -33,7 +39,7 @@ public:
      * @param str Input string to escape.
      * @return Escaped string.
      **/
-    static std::string formatString(const char *str);
+    static std::string formatString(const std::string& str);
 
     /**
      * @brief Format message translations as [f]"form1"[ "form2" ... "formN"]
@@ -47,10 +53,10 @@ public:
     /**
      * @brief Returns a const pointer to a particular translation form.
      *
-     * @param plural_form Index of translation form.
+     * @param index Index of translation form.
      * @return Pointer to buffer.
      **/
-    const char *msgstr(int plural_form) const;
+    OptString msgstr(size_t index) const;
 
     /**
      * @brief Sets the translation in one of the forms.
@@ -58,7 +64,7 @@ public:
      * @param index Index of plural form.
      * @param str Translation text, will be copied to a newly allocated buffer.
      **/
-    void setMsgstr(int index, const char *str);
+    void setMsgstr(size_t index, const OptString& str);
 
     /**
      * @brief Returns the number of plural forms in translation.
@@ -67,6 +73,11 @@ public:
      * Equals 1 if the string does not use plural forms.
      **/
     int numPlurals() const;
+
+    /**
+     * @brief Returns whether the message uses plural forms.
+     **/
+    bool isPlural() const;
 
     /**
      * @brief Returns whether message has the "fuzzy" flag.
@@ -82,7 +93,7 @@ public:
      * @param o Other message.
      * @return Whether msgstr[*] are equal in two messages.
      **/
-    bool equalMsgstr(const MessageTranslationBase *o) const;
+    bool equalMsgstr(const MessageTranslationBase* o) const;
 
     /**
      * @brief Returns whether all translations and state of
@@ -99,7 +110,7 @@ protected:
     /**
      * @brief Initialize an empty message (without any translations).
      **/
-    virtual void clear();
+//     virtual void clear();
 
     /**
      * @brief Initializes m_numPlurals given the value returned from po_message_n_plurals().
@@ -111,15 +122,17 @@ protected:
      *
      * @return Whether the message uses plural forms.
      **/
-    bool setNPluralsPacked(int n_plurals);
+//     bool setNPluralsPacked(int n_plurals);
 
     static std::string formatPoMessage(po_message_t message);
 
 protected:
-    const static int MAX_PLURAL_FORMS = 4; // increase this if you need more plural forms
-    int m_numPlurals; // =1 if the message does not use plural forms
-    char *m_msgstr[MAX_PLURAL_FORMS];
+    // Arabic uses 6 plural forms, TBD: grow this at run-time
+//     const static int MAX_PLURAL_FORMS = 6;
+//     int m_numPlurals; // =1 if the message does not use plural forms
+    bool m_plural;
     bool m_fuzzy;
+    std::vector<OptString> m_msgstr;
 };
 
 #endif // MESSAGETRANSLATIONBASE_H

@@ -2,15 +2,17 @@
 #include "messageeditorwidget.h"
 
 #include <assert.h>
-#include <gettextpo-helper/detectorbase.h>
-#include <gettextpo-helper/message.h>
+#include <gtpo/detectorbase.h>
+#include <gtpo/message.h>
 
 #include <QtGui/QGridLayout>
 #include <QtGui/QLabel>
 #include <QtGui/QPainter>
 
-MessageTranslationOption::MessageTranslationOption(MessageEditorWidget *editor, Message *message):
-    QWidget(), m_editor(editor), m_message(message)
+MessageTranslationOption::MessageTranslationOption(MessageEditorWidget* editor, Message* message)
+    : QWidget()
+    , m_editor(editor)
+    , m_message(message)
 {
     assert(message);
 
@@ -28,14 +30,14 @@ MessageTranslationOption::MessageTranslationOption(MessageEditorWidget *editor, 
 
     QLabel *label;
 
-    label = new QLabel(QString::fromUtf8(message->msgstr(0)));
+    label = new QLabel(QString::fromStdString(message->msgstr(0)));
     label->setWordWrap(true);
     label->setTextFormat(Qt::PlainText);
     if (message->isFuzzy())
         label->setPalette(pal_fuzzy);
     layout->addWidget(label, 0, 0);
 
-    label = new QLabel(QString::fromUtf8(message->msgcomments()));
+    label = new QLabel(QString::fromStdString(message->msgcomments()));
     label->setWordWrap(true);
     label->setTextFormat(Qt::PlainText);
     if (message->isFuzzy())

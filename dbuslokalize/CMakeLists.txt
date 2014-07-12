@@ -5,7 +5,10 @@ project(dbuslokalize)
 # DBus
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(dbus-glib REQUIRED dbus-glib-1)
-include_directories(${dbus-glib_INCLUDE_DIRS})
+include_directories(
+    ${dbus-glib_INCLUDE_DIRS}
+    ${CMAKE_SOURCE_DIR}/gettextpo-helper
+)
 
 set(dbuslokalize_LIB_SRCS
 	dbuslokalize.cpp

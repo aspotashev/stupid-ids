@@ -1,19 +1,19 @@
-
-#include <string.h>
-#include <stdio.h>
-#include <dirent.h>
-#include <algorithm>
-
 #include "translation-collector.h"
 #include "gettextpo-helper.h"
 #include "stupids-client.h"
 #include "translationcontent.h"
 #include "message.h"
 #include "gitloader.h"
+#include "messagegroup.h"
+
+#include <string.h>
+#include <stdio.h>
+#include <dirent.h>
+#include <algorithm>
 
 StupIdTranslationCollector::StupIdTranslationCollector()
 {
-    m_trans = std::map<int, MessageGroup *>();
+    m_trans = std::map<int, MessageGroup*>();
     m_transInit = false;
 }
 
@@ -21,7 +21,7 @@ StupIdTranslationCollector::~StupIdTranslationCollector()
 {
 }
 
-void StupIdTranslationCollector::insertPo(const char *filename)
+void StupIdTranslationCollector::insertPo(const std::string& filename)
 {
     TranslationContent *content = new TranslationContent(filename);
     insertPo(content); // takes ownership of "content"
@@ -34,36 +34,36 @@ void StupIdTranslationCollector::insertPo(TranslationContent *content)
 }
 
 // Takes ownership of the buffer.
-void StupIdTranslationCollector::insertPo(const void *buffer, size_t len, const char *filename)
+void StupIdTranslationCollector::insertPo(const void* buffer, size_t len, const std::string& filename)
 {
     TranslationContent *content = new TranslationContent(buffer, len);
     content->setDisplayFilename(filename);
     insertPo(content); // takes ownership of "content"
 }
 
-void StupIdTranslationCollector::insertPoDir(const char *directory_path)
+void StupIdTranslationCollector::insertPoDir(const std::string& directory_path)
 {
-    DIR *dir = opendir(directory_path);
+    // TBD: rewrite away from C
+    DIR *dir = opendir(directory_path.c_str());
     struct dirent *entry;
     while ((entry = readdir(dir)))
     {
-        const char *d_name = entry->d_name;
-        char *fullpath = concat_path(directory_path, d_name);
+        std::string d_name(entry->d_name);
+        std::string fullpath = directory_path + "/" + d_name;
 
-        if (entry->d_type == DT_REG && ends_with(d_name, ".po"))
+        if (entry->d_type == DT_REG && ends_with(d_name.c_str(), ".po"))
             insertPo(fullpath);
         else if (entry->d_type == DT_DIR && !is_dot_or_dotdot(d_name))
             insertPoDir(fullpath);
-
-        delete [] fullpath;
     }
 
     closedir(dir);
 }
 
-bool file_exists(const char *filename)
+bool file_exists(const std::string& filename)
 {
-    FILE *f = fopen(filename, "r");
+    // TBD: rewrite away from C
+    FILE *f = fopen(filename.c_str(), "r");
     if (f)
         fclose(f);
 
@@ -71,7 +71,7 @@ bool file_exists(const char *filename)
 }
 
 void StupIdTranslationCollector::insertPoOrTemplate(
-    const char *template_path, const char *translation_path)
+    const std::string& template_path, const std::string& translation_path)
 {
     TranslationContent *content = NULL;
 
@@ -90,26 +90,26 @@ void StupIdTranslationCollector::insertPoOrTemplate(
 }
 
 void StupIdTranslationCollector::insertPoDirOrTemplate(
-    const char *templates_path, const char *translations_path)
+    const std::string& templates_path, const std::string& translations_path)
 {
-    DIR *dir = opendir(templates_path);
+    // TBD: rewrite away from C
+    DIR *dir = opendir(templates_path.c_str());
     struct dirent *entry;
     while ((entry = readdir(dir)))
     {
-        const char *d_name = entry->d_name;
-        char *templ_subpath = concat_path(templates_path, d_name);
-        char *trans_subpath = concat_path(translations_path, d_name);
+        std::string d_name(entry->d_name);
+        std::string templ_subpath = templates_path + "/" + d_name;
+        std::string trans_subpath = translations_path + "/" + d_name;
 
         if (entry->d_type == DT_REG && ends_with(d_name, ".pot"))
         {
-            trans_subpath[strlen(trans_subpath) - 1] = '\0'; // .pot -> .po
+            // .pot -> .po
+            trans_subpath = trans_subpath.substr(0, trans_subpath.size() - 1);
+
             insertPoOrTemplate(templ_subpath, trans_subpath);
         }
         else if (entry->d_type == DT_DIR && !is_dot_or_dotdot(d_name))
             insertPoDirOrTemplate(templ_subpath, trans_subpath);
-
-        delete [] templ_subpath;
-        delete [] trans_subpath;
     }
 
     closedir(dir);

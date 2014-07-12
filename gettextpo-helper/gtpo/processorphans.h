@@ -1,5 +1,7 @@
+#include "optstring.h"
 
 #include <vector>
+#include <string>
 
 class ProcessOrphansTxtEntry
 {
@@ -14,32 +16,34 @@ public:
         ALL = MOVE | COPY | DELETE | MERGE | MERGEKEEP
     };
 
-
-    ProcessOrphansTxtEntry(const char *cmd, const char *origin, const char *destination);
+    ProcessOrphansTxtEntry(
+        const std::string& cmd,
+        const std::string& origin, const OptString& destination);
     ~ProcessOrphansTxtEntry();
 
     int type() const;
 
 //  const char *origin() const;
-    const char *origNamePot() const;
-    const char *origPath() const;
+    std::string origNamePot() const;
+    std::string origPath() const;
 
 //  const char *destination() const;
-    const char *destNamePot() const;
-    const char *destPath() const;
+    std::string destNamePot() const;
+    std::string destPath() const;
 
 protected:
-    static void splitFullnamePot(const char *fullname, char **path, char **name);
+    // Returns pathname and basename
+    static std::pair<std::string, std::string> splitFullnamePot(const std::string& fullname);
 
 private:
     int m_type;
-    char *m_origin;
-    char *m_destination;
+    std::string m_origin;
+    std::string m_destination;
 
-    char *m_destPath;
-    char *m_destNamePot;
-    char *m_origPath;
-    char *m_origNamePot;
+    std::string m_destPath;
+    std::string m_destNamePot;
+    std::string m_origPath;
+    std::string m_origNamePot;
 };
 
 //-------------------------------------------------------
@@ -47,11 +51,19 @@ private:
 class ProcessOrphansTxt
 {
 public:
-    ProcessOrphansTxt(const char *filename);
+    ProcessOrphansTxt(const std::string& filename);
     ~ProcessOrphansTxt();
 
-    void findByOrigin(std::vector<const ProcessOrphansTxtEntry *> &dest, const char *name, const char *path, int types) const;
-    void findByDestination(std::vector<const ProcessOrphansTxtEntry *> &dest, const char *name, const char *path, int types) const;
+    void findByOrigin(
+        std::vector<const ProcessOrphansTxtEntry *>& dest,
+        const std::string& name,
+        const std::string& path,
+        int types) const;
+    void findByDestination(
+        std::vector<const ProcessOrphansTxtEntry*> &dest,
+        const std::string& name,
+        const std::string& path,
+        int types) const;
 
 private:
     std::vector<ProcessOrphansTxtEntry *> m_entries;

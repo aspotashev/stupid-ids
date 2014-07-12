@@ -1,8 +1,7 @@
+#include <gtpo/gettextpo-helper.h>
+#include <gtpo/translationcontent.h>
 
 #include <fstream>
-
-#include <gettextpo-helper/gettextpo-helper.h>
-#include <gettextpo-helper/translationcontent.h>
 
 int main(int argc, char *argv[])
 {
@@ -18,4 +17,3 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
-

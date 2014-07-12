@@ -1,3 +1,4 @@
+#include <string>
 
 struct _DBusGConnection;
 typedef struct _DBusGConnection DBusGConnection;
@@ -16,7 +17,7 @@ public:
 	void gotoEntry(int entry);
 	void addTemporaryEntryNote(int entry, const char *note);
 	void clearTemporaryEntryNotes(int entry);
-	void openSyncSource(const char *filename);
+	void openSyncSource(const std::string& filename);
 
 private:
 	DBusGProxy *m_proxy;
@@ -34,17 +35,16 @@ public:
 	void disconnect();
 
 	int getPid();
-	DBusLokalizeEditor *openFileInEditor(const char *filename);
+	DBusLokalizeEditor *openFileInEditor(const std::string& filename);
 
 protected:
-	DBusGProxy *createProxy(const char *service, const char *path, const char *interface);
+	DBusGProxy *createProxy(const std::string& service, const char *path, const char *interface);
 	DBusGProxy *createEditorProxy(int index);
 
 private:
-	static bool s_gTypeInit;
+    static bool s_gTypeInit;
 
-	char *m_lokalizeInstance;
-	DBusGConnection *m_connection;
-	DBusGProxy *m_proxy;
+    std::string m_lokalizeInstance;
+    DBusGConnection* m_connection;
+    DBusGProxy* m_proxy;
 };
-

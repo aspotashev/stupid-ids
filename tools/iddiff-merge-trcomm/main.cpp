@@ -1,8 +1,6 @@
+#include <gtpo/iddiff.h>
 
 #include <assert.h>
-
-#include <gettextpo-helper/iddiff.h>
-
 
 // TODO: merge into "tools/iddiff-merge" (as optional mode)
 int main(int argc, char *argv[])

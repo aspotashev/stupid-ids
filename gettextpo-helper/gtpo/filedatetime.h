@@ -1,9 +1,10 @@
 #ifndef FILEDATETIME_H
 #define FILEDATETIME_H
 
-#include <time.h>
-#include <string>
 #include <git2.h>
+
+#include <string>
+#include <ctime>
 
 class FileDateTime
 {
@@ -15,17 +16,17 @@ public:
      *
      * @param o FileDateTime to copy from.
      **/
-    FileDateTime(const FileDateTime &o);
+    FileDateTime(const FileDateTime& o);
 
     FileDateTime(git_time_t date);
 
     std::string dateString() const;
     void clear();
     bool isNull() const;
-    void fromString(const char *str);
+    void fromString(const std::string& str);
     void setCurrentDateTime();
-    bool operator<(const FileDateTime &o) const;
-    bool operator>(const FileDateTime &o) const;
+    bool operator<(const FileDateTime& o) const;
+    bool operator>(const FileDateTime& o) const;
 
     void addSeconds(int seconds);
     FileDateTime plusSeconds(int seconds) const;
@@ -43,4 +44,3 @@ private:
 };
 
 #endif // FILEDATETIME_H
-

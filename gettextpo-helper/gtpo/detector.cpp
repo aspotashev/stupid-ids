@@ -1,17 +1,22 @@
+#include "detector.h"
+#include "gitloader.h"
+#include "processorphans.h"
+#include "commitfilechange.h"
+#include "repository.h"
+#include "commit.h"
 
-#include <stdio.h>
-#include <assert.h>
 #include <algorithm>
 #include <map>
 #include <set>
 #include <stdexcept>
+#include <iostream>
 
-#include "detector.h"
-#include "gitloader.h"
-#include "processorphans.h"
+#include <cassert>
 
-DetectorSuccessors::DetectorSuccessors(Repository *repo, ProcessOrphansTxt *transitions = NULL):
-    m_repo(repo), m_transitions(transitions)
+DetectorSuccessors::DetectorSuccessors(
+    Repository* repo, ProcessOrphansTxt* transitions = nullptr)
+    : m_repo(repo)
+    , m_transitions(transitions)
 {
 }
 
@@ -19,10 +24,12 @@ DetectorSuccessors::~DetectorSuccessors()
 {
 }
 
-void DetectorSuccessors::processChange(int commit_index, int change_index, const CommitFileChange *change)
+void DetectorSuccessors::processChange(
+    int commit_index, int change_index,
+    const CommitFileChange* change)
 {
     const git_oid *oid;
-    std::vector<const ProcessOrphansTxtEntry *> transitions;
+    std::vector<const ProcessOrphansTxtEntry*> transitions;
 
     switch (change->type())
     {
@@ -36,7 +43,7 @@ void DetectorSuccessors::processChange(int commit_index, int change_index, const
             m_transitions->findByOrigin(transitions, change->name(), change->path(), ProcessOrphansTxtEntry::MOVE | ProcessOrphansTxtEntry::MERGE);
             for (size_t i = 0; i < transitions.size(); i ++)
             {
-                const ProcessOrphansTxtEntry *entry = transitions[i];
+                const ProcessOrphansTxtEntry* entry = transitions[i];
 
                 oid = m_repo->findNextUpdateOid(std::max(commit_index - 20, 0), entry->destNamePot(), entry->destPath());
                 if (oid)
@@ -94,7 +101,7 @@ void DetectorSuccessors::doDetect()
 
 //-------------------------------------------------------
 
-DetectorInterBranch::DetectorInterBranch(Repository *repo_a, Repository *repo_b):
+DetectorInterBranch::DetectorInterBranch(Repository* repo_a, Repository* repo_b):
     m_repoA(repo_a), m_repoB(repo_b)
 {
 }
@@ -136,7 +143,7 @@ void DetectorInterBranch::doDetect()
 
     for (int i = 0; i < m_repoA->nCommits(); i ++)
     {
-        const Commit *commit = m_repoA->commit(i);
+        const Commit* commit = m_repoA->commit(i);
         for (int j = 0; j < commit->nChanges(); j ++)
             processChange(m_repoA, m_repoB, i, j, commit->change(j));
     }
@@ -234,11 +241,11 @@ void clusterStats(Repository *repo, Repository *repo_stable, std::vector<GitOidP
 //      if (!strcmp(allOids[cluster[0]].change()->name(), "katesnippets_tng.pot"))
         if (cluster.size() < 3)
         {
-            printf("%d\n", (int)cluster.size());
+            std::cout << cluster.size() << std::endl;
             for (size_t i = 0; i < cluster.size(); i ++)
             {
                 const CommitFileChange *change = allOids[cluster[i]].change();
-                printf("%s/%s\n", change->path(), change->name());
+                std::cout << change->path() << "/" << change->name() << std::endl;
             }
         }
     }
@@ -278,14 +285,14 @@ void writePairToFile(std::vector<GitOidPair> &allPairs, const char *out_file)
 
 //-------------------------------------------------------
 
-void detectTransitions(std::vector<GitOidPair> &dest, const char *path_trunk, const char *path_stable, const char *path_proorph)
+void detectTransitions(std::vector<GitOidPair> &dest, const char* path_trunk, const char *path_stable, const char *path_proorph)
 {
-    Repository *repo = new Repository(path_trunk);
-    Repository *repo_stable = new Repository(path_stable);
+    Repository* repo = new Repository(path_trunk);
+    Repository* repo_stable = new Repository(path_stable);
     ProcessOrphansTxt transitions(path_proorph);
 
     // Run detectors
-    std::vector<DetectorBase *> detectors;
+    std::vector<DetectorBase*> detectors;
     detectors.push_back(new DetectorSuccessors(repo, &transitions));
     detectors.push_back(new DetectorSuccessors(repo_stable, &transitions));
     detectors.push_back(new DetectorInterBranch(repo, repo_stable));

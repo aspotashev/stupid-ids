@@ -1,15 +1,18 @@
+#include <gtpo/translation-collector.h>
+#include <gtpo/iddiff.h>
+#include <gtpo/gettextpo-helper.h>
+#include <gtpo/translationcontent.h>
+#include <gtpo/detectorbase.h>
+#include <gtpo/messagegroup.h>
 
-#include <stdio.h>
+#include <dbuslokalize.h>
+
+#include <sys/stat.h>
+
 #include <set>
 #include <sstream>
 
-#include <gettextpo-helper/translation-collector.h>
-#include <gettextpo-helper/iddiff.h>
-#include <gettextpo-helper/gettextpo-helper.h>
-#include <gettextpo-helper/translationcontent.h>
-#include <gettextpo-helper/detectorbase.h>
-#include <dbuslokalize.h>
-#include <sys/stat.h>
+#include <cstdio>
 
 class GreedyIddiffCoverage
 {
@@ -89,61 +92,60 @@ TranslationContent *GreedyIddiffCoverage::nextContent()
 
 int main(int argc, char *argv[])
 {
-	assert(argc == 2); // 1 argument
-	const char *input_iddiff = argv[1];
+    assert(argc == 2); // 1 argument
+    const char *input_iddiff = argv[1];
 
-	DBusLokalizeInterface lokalize;
+    DBusLokalizeInterface lokalize;
 
-	StupIdTranslationCollector collector;
-	collector.insertPoDirOrTemplate(
-		"/home/sasha/kde-ru/xx-numbering/templates",
-		"/home/sasha/kde-ru/kde-ru-trunk.git");
-	collector.insertPoDirOrTemplate(
-		"/home/sasha/kde-ru/xx-numbering/stable-templates",
-		"/home/sasha/kde-ru/kde-l10n-ru-stable");
+    StupIdTranslationCollector collector;
+    collector.insertPoDirOrTemplate(
+        "/home/sasha/kde-ru/xx-numbering/templates",
+        "/home/sasha/kde-ru/kde-ru-trunk.git");
+    collector.insertPoDirOrTemplate(
+        "/home/sasha/kde-ru/xx-numbering/stable-templates",
+        "/home/sasha/kde-ru/kde-l10n-ru-stable");
 
-	Iddiffer *diff = new Iddiffer();
-	diff->loadIddiff(input_iddiff);
-	GreedyIddiffCoverage cover(&collector, diff);
+    Iddiffer *diff = new Iddiffer();
+    diff->loadIddiff(input_iddiff);
+    GreedyIddiffCoverage cover(&collector, diff);
 
-	TranslationContent *content = NULL;
-	while ((content = cover.nextContent()))
-	{
-		printf("Reviewing content: %s\n", content->displayFilename());
+    TranslationContent *content = NULL;
+    while ((content = cover.nextContent()))
+    {
+        printf("Reviewing content: %s\n", content->displayFilename().c_str());
 
-		std::ostringstream tempdir;
-		tempdir << "/tmp/lk-iddiff-" << (int)time(NULL);
-		tempdir << "_" << GitOid(content->gitBlobHash()).toString();
-		std::string tempdir_str = tempdir.str();
+        std::ostringstream tempdir;
+        tempdir << "/tmp/lk-iddiff-" << (int)time(NULL);
+        tempdir << "_" << GitOid(content->gitBlobHash()).toString();
+        std::string tempdir_str = tempdir.str();
 
         assert(mkdir(tempdir_str.c_str(), 0777) == 0);
 
-		const char *file_a = xstrdup((tempdir_str + std::string("/") + path_to_basename(content->displayFilename())).c_str());
-		const char *file_b = xstrdup((tempdir_str + "/merge_from.po").c_str());
+        std::string file_a = tempdir_str + std::string("/") + path_to_basename(content->displayFilename());
+        std::string file_b = tempdir_str + "/merge_from.po";
 
-		content->writeToFile(file_a, true);
-		diff->applyToContent(content);
-		content->writeToFile(file_b, true);
+        content->writeToFile(file_a, true);
+        diff->applyToContent(content);
+        content->writeToFile(file_b, true);
 
-		DBusLokalizeEditor *editor = lokalize.openFileInEditor(file_a);
-		editor->openSyncSource(file_b);
+        DBusLokalizeEditor* editor = lokalize.openFileInEditor(file_a);
+        editor->openSyncSource(file_b);
 
-		editor->setEntriesFilteredOut(true);
+        editor->setEntriesFilteredOut(true);
 
-		std::vector<MessageGroup *> messages = content->readMessages();
-		bool gotoEntryCalled = false;
-		for (size_t i = 0; i < messages.size(); i ++)
-			if (messages[i]->message(0)->isEdited())
-			{
-				editor->setEntryFilteredOut(i, false);
-				if (!gotoEntryCalled)
-				{
-					editor->gotoEntry(i);
-					gotoEntryCalled = true;
-				}
-			}
-	}
+        std::vector<MessageGroup*> messages = content->readMessages();
+        bool gotoEntryCalled = false;
+        for (size_t i = 0; i < messages.size(); i ++)
+            if (messages[i]->message(0)->isEdited())
+            {
+                editor->setEntryFilteredOut(i, false);
+                if (!gotoEntryCalled)
+                {
+                    editor->gotoEntry(i);
+                    gotoEntryCalled = true;
+                }
+            }
+    }
 
-	return 0;
+    return 0;
 }
-

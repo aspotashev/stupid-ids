@@ -1,9 +1,7 @@
+#include <gtpo/oidmapcache.h>
 
-#include <assert.h>
 #include <iostream>
-
-#include <gettextpo-helper/oidmapcache.h>
-
+#include <cassert>
 
 // Input: tp_hash
 // Output: list of OIDs

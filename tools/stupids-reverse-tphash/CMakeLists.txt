@@ -5,6 +5,8 @@ set (stupids_reverse_tphash_SRCS
 	main.cpp
 )
 
+include_directories(${CMAKE_SOURCE_DIR}/gettextpo-helper)
+
 add_executable (stupids-reverse-tphash ${stupids_reverse_tphash_SRCS})
 target_link_libraries (stupids-reverse-tphash gettextpo_helper)
 

@@ -1,5 +1,4 @@
-
-#include <gettextpo-helper/translation-collector.h>
+#include <gtpo/translation-collector.h>
 
 #include <QtCore/QString>
 
@@ -9,4 +8,3 @@ public:
 	void insertPo(QString path);
 	void insertPoDir(QString directory_path);
 };
-

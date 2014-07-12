@@ -13,13 +13,13 @@ public:
     StupIdTranslationCollector();
     ~StupIdTranslationCollector();
 
-    void insertPo(const char *filename);
+    void insertPo(const std::string& filename);
     void insertPo(TranslationContent *content);
-    void insertPo(const void *buffer, size_t len, const char *filename);
-    void insertPoDir(const char *directory_path);
+    void insertPo(const void *buffer, size_t len, const std::string& filename);
+    void insertPoDir(const std::string& directory_path);
 
-    void insertPoOrTemplate(const char *template_path, const char *translation_path);
-    void insertPoDirOrTemplate(const char *templates_path, const char *translations_path);
+    void insertPoOrTemplate(const std::string& template_path, const std::string& translation_path);
+    void insertPoDirOrTemplate(const std::string& templates_path, const std::string& translations_path);
 
     void initTransConfl();
     // Cannot be 'const', because there is no const 'std::map::operator []'.

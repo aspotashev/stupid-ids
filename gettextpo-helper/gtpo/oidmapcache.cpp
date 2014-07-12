@@ -15,9 +15,9 @@
 
 std::map<std::string, OidMapCache *> OidMapCacheManager::s_instances = std::map<std::string, OidMapCache *>();
 
-OidMapCache::OidMapCache(const char *filename)
+OidMapCache::OidMapCache(const std::string& filename)
 {
-    m_filename = xstrdup(filename);
+    m_filename = filename;
     m_fileExists = false;
 
     loadCache();
@@ -25,7 +25,6 @@ OidMapCache::OidMapCache(const char *filename)
 
 OidMapCache::~OidMapCache()
 {
-    delete [] m_filename;
 }
 
 void OidMapCache::loadCache()
@@ -33,7 +32,7 @@ void OidMapCache::loadCache()
     assert(m_cache.empty());
 
     // Read the contents of the file
-    FILE *f = fopen(m_filename, "a+b");
+    FILE *f = fopen(m_filename.c_str(), "a+b");
     if (!f)
     {
         m_fileExists = false;
@@ -64,13 +63,13 @@ void OidMapCache::loadCache()
     fclose(f);
 }
 
-void OidMapCache::createDir(const char *pathname)
+void OidMapCache::createDir(const std::string& pathname)
 {
-    DIR *dir = opendir(pathname);
+    DIR *dir = opendir(pathname.c_str());
     if (dir) // directory exists
         assert(closedir(dir) == 0);
     else if (errno == ENOENT)
-        assert(mkdir(pathname, 0777) == 0);
+        assert(mkdir(pathname.c_str(), 0777) == 0);
     else
         assert(0); // unexpected error
 }
@@ -78,10 +77,12 @@ void OidMapCache::createDir(const char *pathname)
 void OidMapCache::createPathDirectories()
 {
     // "a/b" is the minimum directory+file name.
-    if (strlen(m_filename) < 3)
+    if (m_filename.size() < 3)
         return;
 
-    char *filename = xstrdup(m_filename);
+    // TBD: rewrite without copying to C string
+    char *filename = new char[m_filename.size() + 1];
+    strcpy(filename, m_filename.c_str());
 
     // Not taking the root slash.
     char *cur_slash = filename;
@@ -129,7 +130,7 @@ void OidMapCache::addPair(const git_oid *oid, const git_oid *tp_hash)
 
     // Write into the file.
     // "a" (append) means that we will write to the end of file.
-    FILE *f = fopen(m_filename, "ab");
+    FILE *f = fopen(m_filename.c_str(), "ab");
     assert(f);
 
     assert(fwrite(oid, GIT_OID_RAWSZ, 1, f) == 1);

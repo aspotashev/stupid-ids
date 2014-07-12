@@ -1,3 +1,13 @@
+#include "gettextpo-helper.h"
+#include "translationcontent.h"
+#include "stupids-client.h"
+#include "translation-collector.h"
+#include "message.h"
+#include "iddiff.h"
+#include "iddiffmessage.h"
+#include "messagegroup.h"
+
+#include <git2.h>
 
 #include <string.h>
 #include <stdio.h>
@@ -7,147 +17,18 @@
 #include <fstream>
 #include <set>
 
-#include <git2.h>
-
-#include "gettextpo-helper.h"
-#include "translationcontent.h"
-#include "stupids-client.h"
-#include "translation-collector.h"
-#include "message.h"
-#include "iddiff.h"
-
-
-IddiffMessage::IddiffMessage():
-    MessageTranslationBase()
-{
-}
-
-IddiffMessage::IddiffMessage(const IddiffMessage &msg)
-{
-    m_fuzzy = msg.isFuzzy();
-
-    m_numPlurals = msg.numPlurals();
-    for (int i = 0; i < m_numPlurals; i ++)
-        m_msgstr[i] = xstrdup(msg.msgstr(i));
-}
-
-IddiffMessage::IddiffMessage(const Message &msg)
-{
-    m_fuzzy = msg.isFuzzy();
-
-    m_numPlurals = msg.numPlurals();
-    for (int i = 0; i < m_numPlurals; i ++)
-        m_msgstr[i] = xstrdup(msg.msgstr(i));
-}
-
-IddiffMessage::IddiffMessage(po_message_t message):
-    MessageTranslationBase(message)
-{
-}
-
-IddiffMessage::~IddiffMessage()
-{
-    // TODO: free memory
-}
-
-void IddiffMessage::addMsgstr(const char *str)
-{
-    assert(m_numPlurals < MAX_PLURAL_FORMS);
-    m_numPlurals ++;
-
-    m_msgstr[m_numPlurals - 1] = xstrdup(str);
-}
-
-void IddiffMessage::setFuzzy(bool fuzzy)
-{
-    m_fuzzy = fuzzy;
-}
-
-/**
- * Fuzzy flag state will not be copied.
- */
-// TODO: how to replace this?
-void IddiffMessage::copyTranslationsToMessage(Message *message) const
-{
-    assert(numPlurals() == message->numPlurals());
-
-    for (int i = 0; i < numPlurals(); i ++)
-        message->editMsgstr(i, msgstr(i));
-}
-
-bool IddiffMessage::isTranslated() const
-{
-    return !isFuzzy() && !isUntranslated();
-}
-
-//----------------------------------------------
-
-IddiffChange::IddiffChange()
-{
-    m_reviewComment = NULL;
-}
-
-void IddiffChange::clearReviewComment()
-{
-    m_reviewComment = NULL;
-}
-
-bool IddiffChange::empty() const
-{
-    return emptyReview() && emptyAdded() && emptyRemoved();
-}
-
-bool IddiffChange::emptyRemoved() const
-{
-    return m_removedItems.empty();
-}
-
-bool IddiffChange::emptyAdded() const
-{
-    return m_addedItems.empty();
-}
-
-bool IddiffChange::emptyReview() const
-{
-    return m_reviewComment == NULL;
-}
-
-// static
-void IddiffChange::eraseItem(std::vector<IddiffMessage *> &list, const IddiffMessage *item)
-{
-    for (std::vector<IddiffMessage *>::iterator iter = list.begin(); iter != list.end(); iter ++)
-        if (*iter == item) // comparison by pointer, not by translations!
-        {
-            list.erase(iter);
-            return;
-        }
-
-    assert(0); // not found!
-}
-
-void IddiffChange::eraseRemoved(const IddiffMessage *item)
-{
-    eraseItem(m_removedItems, item);
-}
-
-void IddiffChange::eraseAdded(const IddiffMessage *item)
-{
-    eraseItem(m_addedItems, item);
-}
-
-//----------------------------------------------
-
 /**
  * \brief Constructs an empty iddiff
  */
-Iddiffer::Iddiffer():
-    m_output(std::ostringstream::out), m_minimizedIds(false)
+Iddiffer::Iddiffer()
+    : m_minimizedIds(false)
+    , m_output(std::ostringstream::out)
 {
 }
 
 Iddiffer::~Iddiffer()
 {
-    std::vector<std::pair<int, IddiffMessage *> > removed_list = getRemovedVector();
+    std::vector<std::pair<int, IddiffMessage*> > removed_list = getRemovedVector();
     for (size_t i = 0; i < removed_list.size(); i ++)
         delete removed_list[i].second;
 
@@ -269,8 +150,8 @@ void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *cont
 //      index ++)
 //  {
 
-    std::vector<MessageGroup *> messages_a = content_a->readMessages();
-    std::vector<MessageGroup *> messages_b = content_b->readMessages();
+    std::vector<MessageGroup*> messages_a = content_a->readMessages();
+    std::vector<MessageGroup*> messages_b = content_b->readMessages();
     for (size_t index = 0; index < messages_a.size(); index ++)
     {
         Message *message_a = messages_a[index]->message(0);
@@ -419,12 +300,11 @@ std::string join_strings(const std::vector<std::string> &str, const std::string 
 }
 
 // TODO: write and use function split_string()
-std::set<std::string> set_of_lines(const char *input)
+std::set<std::string> set_of_lines(const std::string& input)
 {
     std::set<std::string> res;
 
-    std::string input_str(input);
-    std::stringstream ss(input_str);
+    std::stringstream ss(input);
     std::string item;
     while (std::getline(ss, item))
         res.insert(item);
@@ -475,7 +355,7 @@ void Iddiffer::diffTrCommentsAgainstEmpty(TranslationContent *content_b)
 
         IddiffMessage *diff_message = new IddiffMessage();
         for (size_t i = 0; i < added.size(); i ++)
-            diff_message->addMsgstr(added[i].c_str());
+            diff_message->addMsgstr(added[i]);
         if (added.size() > 0)
             insertAdded(first_id + index, diff_message);
     }
@@ -532,7 +412,7 @@ void Iddiffer::diffTrCommentsFiles(TranslationContent *content_a, TranslationCon
 
         IddiffMessage *diff_message = new IddiffMessage();
         for (size_t i = 0; i < added.size(); i ++)
-            diff_message->addMsgstr(added[i].c_str());
+            diff_message->addMsgstr(added[i]);
         if (added.size() > 0)
             insertAdded(first_id + index, diff_message);
     }
@@ -597,17 +477,17 @@ bool Iddiffer::loadIddiff(const char *filename)
         return false; // file does not exist
 
     fseek(f, 0, SEEK_END);
-    int file_size = (int)ftell(f);
+    long file_size = ftell(f);
     rewind(f);
 
-    if (file_size == 0)
+    if (file_size <= 0)
     {
         fclose(f);
         return false; // file is empty
     }
 
     char *buffer = new char[file_size + 1];
-    assert(fread(buffer, 1, file_size, f) == file_size);
+    assert(fread(buffer, 1, file_size, f) == static_cast<size_t>(file_size));
     fclose(f);
     buffer[file_size] = '\0';
 
@@ -826,7 +706,7 @@ std::pair<int, IddiffMessage *> Iddiffer::loadMessageListEntry(const char *line)
             msgstr_i ++;
         }
         msgstr_buf[msgstr_i] = '\0';
-        msg->addMsgstr(msgstr_buf);
+        msg->addMsgstr(OptString(msgstr_buf));
 //      printf("[[[%s]]]\n", msgstr_buf);
 
         assert(*line == '\"');
@@ -838,7 +718,7 @@ std::pair<int, IddiffMessage *> Iddiffer::loadMessageListEntry(const char *line)
     }
 
     delete [] msgstr_buf;
-    return std::pair<int, IddiffMessage *>(msg_id, msg);
+    return std::pair<int, IddiffMessage*>(msg_id, msg);
 }
 
 template <typename T>
@@ -979,7 +859,7 @@ void Iddiffer::applyToMessageComments(MessageGroup *messageGroup, int min_id)
     // TODO: make join_strings accept any container, including std::set (or iterator?)
     std::string joined_comments = join_strings(comments_vec, std::string("\n"));
 
-    message->editMsgcomments(joined_comments.c_str());
+    message->editMsgcomments(joined_comments);
 }
 
 // TODO: remove this function!
@@ -1028,7 +908,7 @@ void Iddiffer::applyIddiff(StupIdTranslationCollector *collector, bool applyComm
     for (size_t i = 0; i < contents.size(); i ++)
     {
         TranslationContent *content = contents[i];
-        printf("Writing %s\n", content->displayFilename());
+        std::cout << "Writing " << content->displayFilename() << std::endl;
         content->writeToFile(content->displayFilename(), true); // TODO: StupIdTranslationCollector::writeChanges() for writing all changes to .po files
     }
 }
@@ -1243,16 +1123,16 @@ void Iddiffer::mergeTrComments(Iddiffer *diff)
         if (prevMessage)
         {
             std::vector<std::string> comments;
-            for (int i = 0; i < message->numPlurals(); i ++)
+            for (int i = 0; i < message->numPlurals(); ++i)
                 comments.push_back(std::string(message->msgstr(i)));
-            for (int i = 0; i < prevMessage->numPlurals(); i ++)
+            for (int i = 0; i < prevMessage->numPlurals(); ++i)
                 comments.push_back(std::string(prevMessage->msgstr(i)));
 
             sort_uniq(comments);
 
             IddiffMessage *new_message = new IddiffMessage();
-            for (size_t i = 0; i < comments.size(); i ++)
-                new_message->addMsgstr(comments[i].c_str());
+            for (size_t i = 0; i < comments.size(); ++i)
+                new_message->addMsgstr(comments[i]);
 
             eraseAdded(msg_id, prevMessage);
             insertAddedClone(std::make_pair(msg_id, new_message));
@@ -1349,10 +1229,10 @@ void Iddiffer::eraseAdded(int msg_id, const IddiffMessage *item)
     cleanupMsgIdData(msg_id);
 }
 
-const char *Iddiffer::reviewCommentText(int msg_id)
+OptString Iddiffer::reviewCommentText(int msg_id)
 {
     IddiffMessage *comment = m_items[msg_id].m_reviewComment;
-    return comment ? comment->msgstr(0) : NULL;
+    return comment ? comment->msgstr(0) : OptString(nullptr);
 }
 
 /**
@@ -1454,4 +1334,3 @@ void Iddiffer::filterTrustedIddiff(Iddiffer *filter, Iddiffer *input_diff)
 
     mergeHeaders(input_diff);
 }
-
