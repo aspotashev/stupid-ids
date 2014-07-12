@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 project(gettextpo_helper)
 
 set(gettextpo_helper_LIB_SRCS
+    gitoid.cpp
     optstring.cpp
 
     commitfilechange.cpp
