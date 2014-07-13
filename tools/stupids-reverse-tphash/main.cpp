@@ -6,8 +6,10 @@
 
 // Input: tp_hash
 // Output: list of OIDs
-int toolStupidsReverseTpHash(const std::vector<std::string>& args)
+int toolStupidsReverseTpHash(int argc, char *argv[])
 {
+    const std::vector<std::string>& args = parseArgs(argc, argv);
+
     assert(args.size() == 1); // 1 argument
 
     GitOid tp_hash(args[0].c_str());
@@ -17,9 +19,4 @@ int toolStupidsReverseTpHash(const std::vector<std::string>& args)
         std::cout << res[i].toString() << std::endl;
 
     return 0;
-}
-
-int main(int argc, char *argv[])
-{
-    return toolStupidsReverseTpHash(parseArgs(argc, argv));
 }

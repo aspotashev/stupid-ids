@@ -148,8 +148,3 @@ int toolLokalizeReviewIddiff(int argc, char *argv[])
 
     return 0;
 }
-
-int main(int argc, char *argv[])
-{
-    return toolLokalizeReviewIddiff(argc, argv);
-}

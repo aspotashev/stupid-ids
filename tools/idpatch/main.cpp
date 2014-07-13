@@ -43,8 +43,3 @@ int toolIdpatch(int argc, char *argv[])
 
     return 0;
 }
-
-int main(int argc, char *argv[])
-{
-    return toolIdpatch(argc, argv);
-}

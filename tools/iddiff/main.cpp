@@ -33,8 +33,3 @@ int toolIddiff(int argc, char *argv[])
 
     return 0;
 }
-
-int main(int argc, char *argv[])
-{
-    return toolIddiff(argc, argv);
-}
