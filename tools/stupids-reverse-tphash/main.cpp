@@ -1,3 +1,4 @@
+#include <gtpo/gettextpo-helper.h>
 #include <gtpo/oidmapcache.h>
 
 #include <iostream>
@@ -5,16 +6,20 @@
 
 // Input: tp_hash
 // Output: list of OIDs
-int main(int argc, char *argv[])
+int toolStupidsReverseTpHash(const std::vector<std::string>& args)
 {
-	assert(argc == 2); // 1 argument
+    assert(args.size() == 1); // 1 argument
 
-	GitOid tp_hash(argv[1]);
-	std::vector<GitOid> res = TphashCache.reverseGetValues(tp_hash.oid());
+    GitOid tp_hash(args[0].c_str());
+    std::vector<GitOid> res = TphashCache.reverseGetValues(tp_hash.oid());
 
-	for (size_t i = 0; i < res.size(); i ++)
-		std::cout << res[i].toString() << std::endl;
+    for (size_t i = 0; i < res.size(); i ++)
+        std::cout << res[i].toString() << std::endl;
 
-	return 0;
+    return 0;
 }
 
+int main(int argc, char *argv[])
+{
+    return toolStupidsReverseTpHash(parseArgs(argc, argv));
+}

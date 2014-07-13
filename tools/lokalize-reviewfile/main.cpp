@@ -17,7 +17,7 @@
 // 1. Find the original .po from KDE SVN (GitLoader::findOldestByTphash, see also "tools/iddiff-repo")
 // 2. Open the input .po file in Lokalize, select the original .po file for syncing (Lokalize D-Bus: openSyncSource)
 // 3. Show only those strings that are different in two .po files (Lokalize D-Bus: setEntriesFilteredOut/setEntryFilteredOut)
-int main(int argc, char *argv[])
+int toolLokalizeReviewfile(int argc, char *argv[])
 {
 	assert(argc == 2); // 1 argument
 	const char *input_filename_relative = argv[1];
@@ -111,3 +111,7 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
+int main(int argc, char *argv[])
+{
+    return toolLokalizeReviewfile(argc, argv);
+}

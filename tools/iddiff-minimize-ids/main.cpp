@@ -2,19 +2,26 @@
 
 #include <cassert>
 
-int main(int argc, char *argv[])
+int toolIddiffMinimizeIds(int argc, char *argv[])
 {
-    assert(argc == 2 || argc == 3); // 1 or 2 arguments
-    const char *src_path = argv[1];
-    const char *dest_path = (argc == 3) ? argv[2] : src_path;
+    const std::vector<std::string>& args = parseArgs(argc, argv);
 
-    Iddiffer *src_diff = new Iddiffer();
-    if (!src_diff->loadIddiff(src_path)) // src_path does not exist
+    assert(args.size() == 1 || args.size() == 2); // 1 or 2 arguments
+
+    std::string src_path = args[0];
+    std::string dest_path = (args.size() == 2) ? args[1] : src_path;
+
+    Iddiffer* src_diff = new Iddiffer();
+    if (!src_diff->loadIddiff(src_path.c_str())) // src_path does not exist
         return 1;
 
     src_diff->minimizeIds();
-    src_diff->writeToFile(dest_path);
+    src_diff->writeToFile(dest_path.c_str());
 
     return 0;
 }
 
+int main(int argc, char *argv[])
+{
+    return toolIddiffMinimizeIds(argc, argv);
+}

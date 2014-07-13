@@ -89,8 +89,7 @@ TranslationContent *GreedyIddiffCoverage::nextContent()
 	return content;
 }
 
-
-int main(int argc, char *argv[])
+int toolLokalizeReviewIddiff(int argc, char *argv[])
 {
     assert(argc == 2); // 1 argument
     const char *input_iddiff = argv[1];
@@ -148,4 +147,9 @@ int main(int argc, char *argv[])
     }
 
     return 0;
+}
+
+int main(int argc, char *argv[])
+{
+    return toolLokalizeReviewIddiff(argc, argv);
 }

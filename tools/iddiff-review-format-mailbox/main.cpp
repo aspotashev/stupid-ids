@@ -74,8 +74,7 @@ std::string ReviewMailEntry::generateText(int review_item_index)
 	return out.str();
 }
 
-
-int main(int argc, char *argv[])
+int toolIddiffReviewFormatMailbox(int argc, char *argv[])
 {
 //	if (argc != 3) // 2 arguments
 //	{
@@ -132,3 +131,7 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
+int main(int argc, char *argv[])
+{
+    return toolIddiffReviewFormatMailbox(argc, argv);
+}

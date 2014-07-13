@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-int main(int argc, char *argv[])
+int toolStupidsRerereTrustedFilter(int argc, char *argv[])
 {
 	assert(argc >= 3); // at least 2 arguments
 	const char *input_path = argv[1];
@@ -32,3 +32,8 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
+
+int main(int argc, char *argv[])
+{
+    return toolStupidsRerereTrustedFilter(argc, argv);
+}

@@ -107,7 +107,7 @@ void processFile(GitLoader *git_loader, Iddiffer *merged_diff, const char *filen
 
 // Creates an "iddiff" for all given .po files against respective .po
 // files in the official translations repository.
-int main(int argc, char *argv[])
+int toolIddiffRepo(int argc, char *argv[])
 {
     // List of options:
     //     b <branch> -- "trunk" or "stable", necessary when tp_hash was not found.
@@ -156,3 +156,7 @@ int main(int argc, char *argv[])
     return 0;
 }
 
+int main(int argc, char *argv[])
+{
+    return toolIddiffRepo(argc, argv);
+}
