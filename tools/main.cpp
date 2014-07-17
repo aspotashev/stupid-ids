@@ -45,5 +45,5 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    return iter->second(argc, argv);
+    return iter->second(argc - 1, argv + 1);
 }
