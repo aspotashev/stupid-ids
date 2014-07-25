@@ -260,6 +260,10 @@ void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *cont
 }
 
 // http://www.infosoftcom.ru/article/realizatsiya-funktsii-split-string
+//
+// TBD: use a 3rd-party library, e.g.:
+// http://www.boost.org/doc/libs/1_49_0/doc/html/boost/algorithm/split_id820181.html
+// http://stackoverflow.com/questions/7930796/boosttokenizer-vs-boostsplit
 std::vector<std::string> split_string(const std::string &str, const std::string &sep)
 {
     int str_len = str.size();

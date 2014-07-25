@@ -2,6 +2,8 @@
 #include <map>
 #include <string>
 
+// TBD: use Boost or another 3rd-party lib?
+//     http://stackoverflow.com/questions/6175502/how-to-parse-ini-file-with-boost
 class StupidsConfig
 {
 public:

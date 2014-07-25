@@ -717,8 +717,12 @@ void TranslationContent::copyTranslationsFrom(TranslationContent *from_content)
     m_bufferLen = 0;
     m_filename = "";
 
-
     std::vector<MessageGroup *> from = from_content->readMessages();
+    // TBD: optimize this loop:
+    // findMessageGroupByOrig() searches in O(log N), the whole loop
+    // therefore takes N*log(N).
+    // We can walk both catalogs in ascending order and find matches
+    // in O(N), provided the catalogs are already sorted.
     for (size_t i = 0; i < from.size(); i ++)
     {
         MessageGroup *to = findMessageGroupByOrig(from[i]);
