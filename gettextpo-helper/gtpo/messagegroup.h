@@ -14,6 +14,7 @@ class MessageGroup
 {
 public:
     MessageGroup();
+    MessageGroup(const MessageGroup& o);
     MessageGroup(po_message_t message, int index, const std::string& filename);
     ~MessageGroup();
 

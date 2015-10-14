@@ -13,6 +13,16 @@ MessageGroup::MessageGroup()
 {
 }
 
+MessageGroup::MessageGroup(const MessageGroup& o)
+    : m_msgid(o.m_msgid)
+    , m_msgidPlural(o.m_msgidPlural)
+    , m_msgctxt(o.m_msgctxt)
+    , m_messages()
+{
+    for (Message* msg : o.m_messages)
+        m_messages.push_back(new Message(*msg));
+}
+
 MessageGroup::MessageGroup(po_message_t message, int index, const std::string& filename)
     : m_msgid(po_message_msgid(message))
     , m_msgidPlural(po_message_msgid_plural(message))
@@ -23,8 +33,8 @@ MessageGroup::MessageGroup(po_message_t message, int index, const std::string& f
 
 MessageGroup::~MessageGroup()
 {
-    for (size_t i = 0; i < m_messages.size(); i ++)
-        delete m_messages[i];
+//     for (size_t i = 0; i < m_messages.size(); i ++)
+//         delete m_messages[i];
 }
 
 void MessageGroup::addMessage(Message *message)
