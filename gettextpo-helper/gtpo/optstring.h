@@ -16,6 +16,7 @@ public:
     explicit OptString(const char* s);
     explicit OptString(std::nullptr_t);
     OptString(const std::string& s);
+    OptString(const OptString& s);
 
     bool isNull() const;
     bool empty() const;

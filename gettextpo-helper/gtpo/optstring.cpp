@@ -22,6 +22,12 @@ OptString::OptString(const std::string& s)
 {
 }
 
+OptString::OptString(const OptString& s)
+    : m_isNull(s.m_isNull)
+    , m_string(s.m_string)
+{
+}
+
 bool OptString::isNull() const
 {
     return m_isNull;
