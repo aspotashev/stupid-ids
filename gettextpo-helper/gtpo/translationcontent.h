@@ -20,6 +20,11 @@ public:
         virtual const char *what() const throw();
     };
 
+    class ExceptionPoHeaderIncomplete : public std::exception
+    {
+        virtual const char *what() const throw();
+    };
+
     /**
     * \brief Constructs a TranslationContent from a file.
     *

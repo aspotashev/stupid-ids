@@ -777,6 +777,13 @@ int TranslationContent::translatedCount() const
 
 //--------------------------------------------------
 
+const char *TranslationContent::ExceptionPoHeaderIncomplete::what() const throw()
+{
+    return "ExceptionPoHeaderIncomplete (important information is missing from the .po file's header)";
+}
+
+//--------------------------------------------------
+
 const char *TranslationContent::ExceptionNotPo::what() const throw()
 {
     return "ExceptionNotPo (file is not a correct .po/.pot file)";
