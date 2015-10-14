@@ -59,7 +59,7 @@ bool OptString::operator<(const OptString& o) const
     else if (isNull()) // null is smaller than non-null
         return true;
     else
-        return *this < o;
+        return m_string < o.m_string;
 }
 
 const char* OptString::c_str() const
