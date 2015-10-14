@@ -257,10 +257,10 @@ std::string wrap_template_header(po_message_t message)
     char *pot_creation_str = strstr(header, pot_creation_pattern);
     if (pot_creation_str == NULL)
     {
-        // There must be a "POT-Creation-Date:" in the header.
-
         printf("header:\n[%s]\n", header);
-        assert(0);
+
+        // "POT-Creation-Date:" is missing from the header.
+        throw TranslationContent::ExceptionPoHeaderIncomplete();
     }
 
     // extract the date
