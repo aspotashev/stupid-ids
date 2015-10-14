@@ -8,7 +8,7 @@ int main()
     std::vector<MessageGroup*> messages = content->readMessages();
 
     Message *trans = messages[0]->message(0);
-    trans->editMsgstr(0, ("xx" + std::string(trans->msgstr(0)) + "xx").c_str());
+    trans->editMsgstr(0, std::string("xx") + std::string(trans->msgstr(0)) + std::string("xx"));
 
     content->writeToFile();
 
