@@ -18,3 +18,4 @@ endmacro(add_unit_test testname)
 
 enable_testing()
 add_unit_test(calculate_tp_hash)
+add_unit_test(sha1_buffer)
