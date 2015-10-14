@@ -64,12 +64,12 @@ if File.expand_path(File.dirname(__FILE__)) != File.expand_path(Dir.pwd)
 end
 
 templates_location = "#{Dir.pwd}/xx-numbering"
-templates = "#{templates_location}/templates"
-templates_stable = "#{templates_location}/stable-templates"
 ids = "#{templates_location}/ids"
 
-maintain_git_svn_mirror("svn://anonsvn.kde.org/home/kde/trunk/l10n-kde4/templates", templates)
-maintain_git_svn_mirror("svn://anonsvn.kde.org/home/kde/branches/stable/l10n-kde4/templates", templates_stable)
+maintain_git_svn_mirror("svn://anonsvn.kde.org/home/kde/trunk/l10n-kde4/templates", "#{templates_location}/templates")
+maintain_git_svn_mirror("svn://anonsvn.kde.org/home/kde/branches/stable/l10n-kde4/templates", "#{templates_location}/stable-templates")
+maintain_git_svn_mirror("svn://anonsvn.kde.org/home/kde/trunk/l10n-kf5/templates", "#{templates_location}/kf5-templates")
+maintain_git_svn_mirror("svn://anonsvn.kde.org/home/kde/branches/stable/l10n-kf5/templates", "#{templates_location}/kf5-stable-templates")
 
 #`bash -c "cd stupid-id-filler && ./add-templates-from-repo.rb #{templates} ./ids"`
 if not File.exists?("#{ids}/next_id.txt")
