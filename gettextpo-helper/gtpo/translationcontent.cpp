@@ -559,7 +559,8 @@ void TranslationContent::writeToFile(const std::string& destFilename, bool force
                 { // without plural forms
                     assert(messageObj->numPlurals() == 1);
 
-                    po_message_set_msgstr(message, messageObj->msgstr(0).c_str());
+                    OptString msg = messageObj->msgstr(0);
+                    po_message_set_msgstr(message, msg.isNull() ? "" : msg.c_str());
                 }
 
                 OptString comments = messageObj->msgcomments();
