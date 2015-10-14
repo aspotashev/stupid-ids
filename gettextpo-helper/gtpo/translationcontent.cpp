@@ -11,6 +11,7 @@
 #include <git2.h>
 
 #include <stdexcept>
+#include <algorithm>
 
 #include <stdio.h>
 #include <string.h>
@@ -763,6 +764,15 @@ void TranslationContent::clearTranslations()
 {
     for (MessageGroup* msg : m_messagesNormal)
         msg->clearTranslation();
+}
+
+int TranslationContent::translatedCount() const
+{
+    return std::count_if(
+        m_messagesNormal.begin(), m_messagesNormal.end(),
+        [](MessageGroup* item) {
+            return item->message(0)->isTranslated();
+        });
 }
 
 //--------------------------------------------------

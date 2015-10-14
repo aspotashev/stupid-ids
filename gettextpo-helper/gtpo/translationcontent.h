@@ -82,6 +82,8 @@ public:
     // Makes all messages untranslated
     void clearTranslations();
 
+    int translatedCount() const;
+
 private:
     void clear();
 
