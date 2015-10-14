@@ -24,7 +24,6 @@ public:
 
     Message *message(int index);
     const Message *message(int index) const;
-    void mergeMessageGroup(const MessageGroup* other);
 
     OptString msgid() const;
     OptString msgidPlural() const;
@@ -38,6 +37,8 @@ public:
 
     // Makes the message untranslated
     void clearTranslation();
+
+    void mergeMessageGroup(const MessageGroup* other);
 
 protected:
 //     void clear();
