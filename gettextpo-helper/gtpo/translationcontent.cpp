@@ -236,6 +236,8 @@ GitOid TranslationContent::calculateTpHash()
             dump = dumpPoFileTemplate();
         } catch (const ExceptionNotPo&) {
             return GitOid::zero();
+        } catch (const ExceptionPoHeaderIncomplete&) {
+            return GitOid::zero();
         }
 
         git_oid tphash_buf;
