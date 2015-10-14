@@ -14,5 +14,6 @@ int toolLokalizeReviewIddiff(int argc, char *argv[]);
 int toolLokalizeReviewfile(int argc, char *argv[]);
 int toolStupidsRerereTrustedFilter(int argc, char *argv[]);
 int toolStupidsReverseTpHash(int argc, char *argv[]);
+int toolFindBestMatchingTranslated(int argc, char *argv[]);
 
 #endif // TOOLS_H

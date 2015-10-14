@@ -5,6 +5,7 @@
 
 std::map<std::string, int(*)(int argc, char *argv[])> tools = {
     {"calculate-tp-hash", toolCalculateTpHash},
+    {"find-best-matching-translated", toolFindBestMatchingTranslated},
     {"iddiff", toolIddiff},
     {"iddiff-git", toolIddiffGit},
     {"iddiff-merge", toolIddiffMerge},

@@ -16,6 +16,8 @@ set (gtpo_multitool_SRCS
     stupids-rerere-trusted-filter/main.cpp
     stupids-reverse-tphash/main.cpp
 
+    impl/FindBestMatchingTranslated.cpp
+
     main.cpp
 )
 
