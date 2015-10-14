@@ -124,7 +124,9 @@ private:
     std::vector<int> m_minIds;
     bool m_minIdsInit; // "true" if m_minIds is initialized
 
-    std::vector<MessageGroup *> m_messagesNormal;
+    // We use MessageGroup which may contain more than one translation,
+    // but we actually use it here to store only one translation.
+    std::vector<MessageGroup*> m_messagesNormal;
     bool m_messagesNormalInit;
 
     FileDateTime m_date;
