@@ -66,24 +66,30 @@ end
 templates_location = "#{Dir.pwd}/xx-numbering"
 ids = "#{templates_location}/ids"
 
-maintain_git_svn_mirror("svn://anonsvn.kde.org/home/kde/trunk/l10n-kde4/templates", "#{templates_location}/templates")
-maintain_git_svn_mirror("svn://anonsvn.kde.org/home/kde/branches/stable/l10n-kde4/templates", "#{templates_location}/stable-templates")
-maintain_git_svn_mirror("svn://anonsvn.kde.org/home/kde/trunk/l10n-kf5/templates", "#{templates_location}/kf5-templates")
-maintain_git_svn_mirror("svn://anonsvn.kde.org/home/kde/branches/stable/l10n-kf5/templates", "#{templates_location}/kf5-stable-templates")
+GitSvnMirror = Struct.new(:svn_path, :local_path)
 
-#`bash -c "cd stupid-id-filler && ./add-templates-from-repo.rb #{templates} ./ids"`
+mirrors = [
+  GitSvnMirror.new("svn://anonsvn.kde.org/home/kde/trunk/l10n-kde4/templates", "#{templates_location}/templates"),
+  GitSvnMirror.new("svn://anonsvn.kde.org/home/kde/branches/stable/l10n-kde4/templates", "#{templates_location}/stable-templates"),
+  GitSvnMirror.new("svn://anonsvn.kde.org/home/kde/trunk/l10n-kf5/templates", "#{templates_location}/kf5-templates"),
+  GitSvnMirror.new("svn://anonsvn.kde.org/home/kde/branches/stable/l10n-kf5/templates", "#{templates_location}/kf5-stable-templates"),
+]
+
+mirrors.each do |m|
+  maintain_git_svn_mirror(m.svn_path, m.local_path)
+end
+
 if not File.exists?("#{ids}/next_id.txt")
   `./stupid-id-filler/sif-init.sh "#{ids}"`
 end
 
-system("./stupid-id-filler/add-templates-from-repo.rb #{templates} #{ids}")
-system("./stupid-id-filler/add-templates-from-repo.rb #{templates_stable} #{ids}")
+mirrors.each do |m|
+  if not system("./stupid-id-filler/add-templates-from-repo.rb #{m.local_path} #{ids}")
+    exit
+  end
+end
 
-__END__
+system("cd stupid-id-filler/database && ./update-database.rb")
 
-bash -c "cd stupid-id-filler && ./add-templates-from-repo.rb $TEMPLATES_STABLE ./ids"
-
-bash -c "cd stupid-id-filler/database && ./update-database.rb"
-
-bash -c "cd transition-detector && ./update-database.rb"
+system("cd transition-detector && ./update-database.rb")
 
