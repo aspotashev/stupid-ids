@@ -211,33 +211,42 @@ const git_oid *TranslationContent::gitBlobHash()
     return m_oid;
 }
 
-const git_oid *TranslationContent::calculateTpHash()
+GitOid TranslationContent::calculateTpHash()
 {
     if (m_tphash)
-        return m_tphash;
+        return *m_tphash;
 
     // Cache calculated tp_hashes (it takes some time to
     // calculate a tp_hash). A singleton class is used for that.
     const git_oid *oid = gitBlobHash();
     if (!oid)
-        return NULL;
+        return GitOid::zero();
 
     const git_oid *tp_hash = TphashCache.getValue(oid);
 
-    m_tphash = new git_oid;
     if (tp_hash)
     {
-        git_oid_cpy(m_tphash, tp_hash);
+        m_tphash = new GitOid(tp_hash);
     }
     else
     {
-            std::string dump = dumpPoFileTemplate();
-            sha1_buffer(m_tphash, dump.c_str(), dump.size());
+        std::string dump;
 
-            TphashCache.addPair(oid, m_tphash);
+        try {
+            dump = dumpPoFileTemplate();
+        } catch (const ExceptionNotPo&) {
+            return GitOid::zero();
+        }
+
+        git_oid tphash_buf;
+        sha1_buffer(&tphash_buf, dump.c_str(), dump.size());
+
+        m_tphash = new GitOid(&tphash_buf);
+
+        TphashCache.addPair(oid, &tphash_buf);
     }
 
-    return m_tphash;
+    return *m_tphash;
 }
 
 std::string wrap_template_header(po_message_t message)
@@ -490,8 +499,8 @@ void TranslationContent::initFirstIdPair()
     if (m_firstId != 0)
         return;
 
-    const git_oid *tp_hash = calculateTpHash();
-    if (tp_hash)
+    GitOid tp_hash = calculateTpHash();
+    if (!tp_hash.isNull())
     {
         std::pair<int, int> res = stupidsClient.getFirstIdPair(tp_hash);
         m_firstId = res.first;

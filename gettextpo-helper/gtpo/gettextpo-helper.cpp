@@ -251,15 +251,11 @@ std::string wrap_string_hex(const char *str)
 std::string calculate_tp_hash(const char *filename)
 {
     std::unique_ptr<TranslationContent> content(new TranslationContent(filename));
-    const git_oid *tp_hash = content->calculateTpHash();
-    if (!tp_hash)
+    GitOid tp_hash = content->calculateTpHash();
+    if (tp_hash.isNull())
         throw std::runtime_error("Failed to calculate tp_hash");
 
-    char res_str[GIT_OID_HEXSZ + 1];
-    git_oid_fmt(res_str, tp_hash);
-    res_str[GIT_OID_HEXSZ] = '\0';
-
-    return std::string(res_str);
+    return tp_hash.toString();
 }
 
 // Returns the number of messages in .pot (excluding the header)

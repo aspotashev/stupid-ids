@@ -140,11 +140,11 @@ void StupidsClient::sendLong(uint32_t data)
     sendToServer(&data, 4);
 }
 
-void StupidsClient::sendOid(const git_oid *oid)
+void StupidsClient::sendOid(const GitOid& oid)
 {
-    assert(oid);
+    assert(!oid.isNull());
 
-    sendToServer(oid, GIT_OID_RAWSZ);
+    sendToServer(oid.oid(), GIT_OID_RAWSZ);
 }
 
 void StupidsClient::sendLongVector(std::vector<int> vec)
@@ -161,9 +161,9 @@ void StupidsClient::sendLongVector(std::vector<int> vec)
 
 //-----------------------
 
-std::vector<int> StupidsClient::getMinIds(const git_oid *tp_hash)
+std::vector<int> StupidsClient::getMinIds(const GitOid& tp_hash)
 {
-    assert(tp_hash);
+    assert(!tp_hash.isNull());
 
     connect();
 
@@ -197,9 +197,9 @@ std::vector<int> StupidsClient::getMinIds(std::vector<int> msg_ids)
     return recvLongArray(msg_ids.size());
 }
 
-std::pair<int, int> StupidsClient::getFirstIdPair(const git_oid *tp_hash)
+std::pair<int, int> StupidsClient::getFirstIdPair(const GitOid& tp_hash)
 {
-    assert(tp_hash);
+    assert(!tp_hash.isNull());
 
     try
     {
@@ -223,7 +223,7 @@ std::pair<int, int> StupidsClient::getFirstIdPair(const git_oid *tp_hash)
     return std::pair<int, int>(first_id, id_count);
 }
 
-int StupidsClient::getFirstId(const git_oid *tp_hash)
+int StupidsClient::getFirstId(const GitOid& tp_hash)
 {
     std::pair<int, int> res = getFirstIdPair(tp_hash);
     return res.first; // first_id
@@ -261,7 +261,7 @@ std::vector<std::pair<int, int> > StupidsClient::getFirstIdPairs(std::vector<Git
     return res;
 }
 
-std::vector<int> StupidsClient::involvedByMinIds(std::vector<const git_oid *> tp_hashes, std::vector<int> ids)
+std::vector<int> StupidsClient::involvedByMinIds(std::vector<GitOid> tp_hashes, std::vector<int> ids)
 {
     connect();
 

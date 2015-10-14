@@ -89,8 +89,8 @@ const git_oid *GitLoader::findOldestByTphash_oid(const git_oid *tp_hash)
                     continue;
 
                 TranslationContent *content = new TranslationContent(this, oid);
-                const git_oid *current_tp_hash = content->calculateTpHash();
-                if (current_tp_hash && git_oid_cmp(tp_hash, current_tp_hash) == 0)
+                GitOid current_tp_hash = content->calculateTpHash();
+                if (!current_tp_hash.isNull() && git_oid_cmp(tp_hash, current_tp_hash.oid()) == 0)
                 {
                     delete content;
                     OidMapCacheManager::instance("lang_ru_oldest_oid").addPair(tp_hash, oid);
@@ -131,11 +131,10 @@ std::vector<int> GitLoader::getCurrentIdsVector()
     for (size_t i = 0; i < oids.size(); i ++)
     {
         TranslationContent *content = new TranslationContent(this, oids[i].oid());
-        const git_oid *tp_hash = content->calculateTpHash();
-        if (tp_hash)
-            tp_hashes.push_back(GitOid(tp_hash));
-        else
-        {
+        GitOid tp_hash = content->calculateTpHash();
+        if (!tp_hash.isNull()) {
+            tp_hashes.push_back(tp_hash);
+        } else {
             printf("Warning: unknown tp-hash\n");
             assert(0);
         }

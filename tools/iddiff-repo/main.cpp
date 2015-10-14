@@ -23,8 +23,8 @@ void processFile(GitLoader *git_loader, Iddiffer *merged_diff, const char *filen
 {
     TranslationContent *input_content = new TranslationContent(filename);
 
-    const git_oid *tp_hash = input_content->calculateTpHash();
-    if (!tp_hash) // not a .po file
+    GitOid tp_hash = input_content->calculateTpHash();
+    if (tp_hash.isNull()) // not a .po file
         return;
 
     int first_id = stupidsClient.getFirstId(tp_hash);
@@ -94,7 +94,7 @@ void processFile(GitLoader *git_loader, Iddiffer *merged_diff, const char *filen
     // If there are more than one .po with the given tp_hash in the
     // official repositories, we should compare against the oldest
     // .po file, because ... (So, why? -- Because some info may be lost?)
-    TranslationContent *old_content = git_loader->findOldestByTphash(tp_hash);
+    TranslationContent *old_content = git_loader->findOldestByTphash(tp_hash.oid());
     old_content->setDisplayFilename(filename);
     if (old_content)
         diff->diffFiles(old_content, input_content);

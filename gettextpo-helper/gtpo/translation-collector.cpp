@@ -199,7 +199,7 @@ void StupIdTranslationCollector::initTransConfl()
 
 std::vector<TranslationContent *> StupIdTranslationCollector::involvedByMinIds(std::vector<int> ids)
 {
-    std::vector<const git_oid *> tp_hashes;
+    std::vector<GitOid> tp_hashes;
     for (size_t i = 0; i < m_contents.size(); i ++)
         tp_hashes.push_back(m_contents[i]->calculateTpHash());
 

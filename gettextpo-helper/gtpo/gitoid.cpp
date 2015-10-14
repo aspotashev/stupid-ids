@@ -67,6 +67,11 @@ std::string GitOid::toString() const
     return std::string(oid_str);
 }
 
+bool GitOid::isNull() const
+{
+    return *this == zero();
+}
+
 /**
  * \static
  */

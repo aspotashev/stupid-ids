@@ -39,14 +39,14 @@ int toolLokalizeReviewfile(int argc, char *argv[])
 
 
 	TranslationContent *new_content = new TranslationContent(input_filename);
-	const git_oid *tp_hash = new_content->calculateTpHash();
-	assert(tp_hash);
+	GitOid tp_hash = new_content->calculateTpHash();
+	assert(!tp_hash.isNull());
 
 	// 1. Find the original .po from KDE SVN (GitLoader::findOldestByTphash, see also "tools/iddiff-repo")
 	GitLoader *git_loader = new GitLoader();
 	git_loader->addRepository("/home/sasha/kde-ru/kde-ru-trunk.git/.git");
 	git_loader->addRepository("/home/sasha/kde-ru/kde-l10n-ru-stable/.git");
-	TranslationContent *old_content = git_loader->findOldestByTphash(tp_hash);
+	TranslationContent *old_content = git_loader->findOldestByTphash(tp_hash.oid());
 
 //	std::vector<int> upToDateIds = git_loader->getCurrentIdsVector();
 //	sort(upToDateIds.begin(), upToDateIds.end());

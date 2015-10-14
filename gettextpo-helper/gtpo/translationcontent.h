@@ -2,6 +2,7 @@
 #define TRANSLATIONCONTENT_H
 
 #include <gtpo/filedatetime.h>
+#include <gtpo/gitoid.h>
 
 #include <gettext-po.h>
 #include <git2.h>
@@ -67,7 +68,7 @@ public:
     void writeBufferToFile(const std::string& filename);
 
     const git_oid *gitBlobHash();
-    const git_oid *calculateTpHash();
+    GitOid calculateTpHash();
     std::vector<MessageGroup *> readMessages();
     const FileDateTime& date();
     const FileDateTime& potDate();
@@ -119,7 +120,7 @@ private:
 
     GitLoaderBase* m_gitLoader;
     git_oid* m_oid;
-    git_oid* m_tphash;
+    GitOid* m_tphash;
 
     const void* m_buffer;
     size_t m_bufferLen;

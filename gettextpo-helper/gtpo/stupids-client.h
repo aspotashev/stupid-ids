@@ -55,7 +55,7 @@ public:
      * vector go in the same order as the messages in translation file. The size of the
      * vector is equal to the number of messages in translation file.
      */
-    std::vector<int> getMinIds(const git_oid *tp_hash);
+    std::vector<int> getMinIds(const GitOid& tp_hash);
 
     /**
      * \brief Sends the CMD_GET_MIN_IDS request to the server and returns the results
@@ -67,7 +67,7 @@ public:
      */
     std::vector<int> getMinIds(std::vector<int> msg_ids);
 
-    std::pair<int, int> getFirstIdPair(const git_oid *tp_hash);
+    std::pair<int, int> getFirstIdPair(const GitOid& tp_hash);
 
     std::vector<std::pair<int, int> > getFirstIdPairs(std::vector<GitOid> tp_hashes);
 
@@ -86,7 +86,7 @@ public:
      * where "num_messages" is the number of messages in the translation file, \n
      * 3. run CMD_GET_MIN_IDS on that vector.
      */
-    int getFirstId(const git_oid *tp_hash);
+    int getFirstId(const GitOid& tp_hash);
 
     /**
      * \brief Sends the CMD_INVOLVED_BY_MIN_IDS request to the server and returns the results
@@ -98,7 +98,7 @@ public:
      * messages with any of the given IDs (IDs will be firstly minimized).
      * The size of the returned vector can be between zero and the size of @p tp_hashes.
      */
-    std::vector<int> involvedByMinIds(std::vector<const git_oid *> tp_hashes, std::vector<int> ids);
+    std::vector<int> involvedByMinIds(std::vector<GitOid> tp_hashes, std::vector<int> ids);
 
     static StupidsClient &instance();
 
@@ -118,7 +118,7 @@ protected:
 
     void sendToServer(const void *data, size_t len);
     void sendLong(uint32_t data);
-    void sendOid(const git_oid *oid);
+    void sendOid(const GitOid& oid);
     void sendLongVector(std::vector<int> vec);
 
     void recvFromServer(void *data, size_t len);

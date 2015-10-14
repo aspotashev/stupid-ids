@@ -25,6 +25,8 @@ public:
 
     std::string toString() const;
 
+    bool isNull() const;
+
     static GitOid zero();
 
 private:
