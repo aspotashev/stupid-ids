@@ -46,7 +46,7 @@ public:
     // Also sets "m_edited" to true.
     // Used for patching translation files.
     void editFuzzy(bool fuzzy);
-    void editMsgstr(int index, const std::string& str);
+    void editMsgstr(int index, const OptString& str);
     void editMsgcomments(const OptString& str);
     bool isEdited() const;
 

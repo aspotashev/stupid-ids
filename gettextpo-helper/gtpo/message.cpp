@@ -136,7 +136,7 @@ void Message::editFuzzy(bool fuzzy)
     m_edited = true;
 }
 
-void Message::editMsgstr(int index, const std::string& str)
+void Message::editMsgstr(int index, const OptString& str)
 {
     assert(index >= 0 && index < numPlurals());
     assert(!m_msgstr[index].isNull());
