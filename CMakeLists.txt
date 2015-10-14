@@ -18,6 +18,7 @@ add_subdirectory(tools)
 add_subdirectory(stupids-server)
 add_subdirectory(examples)
 add_subdirectory(tests)
+add_subdirectory(autotests)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 

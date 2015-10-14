@@ -26,10 +26,6 @@ add_test(list_equal_messages_ids_diff diff -q ${REF_DATA_DIR}/list_equal_message
 
 ########### next target ###############
 
-add_unit_test(tp_hash)
-
-########### next target ###############
-
 add_unit_test(iddiff_merge_headers)
 add_test(iddiff_merge_headers_diff diff -q ${REF_DATA_DIR}/merged.iddiff ${CMAKE_CURRENT_BINARY_DIR}/result.iddiff)
 
