@@ -18,15 +18,6 @@ public:
     ~MessageGroup();
 
     /**
-     * @brief Add message translation.
-     *
-     * @param message Pointer to message to be added.
-     * This object will be taken ownership of.
-     * @return void
-     **/
-    void addMessage(Message* message);
-
-    /**
      * @brief Returns the number of translations in the group.
      **/
     int size() const;
@@ -50,6 +41,15 @@ protected:
     void setMsgid(const std::string& str);
     void setMsgidPlural(const std::string& str);
     void setMsgctxt(const std::string& str);
+
+    /**
+     * @brief Add message translation.
+     *
+     * @param message Pointer to message to be added.
+     * This object will be taken ownership of.
+     * @return void
+     **/
+    void addMessage(Message* message);
 
 private:
     OptString m_msgid;
