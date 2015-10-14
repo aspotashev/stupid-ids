@@ -252,8 +252,10 @@ std::string calculate_tp_hash(const char *filename)
 {
     std::unique_ptr<TranslationContent> content(new TranslationContent(filename));
     GitOid tp_hash = content->calculateTpHash();
-    if (tp_hash.isNull())
-        throw std::runtime_error("Failed to calculate tp_hash");
+    if (tp_hash.isNull()) {
+//         throw std::runtime_error("Failed to calculate tp_hash");
+        return "";
+    }
 
     return tp_hash.toString();
 }
