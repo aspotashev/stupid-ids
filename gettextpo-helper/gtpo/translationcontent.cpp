@@ -43,6 +43,31 @@ TranslationContent::TranslationContent(const void *buffer, size_t len)
     m_bufferLen = len;
 }
 
+TranslationContent::TranslationContent(const TranslationContent& o)
+    : m_filename(o.m_filename)
+    , m_displayFilename(o.m_displayFilename)
+    , m_gitLoader(o.m_gitLoader)
+    , m_oid(o.m_oid)
+    , m_tphash(o.m_tphash)
+    , m_buffer(nullptr) // TBD: what to do with buffer?
+    , m_bufferLen(0)
+    , m_type(o.m_type)
+    , m_minIds()
+    , m_minIdsInit(false)
+    , m_date(o.m_date)
+    , m_potDate(o.m_potDate)
+    , m_author(o.m_author)
+    , m_firstId(o.m_firstId)
+    , m_idCount(o.m_idCount)
+    , m_messagesNormal()
+    , m_messagesNormalInit(false)
+{
+    for (MessageGroup* msg : o.m_messagesNormal)
+        m_messagesNormal.push_back(new MessageGroup(*msg));
+
+    m_messagesNormalInit = true;
+}
+
 TranslationContent::~TranslationContent()
 {
     if (m_buffer)
@@ -52,8 +77,8 @@ TranslationContent::~TranslationContent()
     if (m_oid)
         delete m_oid;
 
-    for (size_t i = 0; i < m_messagesNormal.size(); i ++)
-        delete m_messagesNormal[i];
+//     for (size_t i = 0; i < m_messagesNormal.size(); i ++)
+//         delete m_messagesNormal[i];
 }
 
 void TranslationContent::clear()

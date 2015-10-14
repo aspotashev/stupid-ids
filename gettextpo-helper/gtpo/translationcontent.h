@@ -43,6 +43,8 @@ public:
     */
     TranslationContent(const void* buffer, size_t len);
 
+    TranslationContent(const TranslationContent& o);
+
     ~TranslationContent();
 
     /**
