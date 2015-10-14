@@ -23,5 +23,6 @@ add_library(stupidsruby SHARED ${stupidsruby_LIB_SRCS})
 target_link_libraries(stupidsruby ${RUBY_LIBRARY} gettextpo_helper)
 set_target_properties(stupidsruby PROPERTIES PREFIX "")
 
-install(TARGETS stupidsruby DESTINATION ${RUBY_SITEARCH_DIR})
-
+install(TARGETS stupidsruby
+    LIBRARY DESTINATION ${RUBY_SITEARCH_DIR}
+)
