@@ -36,6 +36,9 @@ public:
 
     bool compareByMsgid(const MessageGroup& o) const;
 
+    // Makes the message untranslated
+    void clearTranslation();
+
 protected:
 //     void clear();
     void setMsgid(const std::string& str);

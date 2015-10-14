@@ -77,6 +77,9 @@ public:
     // Does the same as "msgmerge"
     void copyTranslationsFrom(TranslationContent *from);
 
+    // Makes all messages untranslated
+    void clearTranslations();
+
 private:
     void clear();
 

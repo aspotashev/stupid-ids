@@ -155,3 +155,10 @@ bool MessageGroup::compareByMsgid(const MessageGroup& o) const
 
     return tupleA < tupleB;
 }
+
+void MessageGroup::clearTranslation()
+{
+    assert(size() == 1);
+
+    m_messages[0]->clearTranslation();
+}

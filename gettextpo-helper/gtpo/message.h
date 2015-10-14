@@ -50,6 +50,8 @@ public:
     void editMsgcomments(const OptString& str);
     bool isEdited() const;
 
+    void clearTranslation();
+
 protected:
     void setMsgcomments(const std::string& str);
 //     virtual void clear();

@@ -733,6 +733,12 @@ void TranslationContent::copyTranslationsFrom(TranslationContent *from_content)
     }
 }
 
+void TranslationContent::clearTranslations()
+{
+    for (MessageGroup* msg : m_messagesNormal)
+        msg->clearTranslation();
+}
+
 //--------------------------------------------------
 
 const char *TranslationContent::ExceptionNotPo::what() const throw()

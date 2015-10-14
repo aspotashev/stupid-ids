@@ -170,3 +170,12 @@ bool Message::equalTranslationsComments(const Message* o) const
 
     return MessageTranslationBase::equalTranslations(o) && m_msgcomments == o->msgcomments();
 }
+
+void Message::clearTranslation()
+{
+    for (int i = 0; i < numPlurals(); ++i)
+        editMsgstr(i, OptString(nullptr));
+
+    m_untranslated = true; // TBD: add method setUntranslated()
+    m_edited = true;
+}
