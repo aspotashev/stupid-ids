@@ -100,38 +100,36 @@ VALUE wrap_detect_transitions_inc(VALUE self, VALUE path_trunk, VALUE path_stabl
 
 VALUE wrap_append_processed_pairs(VALUE self, VALUE file_processed, VALUE pairs)
 {
-	FILE *f = fopen(StringValuePtr(file_processed), "ab");
-	assert(f);
+    FILE *f = fopen(StringValuePtr(file_processed), "ab");
+    assert(f);
 
-	long len = RARRAY_LEN(pairs);
-	const char *oid1_str;
-	const char *oid2_str;
-	git_oid oid1;
-	git_oid oid2;
-	unsigned char oid1_raw[GIT_OID_RAWSZ];
-	unsigned char oid2_raw[GIT_OID_RAWSZ];
-	for (long offset = 0; offset < len; offset ++)
-	{
-		VALUE pair = rb_ary_entry(pairs, offset);
-		VALUE p0 = rb_ary_entry(pair, 0);
-		VALUE p1 = rb_ary_entry(pair, 1);
+    long len = RARRAY_LEN(pairs);
+    const char *oid1_str;
+    const char *oid2_str;
+    git_oid oid1;
+    git_oid oid2;
+    for (long offset = 0; offset < len; offset ++)
+    {
+        VALUE pair = rb_ary_entry(pairs, offset);
+        VALUE p0 = rb_ary_entry(pair, 0);
+        VALUE p1 = rb_ary_entry(pair, 1);
 
-		oid1_str = StringValuePtr(p0);
-		oid2_str = StringValuePtr(p1);
+        oid1_str = StringValuePtr(p0);
+        oid2_str = StringValuePtr(p1);
 
-		assert(git_oid_fromstr(&oid1, oid1_str) == 0);
-		assert(git_oid_fromstr(&oid2, oid2_str) == 0);
+        assert(git_oid_fromstr(&oid1, oid1_str) == 0);
+        assert(git_oid_fromstr(&oid2, oid2_str) == 0);
 
-		// TODO: "git_oid_fmtraw" needed (for full portability)
+        // TODO: "git_oid_fmtraw" needed (for full portability)
 
-		assert(sizeof(oid1) == GIT_OID_RAWSZ);
-		assert(fwrite(&oid1, GIT_OID_RAWSZ, 1, f) == 1);
-		assert(fwrite(&oid2, GIT_OID_RAWSZ, 1, f) == 1);
-	}
+        assert(sizeof(oid1) == GIT_OID_RAWSZ);
+        assert(fwrite(&oid1, GIT_OID_RAWSZ, 1, f) == 1);
+        assert(fwrite(&oid2, GIT_OID_RAWSZ, 1, f) == 1);
+    }
 
-	fclose(f);
+    fclose(f);
 
-	return Qnil;
+    return Qnil;
 }
 
 // TODO: provide options[:load_obsolete] option
