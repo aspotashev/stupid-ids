@@ -96,33 +96,33 @@ void OidMapCache::createPathDirectories()
     delete [] filename;
 }
 
-const git_oid *OidMapCache::getValue(const git_oid *oid)
+GitOid OidMapCache::getValue(const GitOid& oid) const
 {
-    std::vector<std::pair<GitOid, GitOid> >::iterator iter = lower_bound(
-        m_cache.begin(), m_cache.end(), std::pair<GitOid, GitOid>(GitOid(oid), GitOid::zero()));
-    if (iter != m_cache.end() && GitOid(oid) == iter->first)
-        return iter->second.oid();
+    std::vector<std::pair<GitOid, GitOid> >::const_iterator iter = lower_bound(
+        m_cache.cbegin(), m_cache.cend(), std::pair<GitOid, GitOid>(oid, GitOid::zero()));
+    if (iter != m_cache.cend() && oid == iter->first)
+        return iter->second;
     else
-        return NULL;
+        return GitOid::zero();
 }
 
-std::vector<GitOid> OidMapCache::reverseGetValues(const git_oid *oid)
+std::vector<GitOid> OidMapCache::reverseGetValues(const GitOid& oid) const
 {
     std::vector<GitOid> res;
     for (size_t i = 0; i < m_cache.size(); i ++)
-        if (m_cache[i].second == GitOid(oid))
+        if (m_cache[i].second == oid)
             res.push_back(m_cache[i].first);
 
     return res;
 }
 
-void OidMapCache::addPair(const git_oid *oid, const git_oid *tp_hash)
+void OidMapCache::addPair(const GitOid& oid, const GitOid& tp_hash)
 {
     // Check that we do not have this pair yet
-    assert(getValue(oid) == NULL);
+    assert(getValue(oid).isNull());
 
     // Add pair
-    m_cache.push_back(std::pair<GitOid, GitOid>(GitOid(oid), GitOid(tp_hash)));
+    m_cache.push_back(std::pair<GitOid, GitOid>(oid, tp_hash));
     sort(m_cache.begin(), m_cache.end());
 
     if (!m_fileExists)
@@ -133,8 +133,8 @@ void OidMapCache::addPair(const git_oid *oid, const git_oid *tp_hash)
     FILE *f = fopen(m_filename.c_str(), "ab");
     assert(f);
 
-    assert(fwrite(oid, GIT_OID_RAWSZ, 1, f) == 1);
-    assert(fwrite(tp_hash, GIT_OID_RAWSZ, 1, f) == 1);
+    assert(fwrite(oid.oid(), GIT_OID_RAWSZ, 1, f) == 1);
+    assert(fwrite(tp_hash.oid(), GIT_OID_RAWSZ, 1, f) == 1);
 
     fclose(f);
 }
@@ -179,4 +179,3 @@ OidMapCache &OidMapCacheManager::instance(const char *cache_id)
 
     return *cache;
 }
-

@@ -35,12 +35,12 @@ public:
     void addRepository(const char *git_dir);
 
     // Finds the oldest (in Git repositories' histories) .po file with the given tp_hash.
-    TranslationContent *findOldestByTphash(const git_oid *tp_hash);
+    TranslationContent *findOldestByTphash(const GitOid& tp_hash);
 
     std::vector<int> getCurrentIdsVector();
 
 private:
-    const git_oid *findOldestByTphash_oid(const git_oid *tp_hash);
+    GitOid findOldestByTphash_oid(const GitOid& tp_hash);
 
 private:
     std::vector<Repository*> m_repos;

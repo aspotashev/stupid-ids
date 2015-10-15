@@ -162,14 +162,14 @@ VALUE wrap_stupids_conf_path(VALUE self, VALUE key)
 
 VALUE wrap_tphash_cache(VALUE self, VALUE oid_str)
 {
-	GitOid oid(StringValuePtr(oid_str));
-	const git_oid *tp_hash_raw = TphashCache.getValue(oid.oid());
-	if (tp_hash_raw)
-		return rb_str_new2(GitOid(tp_hash_raw).toString().c_str());
-	else
-		return Qnil;
+    GitOid oid(StringValuePtr(oid_str));
+    GitOid tp_hash_raw = TphashCache.getValue(oid);
+    if (tp_hash_raw.isNull()) {
+        return Qnil;
+    } else {
+        return rb_str_new2(tp_hash_raw.toString().c_str());
+    }
 }
-
 
 // init
 void init_globals()

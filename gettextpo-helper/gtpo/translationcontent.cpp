@@ -222,9 +222,9 @@ GitOid TranslationContent::calculateTpHash()
     if (!oid)
         return GitOid::zero();
 
-    const git_oid *tp_hash = TphashCache.getValue(oid);
+    GitOid tp_hash = TphashCache.getValue(oid);
 
-    if (tp_hash)
+    if (!tp_hash.isNull())
     {
         m_tphash = new GitOid(tp_hash);
     }

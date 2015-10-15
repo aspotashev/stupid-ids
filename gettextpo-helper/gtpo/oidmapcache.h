@@ -17,9 +17,9 @@ public:
     void createDir(const std::string& pathname);
     void createPathDirectories();
 
-    const git_oid *getValue(const git_oid *oid);
-    std::vector<GitOid> reverseGetValues(const git_oid *oid);
-    void addPair(const git_oid *oid, const git_oid *tp_hash);
+    GitOid getValue(const GitOid& oid) const;
+    std::vector<GitOid> reverseGetValues(const GitOid& oid) const;
+    void addPair(const GitOid& oid, const GitOid& tp_hash);
 
 private:
     std::string m_filename;

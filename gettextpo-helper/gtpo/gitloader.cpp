@@ -59,11 +59,11 @@ void GitLoader::addRepository(const char *git_dir)
     m_repos.push_back(new Repository(git_dir));
 }
 
-const git_oid *GitLoader::findOldestByTphash_oid(const git_oid *tp_hash)
+GitOid GitLoader::findOldestByTphash_oid(const GitOid& tp_hash)
 {
     // Cache results of this function (TODO: may be even create a stupids-server command for this function?)
-    const git_oid *cached_oid = OidMapCacheManager::instance("lang_ru_oldest_oid").getValue(tp_hash);
-    if (cached_oid)
+    GitOid cached_oid = OidMapCacheManager::instance("lang_ru_oldest_oid").getValue(tp_hash);
+    if (!cached_oid.isNull())
         return cached_oid;
 
     // TODO: ch_iterator (iterator for walking through all CommitFileChanges)
@@ -90,11 +90,11 @@ const git_oid *GitLoader::findOldestByTphash_oid(const git_oid *tp_hash)
 
                 TranslationContent *content = new TranslationContent(this, oid);
                 GitOid current_tp_hash = content->calculateTpHash();
-                if (!current_tp_hash.isNull() && git_oid_cmp(tp_hash, current_tp_hash.oid()) == 0)
+                if (!current_tp_hash.isNull() && tp_hash == current_tp_hash)
                 {
                     delete content;
-                    OidMapCacheManager::instance("lang_ru_oldest_oid").addPair(tp_hash, oid);
-                    return oid; // TODO: choose the oldest TranslationContent from _all_ repositories
+                    OidMapCacheManager::instance("lang_ru_oldest_oid").addPair(tp_hash, GitOid(oid));
+                    return GitOid(oid); // TODO: choose the oldest TranslationContent from _all_ repositories
                 }
                 else
                 {
@@ -104,13 +104,13 @@ const git_oid *GitLoader::findOldestByTphash_oid(const git_oid *tp_hash)
         }
     }
 
-    return NULL;
+    return GitOid::zero();
 }
 
-TranslationContent *GitLoader::findOldestByTphash(const git_oid *tp_hash)
+TranslationContent *GitLoader::findOldestByTphash(const GitOid& tp_hash)
 {
-    const git_oid *oid = findOldestByTphash_oid(tp_hash);
-    return oid ? new TranslationContent(this, oid) : NULL;
+    GitOid oid = findOldestByTphash_oid(tp_hash);
+    return oid.isNull() ? NULL : new TranslationContent(this, oid.oid());
 }
 
 /**
