@@ -156,10 +156,14 @@ end
 def extract_pot_to_file(tp_hash, filename)
   git_hash = get_pot_git_hash(tp_hash)
 
-  [$STUPIDS_PATH + '/xx-numbering/templates', $STUPIDS_PATH + '/xx-numbering/stable-templates'].
-    map {|path| File.expand_path(path) }.
-    any? do |git_dir|
+  templates_paths = [
+    $STUPIDS_PATH + '/xx-numbering/templates',
+    $STUPIDS_PATH + '/xx-numbering/stable-templates',
+    $STUPIDS_PATH + '/xx-numbering/kf5-templates',
+    $STUPIDS_PATH + '/xx-numbering/kf5-stable-templates',
+  ]
 
+  templates_paths.map {|path| File.expand_path(path) }.any? do |git_dir|
     if not try_extract_pot_to_file(git_dir, git_hash, filename)
       raise "Git object not found"
     end
