@@ -19,7 +19,7 @@ def maintain_git_svn_mirror(svn_path, git_path)
       end
 
       # Initialize Git-SVN
-      `git svn init --trunk=/ "#{svn_path}"`
+      `git svn init "#{svn_path}"`
       raise "git svn init failed" if $?.exitstatus != 0
     else
       puts "Git repo exists"
@@ -42,19 +42,9 @@ def maintain_git_svn_mirror(svn_path, git_path)
       raise "Someone has changed to a branch other than \"master\""
     end
 
-    # Rebase "master" on top of "svn/trunk"
-    `git rebase trunk`
-    raise "git rebase failed" if $?.exitstatus != 0
-
-    # Check than branches "master" and "trunk" are same
-    master_sha1 = `git rev-parse master`.strip
-    raise "git rev-parse failed" if $?.exitstatus != 0
-    trunk_sha1 = `git rev-parse trunk`.strip
-    raise "git rev-parse failed" if $?.exitstatus != 0
-
-    if master_sha1 != trunk_sha1
-      raise "\"master\" is not pointing to \"trunk\""
-    end
+    # Rebase "master" on top of latest SVN revision
+    `git svn rebase`
+    raise "git svn rebase failed" if $?.exitstatus != 0
   end
 end
 
