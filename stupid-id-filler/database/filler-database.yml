@@ -1,0 +1,4 @@
+adapter: sqlite3
+database: /home/aspotashev/stupid-ids/stupid-id-filler/database/filler-db.sqlite3
+pool: 5
+timeout: 5000
