@@ -1,7 +1,7 @@
 #!/usr/bin/ruby19
 
 $:.unshift(File.join(File.dirname(__FILE__)))
-$:.unshift(File.join(File.dirname(__FILE__)) + "/../b/gettextpo-helper/ruby-ext")
+$:.unshift(File.join(File.dirname(__FILE__)) + "/../build/gettextpo-helper/ruby-ext")
 
 require 'active_record'
 
