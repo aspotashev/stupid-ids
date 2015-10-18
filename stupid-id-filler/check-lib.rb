@@ -1,8 +1,8 @@
 
 Array.class_eval do
-	def neighbor_pairs
-		(0..(size-2)).map {|i| [self[i], self[i+1]] }
-	end
+  def neighbor_pairs
+    (0..(size-2)).map {|i| [self[i], self[i+1]] }
+  end
 end
 
 # Interesting cases: (TODO: think it out)
@@ -10,16 +10,16 @@ end
 #
 # TBD: rewrite this using libgettextpo, avoid manual parsing
 def is_virgin_pot_content(content, filename)
-	if content.empty?
-		return :empty_content
-	end
+  if content.empty?
+    return :empty_content
+  end
 
-	lines = content.split("\n")
+  lines = content.split("\n")
 
-	if lines.any? {|line| line.match(/^#\. \+> /) }
-		puts "POT file from PO Summit"
-		return :po_summit # files from PO Summit ( see http://techbase.kde.org/Localization/Workflows/PO_Summit )
-	end
+  if lines.any? {|line| line.match(/^#\. \+> /) }
+    puts "POT file from PO Summit"
+    return :po_summit # files from PO Summit ( see http://techbase.kde.org/Localization/Workflows/PO_Summit )
+  end
 
   header_msgid_index = lines.find_index("msgid \"\"")
   if header_msgid_index.nil?
@@ -34,28 +34,27 @@ def is_virgin_pot_content(content, filename)
     return :parsing_failed
   end
 
-	if lines[header_msgid_index - 1] != "#, fuzzy"
-		puts "Header of POT is not fuzzy"
-		return :non_fuzzy_header # header of .POT should be fuzzy
-	end
+  if lines[header_msgid_index - 1] != "#, fuzzy"
+    puts "Header of POT is not fuzzy"
+    return :non_fuzzy_header # header of .POT should be fuzzy
+  end
 
-	if (lines + ['']).neighbor_pairs.
-		select {|pair| pair[0].match(/^msgstr(\[[0-9]+\])? /) }[1..-1].
-		any? {|pair| pair[0].sub(/^msgstr(\[[0-9]+\])? /, '') != "\"\"" or pair[1].match(/^\"/) }
+  if (lines + ['']).neighbor_pairs.
+    select {|pair| pair[0].match(/^msgstr(\[[0-9]+\])? /) }[1..-1].
+    any? {|pair| pair[0].sub(/^msgstr(\[[0-9]+\])? /, '') != "\"\"" or pair[1].match(/^\"/) }
 
-		puts "POT contains translated messages"
-		return :has_translations # .POT contains translations in 'msgstr' fields
-	end
+    puts "POT contains translated messages"
+    return :has_translations # .POT contains translations in 'msgstr' fields
+  end
 
   if not content.match(/"POT-Creation-Date:\ /)
     puts "POT-Creation-Date is missing in the POT header"
     return :creation_date_missing
   end
 
-	:ok # All tests passed
+  :ok # All tests passed
 end
 
 def is_virgin_pot(filename)
-	is_virgin_pot_content(IO.read(filename), filename)
+  is_virgin_pot_content(IO.read(filename), filename)
 end
-
