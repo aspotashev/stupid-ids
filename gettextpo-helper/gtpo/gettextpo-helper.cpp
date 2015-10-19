@@ -5,6 +5,8 @@
 #include "translationcontent.h"
 #include "iddiff.h"
 #include "messagegroup.h"
+#include "exceptionmessageinfo.h"
+#include "gettextparserexception.h"
 
 #include <cstdio>
 #include <cstring>
@@ -12,106 +14,6 @@
 
 #include <stdexcept>
 #include <memory>
-
-class ExceptionMessageInfo
-{
-public:
-    ExceptionMessageInfo();
-    ExceptionMessageInfo(
-        const std::string& filename, size_t lineno, size_t column,
-        bool multilineP, const std::string& messageText);
-
-    std::string toString() const;
-
-private:
-    std::string m_filename;
-    size_t m_lineno;
-    size_t m_column;
-    bool m_multilineP;
-    std::string m_messageText;
-};
-
-ExceptionMessageInfo::ExceptionMessageInfo(
-    const std::string& filename, size_t lineno, size_t column,
-    bool multilineP, const std::string& messageText):
-    m_filename(filename), m_lineno(lineno), m_column(column),
-    m_multilineP(multilineP), m_messageText(messageText)
-{
-}
-
-ExceptionMessageInfo::ExceptionMessageInfo():
-    m_filename(), m_lineno(0), m_column(0),
-    m_multilineP(false), m_messageText("<none>")
-{
-}
-
-std::string ExceptionMessageInfo::toString() const
-{
-    std::stringstream ss;
-    ss << "at " << m_filename <<
-        "[L" << m_lineno << ":C" << m_column << "] " <<
-        (m_multilineP ? "<multiline>" : "<single line>") <<
-        " Error: " << m_messageText;
-
-    return ss.str();
-}
-
-class GettextParserException : public std::exception
-{
-public:
-    GettextParserException(int severity, ExceptionMessageInfo msg1);
-    GettextParserException(int severity, ExceptionMessageInfo msg1, ExceptionMessageInfo msg2);
-    virtual ~GettextParserException() noexcept;
-
-    virtual const char* what() const noexcept;
-
-private:
-    void buildWhatString();
-
-    int m_severity;
-
-    bool m_twoMessages;
-    ExceptionMessageInfo m_msg1;
-    ExceptionMessageInfo m_msg2;
-
-    std::string m_what;
-};
-
-GettextParserException::GettextParserException(int severity, ExceptionMessageInfo msg1):
-    std::exception(),
-    m_severity(severity),
-    m_twoMessages(false), m_msg1(msg1)
-{
-    buildWhatString();
-}
-
-GettextParserException::GettextParserException(int severity, ExceptionMessageInfo msg1, ExceptionMessageInfo msg2):
-    std::exception(),
-    m_severity(severity),
-    m_twoMessages(true), m_msg1(msg1), m_msg2(msg2)
-{
-    buildWhatString();
-}
-
-GettextParserException::~GettextParserException() noexcept
-{
-}
-
-void GettextParserException::buildWhatString()
-{
-    std::stringstream ss;
-    ss << "GettextParserException: severity = " << m_severity << std::endl;
-    ss << "    message 1: " << m_msg1.toString() << std::endl;
-    if (m_twoMessages)
-        ss << "    message 2: " << m_msg2.toString() << std::endl;
-
-    m_what = ss.str();
-}
-
-const char* GettextParserException::what() const throw()
-{
-    return m_what.c_str();
-}
 
 static void xerror_handler(
     int severity,

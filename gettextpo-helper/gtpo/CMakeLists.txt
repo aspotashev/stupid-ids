@@ -33,6 +33,9 @@ set(gettextpo_helper_LIB_SRCS
     processorphans.cpp
 
     block-sha1/sha1.cpp
+
+    exceptionmessageinfo.cpp
+    gettextparserexception.cpp
 )
 
 add_library(gettextpo_helper SHARED ${gettextpo_helper_LIB_SRCS})
