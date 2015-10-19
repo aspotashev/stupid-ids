@@ -5,6 +5,7 @@
 #include <gtpo/config.h>
 #include <gtpo/oidmapcache.h>
 #include <gtpo/messagegroup.h>
+#include <gtpo/gettextparserexception.h>
 
 #include "module.h"
 #include "message.h"
@@ -20,6 +21,10 @@ VALUE wrap_calculate_tp_hash(VALUE self, VALUE filename)
         return rb_str_new2(res.c_str());
     }
     catch (TranslationContent::ExceptionNotPo& e) {
+        // TBD: throw exception instead of returning empty string
+        return rb_str_new2("");
+    }
+    catch (GettextParserException& e) {
         // TBD: throw exception instead of returning empty string
         return rb_str_new2("");
     }
