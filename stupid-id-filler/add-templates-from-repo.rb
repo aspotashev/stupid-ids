@@ -87,13 +87,7 @@ commits_to_process.each_with_index do |commit_sha1, index|
     end
   end
 
-  sif.commit
-
   inc_proc.add_to_processed_list(commit_sha1)
-
-  if index % 30 == 0
-    `cd #{$IDS_DIR} ; git gc`
-  end
 end
 
 `rm -f "#{tempfile_pot}"`

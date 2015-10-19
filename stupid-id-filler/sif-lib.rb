@@ -3,23 +3,13 @@ $:.unshift(File.join(File.dirname(__FILE__)) + "/../build/gettextpo-helper/ruby-
 
 require 'stupidsruby'
 require 'set'
+require 'securerandom'
+require 'couchbase'
 
 class Sif
   # http://www.oreillynet.com/ruby/blog/2007/01/nubygems_dont_use_class_variab_1.html
   @object_created = false
   class << self; attr_accessor :object_created; end
-
-  def next_id_txt
-    @ids_dir + '/next_id.txt'
-  end
-
-  def first_ids_txt
-    @ids_dir + '/first_ids.txt'
-  end
-
-  def pot_origins_txt
-    @ids_dir + '/pot_origins.txt'
-  end
 
   def initialize(ids_dir)
     if self.class.object_created
@@ -28,72 +18,55 @@ class Sif
       self.class.object_created = true
     end
 
-    @ids_dir = ids_dir
+    @conn = Couchbase.connect(bucket: 'stupids')
 
-    `cd #{@ids_dir} && git reset --hard` # reset not commited changes
+    begin
+      @conn.add('next_id', 100)
+    rescue Couchbase::Error::KeyExists
+    end
+    @next_id = @conn.get('next_id')
 
-    @next_id = IO.read(next_id_txt).strip.to_i
-
-    @commited_tp_hashes = IO.read(first_ids_txt).split("\n").map {|x| x[0...40] }.to_set
-    @commited_sha1s = IO.read(pot_origins_txt).split("\n").map {|x| x[0...40] }.to_set
-
-    @new_firstids = [] # pairs: (tp_hash, first_id)
-    @new_origins  = [] # pairs: (sha1, tp_hash)
-
-    @dirty = false
+    @conn.save_design_doc(File.open(File.join(File.dirname(__FILE__)) + '/stupids-couchbase.json'))
+    @views = @conn.design_docs['stupids-couchbase']
   end
 
   def add(pot_path, options = {})
     pot_hash = options[:pot_hash] || `git-hash-object "#{pot_path}"`.strip
 
-    # Prepare new data for pot_origins.txt
-    if @commited_sha1s.include?(pot_hash) or @new_origins.map(&:first).include?(pot_hash)
-      puts "This .pot hash already exists in pot_origins.txt (or already scheduled for addition)"
-    else
-      @dirty = true # there are now changes to commit
+    tphash_view = @views.tp_hash_by_pot(key: pot_hash)
 
+    if tphash_view.count > 0
+      #puts "This .pot hash already exists in Couchbase"
+    else
       tp_hash = GettextpoHelper.calculate_tp_hash(pot_path)
       raise if tp_hash.size != 40
-      @new_origins << [pot_hash, tp_hash]
 
-      # Prepare new data for first_ids.txt
-      if @commited_tp_hashes.include?(tp_hash) or @new_firstids.map(&:first).include?(tp_hash)
-        puts "This template-part hash already exists in first_ids.txt (or already scheduled for addition)"
+      id = SecureRandom.urlsafe_base64(16)
+      item = {
+        'type' => 'tp_hash',
+        'pot_hash' => pot_hash,
+        'tp_hash' => tp_hash,
+      }
+      @conn.set(id, item)
+
+      id_view = @views.first_id_by_tp_hash(key: pot_hash)
+
+      if id_view.count > 0
+        puts "This template-part hash already exists in Couchbase"
       else
         pot_len = GettextpoHelper.get_pot_length(pot_path)
 
-        @new_firstids << [tp_hash, @next_id]
+        id = SecureRandom.urlsafe_base64(16)
+        item = {
+          'type' => 'first_id',
+          'tp_hash' => tp_hash,
+          'first_id' => @next_id,
+          'pot_len' => pot_len,
+        }
+        @conn.set(id, item)
+
         @next_id += pot_len
       end
     end
-  end
-
-  def commit
-    return if @dirty == false # nothing has changed, nothing to commit
-
-    # write new data to files
-    File.open(first_ids_txt, 'a+') do |f|
-      f.puts @new_firstids.map {|x| x.join(' ') }
-    end
-
-    File.open(pot_origins_txt, 'a+') do |f|
-      f.puts @new_origins.map {|x| x.join(' ') }
-    end
-
-    File.open(next_id_txt, 'w') do |f|
-      f.print @next_id
-    end
-
-    # commit
-    puts `cd "#{@ids_dir}" ; git commit -m upd -- first_ids.txt next_id.txt pot_origins.txt`
-
-    # data is already committed
-    @commited_tp_hashes.merge(@new_firstids.map(&:first))
-    @new_firstids = []
-
-    @commited_sha1s.merge(@new_origins.map(&:first))
-    @new_origins = []
-
-    @dirty = false
   end
 end

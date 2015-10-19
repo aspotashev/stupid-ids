@@ -69,17 +69,10 @@ mirrors.each do |m|
   maintain_git_svn_mirror(m.svn_path, m.local_path)
 end
 
-if not File.exists?("#{ids}/next_id.txt")
-  `./stupid-id-filler/sif-init.sh "#{ids}"`
-end
-
 mirrors.each do |m|
   if not system("./stupid-id-filler/add-templates-from-repo.rb #{m.local_path} #{ids}")
     exit
   end
 end
 
-system("cd stupid-id-filler/database && ./update-database.rb")
-
 system("cd transition-detector && ./update-database.rb")
-
