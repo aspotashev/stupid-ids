@@ -63,11 +63,11 @@ public:
     GettextParserException(int severity, ExceptionMessageInfo msg1, ExceptionMessageInfo msg2);
     virtual ~GettextParserException() noexcept;
 
-    void buildWhatString();
-
     virtual const char* what() const noexcept;
 
 private:
+    void buildWhatString();
+
     int m_severity;
 
     bool m_twoMessages;
