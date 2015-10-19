@@ -32,6 +32,11 @@ static void xerror2_handler(
     po_message_t message2, const char *filename2, size_t lineno2,
     size_t column2, int multiline_p2, const char *message_text2)
 {
+    if (!filename2) {
+        // Do not construct std::string on NULL string
+        filename2 = "";
+    }
+
     throw GettextParserException(
         severity,
         ExceptionMessageInfo(filename1, lineno1, column1, multiline_p1, message_text1),
