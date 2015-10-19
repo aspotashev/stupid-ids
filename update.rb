@@ -59,10 +59,14 @@ ids = "#{templates_location}/ids"
 GitSvnMirror = Struct.new(:svn_path, :local_path)
 
 mirrors = [
-  GitSvnMirror.new("svn://anonsvn.kde.org/home/kde/trunk/l10n-kde4/templates", "#{templates_location}/templates"),
-  GitSvnMirror.new("svn://anonsvn.kde.org/home/kde/branches/stable/l10n-kde4/templates", "#{templates_location}/stable-templates"),
-  GitSvnMirror.new("svn://anonsvn.kde.org/home/kde/trunk/l10n-kf5/templates", "#{templates_location}/kf5-templates"),
-  GitSvnMirror.new("svn://anonsvn.kde.org/home/kde/branches/stable/l10n-kf5/templates", "#{templates_location}/kf5-stable-templates"),
+  GitSvnMirror.new("svn://anonsvn.kde.org/home/kde/trunk/l10n-kde4/templates",
+                   "#{templates_location}/templates"),
+  GitSvnMirror.new("svn://anonsvn.kde.org/home/kde/branches/stable/l10n-kde4/templates",
+                   "#{templates_location}/stable-templates"),
+  GitSvnMirror.new("svn://anonsvn.kde.org/home/kde/trunk/l10n-kf5/templates",
+                   "#{templates_location}/kf5-templates"),
+  GitSvnMirror.new("svn://anonsvn.kde.org/home/kde/branches/stable/l10n-kf5/templates",
+                   "#{templates_location}/kf5-stable-templates"),
 ]
 
 mirrors.each do |m|
