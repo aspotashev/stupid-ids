@@ -47,7 +47,7 @@ class Sif
         'pot_hash' => pot_hash,
         'tp_hash' => tp_hash,
       }
-      @conn.set(id, item)
+      @conn.add(id, item)
 
       id_view = @views.first_id_by_tp_hash(key: pot_hash)
 
@@ -63,7 +63,7 @@ class Sif
           'first_id' => @next_id,
           'pot_len' => pot_len,
         }
-        @conn.set(id, item)
+        @conn.add(id, item)
 
         @next_id += pot_len
       end
