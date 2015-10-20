@@ -66,7 +66,7 @@ commits_to_process.each_with_index do |commit_sha1, index|
 
     pot_status = is_virgin_pot(tempfile_pot)
     if pot_status == :ok
-      sif.add(tempfile_pot, :pot_hash => content_sha1)
+      sif.add(tempfile_pot)
     elsif known_broken_pots.include?(content_sha1)
       puts "Repeated broken POT: #{content_sha1}"
     else

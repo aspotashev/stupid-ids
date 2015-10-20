@@ -34,8 +34,8 @@ class Sif
     `git hash-object "#{path}"`.strip
   end
 
-  def add(pot_path, options = {})
-    pot_hash = options[:pot_hash] || git_hash_object(pot_path)
+  def add(pot_path)
+    pot_hash = Sif.git_hash_object(pot_path)
 
     tphash_view = @views.tp_hash_by_pot(key: pot_hash)
 
