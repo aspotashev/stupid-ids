@@ -28,6 +28,8 @@ class Sif
 
     @conn.save_design_doc(File.open(File.join(File.dirname(__FILE__)) + '/stupids-couchbase.json'))
     @views = @conn.design_docs['stupids-couchbase']
+
+    @known_broken_pots = load_known_broken_pots(ids_dir)
   end
 
   def self.git_hash_object(path)
@@ -92,21 +94,20 @@ class Sif
   end
 
   def load_known_broken_pots(ids_dir)
-    res = []
+    @views.known_broken_pot.map(&:key)
+  end
 
-    begin
-      File.open("#{ids_dir}/broken.txt", "r") do |f|
-        f.readlines.each do |line|
-          if line[0..0] != '#' and line.match(/^[0-9a-f]{40}/)
-            res << line[0...40]
-          end
-        end
-      end
-    rescue Errno::ENOENT
-      # File was not found, but it's OK
-    end
+  def insert_known_broken_pot(pot_hash, pot_status, src_dir)
+    @known_broken_pots << pot_hash
 
-    res
+    c_id = SecureRandom.urlsafe_base64(16)
+    c_item = {
+      'type' => 'known_broken_pot',
+      'pot_hash' => pot_hash,
+      'broken_status' => pot_status,
+      'git_repo' => src_dir,
+    }
+    @conn.add(c_id, c_item)
   end
 
   def add_templates_from_repo(src_dir, ids_dir)
@@ -114,40 +115,27 @@ class Sif
     inc_proc = IncrementalCommitProcessing.new(src_dir, ids_dir)
     commits_to_process = inc_proc.commits_to_process
 
-    known_broken_pots = load_known_broken_pots(ids_dir)
-
     tempfile_pot = Tempfile.new(['', '.pot']).path
     commits_to_process.each_with_index do |commit_sha1, index|
       puts ">>> Processing commit #{commit_sha1} (#{index + 1}/#{commits_to_process.size}) in #{src_dir}"
       contents = Sif.contents_of_commit(src_dir, commit_sha1)
-      broken_in_commit = []
 
-      contents.each do |content_sha1|
-        # content_sha1 is the sha1 of blob (e.g. 963a86ab2a7f24ba4400eace2e713c5bb8a5bad4)
+      contents.each do |pot_hash|
+        # pot_hash is the sha1 of blob (e.g. 963a86ab2a7f24ba4400eace2e713c5bb8a5bad4)
 
-        puts "current file SHA1: #{content_sha1}"
-        `cd #{src_dir} ; git show #{content_sha1} > "#{tempfile_pot}"`
+        puts "current file SHA1: #{pot_hash}"
+        `cd #{src_dir} ; git show #{pot_hash} > "#{tempfile_pot}"`
 
         pot_status = is_virgin_pot(tempfile_pot)
         if pot_status == :ok
           add(tempfile_pot)
-        elsif known_broken_pots.include?(content_sha1)
-          puts "Repeated broken POT: #{content_sha1}"
+        elsif @known_broken_pots.include?(pot_hash)
+          puts "Repeated broken POT: #{pot_hash}"
         else
           # Newly appeared broken POT
-          puts "Another broken POT: #{content_sha1}"
+          puts "Another broken POT: #{pot_hash}"
 
-          known_broken_pots << content_sha1
-          broken_in_commit << "#{content_sha1}, :status => :#{pot_status}"
-        end
-      end
-
-      if broken_in_commit.size > 0
-        File.open("#{ids_dir}/broken.txt", "a") do |f|
-          f.puts "# From commit #{commit_sha1} in #{src_dir}"
-          broken_in_commit.each do |item|
-            f.puts item
-          end
+          insert_known_broken_pot(pot_hash, pot_status, src_dir)
         end
       end
 

@@ -7,6 +7,9 @@
     },
     "tp_hash_by_pot": {
       "map": "function (doc, meta) { if (meta.type == 'json' && doc.type && doc.type == 'tp_hash') { emit(doc.pot_hash, doc.tp_hash); } }"
+    },
+    "known_broken_pot": {
+      "map": "function (doc, meta) { if (meta.type == 'json' && doc.type && doc.type == 'known_broken_pot') { emit(doc.pot_hash, null); } }"
     }
   }
 }
