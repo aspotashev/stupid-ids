@@ -31,7 +31,7 @@ class Sif
   end
 
   def self.git_hash_object(path)
-    `git-hash-object "#{path}"`.strip
+    `git hash-object "#{path}"`.strip
   end
 
   def add(pot_path, options = {})
