@@ -30,8 +30,12 @@ class Sif
     @views = @conn.design_docs['stupids-couchbase']
   end
 
+  def self.git_hash_object(path)
+    `git-hash-object "#{path}"`.strip
+  end
+
   def add(pot_path, options = {})
-    pot_hash = options[:pot_hash] || `git-hash-object "#{pot_path}"`.strip
+    pot_hash = options[:pot_hash] || git_hash_object(pot_path)
 
     tphash_view = @views.tp_hash_by_pot(key: pot_hash)
 
