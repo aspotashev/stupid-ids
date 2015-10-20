@@ -31,7 +31,8 @@ class Sif
   end
 
   def self.git_hash_object(path)
-    `git hash-object "#{path}"`.strip
+    data = "blob #{File.size(path).to_s(10)}\0" + File.open(path).read
+    Digest::SHA1.hexdigest(data)
   end
 
   def add(pot_path)
