@@ -91,23 +91,30 @@ class Sif
       map {|x| x[3] }
   end
 
-  def add_templates_from_repo(src_dir, ids_dir)
-    #commits_to_process = git_commits(src_dir) - processed_git_commits(ids_dir)
-    inc_proc = IncrementalCommitProcessing.new(src_dir, ids_dir)
-    commits_to_process = inc_proc.commits_to_process
+  def load_known_broken_pots(ids_dir)
+    res = []
 
-    known_broken_pots = []
     begin
       File.open("#{ids_dir}/broken.txt", "r") do |f|
         f.readlines.each do |line|
           if line[0..0] != '#' and line.match(/^[0-9a-f]{40}/)
-            known_broken_pots << line[0...40]
+            res << line[0...40]
           end
         end
       end
     rescue Errno::ENOENT
       # File was not found, but it's OK
     end
+
+    res
+  end
+
+  def add_templates_from_repo(src_dir, ids_dir)
+    #commits_to_process = git_commits(src_dir) - processed_git_commits(ids_dir)
+    inc_proc = IncrementalCommitProcessing.new(src_dir, ids_dir)
+    commits_to_process = inc_proc.commits_to_process
+
+    known_broken_pots = load_known_broken_pots(ids_dir)
 
     tempfile_pot = Tempfile.new(['', '.pot']).path
     commits_to_process.each_with_index do |commit_sha1, index|
