@@ -110,9 +110,28 @@ class Sif
     @conn.add(c_id, c_item)
   end
 
+  class CouchbaseProcessedCommitsStorage
+    def initialize(conn, views)
+      @conn = conn
+      @views = views
+    end
+
+    def list
+      @views.processed_templates_git_commits.map(&:key)
+    end
+
+    def add(string)
+      c_id = SecureRandom.urlsafe_base64(16)
+      c_item = {
+        'type' => 'processed_templates_git_commit',
+        'commit_hash' => string,
+      }
+      @conn.add(c_id, c_item)
+    end
+  end
+
   def add_templates_from_repo(src_dir, ids_dir)
-    #commits_to_process = git_commits(src_dir) - processed_git_commits(ids_dir)
-    inc_proc = IncrementalCommitProcessing.new(src_dir, TextFileStorage.new(ids_dir + '/processed.txt'))
+    inc_proc = IncrementalCommitProcessing.new(src_dir, CouchbaseProcessedCommitsStorage.new(@conn, @views))
     commits_to_process = inc_proc.commits_to_process
 
     tempfile_pot = Tempfile.new(['', '.pot']).path
