@@ -56,7 +56,7 @@ class Sif
       }
       @conn.add(id, item)
 
-      id_view = @views.first_id_by_tp_hash(key: pot_hash)
+      id_view = @views.first_id_by_tp_hash(key: tp_hash)
 
       if id_view.count > 0
         puts "This template-part hash already exists in Couchbase"
