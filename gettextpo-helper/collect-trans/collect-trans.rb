@@ -104,7 +104,7 @@ def get_min_ids_by_tp_hash(tp_hash)
   min_ids
 end
 
-inc_proc = IncrementalCommitProcessing.new($TRANS_DIR, $DATABASE_DIR)
+inc_proc = IncrementalCommitProcessing.new($TRANS_DIR, TextFileStorage.new($DATABASE_DIR + '/processed.txt'))
 commits = inc_proc.commits_to_process
 commits.each_with_index do |sha1, index|
   puts "Processing #{sha1} (#{index + 1}/#{commits.size})"

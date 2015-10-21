@@ -112,7 +112,7 @@ class Sif
 
   def add_templates_from_repo(src_dir, ids_dir)
     #commits_to_process = git_commits(src_dir) - processed_git_commits(ids_dir)
-    inc_proc = IncrementalCommitProcessing.new(src_dir, ids_dir)
+    inc_proc = IncrementalCommitProcessing.new(src_dir, TextFileStorage.new(ids_dir + '/processed.txt'))
     commits_to_process = inc_proc.commits_to_process
 
     tempfile_pot = Tempfile.new(['', '.pot']).path

@@ -66,15 +66,15 @@ class TextFileStorage
   end
 end
 
-class IncrementalCommitProcessing < Struct.new(:git_dir, :proc_git_dir)
+class IncrementalCommitProcessing
   # git_dir -- repo from where the commits are taken
   # proc_git_dir -- directory where 'processed.txt' resides
 
   # The db object is responsible for the persistent storage (file or database)
   # where the list of processed commits is written.
-  def initialize(git_dir, proc_git_dir)
+  def initialize(git_dir, db)
     @git_dir = git_dir
-    @db = TextFileStorage.new(proc_git_dir + '/processed.txt')
+    @db = db
   end
 
   def commits_to_process
