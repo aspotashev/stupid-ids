@@ -4,7 +4,9 @@
 #  1. the first ID for template-part hash of this .pot file
 #  2. map: [sha1 of .pot] <-> [template-part hash]
 
-require '../sif-lib.rb'
+$:.unshift(File.join(File.dirname(__FILE__)) + '/..')
+
+require 'sif-lib.rb'
 
 pot = ARGV[0]
 
