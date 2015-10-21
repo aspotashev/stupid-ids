@@ -1,0 +1,6 @@
+sif -- stupid id filler
+
+=== SCRIPTS ===
+./sif-add.rb ~/templates/messages/kdebase/dolphin.pot
+./add-templates-from-repo.rb ~/kde-ru/xx-numbering/templates
+
