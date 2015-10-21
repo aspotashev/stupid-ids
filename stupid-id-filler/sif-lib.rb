@@ -37,6 +37,15 @@ class Sif
     Digest::SHA1.hexdigest(data)
   end
 
+  def have_info_for_pot_hash?(pot_hash)
+    tphash_view = @views.tp_hash_by_pot(key: pot_hash)
+    return false if tphash_view.count == 0
+
+    tp_hash = tphash_view.first.value
+
+    return @views.first_id_by_tp_hash(key: tp_hash).count > 0
+  end
+
   def add(pot_path)
     pot_hash = Sif.git_hash_object(pot_path)
 
@@ -144,6 +153,11 @@ class Sif
 
         if @known_broken_pots.include?(pot_hash)
           puts "Repeated broken POT: #{pot_hash}"
+          next
+        end
+
+        if have_info_for_pot_hash?(pot_hash)
+#           puts "Already exists in the database: #{pot_hash}"
           next
         end
 
