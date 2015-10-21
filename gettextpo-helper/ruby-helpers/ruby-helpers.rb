@@ -68,8 +68,7 @@ end
 
 class IncrementalCommitProcessing
   # git_dir -- repo from where the commits are taken
-  # proc_git_dir -- directory where 'processed.txt' resides
-
+  #
   # The db object is responsible for the persistent storage (file or database)
   # where the list of processed commits is written.
   def initialize(git_dir, db)
