@@ -142,14 +142,17 @@ class Sif
       contents.each do |pot_hash|
         # pot_hash is the sha1 of blob (e.g. 963a86ab2a7f24ba4400eace2e713c5bb8a5bad4)
 
+        if @known_broken_pots.include?(pot_hash)
+          puts "Repeated broken POT: #{pot_hash}"
+          next
+        end
+
         puts "current file SHA1: #{pot_hash}"
         `cd #{src_dir} ; git show #{pot_hash} > "#{tempfile_pot}"`
 
         pot_status = is_virgin_pot(tempfile_pot)
         if pot_status == :ok
           add(tempfile_pot)
-        elsif @known_broken_pots.include?(pot_hash)
-          puts "Repeated broken POT: #{pot_hash}"
         else
           puts "Newly appeared broken POT: #{pot_hash}"
 
