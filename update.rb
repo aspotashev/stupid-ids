@@ -1,5 +1,8 @@
 #!/usr/bin/ruby
 
+$:.unshift(File.join(File.dirname(__FILE__)) + '/stupid-id-filler')
+require 'sif-lib.rb'
+
 def maintain_git_svn_mirror(svn_path, git_path)
   puts "Mirroring #{svn_path} to #{git_path}"
   `mkdir -p "#{git_path}"`
@@ -72,10 +75,9 @@ mirrors.each do |m|
   maintain_git_svn_mirror(m.svn_path, m.local_path)
 end
 
+sif = Sif.new
 mirrors.each do |m|
-  if not system("./stupid-id-filler/add-templates-from-repo.rb #{m.local_path}")
-    exit
-  end
+  sif.add_templates_from_repo(m.local_path)
 end
 
 system("cd transition-detector && ./update-database.rb")
