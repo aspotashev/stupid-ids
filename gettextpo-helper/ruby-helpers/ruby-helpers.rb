@@ -41,42 +41,48 @@ def parse_commit_changes(git_dir, git_ref)
     end
 end
 
-class IncrementalCommitProcessing < Struct.new(:git_dir, :proc_git_dir)
-  # git_dir -- repo from where the commits are taken
-  # proc_git_dir -- directory where 'processed.txt' resides
-
-  def commits_to_process
-    _git_commits(git_dir) - _processed_git_commits(proc_git_dir)
+class TextFileStorage
+  def initialize(path)
+    @path = path
   end
 
-  def add_to_processed_list(commit_sha1)
-    _add_to_processed_list(proc_git_dir, commit_sha1)
-  end
-
-private
-  # List of all commits in git_dir, from the oldest to the newest
-  def _git_commits(git_dir)
-    `cd "#{git_dir}" ; git log --format=format:%H`.split("\n").reverse
-  end
-
-  # List of SHA-1s from processed.txt
-  def _processed_git_commits(git_dir)
+  def list
     begin
-      File.open(git_dir + '/processed.txt').read.split("\n")
+      File.open(@path).read.split("\n")
     rescue Errno::ENOENT => e
       []
     end
   end
 
-  # Add SHA-1 to processed.txt
-  def _add_to_processed_list(git_dir, commit_sha1)
-    if not File.exists?(git_dir)
-      `mkdir -p "#{git_dir}"`
+  def add(string)
+    dir = File.dirname(@path)
+    if not File.exists?(dir)
+      `mkdir -p "#{dir}"`
     end
 
-    File.open(git_dir + '/processed.txt', 'a+') do |f|
-      f.puts commit_sha1
+    File.open(@path, 'a+') do |f|
+      f.puts string
     end
   end
 end
 
+class IncrementalCommitProcessing < Struct.new(:git_dir, :proc_git_dir)
+  # git_dir -- repo from where the commits are taken
+  # proc_git_dir -- directory where 'processed.txt' resides
+
+  # The db object is responsible for the persistent storage (file or database)
+  # where the list of processed commits is written.
+  def initialize(git_dir, proc_git_dir)
+    @git_dir = git_dir
+    @db = TextFileStorage.new(proc_git_dir + '/processed.txt')
+  end
+
+  def commits_to_process
+    add_git_commits = `cd "#{@git_dir}" ; git log --format=format:%H`.split("\n").reverse
+    add_git_commits - @db.list
+  end
+
+  def add_to_processed_list(commit_sha1)
+    @db.add(commit_sha1)
+  end
+end
