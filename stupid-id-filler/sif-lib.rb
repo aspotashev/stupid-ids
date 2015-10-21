@@ -1,6 +1,8 @@
 
 $:.unshift(File.join(File.dirname(__FILE__)) + "/../build/gettextpo-helper/ruby-ext")
 
+require 'tempfile'
+require './gettextpo-helper/ruby-helpers/ruby-helpers.rb'
 require 'stupidsruby'
 require 'set'
 require 'securerandom'

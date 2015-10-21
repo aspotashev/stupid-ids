@@ -2,11 +2,7 @@
 
 $:.unshift(File.join(File.dirname(__FILE__)))
 
-require 'tempfile'
-
 require 'sif-lib.rb'
-require 'check-lib.rb'
-require './gettextpo-helper/ruby-helpers/ruby-helpers.rb'
 
 
 if ARGV.size != 2
