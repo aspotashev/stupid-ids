@@ -31,7 +31,10 @@ end
 # result[i][4] -- operation
 # result[i][5] -- filename
 def parse_commit_changes(git_dir, git_ref)
-  `cd #{git_dir} ; git show --raw --no-abbrev #{git_ref}`.split("\n").
+  output = `cd #{git_dir} ; git show --raw --no-abbrev #{git_ref}`
+  raise "git show failed, git_dir = #{git_dir}" if $?.exitstatus != 0
+
+  output.split("\n").
     select {|line| line[0..0] == ':' }.
     map do |line|
       line =~ /^:([0-9]{6}) ([0-9]{6}) ([0-9a-f]{40}) ([0-9a-f]{40}) ([AMD])\t(.+)$/ && $~.captures
