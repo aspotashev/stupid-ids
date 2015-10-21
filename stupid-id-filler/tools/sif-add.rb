@@ -1,21 +1,17 @@
 #!/usr/bin/ruby
 #
-# Adds to a Git repository:
+# Adds to Couchbase:
 #  1. the first ID for template-part hash of this .pot file
 #  2. map: [sha1 of .pot] <-> [template-part hash]
 
 require '../sif-lib.rb'
 
+pot = ARGV[0]
 
-dir = ARGV[0]
-pot = ARGV[1]
-
-if dir.nil? or pot.nil?
-	puts "Usage: ./sif-add.rb <dir> <.pot>"
-	exit
+if pot.nil?
+  puts "Usage: ./sif-add.rb <.pot>"
+  exit
 end
 
-sif = Sif.new(dir)
+sif = Sif.new
 sif.add(pot)
-sif.commit
-
