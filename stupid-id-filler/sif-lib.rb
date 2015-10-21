@@ -3,6 +3,7 @@ $:.unshift(File.join(File.dirname(__FILE__)) + "/../build/gettextpo-helper/ruby-
 
 require 'tempfile'
 require './gettextpo-helper/ruby-helpers/ruby-helpers.rb'
+require 'check-lib.rb'
 require 'stupidsruby'
 require 'set'
 require 'securerandom'
