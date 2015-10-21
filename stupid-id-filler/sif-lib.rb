@@ -132,8 +132,7 @@ class Sif
         elsif @known_broken_pots.include?(pot_hash)
           puts "Repeated broken POT: #{pot_hash}"
         else
-          # Newly appeared broken POT
-          puts "Another broken POT: #{pot_hash}"
+          puts "Newly appeared broken POT: #{pot_hash}"
 
           insert_known_broken_pot(pot_hash, pot_status, src_dir)
         end
