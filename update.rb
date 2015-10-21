@@ -54,7 +54,6 @@ if File.expand_path(File.dirname(__FILE__)) != File.expand_path(Dir.pwd)
 end
 
 templates_location = "#{Dir.pwd}/xx-numbering"
-ids = "#{templates_location}/ids"
 
 GitSvnMirror = Struct.new(:svn_path, :local_path)
 
@@ -74,7 +73,7 @@ mirrors.each do |m|
 end
 
 mirrors.each do |m|
-  if not system("./stupid-id-filler/add-templates-from-repo.rb #{m.local_path} #{ids}")
+  if not system("./stupid-id-filler/add-templates-from-repo.rb #{m.local_path}")
     exit
   end
 end

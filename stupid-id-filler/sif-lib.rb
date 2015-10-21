@@ -13,7 +13,7 @@ class Sif
   @object_created = false
   class << self; attr_accessor :object_created; end
 
-  def initialize(ids_dir)
+  def initialize
     if self.class.object_created
       raise "can create only one instance of class Sif (to prevent conflicting changes in files)"
     else
@@ -31,7 +31,7 @@ class Sif
     @conn.save_design_doc(File.open(File.join(File.dirname(__FILE__)) + '/stupids-couchbase.json'))
     @views = @conn.design_docs['stupids-couchbase']
 
-    @known_broken_pots = load_known_broken_pots(ids_dir)
+    @known_broken_pots = load_known_broken_pots
   end
 
   def self.git_hash_object(path)
@@ -104,7 +104,7 @@ class Sif
       map {|x| x[3] }
   end
 
-  def load_known_broken_pots(ids_dir)
+  def load_known_broken_pots
     @views.known_broken_pot.map(&:key)
   end
 
@@ -141,7 +141,7 @@ class Sif
     end
   end
 
-  def add_templates_from_repo(src_dir, ids_dir)
+  def add_templates_from_repo(src_dir)
     inc_proc = IncrementalCommitProcessing.new(src_dir, CouchbaseProcessedCommitsStorage.new(@conn, @views))
     commits_to_process = inc_proc.commits_to_process
 
