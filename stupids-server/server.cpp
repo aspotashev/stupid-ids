@@ -1,26 +1,23 @@
 #include "server.h"
+#include "stupidsdatabase.h"
 
 #include <gtpo/stupids-client.h>
 #include <gtpo/mappedfile.h>
 #include <gtpo/config.h>
-#include <gtpo/filedbfirstids.h>
 
 #include <stdio.h>
 #include <assert.h>
 #include <algorithm>
 
 Server::Server()
+    : m_db(new StupidsDatabase())
+    , m_idMapDb(new MappedFileIdMapDb(expand_path(StupidsConf("server.idmapdb")).c_str()))
 {
-    m_firstIds = new FiledbFirstIds(
-        expand_path(StupidsConf("server.first_ids_db_path.first_ids")).c_str(),
-        expand_path(StupidsConf("server.first_ids_db_path.next_id")).c_str());
-    m_idMapDb = new MappedFileIdMapDb(
-        expand_path(StupidsConf("server.idmapdb")).c_str());
 }
 
 Server::~Server()
 {
-    delete m_firstIds;
+    delete m_db;
     delete m_idMapDb;
 }
 
@@ -88,7 +85,7 @@ void Server::sendLongVector(std::vector<int> vec)
 
 std::vector<int> Server::getTphashMinIds(GitOid tp_hash)
 {
-    std::pair<int, int> first_ids = m_firstIds->getFirstId(tp_hash);
+    std::pair<int, int> first_ids = m_db->getFirstId(tp_hash);
     int first_id = first_ids.first;
     int id_count = first_ids.second;
     if (first_id == 0) {
@@ -129,7 +126,7 @@ void Server::handleGetFirstId()
     // the class GitOid for tp_hashes.
     GitOid tp_hash = recvOid();
 
-    std::pair<int, int> first_ids = m_firstIds->getFirstId(tp_hash);
+    std::pair<int, int> first_ids = m_db->getFirstId(tp_hash);
     int first_id = first_ids.first;
     int id_count = first_ids.second;
 
@@ -151,7 +148,7 @@ void Server::handleGetFirstIdMulti()
     for (size_t i = 0; i < count; ++i) {
         GitOid tp_hash = recvOid();
 
-        std::pair<int, int> first_ids = m_firstIds->getFirstId(tp_hash);
+        std::pair<int, int> first_ids = m_db->getFirstId(tp_hash);
         int first_id = first_ids.first;
         int id_count = first_ids.second;
 

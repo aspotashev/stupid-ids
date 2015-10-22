@@ -2,7 +2,7 @@
 
 #include "tcpcommandserver.h"
 
-class FiledbFirstIds;
+class StupidsDatabase;
 class MappedFileIdMapDb;
 
 class Server : public TcpCommandServer
@@ -68,7 +68,6 @@ private:
     void handleInvolvedByMinIds();
 
 
-    FiledbFirstIds *m_firstIds;
+    StupidsDatabase *m_db;
     MappedFileIdMapDb *m_idMapDb;
 };
-
