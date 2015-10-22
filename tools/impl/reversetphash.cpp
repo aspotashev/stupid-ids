@@ -6,7 +6,7 @@
 
 // Input: tp_hash
 // Output: list of OIDs
-int toolStupidsReverseTpHash(int argc, char *argv[])
+int toolReverseTpHash(int argc, char *argv[])
 {
     const std::vector<std::string>& args = parseArgs(argc, argv);
 
