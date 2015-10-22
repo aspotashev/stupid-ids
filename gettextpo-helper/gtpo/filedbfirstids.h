@@ -1,3 +1,5 @@
+#ifndef FILEDBFIRSTIDS_H
+#define FILEDBFIRSTIDS_H
 
 #include <map>
 
@@ -15,3 +17,4 @@ private:
     std::vector<std::pair<GitOid, std::pair<int, int> > > m_firstIds;
 };
 
+#endif // FILEDBFIRSTIDS_H
