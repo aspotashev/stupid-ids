@@ -124,6 +124,7 @@ class Sif
     @conn.add(c_id, c_item)
   end
 
+  # Used for the IncrementalCommitProcessing object in add_templates_from_repo()
   class CouchbaseProcessedCommitsStorage
     def initialize(conn, views)
       @conn = conn
