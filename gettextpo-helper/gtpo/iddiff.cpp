@@ -178,36 +178,37 @@ void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *cont
         // bit 2 -- A == B (msgstr)
         // bit 3 -- fuzzy A
         // bit 4 -- fuzzy B
-        #define FORMAT_IDDIFF_BITARRAY(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13) { \
+        #define FORMAT_IDDIFF_BITARRAY(p1, p2, p3, p4, p5, p6, p7, \
+                                       p8, p9, p10, p11, p12, p13, p14) { \
             p1,  /* 00000    "abc" ->  "def"                                           */ \
             p2,  /* 00001    ""    ->  "abc"                                           */ \
             p3,  /* 00010    "abc" ->  ""                                              */ \
-            -1,  /* 00011   (both empty, but not equal)                                */ \
-            p4,  /* 00100    "abc" ->  "abc"                                           */ \
+            p4,  /* 00011    ""    ->  "" (different nplurals)                         */ \
+            p5,  /* 00100    "abc" ->  "abc"                                           */ \
             -1,  /* 00101   (empty cannot be equal to non-empty)                       */ \
             -1,  /* 00110   (empty cannot be equal to non-empty)                       */ \
-            p5,  /* 00111       "" ->  ""                                              */ \
-            p6,  /* 01000   f"abc" ->  "def"                                           */ \
+            p6,  /* 00111       "" ->  ""                                              */ \
+            p7,  /* 01000   f"abc" ->  "def"                                           */ \
             -1,  /* 01001   (empty+fuzzy A)                                            */ \
-            p7,  /* 01010   f"abc" ->  ""                                              */ \
+            p8,  /* 01010   f"abc" ->  ""                                              */ \
             -1,  /* 01011   (empty+fuzzy A, both empty but not equal)                  */ \
-            p8,  /* 01100   f"abc" ->  "abc"                                           */ \
+            p9,  /* 01100   f"abc" ->  "abc"                                           */ \
             -1,  /* 01101   (empty+fuzzy A, empty cannot be equal to non-empty)        */ \
             -1,  /* 01110   (empty cannot be equal to non-empty)                       */ \
             -1,  /* 01111   (empty+fuzzy A)                                            */ \
-            p9,  /* 10000    "abc" -> f"def"                                           */ \
-            p10, /* 10001       "" -> f"abc"                                           */ \
+            p10, /* 10000    "abc" -> f"def"                                           */ \
+            p11, /* 10001       "" -> f"abc"                                           */ \
             -1,  /* 10010   (empty+fuzzy B)                                            */ \
             -1,  /* 10011   (empty+fuzzy B, both empty, but not equal)                 */ \
-            p11, /* 10100    "abc" -> f"abc"                                           */ \
+            p12, /* 10100    "abc" -> f"abc"                                           */ \
             -1,  /* 10101   (empty cannot be equal to non-empty)                       */ \
             -1,  /* 10110   (empty+fuzzy B, empty cannot be equal to non-empty)        */ \
             -1,  /* 10111   (empty+fuzzy B)                                            */ \
-            p12, /* 11000   f"abc" -> f"def"                                           */ \
+            p13, /* 11000   f"abc" -> f"def"                                           */ \
             -1,  /* 11001   (empty+fuzzy A)                                            */ \
             -1,  /* 11010   (empty+fuzzy B)                                            */ \
             -1,  /* 11011   (empty+fuzzy A, empty+fuzzy B, both empty, but not equal)  */ \
-            p13, /* 11100   f"abc" -> f"abc"                                           */ \
+            p14, /* 11100   f"abc" -> f"abc"                                           */ \
             -1,  /* 11101   (empty+fuzzy A, empty cannot be equal to non-empty)        */ \
             -1,  /* 11110   (empty+fuzzy B, empty cannot be equal to non-empty)        */ \
             -1,  /* 11111   (empty+fuzzy A, empty+fuzzy B)                             */ \
@@ -217,6 +218,7 @@ void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *cont
         // 00000    "abc"  -> "def"  : REMOVED, ADDED
         // 00001    ""     -> "abc"  : ADDED
         // 00010    "abc"  -> ""     : REMOVED
+        // 00011    ""     -> ""     : - (different nplurals)
         // 00100    "abc"  -> "abc"  : -
         // 00111    ""     -> ""     : -
         // 01000    f"abc" -> "def"  : REMOVED, ADDED
@@ -227,8 +229,10 @@ void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *cont
         // 10100    "abc"  -> f"abc" : REMOVED
         // 11000    f"abc" -> f"def" : - (fuzzy messages are "weak", you should write in comments instead what you are not sure in)
         // 11100    f"abc" -> f"abc" : -
-        const int   needAdded[] = FORMAT_IDDIFF_BITARRAY(1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0);
-        const int needRemoved[] = FORMAT_IDDIFF_BITARRAY(1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0);
+        const int   needAdded[] = FORMAT_IDDIFF_BITARRAY(
+            1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0);
+        const int needRemoved[] = FORMAT_IDDIFF_BITARRAY(
+            1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0);
 
         int indexCode = 0;
 //      indexCode |= po_message_is_untranslated(message_a) ? 1 : 0;
