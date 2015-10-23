@@ -27,6 +27,3 @@ target_link_libraries(gtpo-multitool gettextpo_helper dbuslokalize)
 set_target_properties(gtpo-multitool PROPERTIES COMPILE_FLAGS "-ggdb")
 
 install(TARGETS gtpo-multitool DESTINATION bin)
-
-
-add_subdirectory(iddiff-test)
