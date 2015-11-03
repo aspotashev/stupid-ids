@@ -14,5 +14,6 @@ int toolLokalizeReviewfile(int argc, char *argv[]);
 int toolRerereTrustedFilter(int argc, char *argv[]);
 int toolReverseTpHash(int argc, char *argv[]);
 int toolFindBestMatchingTranslated(int argc, char *argv[]);
+int toolTryFillTranslations(int argc, char *argv[]);
 
 #endif // TOOLS_H

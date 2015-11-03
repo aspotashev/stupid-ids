@@ -1,15 +1,14 @@
+#include <gtpo/gettextpo-helper.h>
+#include <gtpo/mappedfile.h>
+#include <gtpo/message.h>
 
-// http://www.gnu.org/software/gettext/manual/gettext.html#libgettextpo
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
+#include <cstdio>
+#include <cstring>
+#include <cassert>
 #include <string>
 #include <iostream>
 #include <vector>
 #include <map>
-
-#include <gettextpo-helper/gettextpo-helper.h>
-#include <gettextpo-helper/mappedfile.h>
 
 typedef long long int trdb_offset; // 64-bit
 
@@ -26,8 +25,8 @@ public:
 	trdb_offset dbOffset() const;
 
 private:
-	char *m_commitId;
-	char *m_author;
+	std::string m_commitId;
+	std::string m_author;
 	time_t m_date;
 
 	bool m_writtenToDb;
@@ -93,24 +92,22 @@ CommitInfo::CommitInfo(const char *commit_id, const char *author, time_t date)
 
 	m_writtenToDb = false;
 
-	m_author = xstrdup(author);
-	m_commitId = xstrdup(commit_id);
+	m_author = std::string(author);
+	m_commitId = std::string(commit_id);
 
 	m_date = date;
 }
 
 CommitInfo::~CommitInfo()
 {
-	delete [] m_author;
-	delete [] m_commitId;
 }
 
 void CommitInfo::write(TrDb *tr_db)
 {
 	m_dbOffset = tr_db->currentOffset();
 	tr_db->appendData(m_date);
-	tr_db->appendString(m_commitId);
-	tr_db->appendString(m_author);
+	tr_db->appendString(m_commitId.c_str());
+	tr_db->appendString(m_author.c_str());
 
 	m_writtenToDb = true;
 }
@@ -223,10 +220,10 @@ trdb_offset TrDb::writeMessage(CommitInfo *commit_info, Message *message)
 	appendData(fuzzy);
 	appendData(num_plurals);
 
-	appendString(message->msgcomments());
+	appendString(message->msgcomments().c_str());
 	printf("numPlurals = %d\n", message->numPlurals());
 	for (int i = 0; i < message->numPlurals(); i ++)
-		appendString(message->msgstr(i));
+		appendString(message->msgstr(i).c_str());
 
 	return offset;
 }
@@ -292,7 +289,7 @@ std::vector<Message *> TrDb::getMessages(int msg_id)
 		for (int i = 0; i < msg->numPlurals(); i ++)
 		{
 			str += strlen(str) + 1;
-			msg->setMsgstr(i, str);
+			msg->setMsgstr(i, OptString(str));
 		}
 
 		res.push_back(msg);
@@ -303,7 +300,7 @@ std::vector<Message *> TrDb::getMessages(int msg_id)
 
 //-----------------------------------------
 
-int main(int argc, char *argv[])
+int toolTryFillTranslations(int argc, char *argv[])
 {
 	TrDb *tr_db = new TrDb(".");
 
@@ -321,11 +318,10 @@ int main(int argc, char *argv[])
 	std::vector<Message *> list = tr_db->getMessages(100);
 	for (size_t i = 0; i < list.size(); i ++)
 	{
-		printf("%s\n", list[i]->msgcomments());
-		printf("%s\n", list[i]->msgstr(0));
+		printf("%s\n", list[i]->msgcomments().c_str());
+		printf("%s\n", list[i]->msgstr(0).c_str());
 		printf("%s\n", list[i]->isFuzzy() ? "fuzzy" : "not fuzzy");
 	}
 
 	return 0;
 }
-

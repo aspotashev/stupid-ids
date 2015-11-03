@@ -15,6 +15,7 @@ set (gtpo_multitool_SRCS
     impl/lokalizereviewiddiff.cpp
     impl/rereretrustedfilter.cpp
     impl/reversetphash.cpp
+    impl/tryfilltr.cpp
 
     main.cpp
 )

@@ -17,6 +17,7 @@ std::map<std::string, int(*)(int argc, char *argv[])> tools = {
     {"lokalize-review-iddiff", toolLokalizeReviewIddiff},
     {"rerere-trusted-filter", toolRerereTrustedFilter},
     {"reverse-tphash", toolReverseTpHash},
+    {"try-fill-tr", toolTryFillTranslations},
 
 //     {"iddiff-test", },
 };

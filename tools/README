@@ -32,3 +32,6 @@ Example:
 
 == idpatch ==
 
+== try-fill-tr ==
+For 1 file given, puts all translated strings into database.
+For 2 files given, puts all new strings introduced in the second file against the first file into database.
