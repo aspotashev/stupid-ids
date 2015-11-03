@@ -2,4 +2,4 @@
 This program writes the list of pairs of IDs for identical messages in 2 .poids files.
 
 == TESTING ==
-./dump-ids temp/dolphin.pot 1000 temp/stable-dolphin.pot 2000
+./dump_ids temp/dolphin.pot 1000 temp/stable-dolphin.pot 2000
