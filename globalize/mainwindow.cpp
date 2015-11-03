@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    collector.insertPoDir(QString("/home/sasha/kde-ru/kde-l10n-ru-stable"));
 
     // Reading iddiff for review
-    Iddiffer *diff = new Iddiffer();
+    Iddiff *diff = new Iddiff();
     diff->loadIddiff("/home/sasha/stupid-ids/tools/iddiff/amarok.iddiff");
     diff->minimizeIds();
     std::vector<int> ids = diff->involvedIds();

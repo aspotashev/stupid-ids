@@ -16,12 +16,11 @@
 class MessageGroup;
 class StupIdTranslationCollector;
 
-// TODO: rename to Iddiff
-class Iddiffer
+class Iddiff
 {
 public:
-    Iddiffer();
-    ~Iddiffer();
+    Iddiff();
+    ~Iddiff();
 
     /**
      * \brief Fills "ADDED" section with strings from the given TranslationContent
@@ -118,9 +117,9 @@ public:
     std::vector<std::pair<int, IddiffMessage*>> getAddedVector();
     std::vector<std::pair<int, IddiffMessage*>> getReviewVector();
 
-    void mergeHeaders(Iddiffer* diff);
-    void merge(Iddiffer* diff);
-    void mergeTrComments(Iddiffer* diff);
+    void mergeHeaders(Iddiff* diff);
+    void merge(Iddiff* diff);
+    void mergeTrComments(Iddiff* diff);
 
     void acceptTranslation(int msg_id, const IddiffMessage* item);
     void rejectTranslation(int msg_id, const IddiffMessage* item);
@@ -133,7 +132,7 @@ public:
      */
     void setCurrentDateTime();
 
-    void filterTrustedIddiff(Iddiffer* filter, Iddiffer* input_diff);
+    void filterTrustedIddiff(Iddiff* filter, Iddiff* input_diff);
 
 private:
     typedef typename rapidjson::Document::ValueType ValueType;

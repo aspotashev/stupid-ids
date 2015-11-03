@@ -32,10 +32,10 @@ int toolIddiffGit(int argc, char *argv[])
     }
 
     const Commit* commit = repo->commit(commit_index);
-    Iddiffer* merged_diff = new Iddiffer();
+    Iddiff* merged_diff = new Iddiff();
     for (int i = 0; i < commit->nChanges(); i ++) {
         const CommitFileChange *change = commit->change(i);
-        Iddiffer *diff = new Iddiffer();
+        Iddiff *diff = new Iddiff();
 
         if (change->type() == CommitFileChange::DEL)
             continue;

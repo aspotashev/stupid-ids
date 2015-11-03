@@ -22,7 +22,7 @@ public:
     * minimal set of them that contains messages with all IDs mentioned in
     * \a diff.
     */
-	GreedyIddiffCoverage(StupIdTranslationCollector *collector, Iddiffer *diff);
+	GreedyIddiffCoverage(StupIdTranslationCollector *collector, Iddiff *diff);
 
     /**
      * Performs the next step of the greedy algorithm.
@@ -39,7 +39,7 @@ private:
 	std::set<int> m_ids;
 };
 
-GreedyIddiffCoverage::GreedyIddiffCoverage(StupIdTranslationCollector *collector, Iddiffer *diff)
+GreedyIddiffCoverage::GreedyIddiffCoverage(StupIdTranslationCollector *collector, Iddiff *diff)
 {
     // Minimizing "ids". See comment in nextContent() after "if (m_ids.find(c_ids[j]) != m_ids.end())".
 	diff->minimizeIds();
@@ -104,7 +104,7 @@ int toolLokalizeReviewIddiff(int argc, char *argv[])
         "/home/sasha/kde-ru/xx-numbering/stable-templates",
         "/home/sasha/kde-ru/kde-l10n-ru-stable");
 
-    Iddiffer *diff = new Iddiffer();
+    Iddiff *diff = new Iddiff();
     diff->loadIddiff(input_iddiff);
     GreedyIddiffCoverage cover(&collector, diff);
 

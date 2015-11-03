@@ -7,7 +7,7 @@ int toolRerereTrustedFilter(int argc, char *argv[])
 	assert(argc >= 3); // at least 2 arguments
 	const char *input_path = argv[1];
 
-	Iddiffer *input_diff = new Iddiffer();
+	   Iddiff *input_diff = new Iddiff();
 	if (!input_diff->loadIddiff(input_path)) // input_path does not exist
 		return 1;
 
@@ -15,11 +15,11 @@ int toolRerereTrustedFilter(int argc, char *argv[])
 	{
 		const char *rerere_path = argv[i];
 
-		Iddiffer *rerere_diff = new Iddiffer();
+		      Iddiff *rerere_diff = new Iddiff();
 		if (!rerere_diff->loadIddiff(rerere_path)) // rerere not found, cannot filter
 			return 2;
 
-		Iddiffer *filtered = new Iddiffer();
+		      Iddiff *filtered = new Iddiff();
 		filtered->filterTrustedIddiff(rerere_diff, input_diff);
 		delete rerere_diff;
 

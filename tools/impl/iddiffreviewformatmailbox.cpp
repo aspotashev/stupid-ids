@@ -18,7 +18,7 @@
 class ReviewMailEntry
 {
 public:
-	ReviewMailEntry(int index, Iddiffer *iddiff, MessageGroup *messageGroup, int min_id);
+	ReviewMailEntry(int index, Iddiff *iddiff, MessageGroup *messageGroup, int min_id);
 
 	std::string generateText(int review_item_index);
 	bool hasCorrected() const;
@@ -26,12 +26,12 @@ public:
 
 private:
 	int m_index;
-	Iddiffer *m_iddiff;
+	   Iddiff *m_iddiff;
 	MessageGroup *m_messageGroup;
 	int m_minId;
 };
 
-ReviewMailEntry::ReviewMailEntry(int index, Iddiffer *iddiff, MessageGroup *messageGroup, int min_id):
+ReviewMailEntry::ReviewMailEntry(int index, Iddiff *iddiff, MessageGroup *messageGroup, int min_id):
 	m_index(index),
 	m_iddiff(iddiff),
 	m_messageGroup(messageGroup),
@@ -85,7 +85,7 @@ int toolIddiffReviewFormatMailbox(int argc, char *argv[])
 	const char *iddiff_path = "/home/sasha/.stupids/lokalize-review-test.iddiff";
 	const char *input_translation_path = "/home/sasha/docmessages/kdebase-workspace/kdm_theme-ref.po";
 
-	Iddiffer *iddiff = new Iddiffer();
+	   Iddiff *iddiff = new Iddiff();
 	iddiff->loadIddiff(iddiff_path);
 	iddiff->minimizeIds(); // patching should always be done with minimized IDs
 

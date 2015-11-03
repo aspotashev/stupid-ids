@@ -11,11 +11,11 @@ int toolIddiffMerge(int argc, char *argv[])
     std::string src_path = args[0];
     std::string merged_path = args[1];
 
-    Iddiffer* src_diff = new Iddiffer();
+    Iddiff* src_diff = new Iddiff();
     if (!src_diff->loadIddiff(src_path.c_str())) // src_path does not exist
         return 1;
 
-    Iddiffer* merged_diff = new Iddiffer();
+    Iddiff* merged_diff = new Iddiff();
     if (merged_diff->loadIddiff(merged_path.c_str())) {
         // there was a file
         merged_diff->merge(src_diff);

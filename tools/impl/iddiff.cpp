@@ -8,8 +8,8 @@ int toolIddiff(int argc, char *argv[])
 {
     const std::vector<std::string>& args = parseArgs(argc, argv);
 
-    Iddiffer* diff = new Iddiffer();
-    Iddiffer* diff_trcomments = new Iddiffer();
+    Iddiff* diff = new Iddiff();
+    Iddiff* diff_trcomments = new Iddiff();
     if (args.size() == 1) {
         TranslationContent* content = new TranslationContent(args[0]);
         diff->diffAgainstEmpty(content);

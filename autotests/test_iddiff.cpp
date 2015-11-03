@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE(LoadSave)
 
     std::string input = read_file_contents(inputfile_str.c_str());
 
-    Iddiffer* diff = new Iddiffer();
+    Iddiff* diff = new Iddiff();
     diff->loadIddiff(inputfile_str.c_str());
     std::string output = diff->generateIddiffText();
 

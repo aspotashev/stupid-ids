@@ -19,7 +19,7 @@ struct
     char **inputFiles;
 } static globalArgs;
 
-void processFile(GitLoader *git_loader, Iddiffer *merged_diff, const char *filename)
+void processFile(GitLoader *git_loader, Iddiff *merged_diff, const char *filename)
 {
     TranslationContent *input_content = new TranslationContent(filename);
 
@@ -89,7 +89,7 @@ void processFile(GitLoader *git_loader, Iddiffer *merged_diff, const char *filen
         input_content = pot_content;
     }
 
-    Iddiffer *diff = new Iddiffer();
+    Iddiff *diff = new Iddiff();
 
     // If there are more than one .po with the given tp_hash in the
     // official repositories, we should compare against the oldest
@@ -146,7 +146,7 @@ int toolIddiffRepo(int argc, char *argv[])
     git_loader->addRepository("/home/sasha/kde-ru/kde-ru-trunk.git/.git");
     git_loader->addRepository("/home/sasha/kde-ru/kde-l10n-ru-stable/.git");
 
-    Iddiffer *merged_diff = new Iddiffer();
+    Iddiff *merged_diff = new Iddiff();
 
     for (int i = 0; i < globalArgs.numInputFiles; i ++)
         processFile(git_loader, merged_diff, globalArgs.inputFiles[i]);

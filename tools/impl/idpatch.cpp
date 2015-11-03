@@ -21,7 +21,7 @@ int toolIdpatch(int argc, char *argv[])
         return 1;
     }
 
-    Iddiffer* differ = new Iddiffer();
+    Iddiff* differ = new Iddiff();
     differ->loadIddiff(argv[1]);
     differ->minimizeIds();
 

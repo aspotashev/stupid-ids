@@ -20,12 +20,12 @@
 /**
  * \brief Constructs an empty iddiff
  */
-Iddiffer::Iddiffer()
+Iddiff::Iddiff()
     : m_minimizedIds(false)
 {
 }
 
-Iddiffer::~Iddiffer()
+Iddiff::~Iddiff()
 {
     std::vector<std::pair<int, IddiffMessage*> > removed_list = getRemovedVector();
     for (size_t i = 0; i < removed_list.size(); i ++)
@@ -40,7 +40,7 @@ Iddiffer::~Iddiffer()
         delete review_list[i].second;
 }
 
-void Iddiffer::writeMessageList(rapidjson::PrettyWriter<rapidjson::StringBuffer> &writer,
+void Iddiff::writeMessageList(rapidjson::PrettyWriter<rapidjson::StringBuffer> &writer,
                                 const std::vector<IddiffMessage*>& list)
 {
     writer.StartArray();
@@ -50,25 +50,25 @@ void Iddiffer::writeMessageList(rapidjson::PrettyWriter<rapidjson::StringBuffer>
     writer.EndArray();
 }
 
-void Iddiffer::clearIddiff()
+void Iddiff::clearIddiff()
 {
     m_items.clear();
 }
 
-void Iddiffer::clearReviewComments()
+void Iddiff::clearReviewComments()
 {
     for (std::map<int, IddiffChange>::iterator it = m_items.begin(); it != m_items.end(); it ++)
         it->second.clearReviewComment();
 }
 
-void Iddiffer::clearReviewComment(int msg_id)
+void Iddiff::clearReviewComment(int msg_id)
 {
     m_items[msg_id].clearReviewComment();
 }
 
 // This function fills m_addedItems.
 // m_removedItems and m_reviewComments will be cleared.
-void Iddiffer::diffAgainstEmpty(TranslationContent *content_b)
+void Iddiff::diffAgainstEmpty(TranslationContent *content_b)
 {
     clearIddiff();
 
@@ -115,7 +115,7 @@ void Iddiffer::diffAgainstEmpty(TranslationContent *content_b)
 
 // This function fills m_removedItems and m_addedItems
 // m_reviewComments will be cleared.
-void Iddiffer::diffFiles(TranslationContent *content_a, TranslationContent *content_b)
+void Iddiff::diffFiles(TranslationContent *content_a, TranslationContent *content_b)
 {
     clearIddiff();
 
@@ -334,7 +334,7 @@ std::vector<T> set_difference(const std::set<T> &a, const std::set<T> &b)
     return res;
 }
 
-void Iddiffer::diffTrCommentsAgainstEmpty(TranslationContent *content_b)
+void Iddiff::diffTrCommentsAgainstEmpty(TranslationContent *content_b)
 {
     clearIddiff();
 
@@ -376,7 +376,7 @@ void Iddiffer::diffTrCommentsAgainstEmpty(TranslationContent *content_b)
     po_file_free(file_b);
 }
 
-void Iddiffer::diffTrCommentsFiles(TranslationContent *content_a, TranslationContent *content_b)
+void Iddiff::diffTrCommentsFiles(TranslationContent *content_a, TranslationContent *content_b)
 {
     clearIddiff();
 
@@ -435,17 +435,17 @@ void Iddiffer::diffTrCommentsFiles(TranslationContent *content_a, TranslationCon
     po_file_free(file_b);
 }
 
-const FileDateTime &Iddiffer::date() const
+const FileDateTime &Iddiff::date() const
 {
     return m_date;
 }
 
-std::string Iddiffer::dateString() const
+std::string Iddiff::dateString() const
 {
     return m_date.dateString();
 }
 
-std::string Iddiffer::generateIddiffText()
+std::string Iddiff::generateIddiffText()
 {
     // TODO: rewrite without getRemovedVector/getAddedVector/getReviewVector to optimize for speed
     std::vector<std::pair<int, IddiffMessage *> > removed_list = getRemovedVector();
@@ -540,7 +540,7 @@ std::string Iddiffer::generateIddiffText()
     return std::string(buffer.GetString());
 }
 
-bool Iddiffer::loadIddiff(const char *filename)
+bool Iddiff::loadIddiff(const char *filename)
 {
     // TODO: function for reading the whole file
     FILE *f = fopen(filename, "r");
@@ -628,7 +628,7 @@ bool Iddiffer::loadIddiff(const char *filename)
     return true; // OK
 }
 
-void Iddiffer::writeToFile(const char *filename)
+void Iddiff::writeToFile(const char *filename)
 {
     std::string text = generateIddiffText();
     if (!text.empty())
@@ -642,7 +642,7 @@ void Iddiffer::writeToFile(const char *filename)
 /**
  * Allocates an object of class IddiffMessage
  */
-std::pair<int, IddiffMessage *> Iddiffer::loadMessageListEntry(const char *line)
+std::pair<int, IddiffMessage *> Iddiff::loadMessageListEntry(const char *line)
 {
     const char *space = strchr(line, ' ');
     assert(space);
@@ -717,7 +717,7 @@ std::pair<int, IddiffMessage *> Iddiffer::loadMessageListEntry(const char *line)
 }
 
 // static
-std::vector<IddiffMessage*> Iddiffer::loadMessageList(const Iddiffer::ValueType& array)
+std::vector<IddiffMessage*> Iddiff::loadMessageList(const Iddiff::ValueType& array)
 {
     rapidjson::SizeType nMsg = array.Size();
 
@@ -727,7 +727,7 @@ std::vector<IddiffMessage*> Iddiffer::loadMessageList(const Iddiffer::ValueType&
     std::vector<IddiffMessage*> res;
     for (rapidjson::SizeType i = 0; i < nMsg; ++i) {
         // TODO: move this into class IddiffMessage
-        const Iddiffer::ValueType& msgTree = array[i];
+        const Iddiff::ValueType& msgTree = array[i];
         assert(msgTree.IsObject());
 
         assert(msgTree.HasMember("fuzzy"));
@@ -737,7 +737,7 @@ std::vector<IddiffMessage*> Iddiffer::loadMessageList(const Iddiffer::ValueType&
         msg->setFuzzy(msgTree["fuzzy"].GetBool());
 
         assert(msgTree.HasMember("msgstr"));
-        const Iddiffer::ValueType& msgstrTree = msgTree["msgstr"];
+        const Iddiff::ValueType& msgstrTree = msgTree["msgstr"];
         assert(msgstrTree.IsArray());
 
         for (rapidjson::SizeType i = 0; i < msgstrTree.Size(); ++i) {
@@ -758,7 +758,7 @@ void sort_uniq(std::vector<T> &v)
     v.resize(unique(v.begin(), v.end()) - v.begin());
 }
 
-std::vector<int> Iddiffer::involvedIds()
+std::vector<int> Iddiff::involvedIds()
 {
     std::vector<int> res;
     // TODO: macro for walking through an std::map
@@ -769,14 +769,14 @@ std::vector<int> Iddiffer::involvedIds()
     return res;
 }
 
-void Iddiffer::cleanupMsgIdData(int msg_id)
+void Iddiff::cleanupMsgIdData(int msg_id)
 {
     std::map<int, IddiffChange>::iterator it = m_items.find(msg_id);
     if (it != m_items.end() && it->second.empty())
         m_items.erase(it);
 }
 
-void Iddiffer::substituteMsgId(int old_id, int new_id)
+void Iddiff::substituteMsgId(int old_id, int new_id)
 {
     if (old_id == new_id)
         return;
@@ -801,7 +801,7 @@ void Iddiffer::substituteMsgId(int old_id, int new_id)
     }
 }
 
-void Iddiffer::minimizeIds()
+void Iddiff::minimizeIds()
 {
     std::vector<int> msg_ids_arr = involvedIds();
 
@@ -816,7 +816,7 @@ void Iddiffer::minimizeIds()
 }
 
 // If the return value is true, we can put the new translation and drop the old one (when patching)
-bool Iddiffer::canDropMessage(const Message *message, int min_id)
+bool Iddiff::canDropMessage(const Message *message, int min_id)
 {
     std::vector<IddiffMessage *> removed = findRemoved(min_id);
 
@@ -829,7 +829,7 @@ bool Iddiffer::canDropMessage(const Message *message, int min_id)
     return false;
 }
 
-void Iddiffer::applyToMessage(MessageGroup *messageGroup, int min_id)
+void Iddiff::applyToMessage(MessageGroup *messageGroup, int min_id)
 {
     assert(messageGroup->size() == 1);
     Message *message = messageGroup->message(0);
@@ -864,7 +864,7 @@ void Iddiffer::applyToMessage(MessageGroup *messageGroup, int min_id)
     }
 }
 
-void Iddiffer::applyToMessageComments(MessageGroup *messageGroup, int min_id)
+void Iddiff::applyToMessageComments(MessageGroup *messageGroup, int min_id)
 {
     assert(messageGroup->size() == 1);
     Message *message = messageGroup->message(0);
@@ -894,7 +894,7 @@ void Iddiffer::applyToMessageComments(MessageGroup *messageGroup, int min_id)
 
 // TODO: remove this function!
 // Applies the iddiff to the given TranslationContent and writes changes to file
-void Iddiffer::applyToContent(TranslationContent *content)
+void Iddiff::applyToContent(TranslationContent *content)
 {
     std::vector<MessageGroup *> messages = content->readMessages();
     std::vector<int> min_ids = content->getMinIds();
@@ -906,7 +906,7 @@ void Iddiffer::applyToContent(TranslationContent *content)
 }
 
 // TODO: Warn about messages that are involved in the Iddiff, but were not found in any of the .po files
-void Iddiffer::applyIddiff(StupIdTranslationCollector *collector, bool applyComments)
+void Iddiff::applyIddiff(StupIdTranslationCollector *collector, bool applyComments)
 {
     // Check that involvedIds() will return minimized IDs
     assert(m_minimizedIds);
@@ -943,12 +943,12 @@ void Iddiffer::applyIddiff(StupIdTranslationCollector *collector, bool applyComm
     }
 }
 
-void Iddiffer::applyIddiff(StupIdTranslationCollector *collector)
+void Iddiff::applyIddiff(StupIdTranslationCollector *collector)
 {
     applyIddiff(collector, false);
 }
 
-void Iddiffer::applyIddiffComments(StupIdTranslationCollector *collector)
+void Iddiff::applyIddiffComments(StupIdTranslationCollector *collector)
 {
     applyIddiff(collector, true);
 }
@@ -958,7 +958,7 @@ void Iddiffer::applyIddiffComments(StupIdTranslationCollector *collector)
  *
  * Takes ownership of "item".
  */
-void Iddiffer::insertRemoved(int msg_id, IddiffMessage *item)
+void Iddiff::insertRemoved(int msg_id, IddiffMessage *item)
 {
     if (findRemoved(msg_id, item) != NULL) // duplicate in "REMOVED"
         return;
@@ -973,7 +973,7 @@ void Iddiffer::insertRemoved(int msg_id, IddiffMessage *item)
  *
  * Takes ownership of "item".
  */
-void Iddiffer::insertAdded(int msg_id, IddiffMessage *item)
+void Iddiff::insertAdded(int msg_id, IddiffMessage *item)
 {
     if (findRemoved(msg_id, item) != NULL) // conflict: trying to "ADD" a translation already existing in "REMOVED"
     {
@@ -1005,7 +1005,7 @@ void Iddiffer::insertAdded(int msg_id, IddiffMessage *item)
  *
  * Takes ownership of "item".
  */
-void Iddiffer::insertReview(int msg_id, IddiffMessage *item)
+void Iddiff::insertReview(int msg_id, IddiffMessage *item)
 {
     assert(m_items[msg_id].emptyReview());
     assert(item->isTranslated()); // text should not be empty
@@ -1016,7 +1016,7 @@ void Iddiffer::insertReview(int msg_id, IddiffMessage *item)
 /**
  * Takes ownership of "item.second".
  */
-void Iddiffer::insertRemoved(std::pair<int, IddiffMessage *> item)
+void Iddiff::insertRemoved(std::pair<int, IddiffMessage *> item)
 {
     insertRemoved(item.first, item.second);
 }
@@ -1024,7 +1024,7 @@ void Iddiffer::insertRemoved(std::pair<int, IddiffMessage *> item)
 /**
  * Takes ownership of "item.second".
  */
-void Iddiffer::insertAdded(std::pair<int, IddiffMessage *> item)
+void Iddiff::insertAdded(std::pair<int, IddiffMessage *> item)
 {
     insertAdded(item.first, item.second);
 }
@@ -1032,7 +1032,7 @@ void Iddiffer::insertAdded(std::pair<int, IddiffMessage *> item)
 /**
  * Takes ownership of "item.second".
  */
-void Iddiffer::insertReview(std::pair<int, IddiffMessage *> item)
+void Iddiff::insertReview(std::pair<int, IddiffMessage *> item)
 {
     insertReview(item.first, item.second);
 }
@@ -1040,7 +1040,7 @@ void Iddiffer::insertReview(std::pair<int, IddiffMessage *> item)
 /**
  * Does not take ownership of "item.second".
  */
-void Iddiffer::insertRemovedClone(std::pair<int, IddiffMessage *> item)
+void Iddiff::insertRemovedClone(std::pair<int, IddiffMessage *> item)
 {
     insertRemoved(item.first, new IddiffMessage(*item.second));
 }
@@ -1048,7 +1048,7 @@ void Iddiffer::insertRemovedClone(std::pair<int, IddiffMessage *> item)
 /**
  * Does not take ownership of "item.second".
  */
-void Iddiffer::insertAddedClone(std::pair<int, IddiffMessage *> item)
+void Iddiff::insertAddedClone(std::pair<int, IddiffMessage *> item)
 {
     insertAdded(item.first, new IddiffMessage(*item.second));
 }
@@ -1056,12 +1056,12 @@ void Iddiffer::insertAddedClone(std::pair<int, IddiffMessage *> item)
 /**
  * Does not take ownership of "item.second".
  */
-void Iddiffer::insertReviewClone(std::pair<int, IddiffMessage *> item)
+void Iddiff::insertReviewClone(std::pair<int, IddiffMessage *> item)
 {
     insertReview(item.first, new IddiffMessage(*item.second));
 }
 
-std::vector<std::pair<int, IddiffMessage *> > Iddiffer::getRemovedVector()
+std::vector<std::pair<int, IddiffMessage *> > Iddiff::getRemovedVector()
 {
     std::vector<std::pair<int, IddiffMessage *> > res;
     for (std::map<int, IddiffChange>::iterator iter = m_items.begin();
@@ -1075,7 +1075,7 @@ std::vector<std::pair<int, IddiffMessage *> > Iddiffer::getRemovedVector()
     return res;
 }
 
-std::vector<std::pair<int, IddiffMessage *> > Iddiffer::getAddedVector()
+std::vector<std::pair<int, IddiffMessage *> > Iddiff::getAddedVector()
 {
     std::vector<std::pair<int, IddiffMessage *> > res;
     for (std::map<int, IddiffChange>::iterator iter = m_items.begin();
@@ -1089,7 +1089,7 @@ std::vector<std::pair<int, IddiffMessage *> > Iddiffer::getAddedVector()
     return res;
 }
 
-std::vector<std::pair<int, IddiffMessage *> > Iddiffer::getReviewVector()
+std::vector<std::pair<int, IddiffMessage *> > Iddiff::getReviewVector()
 {
     std::vector<std::pair<int, IddiffMessage *> > res;
     for (std::map<int, IddiffChange>::iterator iter = m_items.begin();
@@ -1102,7 +1102,7 @@ std::vector<std::pair<int, IddiffMessage *> > Iddiffer::getReviewVector()
     return res;
 }
 
-void Iddiffer::mergeHeaders(Iddiffer *diff)
+void Iddiff::mergeHeaders(Iddiff *diff)
 {
     // Keep the most recent date/time
     if (m_date.isNull() || diff->date() > m_date)
@@ -1117,7 +1117,7 @@ void Iddiffer::mergeHeaders(Iddiffer *diff)
 }
 
 // TODO: Iddiffer::mergeNokeep that removes all items from the given Iddiff (and therefore it does not need to clone the IddiffMessage objects)
-void Iddiffer::merge(Iddiffer *diff)
+void Iddiff::merge(Iddiff *diff)
 {
     std::vector<std::pair<int, IddiffMessage *> > other_removed = diff->getRemovedVector();
     std::vector<std::pair<int, IddiffMessage *> > other_added = diff->getAddedVector();
@@ -1133,7 +1133,7 @@ void Iddiffer::merge(Iddiffer *diff)
     mergeHeaders(diff);
 }
 
-void Iddiffer::mergeTrComments(Iddiffer *diff)
+void Iddiff::mergeTrComments(Iddiff *diff)
 {
     assert(diff->getReviewVector().empty());
 
@@ -1176,7 +1176,7 @@ void Iddiffer::mergeTrComments(Iddiffer *diff)
     mergeHeaders(diff);
 }
 
-std::vector<IddiffMessage *> Iddiffer::findRemoved(int msg_id)
+std::vector<IddiffMessage *> Iddiff::findRemoved(int msg_id)
 {
     // Avoiding addition of empty vector to m_removedItems
     if (m_items.find(msg_id) != m_items.end() && !m_items[msg_id].emptyRemoved())
@@ -1185,7 +1185,7 @@ std::vector<IddiffMessage *> Iddiffer::findRemoved(int msg_id)
         return std::vector<IddiffMessage *>();
 }
 
-std::vector<IddiffMessage *> Iddiffer::findAdded(int msg_id)
+std::vector<IddiffMessage *> Iddiff::findAdded(int msg_id)
 {
     // Avoiding addition of empty vector to m_addedItems
     if (m_items.find(msg_id) != m_items.end() && !m_items[msg_id].emptyAdded())
@@ -1194,7 +1194,7 @@ std::vector<IddiffMessage *> Iddiffer::findAdded(int msg_id)
         return std::vector<IddiffMessage *>();
 }
 
-IddiffMessage *Iddiffer::findAddedSingle(int msg_id)
+IddiffMessage *Iddiff::findAddedSingle(int msg_id)
 {
     std::vector<IddiffMessage *> arr = findAdded(msg_id);
 
@@ -1202,7 +1202,7 @@ IddiffMessage *Iddiffer::findAddedSingle(int msg_id)
     return arr.size() == 1 ? arr[0] : NULL;
 }
 
-IddiffMessage *Iddiffer::findRemovedSingle(int msg_id)
+IddiffMessage *Iddiff::findRemovedSingle(int msg_id)
 {
     std::vector<IddiffMessage *> arr = findRemoved(msg_id);
 
@@ -1213,7 +1213,7 @@ IddiffMessage *Iddiffer::findRemovedSingle(int msg_id)
 /**
  * \static
  */
-IddiffMessage *Iddiffer::findIddiffMessageList(std::vector<IddiffMessage *> list, const IddiffMessage *item)
+IddiffMessage *Iddiff::findIddiffMessageList(std::vector<IddiffMessage *> list, const IddiffMessage *item)
 {
     for (size_t i = 0; i < list.size(); i ++)
         if (list[i]->equalMsgstr(item))
@@ -1223,27 +1223,27 @@ IddiffMessage *Iddiffer::findIddiffMessageList(std::vector<IddiffMessage *> list
     return NULL;
 }
 
-IddiffMessage *Iddiffer::findRemoved(int msg_id, const IddiffMessage *item)
+IddiffMessage *Iddiff::findRemoved(int msg_id, const IddiffMessage *item)
 {
     return findIddiffMessageList(findRemoved(msg_id), item);
 }
 
-IddiffMessage *Iddiffer::findRemoved(std::pair<int, IddiffMessage *> item)
+IddiffMessage *Iddiff::findRemoved(std::pair<int, IddiffMessage *> item)
 {
     return findRemoved(item.first, item.second);
 }
 
-IddiffMessage *Iddiffer::findAdded(int msg_id, const IddiffMessage *item)
+IddiffMessage *Iddiff::findAdded(int msg_id, const IddiffMessage *item)
 {
     return findIddiffMessageList(findAdded(msg_id), item);
 }
 
-IddiffMessage *Iddiffer::findAdded(std::pair<int, IddiffMessage *> item)
+IddiffMessage *Iddiff::findAdded(std::pair<int, IddiffMessage *> item)
 {
     return findAdded(item.first, item.second);
 }
 
-void Iddiffer::eraseRemoved(int msg_id, const IddiffMessage *item)
+void Iddiff::eraseRemoved(int msg_id, const IddiffMessage *item)
 {
     assert(m_items.find(msg_id) != m_items.end());
 
@@ -1251,7 +1251,7 @@ void Iddiffer::eraseRemoved(int msg_id, const IddiffMessage *item)
     cleanupMsgIdData(msg_id);
 }
 
-void Iddiffer::eraseAdded(int msg_id, const IddiffMessage *item)
+void Iddiff::eraseAdded(int msg_id, const IddiffMessage *item)
 {
     assert(m_items.find(msg_id) != m_items.end());
 
@@ -1259,7 +1259,7 @@ void Iddiffer::eraseAdded(int msg_id, const IddiffMessage *item)
     cleanupMsgIdData(msg_id);
 }
 
-OptString Iddiffer::reviewCommentText(int msg_id)
+OptString Iddiff::reviewCommentText(int msg_id)
 {
     IddiffMessage *comment = m_items[msg_id].m_reviewComment;
     return comment ? comment->msgstr(0) : OptString(nullptr);
@@ -1271,7 +1271,7 @@ OptString Iddiffer::reviewCommentText(int msg_id)
 // 1. remove matching from m_removedItems (if any)
 // 2. move all _other_ translations for this "msg_id" from m_addedItems to m_removedItems (there can be only one translation for this "msg_id" in m_addedItems)
 // 3. add to m_addedItems
-void Iddiffer::acceptTranslation(int msg_id, const IddiffMessage *item)
+void Iddiff::acceptTranslation(int msg_id, const IddiffMessage *item)
 {
     assert(msg_id);
     assert(item);
@@ -1300,7 +1300,7 @@ void Iddiffer::acceptTranslation(int msg_id, const IddiffMessage *item)
  */
 // 1. remove matching from m_addedItems (if any)
 // 2. add to m_removedItems
-void Iddiffer::rejectTranslation(int msg_id, const IddiffMessage *item)
+void Iddiff::rejectTranslation(int msg_id, const IddiffMessage *item)
 {
     assert(msg_id);
     assert(item);
@@ -1318,7 +1318,7 @@ void Iddiffer::rejectTranslation(int msg_id, const IddiffMessage *item)
 /**
  * \brief Returns true if the "accept" action has already been reviewed.
  */
-bool Iddiffer::isAcceptAlreadyReviewed(int msg_id, IddiffMessage *item)
+bool Iddiff::isAcceptAlreadyReviewed(int msg_id, IddiffMessage *item)
 {
     return findAdded(msg_id, item) != NULL;
 }
@@ -1326,12 +1326,12 @@ bool Iddiffer::isAcceptAlreadyReviewed(int msg_id, IddiffMessage *item)
 /**
  * \brief Returns true if the "reject" action has already been reviewed.
  */
-bool Iddiffer::isRejectAlreadyReviewed(int msg_id, IddiffMessage *item)
+bool Iddiff::isRejectAlreadyReviewed(int msg_id, IddiffMessage *item)
 {
     return findRemoved(msg_id, item) != NULL;
 }
 
-void Iddiffer::setCurrentDateTime()
+void Iddiff::setCurrentDateTime()
 {
     m_date.setCurrentDateTime();
 }
@@ -1343,7 +1343,7 @@ void Iddiffer::setCurrentDateTime()
 //     I.e. trusted patches can overwrite data in "stupids-rerere".
 //
 // This is opposite to "3rd-party idpatch filtering".
-void Iddiffer::filterTrustedIddiff(Iddiffer *filter, Iddiffer *input_diff)
+void Iddiff::filterTrustedIddiff(Iddiff *filter, Iddiff *input_diff)
 {
     if (!input_diff->getReviewVector().empty())
     {

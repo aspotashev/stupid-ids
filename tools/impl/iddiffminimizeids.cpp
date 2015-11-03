@@ -11,7 +11,7 @@ int toolIddiffMinimizeIds(int argc, char *argv[])
     std::string src_path = args[0];
     std::string dest_path = (args.size() == 2) ? args[1] : src_path;
 
-    Iddiffer* src_diff = new Iddiffer();
+    Iddiff* src_diff = new Iddiff();
     if (!src_diff->loadIddiff(src_path.c_str())) // src_path does not exist
         return 1;
 
