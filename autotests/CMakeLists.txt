@@ -6,7 +6,7 @@ include_directories(${CMAKE_SOURCE_DIR}/gettextpo-helper)
 macro(add_unit_test testname)
     set(INPUT_DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/data)
 
-    add_executable(test_${testname} ${testname}.cpp)
+    add_executable(test_${testname} test_${testname}.cpp)
     target_link_libraries(test_${testname} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
     target_link_libraries(test_${testname} gettextpo_helper)
     set_target_properties(test_${testname}
@@ -17,6 +17,6 @@ macro(add_unit_test testname)
 endmacro(add_unit_test testname)
 
 enable_testing()
-add_unit_test(calculate_tp_hash)
-add_unit_test(sha1_buffer)
-add_unit_test(iddiffer)
+add_unit_test(calculatetphash)
+add_unit_test(sha1buffer)
+add_unit_test(iddiff)

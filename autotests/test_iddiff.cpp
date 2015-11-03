@@ -9,7 +9,7 @@
 #include <fstream>
 #include <stdexcept>
 
-BOOST_AUTO_TEST_SUITE(IddifferTest)
+BOOST_AUTO_TEST_SUITE(IddiffTest)
 
 std::string read_file_contents(const char *filename)
 {
@@ -33,14 +33,14 @@ BOOST_AUTO_TEST_CASE(LoadSave)
 {
     std::string inputfile_str;
     inputfile_str += INPUT_DATA_DIR;
-    inputfile_str += "/iddiffer/";
+    inputfile_str += "/iddiff/";
     inputfile_str += "1.iddiff";
 
     std::string input = read_file_contents(inputfile_str.c_str());
 
-    Iddiffer* differ = new Iddiffer();
-    differ->loadIddiff(inputfile_str.c_str());
-    std::string output = differ->generateIddiffText();
+    Iddiffer* diff = new Iddiffer();
+    diff->loadIddiff(inputfile_str.c_str());
+    std::string output = diff->generateIddiffText();
 
     rapidjson::Document docInput;
     docInput.Parse(input.c_str());
