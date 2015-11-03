@@ -9,6 +9,7 @@ class IddiffChange
 {
 public:
     IddiffChange();
+    ~IddiffChange();
 
     bool empty() const;
     bool emptyRemoved() const;

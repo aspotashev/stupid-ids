@@ -158,6 +158,6 @@ private:
     std::string m_author;
     FileDateTime m_date;
 
-    std::map<int, IddiffChange> m_items;
+    std::map<int, IddiffChange*> m_items;
     bool m_minimizedIds;
 };

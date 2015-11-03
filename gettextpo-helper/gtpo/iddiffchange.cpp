@@ -1,9 +1,26 @@
 #include "iddiffchange.h"
+#include "iddiffmessage.h"
+
 #include <stdexcept>
 
 IddiffChange::IddiffChange()
 {
     m_reviewComment = nullptr;
+}
+
+IddiffChange::~IddiffChange()
+{
+    for (IddiffMessage* x : m_removedItems) {
+        delete x;
+    }
+
+    for (IddiffMessage* x : m_addedItems) {
+        delete x;
+    }
+
+    if (m_reviewComment) {
+        delete m_reviewComment;
+    }
 }
 
 void IddiffChange::clearReviewComment()

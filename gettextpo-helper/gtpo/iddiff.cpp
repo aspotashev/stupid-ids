@@ -27,17 +27,7 @@ Iddiff::Iddiff()
 
 Iddiff::~Iddiff()
 {
-    std::vector<std::pair<int, IddiffMessage*> > removed_list = getRemovedVector();
-    for (size_t i = 0; i < removed_list.size(); i ++)
-        delete removed_list[i].second;
-
-    std::vector<std::pair<int, IddiffMessage *> > added_list = getAddedVector();
-    for (size_t i = 0; i < added_list.size(); i ++)
-        delete added_list[i].second;
-
-    std::vector<std::pair<int, IddiffMessage *> > review_list = getReviewVector();
-    for (size_t i = 0; i < review_list.size(); i ++)
-        delete review_list[i].second;
+    clearIddiff();
 }
 
 void Iddiff::writeMessageList(rapidjson::PrettyWriter<rapidjson::StringBuffer> &writer,
@@ -52,18 +42,25 @@ void Iddiff::writeMessageList(rapidjson::PrettyWriter<rapidjson::StringBuffer> &
 
 void Iddiff::clearIddiff()
 {
+    for (auto& kv : m_items) {
+        delete kv.second;
+    }
+
     m_items.clear();
 }
 
 void Iddiff::clearReviewComments()
 {
-    for (std::map<int, IddiffChange>::iterator it = m_items.begin(); it != m_items.end(); it ++)
-        it->second.clearReviewComment();
+    for (auto& kv : m_items) {
+        kv.second->clearReviewComment();
+    }
 }
 
 void Iddiff::clearReviewComment(int msg_id)
 {
-    m_items[msg_id].clearReviewComment();
+    if (m_items[msg_id]) {
+        m_items[msg_id]->clearReviewComment();
+    }
 }
 
 // This function fills m_addedItems.
@@ -762,8 +759,9 @@ std::vector<int> Iddiff::involvedIds()
 {
     std::vector<int> res;
     // TODO: macro for walking through an std::map
-    for (std::map<int, IddiffChange>::iterator iter = m_items.begin(); iter != m_items.end(); iter ++)
-        res.push_back(iter->first);
+    for (const auto& kv : m_items) {
+        res.push_back(kv.first);
+    }
 
     sort_uniq(res);
     return res;
@@ -771,8 +769,8 @@ std::vector<int> Iddiff::involvedIds()
 
 void Iddiff::cleanupMsgIdData(int msg_id)
 {
-    std::map<int, IddiffChange>::iterator it = m_items.find(msg_id);
-    if (it != m_items.end() && it->second.empty())
+    auto it = m_items.find(msg_id);
+    if (it != m_items.end() && it->second->empty())
         m_items.erase(it);
 }
 
@@ -965,7 +963,10 @@ void Iddiff::insertRemoved(int msg_id, IddiffMessage *item)
 
     assert(findAdded(msg_id, item) == NULL); // conflict: trying to "REMOVE" a translation already existing in "ADDED"
 
-    m_items[msg_id].m_removedItems.push_back(item);
+    if (!m_items[msg_id]) {
+        m_items[msg_id] = new IddiffChange();
+    }
+    m_items[msg_id]->m_removedItems.push_back(item);
 }
 
 /**
@@ -991,13 +992,19 @@ void Iddiff::insertAdded(int msg_id, IddiffMessage *item)
     std::vector<IddiffMessage *> added_this_id = findAdded(msg_id);
     for (size_t i = 0; i < added_this_id.size(); i ++)
     {
-        if (added_this_id[i]->equalMsgstr(item))
-            return; // duplicate in "ADDED"
-        else
-            assert(0); // conflict: two different translations in "ADDED"
+        if (added_this_id[i]->equalMsgstr(item)) {
+            // duplicate in "ADDED"
+            return;
+        } else {
+            // conflict: two different translations in "ADDED"
+            assert(0);
+        }
     }
 
-    m_items[msg_id].m_addedItems.push_back(item);
+    if (!m_items[msg_id]) {
+        m_items[msg_id] = new IddiffChange();
+    }
+    m_items[msg_id]->m_addedItems.push_back(item);
 }
 
 /**
@@ -1007,10 +1014,14 @@ void Iddiff::insertAdded(int msg_id, IddiffMessage *item)
  */
 void Iddiff::insertReview(int msg_id, IddiffMessage *item)
 {
-    assert(m_items[msg_id].emptyReview());
+    if (!m_items[msg_id]) {
+        m_items[msg_id] = new IddiffChange();
+    }
+
+    assert(m_items[msg_id]->emptyReview());
     assert(item->isTranslated()); // text should not be empty
 
-    m_items[msg_id].m_reviewComment = item;
+    m_items[msg_id]->m_reviewComment = item;
 }
 
 /**
@@ -1064,12 +1075,11 @@ void Iddiff::insertReviewClone(std::pair<int, IddiffMessage *> item)
 std::vector<std::pair<int, IddiffMessage *> > Iddiff::getRemovedVector()
 {
     std::vector<std::pair<int, IddiffMessage *> > res;
-    for (std::map<int, IddiffChange>::iterator iter = m_items.begin();
-        iter != m_items.end(); iter ++)
-    {
-        std::vector<IddiffMessage *> id_items = iter->second.m_removedItems;
-        for (size_t i = 0; i < id_items.size(); i ++)
-            res.push_back(std::pair<int, IddiffMessage *>(iter->first, id_items[i]));
+    for (auto& kv : m_items) {
+        std::vector<IddiffMessage *> id_items = kv.second->m_removedItems;
+        for (size_t i = 0; i < id_items.size(); i ++) {
+            res.push_back(std::pair<int, IddiffMessage *>(kv.first, id_items[i]));
+        }
     }
 
     return res;
@@ -1078,12 +1088,11 @@ std::vector<std::pair<int, IddiffMessage *> > Iddiff::getRemovedVector()
 std::vector<std::pair<int, IddiffMessage *> > Iddiff::getAddedVector()
 {
     std::vector<std::pair<int, IddiffMessage *> > res;
-    for (std::map<int, IddiffChange>::iterator iter = m_items.begin();
-        iter != m_items.end(); iter ++)
-    {
-        std::vector<IddiffMessage *> id_items = iter->second.m_addedItems;
-        for (size_t i = 0; i < id_items.size(); i ++)
-            res.push_back(std::pair<int, IddiffMessage *>(iter->first, id_items[i]));
+    for (auto& kv : m_items) {
+        std::vector<IddiffMessage *> id_items = kv.second->m_addedItems;
+        for (size_t i = 0; i < id_items.size(); i ++) {
+            res.push_back(std::pair<int, IddiffMessage *>(kv.first, id_items[i]));
+        }
     }
 
     return res;
@@ -1092,11 +1101,10 @@ std::vector<std::pair<int, IddiffMessage *> > Iddiff::getAddedVector()
 std::vector<std::pair<int, IddiffMessage *> > Iddiff::getReviewVector()
 {
     std::vector<std::pair<int, IddiffMessage *> > res;
-    for (std::map<int, IddiffChange>::iterator iter = m_items.begin();
-        iter != m_items.end(); iter ++)
-    {
-        if (iter->second.m_reviewComment)
-            res.push_back(std::pair<int, IddiffMessage *>(iter->first, iter->second.m_reviewComment));
+    for (auto& kv : m_items) {
+        if (kv.second->m_reviewComment) {
+            res.push_back(std::pair<int, IddiffMessage *>(kv.first, kv.second->m_reviewComment));
+        }
     }
 
     return res;
@@ -1105,8 +1113,9 @@ std::vector<std::pair<int, IddiffMessage *> > Iddiff::getReviewVector()
 void Iddiff::mergeHeaders(Iddiff *diff)
 {
     // Keep the most recent date/time
-    if (m_date.isNull() || diff->date() > m_date)
+    if (m_date.isNull() || diff->date() > m_date) {
         m_date = diff->date();
+    }
 
     std::vector<std::string> authors = split_string(m_author, std::string(", "));
     std::vector<std::string> added_authors = split_string(diff->m_author, std::string(", "));
@@ -1179,8 +1188,8 @@ void Iddiff::mergeTrComments(Iddiff *diff)
 std::vector<IddiffMessage *> Iddiff::findRemoved(int msg_id)
 {
     // Avoiding addition of empty vector to m_removedItems
-    if (m_items.find(msg_id) != m_items.end() && !m_items[msg_id].emptyRemoved())
-        return m_items[msg_id].m_removedItems;
+    if (m_items.find(msg_id) != m_items.end() && !m_items[msg_id]->emptyRemoved())
+        return m_items[msg_id]->m_removedItems;
     else
         return std::vector<IddiffMessage *>();
 }
@@ -1188,8 +1197,8 @@ std::vector<IddiffMessage *> Iddiff::findRemoved(int msg_id)
 std::vector<IddiffMessage *> Iddiff::findAdded(int msg_id)
 {
     // Avoiding addition of empty vector to m_addedItems
-    if (m_items.find(msg_id) != m_items.end() && !m_items[msg_id].emptyAdded())
-        return m_items[msg_id].m_addedItems;
+    if (m_items.find(msg_id) != m_items.end() && !m_items[msg_id]->emptyAdded())
+        return m_items[msg_id]->m_addedItems;
     else
         return std::vector<IddiffMessage *>();
 }
@@ -1247,7 +1256,7 @@ void Iddiff::eraseRemoved(int msg_id, const IddiffMessage *item)
 {
     assert(m_items.find(msg_id) != m_items.end());
 
-    m_items[msg_id].eraseRemoved(item);
+    m_items[msg_id]->eraseRemoved(item);
     cleanupMsgIdData(msg_id);
 }
 
@@ -1255,13 +1264,13 @@ void Iddiff::eraseAdded(int msg_id, const IddiffMessage *item)
 {
     assert(m_items.find(msg_id) != m_items.end());
 
-    m_items[msg_id].eraseAdded(item);
+    m_items[msg_id]->eraseAdded(item);
     cleanupMsgIdData(msg_id);
 }
 
 OptString Iddiff::reviewCommentText(int msg_id)
 {
-    IddiffMessage *comment = m_items[msg_id].m_reviewComment;
+    IddiffMessage *comment = m_items[msg_id] ? m_items[msg_id]->m_reviewComment : nullptr;
     return comment ? comment->msgstr(0) : OptString(nullptr);
 }
 
