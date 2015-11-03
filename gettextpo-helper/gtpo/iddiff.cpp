@@ -22,7 +22,6 @@
  */
 Iddiffer::Iddiffer()
     : m_minimizedIds(false)
-    , m_output(std::ostringstream::out)
 {
 }
 
@@ -41,10 +40,14 @@ Iddiffer::~Iddiffer()
         delete review_list[i].second;
 }
 
-void Iddiffer::writeMessageList(std::vector<std::pair<int, IddiffMessage *> > list)
+void Iddiffer::writeMessageList(rapidjson::PrettyWriter<rapidjson::StringBuffer> &writer,
+                                const std::vector<IddiffMessage*>& list)
 {
-    for (size_t i = 0; i < list.size(); i ++)
-        m_output << list[i].first << " " << list[i].second->formatPoMessage() << "\n";
+    writer.StartArray();
+    for (auto x : list) {
+        x->writeJson(writer);
+    }
+    writer.EndArray();
 }
 
 void Iddiffer::clearIddiff()
@@ -444,37 +447,97 @@ std::string Iddiffer::dateString() const
 
 std::string Iddiffer::generateIddiffText()
 {
-    m_output.str("");
+    // TODO: rewrite without getRemovedVector/getAddedVector/getReviewVector to optimize for speed
     std::vector<std::pair<int, IddiffMessage *> > removed_list = getRemovedVector();
     std::vector<std::pair<int, IddiffMessage *> > added_list = getAddedVector();
     std::vector<std::pair<int, IddiffMessage *> > review_list = getReviewVector();
-    if (removed_list.size() > 0 || added_list.size() > 0 || review_list.size() > 0)
-    {
-        m_output << "Subject: " << m_subject << "\n";
-        m_output << "Author: " << m_author << "\n";
-        m_output << "Date: " << dateString() << "\n";
-        m_output << "\n";
 
-        if (removed_list.size() > 0)
-        {
-            m_output << "REMOVED\n";
-            writeMessageList(removed_list);
-        }
-
-        if (added_list.size() > 0)
-        {
-            m_output << "ADDED\n";
-            writeMessageList(added_list);
-        }
-
-        if (review_list.size() > 0)
-        {
-            m_output << "REVIEW\n";
-            writeMessageList(review_list);
-        }
+    if (removed_list.size() == 0 && added_list.size() == 0 && review_list.size() == 0) {
+        return std::string("{}");
     }
 
-    return m_output.str();
+    rapidjson::StringBuffer buffer;
+    rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
+
+    writer.StartObject();
+
+    writer.String("subject");
+    writer.String(m_subject.c_str());
+
+    writer.String("author");
+    writer.String(m_author.c_str());
+
+    writer.String("dateCreated");
+    writer.String(dateString().c_str());
+
+    std::set<int> ids;
+    for (auto x : removed_list) {
+        ids.insert(x.first);
+    }
+    for (auto x : added_list) {
+        ids.insert(x.first);
+    }
+    for (auto x : review_list) {
+        ids.insert(x.first);
+    }
+
+    writer.String("messages");
+    writer.StartArray();
+    for (int intId : ids) {
+        // {
+        //   "ref": {"intid": 123},
+        //   "accept": ["abc", ...],
+        //   "reject": ["def", ...],
+        //   "review": ["bla bla bla", ...]
+        // }
+        writer.StartObject();
+
+        writer.String("ref");
+        writer.StartObject();
+        writer.String("intid");
+        writer.Int(intId);
+        writer.EndObject();
+
+        std::vector<IddiffMessage*> accept;
+        std::vector<IddiffMessage*> reject;
+        std::vector<IddiffMessage*> review;
+
+        for (auto x : added_list) {
+            if (intId == x.first) {
+                accept.push_back(x.second);
+            }
+        }
+        for (auto x : removed_list) {
+            if (intId == x.first) {
+                reject.push_back(x.second);
+            }
+        }
+        for (auto x : review_list) {
+            if (intId == x.first) {
+                review.push_back(x.second);
+            }
+        }
+
+        if (!accept.empty()) {
+            writer.String("accept");
+            writeMessageList(writer, accept);
+        }
+        if (!reject.empty()) {
+            writer.String("reject");
+            writeMessageList(writer, reject);
+        }
+        if (!review.empty()) {
+            writer.String("review");
+            writeMessageList(writer, review);
+        }
+
+        writer.EndObject();
+    }
+    writer.EndArray();
+
+    writer.EndObject();
+
+    return std::string(buffer.GetString());
 }
 
 bool Iddiffer::loadIddiff(const char *filename)
@@ -499,143 +562,67 @@ bool Iddiffer::loadIddiff(const char *filename)
     fclose(f);
     buffer[file_size] = '\0';
 
-    std::vector<char *> lines;
 
-    char *cur_line = buffer;
-    char *line_break = buffer; // something that is not NULL
+    rapidjson::Document doc;
+    doc.Parse(buffer);
 
-    bool has_subject = false;
-    bool has_author = false;
-    m_date.clear();
-    while (line_break)
-    {
-        line_break = strchr(cur_line, '\n');
-        if (line_break == NULL) // last line does not end with "\n"
-        {
-            break;
-        }
-        else if (line_break - buffer == file_size - 1) // last line ends with "\n"
-        {
-            *line_break = '\0';
-            line_break = NULL;
-        }
+    assert(doc.IsObject());
 
-        if (line_break)
-            *line_break = '\0';
+    assert(doc.HasMember("subject"));
+    m_subject = std::string(doc["subject"].GetString());
 
-        lines.push_back(cur_line);
-        cur_line = line_break + 1;
+    assert(doc.HasMember("author"));
+    m_author = std::string(doc["author"].GetString());
+
+    if (doc.HasMember("dateCreated")) {
+        m_date.fromString(doc["dateCreated"].GetString());
     }
 
-    // Reading header
-    size_t index = 0;
-    for (; index < lines.size(); index ++)
-    {
-        char *line = lines[index];
-
-        if (strlen(line) == 0)
-        {
-            // the header ends
-            index ++;
-            break;
-        }
-
-        char *colon = strchr(line, ':');
-        assert(colon);
-
-        colon[0] = '\0'; // truncate at the end of header item key
-        assert(colon[1] == ' '); // space after colon
-
-        colon += 2; // move to the header item value
-
-        if (!strcmp(line, "Subject"))
-        {
-            assert(!has_subject); // catch duplicate "Subject:" fields
-            has_subject = true;
-
-            m_subject = std::string(colon);
-        }
-        else if (!strcmp(line, "Author"))
-        {
-            assert(!has_author); // catch duplicate "Author:" fields
-            has_author = true;
-
-            m_author = std::string(colon);
-        }
-        else if (!strcmp(line, "Date"))
-        {
-            assert(m_date.isNull()); // catch duplicate "Date:" fields
-
-            std::string date_string = std::string(colon);
-            m_date.fromString(date_string.c_str());
-        }
-        else
-        {
-            printf("Unknown header field: [%s]\n", line);
-            printf("File: [%s]\n", filename);
-            assert(0);
-        }
-    }
-    // Check that all fields are present (is it really necessary?)
-    assert(has_subject);
-    assert(has_author);
-    if (m_date.isNull())
+    if (m_date.isNull()) {
         fprintf(stderr, "Warning: the .iddiff file does not have a \"Date:\" field in the header\n");
-
-
-    enum
-    {
-        SECTION_UNKNOWN,
-        SECTION_REMOVED,
-        SECTION_ADDED,
-        SECTION_REVIEW,
-    } current_section = SECTION_UNKNOWN;
-
-    bool has_removed = false;
-    bool has_added = false;
-    bool has_review = false;
-    for (; index < lines.size(); index ++)
-    {
-        char *line = lines[index];
-
-        if (!strcmp(line, "REMOVED"))
-        {
-            assert(!has_removed);
-            has_removed = true;
-
-            current_section = SECTION_REMOVED;
-        }
-        else if (!strcmp(line, "ADDED"))
-        {
-            assert(!has_added);
-            has_added = true;
-
-            current_section = SECTION_ADDED;
-        }
-        else if (!strcmp(line, "REVIEW"))
-        {
-            assert(!has_review);
-            has_review = true;
-
-            current_section = SECTION_REVIEW;
-        }
-        // Now we are processing a line inside a section
-        else if (current_section == SECTION_REMOVED)
-            insertRemoved(loadMessageListEntry(line));
-        else if (current_section == SECTION_ADDED)
-            insertAdded(loadMessageListEntry(line));
-        else if (current_section == SECTION_REVIEW)
-            insertReview(loadMessageListEntry(line));
-        else // invalid value of "current_section"
-        {
-            // Unknown iddiff section
-            assert(0);
-        }
     }
 
-    // Check that the .iddiff was not useless
-    assert(has_removed || has_added || has_review);
+    assert(doc.HasMember("messages"));
+    const ValueType& messages = doc["messages"];
+    assert(messages.IsArray());
+    rapidjson::SizeType nMsg = messages.Size();
 
+    // Check that the .iddiff is not useless
+    assert(nMsg > 0);
+
+    for (rapidjson::SizeType i = 0; i < nMsg; ++i) {
+        const ValueType& msg = messages[i];
+        assert(msg.IsObject());
+        assert(msg.HasMember("ref"));
+
+        assert(msg["ref"].HasMember("intid"));
+        assert(msg["ref"]["intid"].IsInt());
+        int intId = msg["ref"]["intid"].GetInt();
+
+        // Check that this object is not useless
+        assert(msg.HasMember("accept") || msg.HasMember("reject") || msg.HasMember("review"));
+
+        if (msg.HasMember("accept")) {
+            std::vector<IddiffMessage*> list = loadMessageList(msg["accept"]);
+            for (auto x : list) {
+                insertAdded(intId, x);
+            }
+        }
+
+        if (msg.HasMember("reject")) {
+            std::vector<IddiffMessage*> list = loadMessageList(msg["reject"]);
+            for (auto x : list) {
+                insertRemoved(intId, x);
+            }
+        }
+
+        if (msg.HasMember("review")) {
+            std::vector<IddiffMessage*> list = loadMessageList(msg["review"]);
+            for (auto x : list) {
+                insertReview(intId, x);
+            }
+        }
+    }
 
     delete [] buffer;
     return true; // OK
@@ -727,6 +714,41 @@ std::pair<int, IddiffMessage *> Iddiffer::loadMessageListEntry(const char *line)
 
     delete [] msgstr_buf;
     return std::pair<int, IddiffMessage*>(msg_id, msg);
+}
+
+// static
+std::vector<IddiffMessage*> Iddiffer::loadMessageList(const Iddiffer::ValueType& array)
+{
+    rapidjson::SizeType nMsg = array.Size();
+
+    // Check that the .iddiff is not useless
+    assert(nMsg > 0);
+
+    std::vector<IddiffMessage*> res;
+    for (rapidjson::SizeType i = 0; i < nMsg; ++i) {
+        // TODO: move this into class IddiffMessage
+        const Iddiffer::ValueType& msgTree = array[i];
+        assert(msgTree.IsObject());
+
+        assert(msgTree.HasMember("fuzzy"));
+        assert(msgTree["fuzzy"].IsBool());
+
+        IddiffMessage *msg = new IddiffMessage();
+        msg->setFuzzy(msgTree["fuzzy"].GetBool());
+
+        assert(msgTree.HasMember("msgstr"));
+        const Iddiffer::ValueType& msgstrTree = msgTree["msgstr"];
+        assert(msgstrTree.IsArray());
+
+        for (rapidjson::SizeType i = 0; i < msgstrTree.Size(); ++i) {
+            assert(msgstrTree[i].IsString());
+            msg->addMsgstr(OptString(msgstrTree[i].GetString()));
+        }
+
+        res.push_back(msg);
+    }
+
+    return res;
 }
 
 template <typename T>
@@ -834,9 +856,9 @@ void Iddiffer::applyToMessage(MessageGroup *messageGroup, int min_id)
         {
             std::cerr << "You have a conflict:" << std::endl <<
                 " * Someone has already translated this message as:" << std::endl <<
-                message->formatPoMessage() << std::endl <<
+                message->toJson() << std::endl <<
                 " * And you are suggesting this:" << std::endl <<
-                added->formatPoMessage() << std::endl;
+                added->toJson() << std::endl;
             assert(0);
         }
     }
@@ -909,7 +931,7 @@ void Iddiffer::applyIddiff(StupIdTranslationCollector *collector, bool applyComm
         if (messageGroups.size() == 0)
             fprintf(stderr,
                 "Message has not been found nowhere by its ID (%d):\t%s\n",
-                min_id, findAddedSingle(min_id)->formatPoMessage().c_str());
+                min_id, findAddedSingle(min_id)->toJson().c_str());
     }
 
     printf("involved contents: %d\n", (int)contents.size());
@@ -961,8 +983,8 @@ void Iddiffer::insertAdded(int msg_id, IddiffMessage *item)
             "\told message translation: %s\n"
             "\tnew message translation: %s\n",
             msg_id,
-            findRemoved(msg_id, item)->formatPoMessage().c_str(),
-            item->formatPoMessage().c_str());
+            findRemoved(msg_id, item)->toJson().c_str(),
+            item->toJson().c_str());
         assert(0);
     }
 

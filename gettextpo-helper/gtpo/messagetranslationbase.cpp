@@ -65,15 +65,6 @@ bool MessageTranslationBase::setNPluralsPacked(int n_plurals)
     return n_plurals > 0;
 }*/
 
-std::string MessageTranslationBase::formatPoMessage(po_message_t message)
-{
-    MessageTranslationBase *msg = new MessageTranslationBase(message);
-    std::string res = msg->formatPoMessage();
-    delete msg;
-
-    return res;
-}
-
 std::string MessageTranslationBase::formatPoMessage() const
 {
     assert(numPlurals() > 0);
@@ -91,6 +82,35 @@ std::string MessageTranslationBase::formatPoMessage() const
     }
 
     return res;
+}
+
+void MessageTranslationBase::writeJson(rapidjson::PrettyWriter<rapidjson::StringBuffer> &writer) const
+{
+    assert(numPlurals() > 0);
+
+    writer.StartObject();
+
+    writer.String("fuzzy");
+    writer.Bool(isFuzzy());
+
+    writer.String("msgstr");
+    writer.StartArray();
+    for (int i = 0; i < numPlurals(); i ++) {
+        writer.String(msgstr(i).c_str());
+    }
+    writer.EndArray();
+
+    writer.EndObject();
+}
+
+std::string MessageTranslationBase::toJson() const
+{
+    rapidjson::StringBuffer buffer;
+    rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
+
+    writeJson(writer);
+
+    return std::string(buffer.GetString());
 }
 
 std::string MessageTranslationBase::formatString(const std::string& str)

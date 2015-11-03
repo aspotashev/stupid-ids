@@ -4,6 +4,10 @@
 
 #include <gettext-po.h>
 
+#include <rapidjson/prettywriter.h>
+#include <rapidjson/document.h>
+#include <rapidjson/stringbuffer.h>
+
 #include <string>
 #include <vector>
 #include <sstream>
@@ -132,8 +136,14 @@ public:
     void filterTrustedIddiff(Iddiffer* filter, Iddiffer* input_diff);
 
 private:
-    void writeMessageList(std::vector<std::pair<int, IddiffMessage*>> list);
+    typedef typename rapidjson::Document::ValueType ValueType;
+
+    void writeMessageList(rapidjson::PrettyWriter<rapidjson::StringBuffer> &writer,
+                          const std::vector<IddiffMessage*>& list);
+
     std::pair<int, IddiffMessage*> loadMessageListEntry(const char* line);
+
+    static std::vector<IddiffMessage*> loadMessageList(const ValueType& array);
 
     static IddiffMessage* findIddiffMessageList(
         std::vector<IddiffMessage*> list, const IddiffMessage* item);
@@ -151,6 +161,4 @@ private:
 
     std::map<int, IddiffChange> m_items;
     bool m_minimizedIds;
-
-    std::ostringstream m_output;
 };

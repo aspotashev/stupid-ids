@@ -1,8 +1,28 @@
-Subject: 
-Author: Alexander Potashev <aspotashev@gmail.com>, Ivan Ivanov <ivan.ivanov@example.com>, John Doe <john.doe@example.com>
-Date: 
-
-REMOVED
-45657469 "Правка"
-ADDED
-45657469 "Изменить"
+{
+  "subject": "",
+  "author": "Alexander Potashev <aspotashev@gmail.com>, Ivan Ivanov <ivan.ivanov@example.com>, John Doe <john.doe@example.com>",
+  "dateCreated": "",
+  "messages": [
+    {
+      "ref": {
+        "intid": 45657469
+      },
+      "accept": [
+        {
+          "fuzzy": false,
+          "msgstr": [
+            "Изменить"
+          ]
+        }
+      ],
+      "reject": [
+        {
+          "fuzzy": false,
+          "msgstr": [
+            "Правка"
+          ]
+        }
+      ]
+    }
+  ]
+}

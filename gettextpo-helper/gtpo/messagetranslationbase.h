@@ -5,6 +5,8 @@
 
 #include <gettext-po.h>
 
+#include <rapidjson/prettywriter.h>
+
 #include <vector>
 
 /**
@@ -49,6 +51,10 @@ public:
      * @return Formatted message (for .iddiff files, etc).
      **/
     std::string formatPoMessage() const;
+
+    void writeJson(rapidjson::PrettyWriter<rapidjson::StringBuffer> &writer) const;
+
+    std::string toJson() const;
 
     /**
      * @brief Returns a const pointer to a particular translation form.
@@ -123,8 +129,6 @@ protected:
      * @return Whether the message uses plural forms.
      **/
 //     bool setNPluralsPacked(int n_plurals);
-
-    static std::string formatPoMessage(po_message_t message);
 
 protected:
     // Arabic uses 6 plural forms, TBD: grow this at run-time

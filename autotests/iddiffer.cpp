@@ -42,7 +42,12 @@ BOOST_AUTO_TEST_CASE(LoadSave)
     differ->loadIddiff(inputfile_str.c_str());
     std::string output = differ->generateIddiffText();
 
-    BOOST_CHECK_EQUAL(input, output);
+    rapidjson::Document docInput;
+    docInput.Parse(input.c_str());
+    rapidjson::Document docOutput;
+    docOutput.Parse(output.c_str());
+
+    BOOST_CHECK(docInput == docOutput);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
