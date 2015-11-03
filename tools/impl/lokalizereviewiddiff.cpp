@@ -22,71 +22,72 @@ public:
     * minimal set of them that contains messages with all IDs mentioned in
     * \a diff.
     */
-	GreedyIddiffCoverage(StupIdTranslationCollector *collector, Iddiff *diff);
+    GreedyIddiffCoverage(StupIdTranslationCollector *collector, Iddiff *diff);
 
     /**
      * Performs the next step of the greedy algorithm.
      */
-	TranslationContent *nextContent();
+    TranslationContent *nextContent();
 
 private:
     // TranslationContent-s that can still be returned by "nextContent()".
     // TODO: use std::list instead of std::vector
-	std::vector<TranslationContent *> m_invContents;
+    std::vector<TranslationContent *> m_invContents;
 
     // Minimized IDs that have not been covered yet by
     // any TranslationContent already returned by "nextContent()".
-	std::set<int> m_ids;
+    std::set<int> m_ids;
 };
 
 GreedyIddiffCoverage::GreedyIddiffCoverage(StupIdTranslationCollector *collector, Iddiff *diff)
 {
     // Minimizing "ids". See comment in nextContent() after "if (m_ids.find(c_ids[j]) != m_ids.end())".
-	diff->minimizeIds();
+    diff->minimizeIds();
 
-	// Initializing "m_ids".
-	std::vector<int> ids = diff->involvedIds();
-	m_ids = std::set<int>(ids.begin(), ids.end());
+    // Initializing "m_ids".
+    std::vector<int> ids = diff->involvedIds();
+    m_ids = std::set<int>(ids.begin(), ids.end());
 
-	// Initializing "m_invContents".
-	m_invContents = collector->involvedByMinIds(ids);
+    // Initializing "m_invContents".
+    m_invContents = collector->involvedByMinIds(ids);
 }
 
 TranslationContent *GreedyIddiffCoverage::nextContent()
 {
-	int best_index = -1;
-	int best_covered = 0;
+    int best_index = -1;
+    int best_covered = 0;
 
-	for (size_t i = 0; i < m_invContents.size(); i ++)
-	{
-		TranslationContent *content = m_invContents[i];
-		const std::vector<int> &c_ids = content->getMinIds();
+    for (size_t i = 0; i < m_invContents.size(); ++i) {
+        TranslationContent *content = m_invContents[i];
+        const std::vector<int> &c_ids = content->getMinIds();
 
-		int covered = 0;
-		for (size_t j = 0; j < c_ids.size(); j ++)
-			if (m_ids.find(c_ids[j]) != m_ids.end()) // We are searching for a _minimized_ ID "c_ids[j]",
-				covered ++;                          // therefore all IDs in "m_ids" should also be minimized.
+        int covered = 0;
+        for (size_t j = 0; j < c_ids.size(); j ++) {
+            if (m_ids.find(c_ids[j]) != m_ids.end()) // We are searching for a _minimized_ ID "c_ids[j]",
+                covered ++;                          // therefore all IDs in "m_ids" should also be minimized.
+        }
 
-		if (covered > best_covered)
-		{
-			best_index = i;
-			best_covered = covered;
-		}
-	}
+        if (covered > best_covered) {
+            best_index = i;
+            best_covered = covered;
+        }
+    }
 
-	if (best_index == -1)
-		return NULL;
+    if (best_index == -1) {
+        return NULL;
+    }
 
-	// Remove handled IDs from m_ids
-	TranslationContent *content = m_invContents[best_index];
-	std::vector<int> c_ids = content->getMinIds();
-	for (size_t i = 0; i < c_ids.size(); i ++)
-		m_ids.erase(c_ids[i]);
+    // Remove handled IDs from m_ids
+    TranslationContent *content = m_invContents[best_index];
+    std::vector<int> c_ids = content->getMinIds();
+    for (size_t i = 0; i < c_ids.size(); ++i) {
+        m_ids.erase(c_ids[i]);
+    }
 
-	// Remove handled content from the list
-	m_invContents.erase(m_invContents.begin() + best_index);
+    // Remove handled content from the list
+    m_invContents.erase(m_invContents.begin() + best_index);
 
-	return content;
+    return content;
 }
 
 int toolLokalizeReviewIddiff(int argc, char *argv[])

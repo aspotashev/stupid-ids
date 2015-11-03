@@ -1,11 +1,9 @@
-
 #include "server.h"
 
 int main()
 {
-	Server server;
-	server.start();
+    Server server;
+    server.start();
 
-	return 0;
+    return 0;
 }
-

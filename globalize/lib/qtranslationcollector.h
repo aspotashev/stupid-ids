@@ -5,6 +5,6 @@
 class TranslationCollector : public StupIdTranslationCollector
 {
 public:
-	void insertPo(QString path);
-	void insertPoDir(QString directory_path);
+    void insertPo(QString path);
+    void insertPoDir(QString directory_path);
 };
