@@ -26,6 +26,8 @@ public:
 
     OptString msgctxt() const;
 
+    bool operator==(const MessageOriginalText& that) const;
+
 protected:
     /**
     * Does not take ownership of "str".

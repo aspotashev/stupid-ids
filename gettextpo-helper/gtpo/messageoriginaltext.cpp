@@ -70,3 +70,10 @@ OptString MessageOriginalText::msgctxt() const
 
     return m_msgctxt;
 }
+
+bool MessageOriginalText::operator==(const MessageOriginalText& that) const
+{
+    return m_msgid == that.m_msgid &&
+        m_msgidPlural == that.m_msgidPlural &&
+        m_msgctxt == that.m_msgctxt;
+}

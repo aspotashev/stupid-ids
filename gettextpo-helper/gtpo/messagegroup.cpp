@@ -78,11 +78,9 @@ void MessageGroup::mergeMessageGroup(const MessageGroup *other)
 //     m_msgctxt = NULL;
 // }
 
-bool MessageGroup::equalOrigText(const MessageGroup* other) const
+bool MessageGroup::equalOrigText(const MessageGroup* that) const
 {
-    return msgid() == other->msgid() &&
-        msgctxt() == other->msgctxt() &&
-        msgidPlural() == other->msgidPlural();
+    return dynamic_cast<const MessageOriginalText&>(*this) == dynamic_cast<const MessageOriginalText&>(*that);
 }
 
 void MessageGroup::updateTranslationFrom(const MessageGroup* from)
