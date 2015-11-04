@@ -76,14 +76,14 @@ void MessageGroup::mergeMessageGroup(const MessageGroup *other)
 //     m_msgctxt = NULL;
 // }
 
-bool MessageGroup::equalOrigText(const MessageGroup* that) const
+bool MessageGroup::equalOrigText(const MessageGroup& that) const
 {
-    return static_cast<const MessageOriginalText&>(*this) == static_cast<const MessageOriginalText&>(*that);
+    return static_cast<const MessageOriginalText&>(*this) == static_cast<const MessageOriginalText&>(that);
 }
 
-bool MessageGroup::compareByMsgid(const MessageGroup& o) const
+bool MessageGroup::compareByMsgid(const MessageGroup& that) const
 {
-    return static_cast<const MessageOriginalText&>(*this) < static_cast<const MessageOriginalText&>(o);
+    return static_cast<const MessageOriginalText&>(*this) < static_cast<const MessageOriginalText&>(that);
 }
 
 void MessageGroup::updateTranslationFrom(const MessageGroup* from)

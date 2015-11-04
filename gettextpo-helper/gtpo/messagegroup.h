@@ -28,8 +28,8 @@ public:
     Message *message(int index);
     const Message *message(int index) const;
 
-    bool equalOrigText(const MessageGroup *that) const;
-    bool compareByMsgid(const MessageGroup& o) const;
+    bool equalOrigText(const MessageGroup& that) const;
+    bool compareByMsgid(const MessageGroup& that) const;
 
     void updateTranslationFrom(const MessageGroup *from);
 

@@ -725,7 +725,7 @@ MessageGroup *TranslationContent::findMessageGroupByOrig(const MessageGroup *msg
     readMessages(); // "m_messagesNormal" should be initialized
 
     for (size_t i = 0; i < m_messagesNormal.size(); i ++)
-        if (m_messagesNormal[i]->equalOrigText(msg))
+        if (m_messagesNormal[i]->equalOrigText(*msg))
             return m_messagesNormal[i];
 
     return NULL;
