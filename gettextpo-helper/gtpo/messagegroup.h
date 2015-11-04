@@ -29,10 +29,9 @@ public:
     const Message *message(int index) const;
 
     bool equalOrigText(const MessageGroup *that) const;
+    bool compareByMsgid(const MessageGroup& o) const;
 
     void updateTranslationFrom(const MessageGroup *from);
-
-    bool compareByMsgid(const MessageGroup& o) const;
 
     // Makes the message untranslated
     void clearTranslation();

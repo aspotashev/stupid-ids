@@ -1,6 +1,7 @@
 #include "messageoriginaltext.h"
 
 #include <cassert>
+#include <tuple>
 
 MessageOriginalText::MessageOriginalText()
     : m_msgid(nullptr)
@@ -76,4 +77,14 @@ bool MessageOriginalText::operator==(const MessageOriginalText& that) const
     return m_msgid == that.m_msgid &&
         m_msgidPlural == that.m_msgidPlural &&
         m_msgctxt == that.m_msgctxt;
+}
+
+bool MessageOriginalText::operator<(const MessageOriginalText& that) const
+{
+    std::tuple<OptString, OptString, OptString> tupleA(
+        m_msgctxt, m_msgid, m_msgidPlural);
+    std::tuple<OptString, OptString, OptString> tupleB(
+        that.m_msgctxt, that.m_msgid, that.m_msgidPlural);
+
+    return tupleA < tupleB;
 }

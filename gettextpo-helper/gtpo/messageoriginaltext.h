@@ -27,6 +27,7 @@ public:
     OptString msgctxt() const;
 
     bool operator==(const MessageOriginalText& that) const;
+    bool operator<(const MessageOriginalText& that) const;
 
 protected:
     /**

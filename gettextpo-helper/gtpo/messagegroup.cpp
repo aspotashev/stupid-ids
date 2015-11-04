@@ -1,8 +1,6 @@
 #include "messagegroup.h"
 #include "message.h"
 
-#include <tuple>
-
 #include <cassert>
 
 MessageGroup::MessageGroup()
@@ -83,6 +81,11 @@ bool MessageGroup::equalOrigText(const MessageGroup* that) const
     return static_cast<const MessageOriginalText&>(*this) == static_cast<const MessageOriginalText&>(*that);
 }
 
+bool MessageGroup::compareByMsgid(const MessageGroup& o) const
+{
+    return static_cast<const MessageOriginalText&>(*this) < static_cast<const MessageOriginalText&>(o);
+}
+
 void MessageGroup::updateTranslationFrom(const MessageGroup* from)
 {
     assert(size() == 1);
@@ -90,16 +93,6 @@ void MessageGroup::updateTranslationFrom(const MessageGroup* from)
 
     delete m_messages[0];
     m_messages[0] = new Message(*(from->message(0)));
-}
-
-bool MessageGroup::compareByMsgid(const MessageGroup& o) const
-{
-    std::tuple<OptString, OptString, OptString> tupleA(
-        msgctxt(), msgid(), msgidPlural());
-    std::tuple<OptString, OptString, OptString> tupleB(
-        o.msgctxt(), o.msgid(), o.msgidPlural());
-
-    return tupleA < tupleB;
 }
 
 void MessageGroup::clearTranslation()
