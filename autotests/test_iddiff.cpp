@@ -2,30 +2,12 @@
 #define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 
+#include "common.h"
+
 #include <gtpo/iddiff.h>
 #include <gtpo/iddiffmessage.h>
 
-#include <string>
-#include <sstream>
-#include <fstream>
-#include <stdexcept>
-
 BOOST_AUTO_TEST_SUITE(IddiffTest)
-
-std::string read_file_contents(std::string filename)
-{
-    std::ifstream in(filename.c_str(), std::ios::in | std::ios::binary);
-    if (!in) {
-        std::stringstream ss;
-        ss << "Failed to open file " << filename;
-        throw std::runtime_error(ss.str());
-    }
-
-    std::ostringstream ss;
-    ss << in.rdbuf();
-    in.close();
-    return ss.str();
-}
 
 // Testing here:
 // Iddiffer::loadIddiff()
