@@ -12,9 +12,9 @@
 
 BOOST_AUTO_TEST_SUITE(IddiffTest)
 
-std::string read_file_contents(const char *filename)
+std::string read_file_contents(std::string filename)
 {
-    std::ifstream in(filename, std::ios::in | std::ios::binary);
+    std::ifstream in(filename.c_str(), std::ios::in | std::ios::binary);
     if (!in) {
         std::stringstream ss;
         ss << "Failed to open file " << filename;
@@ -98,6 +98,28 @@ BOOST_AUTO_TEST_CASE(Build1)
     docOutput.Parse(output.c_str());
 
     BOOST_CHECK(docInput == docOutput);
+}
+
+BOOST_AUTO_TEST_CASE(MergeHeaders)
+{
+    std::string inputDir(INPUT_DATA_DIR "/iddiff/");
+
+    Iddiff *diff_a = new Iddiff();
+    assert(diff_a->loadIddiff((inputDir + "merge_a.iddiff").c_str()));
+    Iddiff *diff_b = new Iddiff();
+    assert(diff_b->loadIddiff((inputDir + "merge_b.iddiff").c_str()));
+
+    diff_a->mergeHeaders(diff_b);
+    std::string output = diff_a->generateIddiffText();
+
+    std::string reference = read_file_contents((inputDir + "merged.iddiff").c_str());
+
+    rapidjson::Document docRef;
+    docRef.Parse(reference.c_str());
+    rapidjson::Document docOutput;
+    docOutput.Parse(output.c_str());
+
+    BOOST_CHECK(docRef == docOutput);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

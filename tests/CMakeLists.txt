@@ -15,14 +15,7 @@ macro(add_unit_test testname)
 	add_test(${testname} ${CMAKE_CURRENT_BINARY_DIR}/${testname})
 endmacro(add_unit_test testname)
 
-########### next target ###############
-
 add_unit_test(list_equal_messages_ids)
 add_test(list_equal_messages_ids_diff diff -q ${REF_DATA_DIR}/list_equal_messages_ids.txt ${CMAKE_CURRENT_BINARY_DIR}/result.txt)
-
-########### next target ###############
-
-add_unit_test(iddiff_merge_headers)
-add_test(iddiff_merge_headers_diff diff -qw ${REF_DATA_DIR}/merged.iddiff ${CMAKE_CURRENT_BINARY_DIR}/result.iddiff)
 
 add_subdirectory(dump-ids)
