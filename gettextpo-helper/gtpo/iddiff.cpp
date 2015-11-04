@@ -771,6 +771,7 @@ void Iddiff::cleanupMsgIdData(int msg_id)
 {
     auto it = m_items.find(msg_id);
     if (it != m_items.end() && it->second->empty())
+        delete it->second;
         m_items.erase(it);
 }
 
