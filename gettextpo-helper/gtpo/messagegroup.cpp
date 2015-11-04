@@ -80,7 +80,7 @@ void MessageGroup::mergeMessageGroup(const MessageGroup *other)
 
 bool MessageGroup::equalOrigText(const MessageGroup* that) const
 {
-    return dynamic_cast<const MessageOriginalText&>(*this) == dynamic_cast<const MessageOriginalText&>(*that);
+    return static_cast<const MessageOriginalText&>(*this) == static_cast<const MessageOriginalText&>(*that);
 }
 
 void MessageGroup::updateTranslationFrom(const MessageGroup* from)
