@@ -150,8 +150,8 @@ private:
     const FileDateTime& date() const;
 
     // Helper functions for minimizeIds()
-    void cleanupMsgIdData(int msg_id);
-    void substituteMsgId(int old_id, int new_id);
+    void clearEmptyMessageData(int msgId);
+    void substituteMsgId(int oldId, int newId);
 
 private:
     std::string m_subject;

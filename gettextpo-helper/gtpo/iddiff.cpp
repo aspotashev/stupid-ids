@@ -767,36 +767,36 @@ std::vector<int> Iddiff::involvedIds()
     return res;
 }
 
-void Iddiff::cleanupMsgIdData(int msg_id)
+void Iddiff::clearEmptyMessageData(int msgId)
 {
-    auto it = m_items.find(msg_id);
-    if (it != m_items.end() && it->second->empty())
+    auto it = m_items.find(msgId);
+    if (it != m_items.end() && it->second->empty()) {
         delete it->second;
         m_items.erase(it);
+    }
 }
 
-void Iddiff::substituteMsgId(int old_id, int new_id)
+void Iddiff::substituteMsgId(int oldId, int newId)
 {
-    if (old_id == new_id)
+    if (oldId == newId) {
         return;
+    }
 
-    cleanupMsgIdData(old_id);
-    cleanupMsgIdData(new_id);
+    clearEmptyMessageData(oldId);
+    clearEmptyMessageData(newId);
 
     // Check that IDs won't collide
-    if (m_items.find(new_id) != m_items.end())
-    {
+    if (m_items.find(newId) != m_items.end()) {
         // TODO: if there is no real conflict, this should not fail
         // (e.g. when the same string was changed in the same way via two different msg_IDs,
         // this often happens if you enable parallel branches in Lokalize)
-        printf("new_id = %d, old_id = %d\n", new_id, old_id);
+        printf("newId = %d, oldId = %d\n", newId, oldId);
         assert(0);
     }
 
-    if (m_items.find(old_id) != m_items.end())
-    {
-        m_items[new_id] = m_items[old_id]; // copying object of class IddiffChange
-        m_items.erase(old_id);
+    if (m_items.find(oldId) != m_items.end()) {
+        m_items[newId] = m_items[oldId]; // copying object of class IddiffChange
+        m_items.erase(oldId);
     }
 }
 
@@ -1258,7 +1258,7 @@ void Iddiff::eraseRemoved(int msg_id, const IddiffMessage *item)
     assert(m_items.find(msg_id) != m_items.end());
 
     m_items[msg_id]->eraseRemoved(item);
-    cleanupMsgIdData(msg_id);
+    clearEmptyMessageData(msg_id);
 }
 
 void Iddiff::eraseAdded(int msg_id, const IddiffMessage *item)
@@ -1266,7 +1266,7 @@ void Iddiff::eraseAdded(int msg_id, const IddiffMessage *item)
     assert(m_items.find(msg_id) != m_items.end());
 
     m_items[msg_id]->eraseAdded(item);
-    cleanupMsgIdData(msg_id);
+    clearEmptyMessageData(msg_id);
 }
 
 OptString Iddiff::reviewCommentText(int msg_id)
