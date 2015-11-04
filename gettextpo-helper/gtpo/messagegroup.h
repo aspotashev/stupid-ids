@@ -1,6 +1,8 @@
 #ifndef MESSAGEGROUP_H
 #define MESSAGEGROUP_H
 
+#include "messageoriginaltext.h"
+
 #include <gtpo/optstring.h>
 
 #include <gettext-po.h>
@@ -10,7 +12,7 @@
 
 class Message;
 
-class MessageGroup
+class MessageGroup : public MessageOriginalText
 {
 public:
     MessageGroup();
@@ -26,10 +28,6 @@ public:
     Message *message(int index);
     const Message *message(int index) const;
 
-    OptString msgid() const;
-    OptString msgidPlural() const;
-    OptString msgctxt() const;
-
     bool equalOrigText(const MessageGroup *other) const;
 
     void updateTranslationFrom(const MessageGroup *from);
@@ -43,9 +41,6 @@ public:
 
 protected:
 //     void clear();
-    void setMsgid(const std::string& str);
-    void setMsgidPlural(const std::string& str);
-    void setMsgctxt(const std::string& str);
 
     /**
      * @brief Add message translation.
@@ -57,10 +52,6 @@ protected:
     void addMessage(Message* message);
 
 private:
-    OptString m_msgid;
-    OptString m_msgidPlural;
-    OptString m_msgctxt;
-
     std::vector<Message*> m_messages;
 };
 

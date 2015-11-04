@@ -6,17 +6,13 @@
 #include <cassert>
 
 MessageGroup::MessageGroup()
-    : m_msgid(nullptr)
-    , m_msgidPlural(nullptr)
-    , m_msgctxt(nullptr)
+    : MessageOriginalText()
     , m_messages()
 {
 }
 
 MessageGroup::MessageGroup(const MessageGroup& o)
-    : m_msgid(o.m_msgid)
-    , m_msgidPlural(o.m_msgidPlural)
-    , m_msgctxt(o.m_msgctxt)
+    : MessageOriginalText(o)
     , m_messages()
 {
     for (Message* msg : o.m_messages)
@@ -24,9 +20,7 @@ MessageGroup::MessageGroup(const MessageGroup& o)
 }
 
 MessageGroup::MessageGroup(po_message_t message, int index, const std::string& filename)
-    : m_msgid(po_message_msgid(message))
-    , m_msgidPlural(po_message_msgid_plural(message))
-    , m_msgctxt(po_message_msgctxt(message))
+    : MessageOriginalText(message)
 {
     addMessage(new Message(message, index, filename));
 }
@@ -83,62 +77,6 @@ void MessageGroup::mergeMessageGroup(const MessageGroup *other)
 //     m_msgidPlural = NULL;
 //     m_msgctxt = NULL;
 // }
-
-/**
- * Does not take ownership of "str".
- */
-void MessageGroup::setMsgid(const std::string& str)
-{
-    assert(m_msgid.isNull());
-
-    m_msgid = OptString(str);
-}
-
-/**
- * Does not take ownership of "str".
- */
-void MessageGroup::setMsgidPlural(const std::string& str)
-{
-    assert(m_msgidPlural.isNull());
-
-    m_msgidPlural = OptString(str);
-}
-
-/**
- * Does not take ownership of "str".
- */
-void MessageGroup::setMsgctxt(const std::string& str)
-{
-    assert(m_msgctxt.isNull());
-
-    m_msgctxt = OptString(str);
-}
-
-OptString MessageGroup::msgid() const
-{
-    return m_msgid;
-}
-
-/**
- * \brief Returns NULL for messages without plural forms.
- */
-OptString MessageGroup::msgidPlural() const
-{
-    // Checking that m_msgid is initialized. This should mean
-    // that m_msgidPlural is also set (probably, set to NULL).
-    assert(!m_msgid.isNull());
-
-    return m_msgidPlural;
-}
-
-OptString MessageGroup::msgctxt() const
-{
-    // Checking that m_msgid is initialized. This should mean
-    // that m_msgctxt is also set (probably, set to NULL).
-    assert(!m_msgid.isNull());
-
-    return m_msgctxt;
-}
 
 bool MessageGroup::equalOrigText(const MessageGroup* other) const
 {

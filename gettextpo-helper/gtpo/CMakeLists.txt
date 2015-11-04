@@ -13,8 +13,9 @@ set(gettextpo_helper_LIB_SRCS
     iddiffchange.cpp
     iddiff.cpp
 
-    message.cpp
+    messageoriginaltext.cpp
     messagetranslationbase.cpp
+    message.cpp
     messagegroup.cpp
 
     gettextpo-helper.cpp
