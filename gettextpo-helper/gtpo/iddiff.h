@@ -155,7 +155,7 @@ private:
 
 private:
     std::string m_subject;
-    std::string m_author;
+    std::vector<std::string> m_authors;
     FileDateTime m_date;
 
     std::map<int, IddiffChange*> m_items;

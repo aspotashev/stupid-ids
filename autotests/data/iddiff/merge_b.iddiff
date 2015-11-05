@@ -1,6 +1,9 @@
 {
   "subject": "",
-  "author": "Ivan Ivanov <ivan.ivanov@example.com>, Alexander Potashev <aspotashev@gmail.com>",
+  "authors": [
+    "Ivan Ivanov <ivan.ivanov@example.com>",
+    "Alexander Potashev <aspotashev@gmail.com>"
+  ],
   "dateCreated": "",
   "messages": [
     {

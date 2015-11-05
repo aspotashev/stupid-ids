@@ -76,7 +76,8 @@ void Iddiff::diffAgainstEmpty(TranslationContent *content_b)
 
     // TODO: function for this
     m_date = content_b->date();
-    m_author = content_b->author();
+    m_authors = std::vector<std::string>();
+    m_authors.push_back(content_b->author());
 
     // compare pairs of messages in 2 .po files
     po_file_t file_b = content_b->poFileRead();
@@ -127,7 +128,8 @@ void Iddiff::diffFiles(TranslationContent *content_a, TranslationContent *conten
 
     // TODO: function for this
     m_date = content_b->date();
-    m_author = content_b->author();
+    m_authors = std::vector<std::string>();
+    m_authors.push_back(content_b->author());
 
     // compare pairs of messages in 2 .po files
 //  po_file_t file_a = content_a->poFileRead();
@@ -342,7 +344,8 @@ void Iddiff::diffTrCommentsAgainstEmpty(TranslationContent *content_b)
 
     // TODO: function for this
     m_date = content_b->date();
-    m_author = content_b->author();
+    m_authors = std::vector<std::string>();
+    m_authors.push_back(content_b->author());
 
     // compare pairs of messages in 2 .po files
     po_file_t file_b = content_b->poFileRead();
@@ -388,7 +391,8 @@ void Iddiff::diffTrCommentsFiles(TranslationContent *content_a, TranslationConte
 
     // TODO: function for this
     m_date = content_b->date();
-    m_author = content_b->author();
+    m_authors = std::vector<std::string>();
+    m_authors.push_back(content_b->author());
 
     // compare pairs of messages in 2 .po files
     po_file_t file_a = content_a->poFileRead();
@@ -461,8 +465,12 @@ std::string Iddiff::generateIddiffText()
     writer.String("subject");
     writer.String(m_subject.c_str());
 
-    writer.String("author");
-    writer.String(m_author.c_str());
+    writer.String("authors");
+    writer.StartArray();
+    for (const std::string& author : m_authors) {
+        writer.String(author.c_str());
+    }
+    writer.EndArray();
 
     writer.String("dateCreated");
     writer.String(dateString().c_str());
@@ -568,8 +576,12 @@ bool Iddiff::loadIddiff(const char *filename)
     assert(doc.HasMember("subject"));
     m_subject = std::string(doc["subject"].GetString());
 
-    assert(doc.HasMember("author"));
-    m_author = std::string(doc["author"].GetString());
+    assert(doc.HasMember("authors"));
+    assert(doc["authors"].IsArray());
+    m_authors = std::vector<std::string>();
+    for (rapidjson::SizeType i = 0; i < doc["authors"].Size(); ++i) {
+        m_authors.push_back(doc["authors"][i].GetString());
+    }
 
     if (doc.HasMember("dateCreated")) {
         m_date.fromString(doc["dateCreated"].GetString());
@@ -1118,12 +1130,8 @@ void Iddiff::mergeHeaders(Iddiff *diff)
         m_date = diff->date();
     }
 
-    std::vector<std::string> authors = split_string(m_author, std::string(", "));
-    std::vector<std::string> added_authors = split_string(diff->m_author, std::string(", "));
-    authors.insert(authors.end(), added_authors.begin(), added_authors.end());
-    sort_uniq(authors);
-
-    m_author = join_strings(authors, std::string(", "));
+    m_authors.insert(m_authors.end(), diff->m_authors.begin(), diff->m_authors.end());
+    sort_uniq(m_authors);
 }
 
 // TODO: Iddiffer::mergeNokeep that removes all items from the given Iddiff (and therefore it does not need to clone the IddiffMessage objects)
