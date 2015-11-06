@@ -6,6 +6,7 @@
 
 #include <gtpo/iddiff.h>
 #include <gtpo/translationcontent.h>
+#include <gtpo/filecontentfs.h>
 
 #include <sstream>
 
@@ -15,8 +16,8 @@ BOOST_AUTO_TEST_CASE(Match)
 {
     std::string inputDir(INPUT_DATA_DIR "/matchpomessages/");
 
-    TranslationContent *file_a = new TranslationContent(inputDir + "data/dumpids-a.po");
-    TranslationContent *file_b = new TranslationContent(inputDir + "data/dumpids-b.po");
+    TranslationContent *file_a = new TranslationContent(new FileContentFs(inputDir + "data/dumpids-a.po"));
+    TranslationContent *file_b = new TranslationContent(new FileContentFs(inputDir + "data/dumpids-b.po"));
     std::vector<std::pair<int, int> > list = list_equal_messages_ids_2(
         file_a, 1000,
         file_b, 101000);

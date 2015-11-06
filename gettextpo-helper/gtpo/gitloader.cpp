@@ -1,6 +1,7 @@
 #include "gitloader.h"
 #include "gettextpo-helper.h"
 #include "translationcontent.h"
+#include "filecontentgit.h"
 #include "oidmapcache.h"
 #include "stupids-client.h"
 #include "repository.h"
@@ -88,7 +89,7 @@ GitOid GitLoader::findOldestByTphash_oid(const GitOid& tp_hash)
                 if (!oid)
                     continue;
 
-                TranslationContent *content = new TranslationContent(this, oid);
+                TranslationContent *content = new TranslationContent(new FileContentGit(this, oid));
                 GitOid current_tp_hash = content->calculateTpHash();
                 if (!current_tp_hash.isNull() && tp_hash == current_tp_hash)
                 {
@@ -110,7 +111,7 @@ GitOid GitLoader::findOldestByTphash_oid(const GitOid& tp_hash)
 TranslationContent *GitLoader::findOldestByTphash(const GitOid& tp_hash)
 {
     GitOid oid = findOldestByTphash_oid(tp_hash);
-    return oid.isNull() ? NULL : new TranslationContent(this, oid.oid());
+    return oid.isNull() ? NULL : new TranslationContent(new FileContentGit(this, oid.oid()));
 }
 
 /**
@@ -130,7 +131,7 @@ std::vector<int> GitLoader::getCurrentIdsVector()
     std::vector<GitOid> tp_hashes;
     for (size_t i = 0; i < oids.size(); i ++)
     {
-        TranslationContent *content = new TranslationContent(this, oids[i].oid());
+        TranslationContent *content = new TranslationContent(new FileContentGit(this, oids[i].oid()));
         GitOid tp_hash = content->calculateTpHash();
         if (!tp_hash.isNull()) {
             tp_hashes.push_back(tp_hash);

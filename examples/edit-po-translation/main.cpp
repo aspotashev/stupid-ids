@@ -1,10 +1,11 @@
 #include <gtpo/translationcontent.h>
+#include <gtpo/filecontentfs.h>
 #include <gtpo/message.h>
 #include <gtpo/messagegroup.h>
 
 int main()
 {
-    TranslationContent* content = new TranslationContent("data/input.po");
+    TranslationContent* content = new TranslationContent(new FileContentFs("data/input.po"));
     std::vector<MessageGroup*> messages = content->readMessages();
 
     Message *trans = messages[0]->message(0);

@@ -1,4 +1,6 @@
 #include <gtpo/translationcontent.h>
+#include <gtpo/filecontentfs.h>
+#include <gtpo/filecontentgit.h>
 #include <gtpo/iddiff.h>
 #include <gtpo/gitloader.h>
 #include <gtpo/stupids-client.h>
@@ -21,7 +23,7 @@ struct
 
 void processFile(GitLoader *git_loader, Iddiff *merged_diff, const char *filename)
 {
-    TranslationContent *input_content = new TranslationContent(filename);
+    TranslationContent *input_content = new TranslationContent(new FileContentFs(filename));
 
     GitOid tp_hash = input_content->calculateTpHash();
     if (tp_hash.isNull()) // not a .po file
@@ -71,7 +73,7 @@ void processFile(GitLoader *git_loader, Iddiff *merged_diff, const char *filenam
             assert(0);
         }
 
-        TranslationContent *pot_content = new TranslationContent(repo, best_pot_oid);
+        TranslationContent *pot_content = new TranslationContent(new FileContentGit(repo, best_pot_oid));
         pot_content->setDisplayFilename(filename);
         tp_hash = pot_content->calculateTpHash();
 

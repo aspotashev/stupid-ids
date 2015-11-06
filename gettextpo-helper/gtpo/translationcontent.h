@@ -5,13 +5,12 @@
 #include <gtpo/gitoid.h>
 
 #include <gettext-po.h>
-#include <git2.h>
 
 #include <vector>
 #include <string>
 
 class MessageGroup;
-class GitLoaderBase;
+class FileContentBase;
 
 class TranslationContent
 {
@@ -27,29 +26,11 @@ public:
     };
 
     /**
-    * \brief Constructs a TranslationContent from a file.
+    * \brief Constructs a TranslationContent from a file content.
     *
-    * \param filename File name.
+    * \param fileContent File or git blob or buffer (FileContentFs/FileContentGit/FileContentBuffer).
     */
-    TranslationContent(const std::string& filename);
-
-    /**
-    * \brief Constructs a TranslationContent from a Git blob identified by its OID.
-    *
-    * \param git_loader Git repositories list used for searching the blob by OID.
-    * \param oid OID of the blob.
-    */
-    TranslationContent(GitLoaderBase *git_loader, const git_oid *oid);
-
-    /**
-    * \brief Constructs a TranslationContent using data from a buffer.
-    *
-    * \param buffer Buffer.
-    * \param len Size of the buffer.
-    */
-    TranslationContent(const void* buffer, size_t len);
-
-    TranslationContent(const TranslationContent& o);
+    TranslationContent(FileContentBase* fileContent);
 
     ~TranslationContent();
 
@@ -63,8 +44,6 @@ public:
     // Caller should run 'po_file_free'
     po_file_t poFileRead();
 
-    const void *getDataBuffer();
-    size_t getDataBufferLength();
     void writeBufferToFile(const std::string& filename);
 
     const git_oid *gitBlobHash();
@@ -91,18 +70,6 @@ public:
     int translatedCount() const;
 
 private:
-    void clear();
-
-    // Helpers for poFileRead()
-    po_file_t poreadFile();
-    po_file_t poreadGit();
-    po_file_t poreadBuffer();
-
-    // Helpers for getDataBuffer() and getDataBufferLength()
-    void loadToBuffer();
-    void loadToBufferFile();
-    void loadToBufferGit();
-
     // for calculateTpHash
     std::string dumpPoFileTemplate();
 
@@ -115,17 +82,11 @@ private:
     MessageGroup* findMessageGroupByOrig(const MessageGroup* msg);
 
 private:
-    std::string m_filename;
+    FileContentBase* m_fileContent;
+
     std::string m_displayFilename;
 
-    GitLoaderBase* m_gitLoader;
-    git_oid* m_oid;
     GitOid* m_tphash;
-
-    const void* m_buffer;
-    size_t m_bufferLen;
-
-    int m_type;
 
     std::vector<int> m_minIds;
     bool m_minIdsInit; // "true" if m_minIds is initialized
@@ -141,15 +102,6 @@ private:
 
     int m_firstId;
     int m_idCount;
-
-    enum
-    {
-        TYPE_UNKNOWN = 0,
-        TYPE_FILE = 1,
-        TYPE_GIT = 2,
-        TYPE_BUFFER = 3,
-        TYPE_DYNAMIC = 4 // the content of .po file can't be re-read from any other sources, only "m_messagesNormal" is valid
-    };
 };
 
 std::vector<MessageGroup *> read_po_file_messages(const char *filename, bool loadObsolete);

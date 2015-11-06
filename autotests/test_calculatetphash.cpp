@@ -3,6 +3,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <gtpo/translationcontent.h>
+#include <gtpo/filecontentfs.h>
 #include <gtpo/gitoid.h>
 
 BOOST_AUTO_TEST_SUITE(TpHashUnitTests)
@@ -14,7 +15,7 @@ std::string getTpHash(const char* inputfile)
     inputfile_str += "/tp_hash/";
     inputfile_str += inputfile;
 
-    TranslationContent *content = new TranslationContent(inputfile_str.c_str());
+    TranslationContent *content = new TranslationContent(new FileContentFs(inputfile_str));
     std::string res = GitOid(content->calculateTpHash()).toString();
 
     delete content;

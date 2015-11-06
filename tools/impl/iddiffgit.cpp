@@ -1,4 +1,5 @@
 #include <gtpo/translationcontent.h>
+#include <gtpo/filecontentgit.h>
 #include <gtpo/iddiff.h>
 #include <gtpo/repository.h>
 #include <gtpo/gettextpo-helper.h>
@@ -40,13 +41,13 @@ int toolIddiffGit(int argc, char *argv[])
         if (change->type() == CommitFileChange::DEL)
             continue;
 
-        TranslationContent *new_content = new TranslationContent(repo, change->oid2());
+        TranslationContent *new_content = new TranslationContent(new FileContentGit(repo, change->oid2()));
         TranslationContent *old_content = NULL;
         if (change->type() == CommitFileChange::ADD) {
             diff->diffAgainstEmpty(new_content);
         }
         else if (change->type() == CommitFileChange::MOD) {
-            old_content = new TranslationContent(repo, change->oid1());
+            old_content = new TranslationContent(new FileContentGit(repo, change->oid1()));
             diff->diffFiles(old_content, new_content);
         }
         else assert(0);

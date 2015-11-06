@@ -1,8 +1,9 @@
 #include "gettextpo-helper.h"
 #include "translationcontent.h"
+#include "filecontentbase.h"
+#include "filecontentfs.h"
 #include "oidmapcache.h"
 #include "stupids-client.h"
-#include "gitloader.h"
 #include "message.h"
 #include "block-sha1/sha1.h"
 #include "filedatetime.h"
@@ -16,87 +17,37 @@
 #include <stdio.h>
 #include <string.h>
 
-TranslationContent::TranslationContent(const std::string& filename)
-{
-    clear();
 
-    m_type = TYPE_FILE;
-    m_filename = filename;
-    setDisplayFilename(filename);
-}
-
-TranslationContent::TranslationContent(GitLoaderBase *git_loader, const git_oid *oid)
-{
-    clear();
-
-    m_type = TYPE_GIT;
-    m_gitLoader = git_loader;
-    m_oid = new git_oid;
-    git_oid_cpy(m_oid, oid);
-}
-
-TranslationContent::TranslationContent(const void *buffer, size_t len)
-{
-    clear();
-
-    m_type = TYPE_BUFFER;
-    m_buffer = buffer; // take ownership of the buffer
-    m_bufferLen = len;
-}
-
-TranslationContent::TranslationContent(const TranslationContent& o)
-    : m_filename(o.m_filename)
-    , m_displayFilename(o.m_displayFilename)
-    , m_gitLoader(o.m_gitLoader)
-    , m_oid(o.m_oid)
-    , m_tphash(o.m_tphash)
-    , m_buffer(nullptr) // TBD: what to do with buffer?
-    , m_bufferLen(0)
-    , m_type(o.m_type)
+TranslationContent::TranslationContent(FileContentBase* fileContent)
+    : m_fileContent(fileContent)
+    , m_displayFilename("")
+    , m_tphash(nullptr)
     , m_minIds()
     , m_minIdsInit(false)
     , m_messagesNormal()
     , m_messagesNormalInit(false)
-    , m_date(o.m_date)
-    , m_potDate(o.m_potDate)
-    , m_author(o.m_author)
-    , m_firstId(o.m_firstId)
-    , m_idCount(o.m_idCount)
+    , m_date()
+    , m_potDate()
+    , m_author()
+    , m_firstId(0) // 0 = uninitialized or undefined (undefined means that tp_hash is unknown on server)
+    , m_idCount(-1)
 {
-    for (MessageGroup* msg : o.m_messagesNormal)
-        m_messagesNormal.push_back(new MessageGroup(*msg));
-
-    m_messagesNormalInit = true;
+    FileContentFs* file = dynamic_cast<FileContentFs*>(fileContent);
+    if (file) {
+        m_displayFilename = file->filename();
+    }
 }
 
 TranslationContent::~TranslationContent()
 {
-    if (m_buffer)
-        delete [] (char *)m_buffer;
-    if (m_tphash)
+    if (m_fileContent) {
+        delete m_fileContent;
+        m_fileContent = nullptr;
+    }
+
+    if (m_tphash) {
         delete m_tphash;
-    if (m_oid)
-        delete m_oid;
-
-//     for (size_t i = 0; i < m_messagesNormal.size(); i ++)
-//         delete m_messagesNormal[i];
-}
-
-void TranslationContent::clear()
-{
-    m_type = TYPE_UNKNOWN;
-    m_gitLoader = NULL;
-    m_oid = NULL;
-    m_buffer = NULL;
-    m_bufferLen = 0;
-    m_tphash = NULL;
-    m_filename = "";
-    m_displayFilename = "";
-
-    m_minIdsInit = false;
-    m_messagesNormalInit = false;
-    m_firstId = 0; // 0 = uninitialized or undefined (undefined means that tp_hash is unknown on server)
-    m_idCount = -1;
+    }
 }
 
 void TranslationContent::setDisplayFilename(const std::string& filename)
@@ -111,104 +62,16 @@ std::string TranslationContent::displayFilename() const
 
 po_file_t TranslationContent::poFileRead()
 {
-    switch (m_type)
-    {
-    case TYPE_FILE:
-        return poreadFile();
-    case TYPE_GIT:
-        return poreadGit();
-    case TYPE_BUFFER:
-        return poreadBuffer();
-    case TYPE_DYNAMIC:
-        assert(0); // There is no file to read, only "m_messagesNormal" contains valid data.
-    default:
-        printf("m_type = %d\n", m_type);
-        assert(0);
-        return NULL;
-    }
-}
+    assert(m_fileContent);
 
-po_file_t TranslationContent::poreadFile()
-{
-    assert(!m_filename.empty());
-
-    return po_file_read(m_filename.c_str());
-}
-
-// TODO: use m_buffer if it is initialized
-po_file_t TranslationContent::poreadGit()
-{
-    assert(m_gitLoader);
-    assert(m_oid);
-
-    git_blob *blob = m_gitLoader->blobLookup(GitOid(m_oid));
-    if (!blob)
-        return NULL;
-
-    const void *rawcontent = git_blob_rawcontent(blob);
-    int rawsize = git_blob_rawsize(blob);
-    po_file_t file = po_buffer_read((const char *)rawcontent, (size_t)rawsize);
-
-    git_blob_free(blob);
-
-    return file;
-}
-
-po_file_t TranslationContent::poreadBuffer()
-{
-    assert(m_buffer);
-
-    return po_buffer_read((const char *)m_buffer, m_bufferLen);
+    return m_fileContent->poFileRead();
 }
 
 const git_oid *TranslationContent::gitBlobHash()
 {
-    char *temp_buffer;
-    long file_size;
-    FILE *f;
+    assert(m_fileContent);
 
-    if (m_oid)
-        return m_oid;
-
-    // If type is TYPE_GIT, then m_oid must be already initialized
-
-    m_oid = new git_oid;
-    switch (m_type)
-    {
-    case TYPE_FILE:
-        f = fopen(m_filename.c_str(), "r");
-        if (!f)
-        {
-            printf("Could not open file %s\n", m_filename.c_str());
-
-            delete m_oid;
-            m_oid = NULL;
-            return NULL;
-        }
-
-        fseek(f, 0, SEEK_END);
-        file_size = ftell(f);
-        if (file_size < 0)
-            throw std::runtime_error("ftell() failed");
-        rewind(f);
-
-        temp_buffer = new char[file_size];
-        assert(fread(temp_buffer, 1, file_size, f) == static_cast<size_t>(file_size));
-        fclose(f);
-
-        assert(git_odb_hash(m_oid, temp_buffer, file_size, GIT_OBJ_BLOB) == 0);
-        delete [] temp_buffer;
-        break;
-    case TYPE_BUFFER:
-        assert(git_odb_hash(m_oid, m_buffer, m_bufferLen, GIT_OBJ_BLOB) == 0);
-        break;
-    default:
-        printf("m_type = %d\n", m_type);
-        assert(0);
-        break;
-    }
-
-    return m_oid;
+    return m_fileContent->gitBlobHash();
 }
 
 GitOid TranslationContent::calculateTpHash()
@@ -218,7 +81,7 @@ GitOid TranslationContent::calculateTpHash()
 
     // Cache calculated tp_hashes (it takes some time to
     // calculate a tp_hash). A singleton class is used for that.
-    const git_oid *oid = gitBlobHash();
+    const git_oid *oid = m_fileContent ? m_fileContent->gitBlobHash() : nullptr;
     if (!oid)
         return GitOid::zero();
 
@@ -601,85 +464,17 @@ void TranslationContent::writeToFile(const std::string& destFilename, bool force
 
 void TranslationContent::writeToFile()
 {
-    assert(m_type == TYPE_FILE);
-    writeToFile(m_filename, false);
-}
+    FileContentFs* file = dynamic_cast<FileContentFs*>(m_fileContent);
+    assert(file);
 
-const void *TranslationContent::getDataBuffer()
-{
-    if (!m_buffer) // if the data has not been buffered yet
-        loadToBuffer();
-
-    return m_buffer;
-}
-
-size_t TranslationContent::getDataBufferLength()
-{
-    if (!m_buffer) // if the data has not been buffered yet
-        loadToBuffer();
-
-    return m_bufferLen;
-}
-
-void TranslationContent::loadToBufferFile()
-{
-    assert(0); // not used for now, someone will write this later
-}
-
-void TranslationContent::loadToBufferGit()
-{
-    assert(m_gitLoader);
-    assert(m_oid);
-
-    git_blob *blob = m_gitLoader->blobLookup(m_oid);
-    if (!blob)
-        return;
-
-    const void *rawcontent = git_blob_rawcontent(blob);
-    int rawsize = git_blob_rawsize(blob);
-    assert(rawsize > 0);
-
-    char *rawcontent_copy = new char[rawsize];
-    assert(rawcontent_copy);
-    memcpy(rawcontent_copy, rawcontent, (size_t)rawsize);
-
-    git_blob_free(blob);
-
-
-    m_buffer = rawcontent_copy;
-    m_bufferLen = (size_t)rawsize;
-}
-
-void TranslationContent::loadToBuffer()
-{
-    if (m_buffer) // if the data has already been buffered
-        return;
-
-    switch (m_type)
-    {
-    case TYPE_FILE:
-        loadToBufferFile();
-        break;
-    case TYPE_GIT:
-        loadToBufferGit();
-        break;
-    case TYPE_BUFFER:
-        assert(0); // data should already be buffered (by definition of TYPE_BUFFER)
-        break;
-    default:
-        printf("m_type = %d\n", m_type);
-        assert(0);
-    }
+    writeToFile(file->filename(), false);
 }
 
 void TranslationContent::writeBufferToFile(const std::string& filename)
 {
-    loadToBuffer();
+    assert(m_fileContent);
 
-    FILE *f = fopen(filename.c_str(), "w");
-    assert(f);
-    assert(fwrite(m_buffer, 1, m_bufferLen, f) == m_bufferLen);
-    fclose(f);
+    m_fileContent->writeBufferToFile(filename);
 }
 
 void TranslationContent::assertOk()
@@ -740,20 +535,13 @@ void TranslationContent::copyTranslationsFrom(TranslationContent *from_content)
     // "m_tphash" is still valid
     // "m_minIdsInit", "m_firstId" and "m_idCount" are still valid
 
-    // "m_oid" will (most likely) change
-    if (m_oid)
-    {
-        delete m_oid;
-        m_oid = NULL;
+    // The former file content is not valid anymore
+    if (m_fileContent) {
+        delete m_fileContent;
+        m_fileContent = nullptr;
     }
 
     m_date = from_content->date();
-
-    m_type = TYPE_DYNAMIC;
-    m_gitLoader = NULL;
-    m_buffer = NULL;
-    m_bufferLen = 0;
-    m_filename = "";
 
     std::vector<MessageGroup *> from = from_content->readMessages();
     // TBD: optimize this loop:
@@ -804,10 +592,9 @@ const char *TranslationContent::ExceptionNotPo::what() const throw()
 
 std::vector<MessageGroup *> read_po_file_messages(const char *filename, bool loadObsolete)
 {
-    TranslationContent *content = new TranslationContent(filename);
+    TranslationContent *content = new TranslationContent(new FileContentFs(filename));
     std::vector<MessageGroup *> res = content->readMessages();
     delete content;
 
     return res;
 }
-

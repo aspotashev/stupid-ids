@@ -2,6 +2,8 @@
 #include "gettextpo-helper.h"
 #include "stupids-client.h"
 #include "translationcontent.h"
+#include "filecontentfs.h"
+#include "filecontentbuffer.h"
 #include "message.h"
 #include "gitloader.h"
 #include "messagegroup.h"
@@ -23,7 +25,7 @@ StupIdTranslationCollector::~StupIdTranslationCollector()
 
 void StupIdTranslationCollector::insertPo(const std::string& filename)
 {
-    TranslationContent *content = new TranslationContent(filename);
+    TranslationContent *content = new TranslationContent(new FileContentFs(filename));
     insertPo(content); // takes ownership of "content"
 }
 
@@ -36,7 +38,7 @@ void StupIdTranslationCollector::insertPo(TranslationContent *content)
 // Takes ownership of the buffer.
 void StupIdTranslationCollector::insertPo(const void* buffer, size_t len, const std::string& filename)
 {
-    TranslationContent *content = new TranslationContent(buffer, len);
+    TranslationContent *content = new TranslationContent(new FileContentBuffer(buffer, len));
     content->setDisplayFilename(filename);
     insertPo(content); // takes ownership of "content"
 }
@@ -77,12 +79,12 @@ void StupIdTranslationCollector::insertPoOrTemplate(
 
     if (file_exists(translation_path))
     {
-        content = new TranslationContent(translation_path);
+        content = new TranslationContent(new FileContentFs(translation_path));
     }
     else
     {
         assert(file_exists(template_path));
-        content = new TranslationContent(template_path);
+        content = new TranslationContent(new FileContentFs(template_path));
         content->setDisplayFilename(translation_path);
     }
 

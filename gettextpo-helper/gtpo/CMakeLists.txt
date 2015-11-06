@@ -18,6 +18,11 @@ set(gettextpo_helper_LIB_SRCS
     message.cpp
     messagegroup.cpp
 
+    filecontentbase.cpp
+    filecontentfs.cpp
+    filecontentgit.cpp
+    filecontentbuffer.cpp
+
     gettextpo-helper.cpp
     translation-collector.cpp
     mappedfile.cpp

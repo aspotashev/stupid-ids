@@ -3,6 +3,7 @@
 #include "gettextpo-helper.h"
 #include "mappedfile.h"
 #include "translationcontent.h"
+#include "filecontentfs.h"
 #include "iddiff.h"
 #include "messagegroup.h"
 #include "exceptionmessageinfo.h"
@@ -157,7 +158,7 @@ std::string wrap_string_hex(const char *str)
 
 std::string calculate_tp_hash(const char *filename)
 {
-    std::unique_ptr<TranslationContent> content(new TranslationContent(filename));
+    std::unique_ptr<TranslationContent> content(new TranslationContent(new FileContentFs(filename)));
     GitOid tp_hash = content->calculateTpHash();
     if (tp_hash.isNull()) {
 //         throw std::runtime_error("Failed to calculate tp_hash");

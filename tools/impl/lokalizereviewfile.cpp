@@ -2,6 +2,7 @@
 
 #include <gtpo/translation-collector.h>
 #include <gtpo/translationcontent.h>
+#include <gtpo/filecontentfs.h>
 #include <gtpo/gitloader.h>
 #include <gtpo/iddiff.h>
 #include <gtpo/gettextpo-helper.h>
@@ -35,7 +36,7 @@ int toolLokalizeReviewfile(int argc, char *argv[])
     }
 
 
-    TranslationContent *new_content = new TranslationContent(input_filename);
+    TranslationContent *new_content = new TranslationContent(new FileContentFs(input_filename));
     GitOid tp_hash = new_content->calculateTpHash();
     assert(!tp_hash.isNull());
 

@@ -1,4 +1,5 @@
 #include <gtpo/translationcontent.h>
+#include <gtpo/filecontentfs.h>
 #include <gtpo/gettextpo-helper.h>
 
 #include <algorithm>
@@ -37,7 +38,7 @@ int toolFindBestMatchingTranslated(int argc, char *argv[])
     //   2nd and further arguments: .po files with translations to choose from
     assert(args.size() >= 2);
 
-    TranslationContent targetContent(args[0]);
+    TranslationContent targetContent(new FileContentFs(args[0]));
     targetContent.readMessages();
 //     targetContent.clearTranslations(); // TBD: may be we should keep the catalog partially translated so that we find the best matching source only for the untranslated strings?
 
@@ -59,7 +60,7 @@ int toolFindBestMatchingTranslated(int argc, char *argv[])
     auto maxIt = max_element_by_score(
         args.begin() + 1, args.end(),
         [&targetContent,&baseTranslated](const std::string& file) {
-            TranslationContent content(file);
+            TranslationContent content(new FileContentFs(file));
             content.readMessages();
 
             // make a copy

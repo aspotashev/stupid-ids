@@ -1,4 +1,5 @@
 #include <gtpo/translationcontent.h>
+#include <gtpo/filecontentfs.h>
 #include <gtpo/gettextpo-helper.h>
 #include <gtpo/iddiff.h>
 #include <gtpo/gitloader.h>
@@ -93,7 +94,7 @@ int toolIddiffReviewFormatMailbox(int argc, char *argv[])
     iddiff->loadIddiff(iddiff_path);
     iddiff->minimizeIds(); // patching should always be done with minimized IDs
 
-    TranslationContent *input_translation = new TranslationContent(input_translation_path);
+    TranslationContent *input_translation = new TranslationContent(new FileContentFs(input_translation_path));
     std::vector<int> min_ids = input_translation->getMinIds();
     std::vector<MessageGroup *> messages = input_translation->readMessages();
 
