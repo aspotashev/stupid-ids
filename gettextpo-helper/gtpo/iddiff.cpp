@@ -770,7 +770,6 @@ void sort_uniq(std::vector<T> &v)
 std::vector<int> Iddiff::involvedIds()
 {
     std::vector<int> res;
-    // TODO: macro for walking through an std::map
     for (const auto& kv : m_items) {
         res.push_back(kv.first);
     }
