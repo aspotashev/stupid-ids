@@ -13,6 +13,7 @@
 
 #include <stdexcept>
 #include <algorithm>
+#include <iostream>
 
 #include <stdio.h>
 #include <string.h>
@@ -114,40 +115,34 @@ GitOid TranslationContent::calculateTpHash()
     return *m_tphash;
 }
 
-std::string wrap_template_header(po_message_t message)
+std::string wrap_template_header(std::string headerString)
 {
-    char *header = new char [strlen(po_message_msgstr(message)) + 2];
-    header[0] = '\n'; // prepend "\n" to simplify search for "\nPOT-Creation-Date: "
-    strcpy(header + 1, po_message_msgstr(message));
-
-    if (!isalpha(header[1]))
-    {
+    if (!isalpha(headerString[0])) {
         // Header corrupt. See KDE SVN revision 1228594 for an example.
         throw TranslationContent::ExceptionNotPo();
     }
 
+    // prepend "\n" to simplify search for "\nPOT-Creation-Date: "
+    std::string header = std::string("\n") + headerString;
+
+    // text that goes before the POT creation date
+    std::string pot_creation_pattern("\nPOT-Creation-Date: ");
+
     // find the "POT-Creation-Date:" field
-    const char *pot_creation_pattern = "\nPOT-Creation-Date: "; // text that goes before the POT creation date
-    char *pot_creation_str = strstr(header, pot_creation_pattern);
-    if (pot_creation_str == NULL)
-    {
-        printf("header:\n[%s]\n", header);
+    size_t pot_creation_pos = header.find(pot_creation_pattern);
+    if (pot_creation_pos == std::string::npos) {
+        std::cerr << "header:\n[" << header << "]\n";
 
         // "POT-Creation-Date:" is missing from the header.
         throw TranslationContent::ExceptionPoHeaderIncomplete();
     }
 
     // extract the date
-    pot_creation_str += strlen(pot_creation_pattern); // move to the beginning of the date
-    char *pot_date_end = strchr(pot_creation_str, '\n');
-    assert(pot_date_end != NULL); // There must be a "\n" after every line (including "POT-Creation-Date: ...") in the header.
-    *pot_date_end = '\0'; // truncate the string
+    pot_creation_pos += pot_creation_pattern.size(); // move to the beginning of the date
+    size_t pot_date_end = header.find("\n", pot_creation_pos);
+    assert(pot_date_end != std::string::npos); // There must be a "\n" after every line (including "POT-Creation-Date: ...") in the header.
 
-
-    std::string res = wrap_string_hex(pot_creation_str);
-    delete [] header;
-
-    return res;
+    return wrap_string_hex(header.substr(pot_creation_pos, pot_date_end - pot_creation_pos).c_str());
 }
 
 std::string dump_filepos_entries(po_message_t message)
@@ -252,7 +247,7 @@ std::string TranslationContent::dumpPoFileTemplate()
     message = po_next_message(iterator);
     if (!message) // no messages in file, i.e. not a .po/.pot file
         throw ExceptionNotPo();
-    res += wrap_template_header(message);
+    res += wrap_template_header(po_message_msgstr(message));
 
     // ordinary .po messages (not header)
     //
