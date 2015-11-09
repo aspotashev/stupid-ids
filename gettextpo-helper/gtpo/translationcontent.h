@@ -86,6 +86,7 @@ private:
 
     std::string m_displayFilename;
 
+    // Cached tphash
     GitOid* m_tphash;
 
     std::vector<int> m_minIds;
