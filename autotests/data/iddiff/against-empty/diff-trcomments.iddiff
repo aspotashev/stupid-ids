@@ -1,0 +1,22 @@
+{
+    "subject": "",
+    "authors": [
+        "Alexander Potashev <aspotashev@gmail.com>"
+    ],
+    "dateCreated": "2014-04-09 22:35+0400",
+    "messages": [
+        {
+            "ref": {
+                "intid": 101
+            },
+            "accept": [
+                {
+                    "fuzzy": false,
+                    "msgstr": [
+                        "hello"
+                    ]
+                }
+            ]
+        }
+    ]
+}

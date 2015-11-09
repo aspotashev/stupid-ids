@@ -6,6 +6,8 @@
 
 #include <gtpo/iddiff.h>
 #include <gtpo/iddiffmessage.h>
+#include <gtpo/translationcontent.h>
+#include <gtpo/filecontentfs.h>
 
 BOOST_AUTO_TEST_SUITE(IddiffTest)
 
@@ -100,6 +102,29 @@ BOOST_AUTO_TEST_CASE(MergeHeaders)
     std::string reference = read_file_contents((inputDir + "merged.iddiff").c_str());
 
     BOOST_CHECK(jsonEqual(reference, output));
+}
+
+BOOST_AUTO_TEST_CASE(DiffAgaistEmpty)
+{
+    std::string inputDir(INPUT_DATA_DIR "/iddiff/against-empty/");
+
+    TranslationContent* content = new TranslationContent(new FileContentFs(inputDir + "input.po"));
+
+    {
+        Iddiff* diff = new Iddiff();
+        diff->diffAgainstEmpty(content);
+        BOOST_CHECK(jsonEqual(
+            diff->generateIddiffText(),
+            read_file_contents(inputDir + "diff.iddiff")));
+    }
+
+    {
+        Iddiff* diff_trcomments = new Iddiff();
+        diff_trcomments->diffTrCommentsAgainstEmpty(content);
+        BOOST_CHECK(jsonEqual(
+            diff_trcomments->generateIddiffText(),
+            read_file_contents(inputDir + "diff-trcomments.iddiff")));
+    }
 }
 
 BOOST_AUTO_TEST_SUITE_END()

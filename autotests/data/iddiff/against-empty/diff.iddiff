@@ -1,0 +1,38 @@
+{
+    "subject": "",
+    "authors": [
+        "Alexander Potashev <aspotashev@gmail.com>"
+    ],
+    "dateCreated": "2014-04-09 22:35+0400",
+    "messages": [
+        {
+            "ref": {
+                "intid": 100
+            },
+            "accept": [
+                {
+                    "fuzzy": false,
+                    "msgstr": [
+                        "Метка"
+                    ]
+                }
+            ]
+        },
+        {
+            "ref": {
+                "intid": 102
+            },
+            "accept": [
+                {
+                    "fuzzy": false,
+                    "msgstr": [
+                        " минута",
+                        " минуты",
+                        " минут",
+                        " минута"
+                    ]
+                }
+            ]
+        }
+    ]
+}
