@@ -79,18 +79,12 @@ void Iddiff::diffAgainstEmpty(TranslationContent *content_b)
     m_authors = std::vector<std::string>();
     m_authors.push_back(content_b->author());
 
-    // compare pairs of messages in 2 .po files
-    po_file_t file_b = content_b->poFileRead();
-    po_message_iterator_t iterator_b = po_message_iterator(file_b, "messages");
-    // skipping headers
-    po_message_t message_b = po_next_message(iterator_b);
+    std::vector<MessageGroup *> messages = content_b->readMessages();
+    int index = 0;
+    for (MessageGroup *messageGroup : messages) {
+        assert(messageGroup->size() == 1);
+        Message *messageObj = messageGroup->message(0);
 
-    // TODO: use data from TranslationContent::readMessages
-    for (int index = 0;
-        (message_b = po_next_message(iterator_b)) &&
-        !po_message_is_obsolete(message_b);
-        index ++)
-    {
         // Messages can be:
         //     "" -- untranslated (does not matter fuzzy or not, so f"" is illegal)
         //     "abc" -- translated
@@ -102,13 +96,12 @@ void Iddiff::diffAgainstEmpty(TranslationContent *content_b)
         //     ""     -> f"abc" : - (fuzzy messages are "weak", you should write in comments instead what you are not sure in)
 
         // Adding to "ADDED" if "B" is translated
-        if (!po_message_is_untranslated(message_b) && !po_message_is_fuzzy(message_b))
-            insertAdded(first_id + index, new IddiffMessage(message_b));
-    }
+        if (!messageObj->isUntranslated() && !messageObj->isFuzzy()) {
+            insertAdded(first_id + index, new IddiffMessage(*messageObj));
+        }
 
-    // free memory
-    po_message_iterator_free(iterator_b);
-    po_file_free(file_b);
+        index++;
+    }
 }
 
 // This function fills m_removedItems and m_addedItems
