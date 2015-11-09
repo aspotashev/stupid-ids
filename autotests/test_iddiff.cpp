@@ -9,6 +9,19 @@
 
 BOOST_AUTO_TEST_SUITE(IddiffTest)
 
+rapidjson::Document parseJson(std::string s)
+{
+    rapidjson::Document doc;
+    doc.Parse(s.c_str());
+
+    return doc;
+}
+
+bool jsonEqual(std::string json1, std::string json2)
+{
+    return parseJson(json1) == parseJson(json2);
+}
+
 // Testing here:
 // Iddiffer::loadIddiff()
 // Iddiffer::generateIddiffText()
@@ -25,12 +38,7 @@ BOOST_AUTO_TEST_CASE(LoadSave)
     diff->loadIddiff(inputfile_str.c_str());
     std::string output = diff->generateIddiffText();
 
-    rapidjson::Document docInput;
-    docInput.Parse(input.c_str());
-    rapidjson::Document docOutput;
-    docOutput.Parse(output.c_str());
-
-    BOOST_CHECK(docInput == docOutput);
+    BOOST_CHECK(jsonEqual(input, output));
 }
 
 BOOST_AUTO_TEST_CASE(Build1)
@@ -74,12 +82,7 @@ BOOST_AUTO_TEST_CASE(Build1)
 
     std::string output = diff->generateIddiffText();
 
-    rapidjson::Document docInput;
-    docInput.Parse(input.c_str());
-    rapidjson::Document docOutput;
-    docOutput.Parse(output.c_str());
-
-    BOOST_CHECK(docInput == docOutput);
+    BOOST_CHECK(jsonEqual(input, output));
 }
 
 BOOST_AUTO_TEST_CASE(MergeHeaders)
@@ -96,12 +99,7 @@ BOOST_AUTO_TEST_CASE(MergeHeaders)
 
     std::string reference = read_file_contents((inputDir + "merged.iddiff").c_str());
 
-    rapidjson::Document docRef;
-    docRef.Parse(reference.c_str());
-    rapidjson::Document docOutput;
-    docOutput.Parse(output.c_str());
-
-    BOOST_CHECK(docRef == docOutput);
+    BOOST_CHECK(jsonEqual(reference, output));
 }
 
 BOOST_AUTO_TEST_SUITE_END()
