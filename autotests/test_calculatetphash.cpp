@@ -16,7 +16,7 @@ std::string getTpHash(const char* inputfile)
     inputfile_str += inputfile;
 
     TranslationContent *content = new TranslationContent(new FileContentFs(inputfile_str));
-    std::string res = GitOid(content->calculateTpHash()).toString();
+    std::string res = GitOid(content->getTpHash()).toString();
 
     delete content;
 

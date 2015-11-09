@@ -25,7 +25,7 @@ void processFile(GitLoader *git_loader, Iddiff *merged_diff, const char *filenam
 {
     TranslationContent *input_content = new TranslationContent(new FileContentFs(filename));
 
-    GitOid tp_hash = input_content->calculateTpHash();
+    GitOid tp_hash = input_content->getTpHash();
     if (tp_hash.isNull()) // not a .po file
         return;
 
@@ -75,7 +75,7 @@ void processFile(GitLoader *git_loader, Iddiff *merged_diff, const char *filenam
 
         TranslationContent *pot_content = new TranslationContent(new FileContentGit(repo, best_pot_oid));
         pot_content->setDisplayFilename(filename);
-        tp_hash = pot_content->calculateTpHash();
+        tp_hash = pot_content->getTpHash();
 
         //printf("filename=%s, oid=%s, tphash=%s\n", filename, GitOid(best_pot_oid).toString().c_str(), GitOid(tp_hash).toString().c_str());
 

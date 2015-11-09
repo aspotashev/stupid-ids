@@ -37,7 +37,7 @@ int toolLokalizeReviewfile(int argc, char *argv[])
 
 
     TranslationContent *new_content = new TranslationContent(new FileContentFs(input_filename));
-    GitOid tp_hash = new_content->calculateTpHash();
+    GitOid tp_hash = new_content->getTpHash();
     assert(!tp_hash.isNull());
 
     // 1. Find the original .po from KDE SVN (GitLoader::findOldestByTphash, see also "tools/iddiff-repo")

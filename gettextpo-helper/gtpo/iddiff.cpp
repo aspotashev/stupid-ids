@@ -69,7 +69,7 @@ void Iddiff::diffAgainstEmpty(TranslationContent *content_b)
 {
     clearIddiff();
 
-    GitOid tp_hash = content_b->calculateTpHash();
+    GitOid tp_hash = content_b->getTpHash();
     int first_id = stupidsClient.getFirstId(tp_hash);
     assert(first_id > 0);
 
@@ -111,8 +111,8 @@ void Iddiff::diffFiles(TranslationContent *content_a, TranslationContent *conten
     clearIddiff();
 
     // .po files should be derived from the same .pot
-    GitOid tp_hash = content_a->calculateTpHash();
-    assert(tp_hash == content_b->calculateTpHash());
+    GitOid tp_hash = content_a->getTpHash();
+    assert(tp_hash == content_b->getTpHash());
 
     // first_id is the same for 2 files
     int first_id = stupidsClient.getFirstId(tp_hash);
@@ -330,7 +330,7 @@ void Iddiff::diffTrCommentsAgainstEmpty(TranslationContent *content_b)
 {
     clearIddiff();
 
-    GitOid tp_hash = content_b->calculateTpHash();
+    GitOid tp_hash = content_b->getTpHash();
     int first_id = stupidsClient.getFirstId(tp_hash);
     assert(first_id > 0);
 
@@ -374,8 +374,8 @@ void Iddiff::diffTrCommentsFiles(TranslationContent *content_a, TranslationConte
     clearIddiff();
 
     // .po files should be derived from the same .pot
-    GitOid tp_hash = content_a->calculateTpHash();
-    assert(tp_hash == content_b->calculateTpHash());
+    GitOid tp_hash = content_a->getTpHash();
+    assert(tp_hash == content_b->getTpHash());
 
     // first_id is the same for 2 files
     int first_id = stupidsClient.getFirstId(tp_hash);

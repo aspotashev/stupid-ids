@@ -90,7 +90,7 @@ GitOid GitLoader::findOldestByTphash_oid(const GitOid& tp_hash)
                     continue;
 
                 TranslationContent *content = new TranslationContent(new FileContentGit(this, oid));
-                GitOid current_tp_hash = content->calculateTpHash();
+                GitOid current_tp_hash = content->getTpHash();
                 if (!current_tp_hash.isNull() && tp_hash == current_tp_hash)
                 {
                     delete content;
@@ -132,7 +132,7 @@ std::vector<int> GitLoader::getCurrentIdsVector()
     for (size_t i = 0; i < oids.size(); i ++)
     {
         TranslationContent *content = new TranslationContent(new FileContentGit(this, oids[i].oid()));
-        GitOid tp_hash = content->calculateTpHash();
+        GitOid tp_hash = content->getTpHash();
         if (!tp_hash.isNull()) {
             tp_hashes.push_back(tp_hash);
         } else {

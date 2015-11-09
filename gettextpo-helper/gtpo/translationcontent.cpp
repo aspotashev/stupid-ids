@@ -75,7 +75,7 @@ const git_oid *TranslationContent::gitBlobHash()
     return m_fileContent->gitBlobHash();
 }
 
-GitOid TranslationContent::calculateTpHash()
+GitOid TranslationContent::getTpHash()
 {
     if (m_tphash)
         return *m_tphash;
@@ -346,7 +346,7 @@ const std::vector<int> &TranslationContent::getMinIds()
 {
     if (!m_minIdsInit)
     {
-        m_minIds = stupidsClient.getMinIds(calculateTpHash());
+        m_minIds = stupidsClient.getMinIds(getTpHash());
         m_minIdsInit = true;
         assertOk();
     }
@@ -359,7 +359,7 @@ void TranslationContent::initFirstIdPair()
     if (m_firstId != 0)
         return;
 
-    GitOid tp_hash = calculateTpHash();
+    GitOid tp_hash = getTpHash();
     if (!tp_hash.isNull())
     {
         std::pair<int, int> res = stupidsClient.getFirstIdPair(tp_hash);

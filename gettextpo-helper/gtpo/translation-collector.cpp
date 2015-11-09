@@ -203,7 +203,7 @@ std::vector<TranslationContent *> StupIdTranslationCollector::involvedByMinIds(s
 {
     std::vector<GitOid> tp_hashes;
     for (size_t i = 0; i < m_contents.size(); i ++)
-        tp_hashes.push_back(m_contents[i]->calculateTpHash());
+        tp_hashes.push_back(m_contents[i]->getTpHash());
 
     std::vector<int> res_indices = stupidsClient.involvedByMinIds(tp_hashes, ids);
 

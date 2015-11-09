@@ -159,7 +159,7 @@ std::string wrap_string_hex(const char *str)
 std::string calculate_tp_hash(const char *filename)
 {
     std::unique_ptr<TranslationContent> content(new TranslationContent(new FileContentFs(filename)));
-    GitOid tp_hash = content->calculateTpHash();
+    GitOid tp_hash = content->getTpHash();
     if (tp_hash.isNull()) {
 //         throw std::runtime_error("Failed to calculate tp_hash");
         return "";
