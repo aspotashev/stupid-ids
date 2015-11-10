@@ -18,7 +18,7 @@ FileContentFs::~FileContentFs()
 {
 }
 
-po_file_t FileContentFs::poFileRead()
+po_file_t FileContentFs::poFileRead() const
 {
     assert(!m_filename.empty());
 

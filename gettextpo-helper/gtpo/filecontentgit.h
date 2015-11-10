@@ -25,7 +25,7 @@ public:
     ~FileContentGit();
 
     // Caller should run 'po_file_free'
-    virtual po_file_t poFileRead();
+    virtual po_file_t poFileRead() const;
 
 private:
     virtual git_oid *gitBlobHashImpl() const;

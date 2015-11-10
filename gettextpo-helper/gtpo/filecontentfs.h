@@ -22,7 +22,7 @@ public:
     ~FileContentFs();
 
     // Caller should run 'po_file_free'
-    virtual po_file_t poFileRead();
+    virtual po_file_t poFileRead() const;
 
     std::string filename() const;
 

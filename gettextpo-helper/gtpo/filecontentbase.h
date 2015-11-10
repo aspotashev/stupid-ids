@@ -20,7 +20,7 @@ public:
     virtual ~FileContentBase();
 
     // Caller should run 'po_file_free'
-    virtual po_file_t poFileRead() = 0;
+    virtual po_file_t poFileRead() const = 0;
 
     const void *getDataBuffer();
     size_t getDataBufferLength();

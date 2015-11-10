@@ -19,7 +19,7 @@ FileContentBuffer::~FileContentBuffer()
 {
 }
 
-po_file_t FileContentBuffer::poFileRead()
+po_file_t FileContentBuffer::poFileRead() const
 {
     assert(m_buffer);
 

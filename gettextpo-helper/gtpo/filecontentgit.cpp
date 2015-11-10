@@ -23,7 +23,7 @@ FileContentGit::~FileContentGit()
 }
 
 // TODO: use m_buffer if it is initialized
-po_file_t FileContentGit::poFileRead()
+po_file_t FileContentGit::poFileRead() const
 {
     assert(m_gitLoader);
     assert(m_oid);
