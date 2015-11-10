@@ -42,7 +42,7 @@ public:
     std::string displayFilename() const;
 
     // Caller should run 'po_file_free'
-    po_file_t poFileRead();
+    po_file_t poFileRead() const;
 
     void writeBufferToFile(const std::string& filename);
 

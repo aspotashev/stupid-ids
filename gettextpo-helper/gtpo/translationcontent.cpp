@@ -61,7 +61,7 @@ std::string TranslationContent::displayFilename() const
     return m_displayFilename;
 }
 
-po_file_t TranslationContent::poFileRead()
+po_file_t TranslationContent::poFileRead() const
 {
     assert(m_fileContent);
 
