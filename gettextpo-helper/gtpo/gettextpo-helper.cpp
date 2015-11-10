@@ -144,10 +144,8 @@ std::string wrap_string_hex(const char *str)
     }
 
     std::ostringstream ss;
-
-    size_t len = strlen(str);
-    for (size_t i = 0; i < len; i ++) {
-        ss << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(static_cast<unsigned char>(str[i]));
+    for (char ch : std::string(str)) {
+        ss << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(static_cast<unsigned char>(ch));
     }
 
     return ss.str();
