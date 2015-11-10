@@ -232,7 +232,7 @@ std::string wrap_template_message(po_message_t message, bool include_non_id)
     return res;
 }
 
-std::string TranslationContent::dumpPoFileTemplate()
+std::string TranslationContent::dumpPoFileTemplate() const
 {
     std::string res;
 

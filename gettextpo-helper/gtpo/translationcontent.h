@@ -71,7 +71,7 @@ public:
 
 private:
     // for calculateTpHash
-    std::string dumpPoFileTemplate();
+    std::string dumpPoFileTemplate() const;
 
     void readMessagesInternal(std::vector<MessageGroup *>& dest, bool& destInit);
 
