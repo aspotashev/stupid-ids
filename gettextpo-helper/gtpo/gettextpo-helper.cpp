@@ -15,6 +15,7 @@
 
 #include <stdexcept>
 #include <memory>
+#include <iomanip>
 
 static void xerror_handler(
     int severity,
@@ -138,20 +139,18 @@ po_file_t po_buffer_read(const char *buffer, size_t length)
 // Transform string into a string of characters [0-9a-f] or "n" if str is NULL.
 std::string wrap_string_hex(const char *str)
 {
-    if (str == NULL)
+    if (!str) {
         return "n";
-
-    std::string res;
-
-    size_t len = strlen(str);
-    char hex[3];
-    for (size_t i = 0; i < len; i ++)
-    {
-        sprintf(hex, "%02x", (unsigned char)str[i]);
-        res += hex;
     }
 
-    return res;
+    std::ostringstream ss;
+
+    size_t len = strlen(str);
+    for (size_t i = 0; i < len; i ++) {
+        ss << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(static_cast<unsigned char>(str[i]));
+    }
+
+    return ss.str();
 }
 
 //----------------------- Calculation of template-part hash ------------------------
