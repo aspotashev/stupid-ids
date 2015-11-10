@@ -47,6 +47,7 @@ public:
     void writeBufferToFile(const std::string& filename);
 
     const git_oid *gitBlobHash();
+    GitOid calculateTpHash() const;
     GitOid getTpHash();
     std::vector<MessageGroup *> readMessages();
     const FileDateTime& date();

@@ -75,41 +75,45 @@ const git_oid *TranslationContent::gitBlobHash()
     return m_fileContent->gitBlobHash();
 }
 
+GitOid TranslationContent::calculateTpHash() const
+{
+    std::string dump;
+
+    try {
+        dump = dumpPoFileTemplate();
+    } catch (const ExceptionNotPo&) {
+        return GitOid::zero();
+    } catch (const ExceptionPoHeaderIncomplete&) {
+        return GitOid::zero();
+    }
+
+    git_oid tphash_buf;
+    sha1_buffer(&tphash_buf, dump.c_str(), dump.size());
+
+    return GitOid(&tphash_buf);
+}
+
 GitOid TranslationContent::getTpHash()
 {
-    if (m_tphash)
+    if (m_tphash) {
         return *m_tphash;
+    }
 
     // Cache calculated tp_hashes (it takes some time to
     // calculate a tp_hash). A singleton class is used for that.
     const git_oid *oid = m_fileContent ? m_fileContent->gitBlobHash() : nullptr;
-    if (!oid)
+    if (!oid) {
         return GitOid::zero();
+    }
 
     GitOid tp_hash = TphashCache.getValue(oid);
 
-    if (!tp_hash.isNull())
-    {
+    if (!tp_hash.isNull()) {
         m_tphash = new GitOid(tp_hash);
-    }
-    else
-    {
-        std::string dump;
+    } else {
+        m_tphash = new GitOid(calculateTpHash());
 
-        try {
-            dump = dumpPoFileTemplate();
-        } catch (const ExceptionNotPo&) {
-            return GitOid::zero();
-        } catch (const ExceptionPoHeaderIncomplete&) {
-            return GitOid::zero();
-        }
-
-        git_oid tphash_buf;
-        sha1_buffer(&tphash_buf, dump.c_str(), dump.size());
-
-        m_tphash = new GitOid(&tphash_buf);
-
-        TphashCache.addPair(oid, &tphash_buf);
+        TphashCache.addPair(oid, *m_tphash);
     }
 
     return *m_tphash;
