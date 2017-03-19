@@ -1,7 +1,11 @@
 project(StupidsRuby)
 cmake_minimum_required(VERSION 2.6)
 
-find_package(Ruby REQUIRED)
+unset(RUBY_VERSION_MAJOR CACHE)
+unset(RUBY_INCLUDE_DIR CACHE)
+unset(RUBY_CONFIG_INCLUDE_DIR CACHE)
+unset(RUBY_LIBRARY CACHE)
+find_package(Ruby 1.9 REQUIRED)
 
 include_directories(${RUBY_INCLUDE_DIRS})
 include_directories(${CMAKE_SOURCE_DIR}/lib/include)
