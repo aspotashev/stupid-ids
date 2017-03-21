@@ -9,7 +9,7 @@ require 'tempfile'
 require 'check-lib.rb'
 require 'set'
 require 'securerandom'
-require 'couchbase'
+require 'redis'
 
 class Sif
   # http://www.oreillynet.com/ruby/blog/2007/01/nubygems_dont_use_class_variab_1.html
@@ -23,16 +23,10 @@ class Sif
       self.class.object_created = true
     end
 
-    @conn = Couchbase.connect(bucket: 'stupids')
+    @redis = Redis.new
 
-    begin
-      @conn.add('next_id', 100)
-    rescue Couchbase::Error::KeyExists
-    end
-    @next_id = @conn.get('next_id')
-
-    @conn.save_design_doc(File.open(File.join(File.dirname(__FILE__)) + '/stupids-couchbase.json'))
-    @views = @conn.design_docs['stupids-couchbase']
+    @next_id = (@redis.get('next_id') || 100).to_i
+    @redis.set('next_id', @next_id)
 
     @known_broken_pots = load_known_broken_pots
   end
@@ -43,49 +37,26 @@ class Sif
   end
 
   def have_info_for_pot_hash?(pot_hash)
-    tphash_view = @views.tp_hash_by_pot(key: pot_hash)
-    return false if tphash_view.count == 0
+    tphash = @redis.hget('pot_to_tohash', pot_hash)
+    return false if tphash.nil?
 
-    tp_hash = tphash_view.first.value
-
-    return @views.first_id_by_tp_hash(key: tp_hash).count > 0
+    not @redis.hget('tphash_to_idrange', tphash).nil?
   end
 
   def add(pot_path)
     pot_hash = Sif.git_hash_object(pot_path)
 
-    tphash_view = @views.tp_hash_by_pot(key: pot_hash)
+    if not @redis.hexists('pot_to_tohash', pot_hash)
+      tphash = GettextpoHelper.calculate_tp_hash(pot_path)
+      raise if tphash.size != 40
 
-    if tphash_view.count > 0
-      #puts "This .pot hash already exists in Couchbase"
-    else
-      tp_hash = GettextpoHelper.calculate_tp_hash(pot_path)
-      raise if tp_hash.size != 40
+      @redis.hset('pot_to_tohash', pot_hash, tphash)
 
-      id = SecureRandom.urlsafe_base64(16)
-      item = {
-        'type' => 'tp_hash',
-        'pot_hash' => pot_hash,
-        'tp_hash' => tp_hash,
-      }
-      @conn.add(id, item)
-
-      id_view = @views.first_id_by_tp_hash(key: tp_hash)
-
-      if id_view.count > 0
+      if @redis.hexists('tphash_to_idrange', tphash)
         puts "This template-part hash already exists in Couchbase"
       else
         pot_len = GettextpoHelper.get_pot_length(pot_path)
-
-        id = SecureRandom.urlsafe_base64(16)
-        item = {
-          'type' => 'first_id',
-          'tp_hash' => tp_hash,
-          'first_id' => @next_id,
-          'pot_len' => pot_len,
-        }
-        @conn.add(id, item)
-
+        @redis.hset('tphash_to_idrange', tphash, "#{@next_id} #{pot_len}")
         @next_id += pot_len
       end
     end
@@ -108,45 +79,38 @@ class Sif
   end
 
   def load_known_broken_pots
-    @views.known_broken_pot.map(&:key)
+    @redis.lrange('known_broken_pots', 0, -1)
   end
 
   def insert_known_broken_pot(pot_hash, pot_status, src_dir)
+    @redis.lpush('known_broken_pots', pot_hash)
     @known_broken_pots << pot_hash
 
-    c_id = SecureRandom.urlsafe_base64(16)
-    c_item = {
-      'type' => 'known_broken_pot',
-      'pot_hash' => pot_hash,
-      'broken_status' => pot_status,
-      'git_repo' => src_dir,
-    }
-    @conn.add(c_id, c_item)
+#    c_item = {
+#      'type' => 'known_broken_pot',
+#      'pot_hash' => pot_hash,
+#      'broken_status' => pot_status,
+#      'git_repo' => src_dir,
+#    }
   end
 
   # Used for the IncrementalCommitProcessing object in add_templates_from_repo()
   class CouchbaseProcessedCommitsStorage
-    def initialize(conn, views)
-      @conn = conn
-      @views = views
+    def initialize(redis)
+      @redis = redis
     end
 
     def list
-      @views.processed_templates_git_commits.map(&:key)
+      @redis.lrange('processed_templates_git_commits', 0, -1)
     end
 
-    def add(string)
-      c_id = SecureRandom.urlsafe_base64(16)
-      c_item = {
-        'type' => 'processed_templates_git_commit',
-        'commit_hash' => string,
-      }
-      @conn.add(c_id, c_item)
+    def add(commit_hash)
+      @redis.lpush('processed_templates_git_commits', commit_hash)
     end
   end
 
   def add_templates_from_repo(src_dir)
-    inc_proc = IncrementalCommitProcessing.new(src_dir, CouchbaseProcessedCommitsStorage.new(@conn, @views))
+    inc_proc = IncrementalCommitProcessing.new(src_dir, CouchbaseProcessedCommitsStorage.new(@redis))
     commits_to_process = inc_proc.commits_to_process
 
     tempfile_pot = Tempfile.new(['', '.pot']).path
