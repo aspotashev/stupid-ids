@@ -25,8 +25,11 @@ class Sif
 
     @redis = Redis.new
 
-    @next_id = (@redis.get('next_id') || 100).to_i
-    @redis.set('next_id', @next_id)
+    @next_id = @redis.get('next_id').to_i
+    if @next_id.nil?
+      @next_id = @redis.hgetall('tphash_to_idrange').map {|k,v| v.split.map(&:to_i).inject(&:+) }.max || 100
+      @redis.set('next_id', @next_id)
+    end
 
     @known_broken_pots = load_known_broken_pots
   end
@@ -58,6 +61,7 @@ class Sif
         pot_len = GettextpoHelper.get_pot_length(pot_path)
         @redis.hset('tphash_to_idrange', tphash, "#{@next_id} #{pot_len}")
         @next_id += pot_len
+        @redis.set('next_id', @next_id)
       end
     end
   end
