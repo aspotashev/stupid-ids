@@ -22,113 +22,33 @@
 
 #include "stupidsdatabase.h"
 
-#include <libcouchbase/api3.h>
-#include <libcouchbase/views.h>
-
-#include <utility>
-
-class RequestBase
-{
-public:
-    virtual void callbackRow(const lcb_RESPVIEWQUERY *rv) = 0;
-    virtual void callbackFinal(const lcb_RESPVIEWQUERY *rv) = 0;
-};
-
-class GetIdsRequest
-{
-public:
-    GetIdsRequest();
-
-    virtual void callbackRow(const lcb_RESPVIEWQUERY *rv);
-    virtual void callbackFinal(const lcb_RESPVIEWQUERY *rv);
-
-    std::pair<int, int> m_res;
-};
-
-GetIdsRequest::GetIdsRequest()
-    : m_res(std::make_pair<int, int>(0, -1))
-{
-}
-
-void GetIdsRequest::callbackRow(const lcb_RESPVIEWQUERY* rv)
-{
-    if (rv->rc == 0) {
-        std::string value(rv->value, rv->nvalue);
-
-        // TBD: use rapidjson
-        int first_id = -1;
-        int sz = -1;
-        assert(sscanf(value.c_str(), "[%d,%d]", &first_id, &sz) == 2);
-
-        m_res = std::pair<int, int>(first_id, sz);
-        printf("first_id = %d\n", first_id);
-        printf("sz = %d\n", sz);
-    } else {
-        // failed
-    }
-}
-
-void GetIdsRequest::callbackFinal(const lcb_RESPVIEWQUERY* rv)
-{
-}
-
-extern "C" {
-static void viewCallback(lcb_t, int, const lcb_RESPVIEWQUERY *rv)
-{
-    RequestBase* request = reinterpret_cast<RequestBase*>(rv->cookie);
-
-    if (rv->rflags & LCB_RESP_F_FINAL) {
-        request->callbackFinal(rv);
-    } else {
-        request->callbackRow(rv);
-    }
-}
-}
+#include <boost/network/protocol/http/client.hpp>
 
 StupidsDatabase::StupidsDatabase()
 {
-    lcb_create_st cropts;
-    memset(&cropts, 0, sizeof cropts);
-    const char *connstr = "couchbase://localhost/stupids";
-
-    cropts.version = 3;
-    cropts.v.v3.connstr = connstr;
-    lcb_error_t rc;
-    rc = lcb_create(&m_instance, &cropts);
-    assert(rc == LCB_SUCCESS);
-    rc = lcb_connect(m_instance);
-    assert(rc == LCB_SUCCESS);
-    lcb_wait(m_instance);
-    assert(lcb_get_bootstrap_status(m_instance) == LCB_SUCCESS);
 }
 
 StupidsDatabase::~StupidsDatabase()
 {
-    lcb_destroy(m_instance);
 }
 
 std::pair<int, int> StupidsDatabase::getFirstId(const GitOid& tp_hash)
 {
-    lcb_CMDVIEWQUERY vq = { 0 };
-    std::string dName = "stupids-couchbase";
-    std::string vName = "first_id_by_tp_hash";
-    std::string options = std::string("reduce=false&key=\"") + tp_hash.toString() + std::string("\"");
+    using namespace boost::network;
+    using namespace boost::network::http;
 
-    vq.callback = viewCallback;
-    vq.ddoc = dName.c_str();
-    vq.nddoc = dName.length();
-    vq.view = vName.c_str();
-    vq.nview = vName.length();
-    vq.optstr = options.c_str();
-    vq.noptstr = options.size();
+    std::stringstream ss;
+    ss << "http://127.0.0.1:1235/tphash?tphash=" << tp_hash.toString();
 
-    vq.cmdflags = LCB_CMDVIEWQUERY_F_INCLUDE_DOCS;
+    client::request request_(ss.str());
+    request_ << header("Connection", "close");
+    client client_;
+    client::response response_ = client_.get(request_);
+    std::string body_ = body(response_);
 
-    GetIdsRequest request;
+    int id_count = -1;
+    int first_id = -1;
+    assert(2 == sscanf(body_.c_str(), "{\"id_count\": %d, \"first_id\": %d}", &id_count, &first_id));
 
-    lcb_error_t rc = lcb_view_query(m_instance, &request, &vq);
-    assert(rc == LCB_SUCCESS);
-    lcb_wait(m_instance);
-
-    return request.m_res;
+    return std::make_pair(first_id, id_count);
 }

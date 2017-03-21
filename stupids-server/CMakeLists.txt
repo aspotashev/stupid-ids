@@ -13,7 +13,11 @@ include_directories(${CMAKE_SOURCE_DIR}/gettextpo-helper)
 add_executable(stupids-server ${stupids_server_SRCS})
 target_link_libraries(stupids-server
     gettextpo_helper
-    couchbase
+    pthread
+    cppnetlib-client-connections
+    cppnetlib-uri
+    boost_system
+    boost_thread
 )
 
 set_target_properties(stupids-server PROPERTIES COMPILE_FLAGS "-ggdb")

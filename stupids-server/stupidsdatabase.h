@@ -25,9 +25,7 @@
 
 #include <gtpo/gitoid.h>
 
-#include <libcouchbase/couchbase.h>
-
-#include <algorithm>
+#include <utility>
 
 class StupidsDatabase
 {
@@ -38,7 +36,6 @@ public:
     std::pair<int, int> getFirstId(const GitOid& tp_hash);
 
 private:
-    lcb_t m_instance;
 };
 
 #endif // STUPIDSDATABASE_H
