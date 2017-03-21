@@ -37,7 +37,10 @@ def parse_commit_changes(git_dir, git_ref)
   output.split("\n").
     select {|line| line[0..0] == ':' }.
     map do |line|
-      line =~ /^:([0-9]{6}) ([0-9]{6}) ([0-9a-f]{40}) ([0-9a-f]{40}) ([AMD])\t(.+)$/ && $~.captures
+      match_result = (line =~ /^:([0-9]{6}) ([0-9]{6}) ([0-9a-f]{40}) ([0-9a-f]{40}) ([AMD]|R[0-9]+)\t(.+)$/)
+      raise "Failed to parse line:\n  #{line}\n  git_ref = #{git_ref}" if match_result.nil?
+
+      $~.captures
     end
 end
 
