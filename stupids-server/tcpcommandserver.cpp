@@ -122,6 +122,12 @@ void TcpCommandServer::start()
 
     listenfd = socket(AF_INET, SOCK_STREAM, 0);
 
+    const int enable = 1;
+    if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0) {
+        printf("setsockopt(SO_REUSEADDR) failed\n");
+        assert(0);
+    }
+
     bzero(&servaddr, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
