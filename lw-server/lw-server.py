@@ -25,6 +25,10 @@ class RequestHandler(BaseHTTPRequestHandler):
             tphash = q_params['tphash'][0]
 
             value = db.hget('tphash_to_idrange', tphash)
+            if value is None:
+                self.send_response(404)
+                return
+
             ints = [int(x) for x in value.split()]
             first_id, id_count = ints
 
@@ -44,10 +48,8 @@ class RequestHandler(BaseHTTPRequestHandler):
 
             # Write content as utf-8 data
             self.wfile.write(bytes(message, 'utf8'))
-            return
         else:
             self.send_response(404)
-            return
 
 
 server_address = ('127.0.0.1', 1235)
