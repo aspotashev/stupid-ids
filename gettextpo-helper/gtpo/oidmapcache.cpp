@@ -56,9 +56,8 @@ void OidMapCache::loadCache()
     {
         assert(fread(&oid, GIT_OID_RAWSZ, 1, f) == 1);
         assert(fread(&tp_hash, GIT_OID_RAWSZ, 1, f) == 1);
-        m_cache.push_back(std::pair<GitOid, GitOid>(GitOid(&oid), GitOid(&tp_hash)));
+        m_cache[GitOid(&oid)] = GitOid(&tp_hash);
     }
-    sort(m_cache.begin(), m_cache.end());
 
     fclose(f);
 }
@@ -98,10 +97,9 @@ void OidMapCache::createPathDirectories()
 
 GitOid OidMapCache::getValue(const GitOid& oid) const
 {
-    std::vector<std::pair<GitOid, GitOid> >::const_iterator iter = lower_bound(
-        m_cache.cbegin(), m_cache.cend(), std::pair<GitOid, GitOid>(oid, GitOid::zero()));
-    if (iter != m_cache.cend() && oid == iter->first)
-        return iter->second;
+    const auto it = m_cache.find(oid);
+    if (it != m_cache.cend())
+        return it->second;
     else
         return GitOid::zero();
 }
@@ -109,9 +107,11 @@ GitOid OidMapCache::getValue(const GitOid& oid) const
 std::vector<GitOid> OidMapCache::reverseGetValues(const GitOid& oid) const
 {
     std::vector<GitOid> res;
-    for (size_t i = 0; i < m_cache.size(); i ++)
-        if (m_cache[i].second == oid)
-            res.push_back(m_cache[i].first);
+    for (const auto pr : m_cache) {
+        if (pr.second == oid) {
+            res.push_back(pr.first);
+        }
+    }
 
     return res;
 }
@@ -122,8 +122,7 @@ void OidMapCache::addPair(const GitOid& oid, const GitOid& tp_hash)
     assert(getValue(oid).isNull());
 
     // Add pair
-    m_cache.push_back(std::pair<GitOid, GitOid>(oid, tp_hash));
-    sort(m_cache.begin(), m_cache.end());
+    m_cache[oid] = tp_hash;
 
     if (!m_fileExists)
         createPathDirectories();

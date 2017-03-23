@@ -24,7 +24,7 @@ public:
 private:
     std::string m_filename;
     bool m_fileExists;
-    std::vector<std::pair<GitOid, GitOid> > m_cache;
+    std::map<GitOid, GitOid> m_cache;
 };
 
 //---------------------------------------------------
