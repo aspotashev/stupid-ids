@@ -333,7 +333,7 @@ void filterProcessedTransitions(const char *file_processed, std::vector<GitOidPa
 {
     FILE *f = fopen(file_processed, "rb");
     if (!f)
-        throw std::runtime_error("Failed to open file " + std::string(file_processed));
+        throw std::runtime_error("filterProcessedTransitions: Failed to open file " + std::string(file_processed));
 
     fseek(f, 0, SEEK_END);
     int n_processed = ftell(f) / (2 * GIT_OID_RAWSZ);

@@ -11,7 +11,7 @@ FiledbFirstIds::FiledbFirstIds(const char *filename, const char *filename_next_i
 {
     FILE *f = fopen(filename, "r");
         if (!f)
-            throw std::runtime_error("Failed to open file " + std::string(filename));
+            throw std::runtime_error("FiledbFirstIds: Failed to open file " + std::string(filename));
 
     std::vector<GitOid> oids;
     std::vector<int> first_ids;

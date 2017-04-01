@@ -84,7 +84,7 @@ std::pair<std::string, std::string> ProcessOrphansTxtEntry::splitFullnamePot(
 {
     size_t slashPos = fullname.rfind('/');
     if (slashPos == std::string::npos)
-        throw std::runtime_error("Not slash found in the whole path to file");
+        throw std::runtime_error("No slash found in the whole path to file: " + fullname);
 
     // Make change in basename: .po -> .pot
     return std::make_pair(
