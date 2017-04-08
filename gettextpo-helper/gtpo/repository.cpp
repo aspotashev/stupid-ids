@@ -255,7 +255,9 @@ void Repository::initOidMaster()
     libgitRepo();
 
     git_reference *ref_master;
-    assert(git_reference_lookup(&ref_master, m_libgitRepo, "refs/heads/master") == 0);
+    if (git_reference_lookup(&ref_master, m_libgitRepo, "refs/heads/master") != 0) {
+        throw std::runtime_error("git_reference_lookup failed");
+    }
 
     m_oidMaster = new git_oid;
     git_oid_cpy(m_oidMaster, git_reference_target(ref_master));

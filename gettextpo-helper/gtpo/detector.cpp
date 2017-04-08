@@ -88,7 +88,10 @@ void DetectorSuccessors::processChange(
 
 void DetectorSuccessors::doDetect()
 {
-    assert(m_repo);
+    if (!m_repo) {
+        throw std::runtime_error("m_repo is null");
+    }
+
     m_repo->readRepositoryCommits();
 
     for (int i = 0; i < m_repo->nCommits(); i ++)
