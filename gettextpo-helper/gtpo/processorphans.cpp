@@ -24,17 +24,24 @@ ProcessOrphansTxtEntry::ProcessOrphansTxtEntry(
     else
         throw std::runtime_error("unexpected command: " + std::string(cmd));
 
-    // If command is not "delete", destination must be specified.
-    //
-    // If command is "delete", destination may
-    // contain garbage (for example, SVN revision number).
-    assert(m_type == DELETE || !destination.isNull());
-
     m_origin = origin;
     std::tie(m_origPath, m_origNamePot) = splitFullnamePot(m_origin);
 
-    m_destination = destination;
-    std::tie(m_destPath, m_destNamePot) = splitFullnamePot(m_destination);
+    if (m_type == DELETE) {
+        // If command is "delete", destination may
+        // contain garbage (for example, SVN revision number).
+        m_destination = "";
+        m_destPath = "";
+        m_destNamePot = "";
+    } else {
+        // If command is not "delete", destination must be specified.
+        if (destination.isNull()) {
+            throw std::runtime_error("Destination is empty");
+        }
+
+        m_destination = destination;
+        std::tie(m_destPath, m_destNamePot) = splitFullnamePot(m_destination);
+    }
 }
 
 ProcessOrphansTxtEntry::~ProcessOrphansTxtEntry()
