@@ -47,7 +47,7 @@ set(gettextpo_helper_LIB_SRCS
 add_library(gettextpo_helper SHARED ${gettextpo_helper_LIB_SRCS})
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
-find_package(Libgit2 REQUIRED)
+find_package(Libgit2 REQUIRED 0.22)
 include_directories(${LIBGIT2_INCLUDE_DIR})
 target_link_libraries(gettextpo_helper
     gettextpo

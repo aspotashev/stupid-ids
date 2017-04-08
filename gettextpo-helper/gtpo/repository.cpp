@@ -530,6 +530,12 @@ void Repository::libgitClose()
 
 git_repository *Repository::libgitRepo()
 {
+    static bool libgit2_init = false;
+    if (!libgit2_init) {
+        git_libgit2_init();
+        libgit2_init = true;
+    }
+
     if (!m_libgitRepo)
     {
         int ret = git_repository_open(&m_libgitRepo, m_gitDir.c_str());
