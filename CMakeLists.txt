@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
+# TBD: require gettext-devel
+
 set(GETTEXTPO_HELPER_INCLUDES
 	${CMAKE_SOURCE_DIR}/gettextpo-helper/lib/include
 	${CMAKE_SOURCE_DIR}/dbuslokalize
