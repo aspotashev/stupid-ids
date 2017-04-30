@@ -1,6 +1,4 @@
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MAIN
-#include <boost/test/unit_test.hpp>
+#include <gtest/gtest.h>
 
 #include "common.h"
 
@@ -8,8 +6,6 @@
 #include <gtpo/iddiffmessage.h>
 #include <gtpo/translationcontent.h>
 #include <gtpo/filecontentfs.h>
-
-BOOST_AUTO_TEST_SUITE(IddiffTest)
 
 rapidjson::Document parseJson(std::string s)
 {
@@ -27,7 +23,7 @@ bool jsonEqual(std::string json1, std::string json2)
 // Testing here:
 // Iddiffer::loadIddiff()
 // Iddiffer::generateIddiffText()
-BOOST_AUTO_TEST_CASE(LoadSave)
+TEST(Iddiff, LoadSave)
 {
     std::string inputfile_str;
     inputfile_str += INPUT_DATA_DIR;
@@ -40,10 +36,10 @@ BOOST_AUTO_TEST_CASE(LoadSave)
     diff->loadIddiff(inputfile_str.c_str());
     std::string output = diff->generateIddiffText();
 
-    BOOST_CHECK(jsonEqual(input, output));
+    EXPECT_TRUE(jsonEqual(input, output));
 }
 
-BOOST_AUTO_TEST_CASE(Build1)
+TEST(Iddiff, Build1)
 {
     std::string inputfile_str;
     inputfile_str += INPUT_DATA_DIR;
@@ -84,10 +80,10 @@ BOOST_AUTO_TEST_CASE(Build1)
 
     std::string output = diff->generateIddiffText();
 
-    BOOST_CHECK(jsonEqual(input, output));
+    EXPECT_TRUE(jsonEqual(input, output));
 }
 
-BOOST_AUTO_TEST_CASE(MergeHeaders)
+TEST(Iddiff, MergeHeaders)
 {
     std::string inputDir(INPUT_DATA_DIR "/iddiff/");
 
@@ -101,10 +97,10 @@ BOOST_AUTO_TEST_CASE(MergeHeaders)
 
     std::string reference = read_file_contents((inputDir + "merged.iddiff").c_str());
 
-    BOOST_CHECK(jsonEqual(reference, output));
+    EXPECT_TRUE(jsonEqual(reference, output));
 }
 
-BOOST_AUTO_TEST_CASE(DiffAgaistEmpty)
+TEST(Iddiff, DiffAgaistEmpty)
 {
     std::string inputDir(INPUT_DATA_DIR "/iddiff/against-empty/");
 
@@ -113,7 +109,7 @@ BOOST_AUTO_TEST_CASE(DiffAgaistEmpty)
     {
         Iddiff* diff = new Iddiff();
         diff->diffAgainstEmpty(content);
-        BOOST_CHECK(jsonEqual(
+        EXPECT_TRUE(jsonEqual(
             diff->generateIddiffText(),
             read_file_contents(inputDir + "diff.iddiff")));
     }
@@ -121,10 +117,8 @@ BOOST_AUTO_TEST_CASE(DiffAgaistEmpty)
     {
         Iddiff* diff_trcomments = new Iddiff();
         diff_trcomments->diffTrCommentsAgainstEmpty(content);
-        BOOST_CHECK(jsonEqual(
+        EXPECT_TRUE(jsonEqual(
             diff_trcomments->generateIddiffText(),
             read_file_contents(inputDir + "diff-trcomments.iddiff")));
     }
 }
-
-BOOST_AUTO_TEST_SUITE_END()

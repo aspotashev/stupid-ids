@@ -1,6 +1,4 @@
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MAIN
-#include <boost/test/unit_test.hpp>
+#include <gtest/gtest.h>
 
 #include "common.h"
 
@@ -10,10 +8,7 @@
 
 #include <sstream>
 
-BOOST_AUTO_TEST_SUITE(MatchPoMessages)
-
-BOOST_AUTO_TEST_CASE(Match)
-{
+TEST(MatchPoMessages, Match) {
     std::string inputDir(INPUT_DATA_DIR "/matchpomessages/");
 
     TranslationContent *file_a = new TranslationContent(new FileContentFs(inputDir + "data/dumpids-a.po"));
@@ -29,7 +24,5 @@ BOOST_AUTO_TEST_CASE(Match)
 
     std::string reference = read_file_contents((inputDir + "ref/list_equal_messages_ids.txt").c_str());
 
-    BOOST_CHECK_EQUAL(reference, output.str());
+    EXPECT_EQ(reference, output.str());
 }
-
-BOOST_AUTO_TEST_SUITE_END()
