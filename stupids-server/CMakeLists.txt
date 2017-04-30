@@ -15,9 +15,11 @@ target_link_libraries(stupids-server
     gettextpo_helper
     pthread
     cppnetlib-client-connections
-    cppnetlib-uri
+    network-uri
     boost_system
     boost_thread
+    ssl
+    crypto
 )
 
 set_target_properties(stupids-server PROPERTIES COMPILE_FLAGS "-ggdb")
