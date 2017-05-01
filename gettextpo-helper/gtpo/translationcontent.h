@@ -70,10 +70,10 @@ public:
 
     int translatedCount() const;
 
-private:
     // for calculateTpHash
-    std::string dumpPoFileTemplate() const;
+    std::string fileTemplateAsJson() const;
 
+private:
     void readMessagesInternal(std::vector<MessageGroup *>& dest, bool& destInit);
 
     void initFirstIdPair();

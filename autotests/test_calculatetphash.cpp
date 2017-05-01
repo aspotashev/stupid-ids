@@ -21,19 +21,18 @@ static std::string getTpHash(const char* inputfile)
 
 // Testing here:
 // TranslationContent::calculateTpHash()
-TEST(TpHash, Main) {
-    EXPECT_EQ("3daba7a6acba93eb449bc6fe5a28acfda7d7bad0", getTpHash("check-tphash.pot"));
-    EXPECT_EQ("3daba7a6acba93eb449bc6fe5a28acfda7d7bad0", getTpHash("check-tphash.po"));
+TEST(TranslationContent, TpHash) {
+    EXPECT_EQ("50af8de1177dce3f94deb2d866d49f0264aae2fd", getTpHash("check-tphash.pot"));
+    EXPECT_EQ("50af8de1177dce3f94deb2d866d49f0264aae2fd", getTpHash("check-tphash.po"));
 
+    EXPECT_EQ("fd48fbf951a961c89e2760110280e9777cf1593e", getTpHash("base.po"));
+    EXPECT_EQ("fd48fbf951a961c89e2760110280e9777cf1593e", getTpHash("change-trcomments.po"));
 
-    EXPECT_EQ("181f2933566bba8b19192b7384bd5a0fb835ec47", getTpHash("base.po"));
-    EXPECT_EQ("181f2933566bba8b19192b7384bd5a0fb835ec47", getTpHash("change-trcomments.po"));
-
-    EXPECT_EQ("8ca4a81c09b2f811f0f7722f09e2fb0377983601", getTpHash("change-msgid.po"));
-    EXPECT_EQ("73496ffb20d1352eed2fb5ec2097f0b553f4ab03", getTpHash("change-msgctxt.po"));
-    EXPECT_EQ("8aa616d15a5b6e9ed451470038607bce31228efb", getTpHash("change-msgidplural.po"));
-    EXPECT_EQ("bcf8f67a9dd15705d3884aea8ad9a5c9547d0fb5", getTpHash("change-autocomments.po"));
-    EXPECT_EQ("72919da53f4a6caabb1c3a34885b53d21a50a011", getTpHash("change-sourcepos.po"));
-    EXPECT_EQ("84d0afc1b22b1515bd759c1f5449baf68c9beed7", getTpHash("change-sourcefile.po"));
-    EXPECT_EQ("6a0f6b9f8b7ce107944554512465e6882ccb2f43", getTpHash("change-potdate.po"));
+    EXPECT_EQ("ffe72f31b23497e764a8c4b4d42c30d5a32dba7c", getTpHash("change-msgid.po"));
+    EXPECT_EQ("2b3a5aabb62a761744451cca6454fbdb19fe0e79", getTpHash("change-msgctxt.po"));
+    EXPECT_EQ("8f650eac3dc1c739dd5a0e170a303249bf427228", getTpHash("change-msgidplural.po"));
+    EXPECT_EQ("98497a3c9d81b04f2bea35c6e4cfc6f99cd188f9", getTpHash("change-autocomments.po"));
+    EXPECT_EQ("22ee08d28354af5eb031bee161158e3157f607e4", getTpHash("change-sourcepos.po"));
+    EXPECT_EQ("00b62471842fc3c05333b8a4e3b2c729f58cfb9f", getTpHash("change-sourcefile.po"));
+    EXPECT_EQ("99a0ced3f721df2a5aabbb7dd08574499a21c329", getTpHash("change-potdate.po"));
 }

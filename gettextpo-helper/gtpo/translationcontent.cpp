@@ -18,6 +18,11 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <rapidjson/document.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/writer.h>
+
+#include <boost/date_time/local_time/local_time.hpp>
 
 TranslationContent::TranslationContent(FileContentBase* fileContent)
     : m_fileContent(fileContent)
@@ -80,7 +85,7 @@ GitOid TranslationContent::calculateTpHash() const
     std::string dump;
 
     try {
-        dump = dumpPoFileTemplate();
+        dump = fileTemplateAsJson();
     } catch (const ExceptionNotPo&) {
         return GitOid::zero();
     } catch (const ExceptionPoHeaderIncomplete&) {
@@ -119,7 +124,20 @@ GitOid TranslationContent::getTpHash()
     return *m_tphash;
 }
 
-std::string wrap_template_header(std::string headerString)
+// static int64_t dateTimeAsUnixTimestamp(const std::string& str) {
+//     std::istringstream ss("2011-07-06 04:15+0200");
+//     ss.exceptions(std::ios_base::failbit);
+//     boost::local_time::local_time_input_facet facet("%Y-%m-%d %H:%M%ZP");
+//     ss.imbue(std::locale(ss.getloc(), &facet));
+//     boost::local_time::local_date_time ldt(boost::date_time::not_a_date_time);
+//     ss >> ldt;
+// 
+//     ldt.base_utc_offset();
+// 
+//     throw std::runtime_error(str);
+// }
+
+rapidjson::Value templateHeaderAsJson(std::string headerString, rapidjson::MemoryPoolAllocator<>& allocator)
 {
     if (!isalpha(headerString[0])) {
         // Header corrupt. See KDE SVN revision 1228594 for an example.
@@ -146,102 +164,146 @@ std::string wrap_template_header(std::string headerString)
     size_t pot_date_end = header.find("\n", pot_creation_pos);
     assert(pot_date_end != std::string::npos); // There must be a "\n" after every line (including "POT-Creation-Date: ...") in the header.
 
-    return wrap_string_hex(header.substr(pot_creation_pos, pot_date_end - pot_creation_pos).c_str());
-}
+    const std::string pot_creation_date_str = header.substr(pot_creation_pos, pot_date_end - pot_creation_pos);
 
-std::string dump_filepos_entries(po_message_t message)
-{
-    std::string res;
+    rapidjson::Value res;
+    res.SetObject();
 
-    po_filepos_t filepos;
-    char filepos_start_line[20];
-    // FIXME: "filepos" entries should probably be sorted alphabetically
-    // (because PO editors might reorder them).
-    for (int i = 0; (filepos = po_message_filepos(message, i)); i ++)
     {
-        res += po_filepos_file(filepos);
-        res += '\n';
+        rapidjson::Value date;
+        date.SetString(/*dateTimeAsUnixTimestamp(*/ pot_creation_date_str.c_str(), allocator);
 
-        // Convert "po_filepos_start_line" to "int", because the return value is
-        // (size_t)(-1) when no line number is available.
-        sprintf(filepos_start_line, "%d", (int)po_filepos_start_line(filepos));
-        res += filepos_start_line;
-        res += '\n';
+        res.AddMember("pot_creation_date", date, allocator);
     }
 
     return res;
 }
 
-std::string dump_format_types(po_message_t message)
-{
-    std::string res;
+rapidjson::Value fileposEntriesAsJson(po_message_t message, rapidjson::MemoryPoolAllocator<>& allocator) {
+    rapidjson::Value res;
+    res.SetArray();
 
-    // FIXME: "*-format" entries should probably be sorted alphabetically
-    // (because they might be reordered in other versions of "libgettext-po").
-    for (int i = 0; po_format_list()[i] != NULL; i ++)
-        if (po_message_is_format(message, po_format_list()[i]))
+    po_filepos_t filepos;
+//     char filepos_start_line[20];
+    // FIXME: "filepos" entries should probably be sorted alphabetically
+    // (because PO editors might reorder them).
+    for (int i = 0; (filepos = po_message_filepos(message, i)); i++) {
+        rapidjson::Value item;
+        item.SetObject();
+
         {
-            res += po_format_list()[i];
-            res += '\n';
+            rapidjson::Value value;
+            value.SetString(po_filepos_file(filepos), allocator);
+            item.AddMember("file", value, allocator);
         }
+
+        {
+            // Convert "po_filepos_start_line" to "int", because the return value is
+            // (size_t)(-1) when no line number is available.
+            const int start_line = (int)po_filepos_start_line(filepos);
+
+            if (start_line != -1) {
+                rapidjson::Value value;
+//                 value.SetIn(po_filepos_file(filepos), allocator);
+                item.AddMember("line", start_line, allocator);
+            }
+        }
+
+        res.PushBack(item, allocator);
+    }
 
     return res;
 }
 
-// include_non_id: include 'extracted comments', 'filepos entries', 'format types', 'range'
-std::string wrap_template_message(po_message_t message, bool include_non_id)
+rapidjson::Value messageformatsAsJson(po_message_t message, rapidjson::MemoryPoolAllocator<>& allocator) {
+    rapidjson::Value res;
+    res.SetArray();
+
+    // FIXME: "*-format" entries should probably be sorted alphabetically
+    // (because they might be reordered in other versions of "libgettext-po").
+    for (int i = 0; po_format_list()[i] != NULL; i ++) {
+        if (po_message_is_format(message, po_format_list()[i])) {
+            rapidjson::Value value;
+            value.SetString(po_format_list()[i], allocator);
+            res.PushBack(value, allocator);
+        }
+    }
+
+    return res;
+}
+
+rapidjson::Value templateMessageAsString(po_message_t message, rapidjson::MemoryPoolAllocator<>& allocator)
 {
+    rapidjson::Value res;
+    res.SetObject();
+
     // header should be processed separately
-    assert(*po_message_msgid(message) != '\0' || po_message_msgctxt(message) != NULL);
+    if (*po_message_msgid(message) == '\0' && po_message_msgctxt(message) == NULL) {
+        throw std::runtime_error("header");
+    }
 
-    if (po_message_is_obsolete(message)) // obsolete messages should not affect the dump
-        return std::string();
+    if (po_message_is_obsolete(message)) { // obsolete messages should not affect the dump
+        return rapidjson::Value();
+    }
 
+    {
+        const char* str = po_message_msgctxt(message);
+        if (str) {
+            rapidjson::Value value;
+            value.SetString(str, allocator);
+            res.AddMember("msgctxt", value, allocator);
+        }
+    }
 
-    std::string res;
+    {
+        const char* str = po_message_msgid(message);
+        if (str) {
+            rapidjson::Value value;
+            value.SetString(str, allocator);
+            res.AddMember("msgid", value, allocator);
+        }
+    }
 
-    res += "T"; // "T". May be NULL.
-    res += wrap_string_hex(po_message_msgctxt(message));
+    {
+        const char* str = po_message_msgid_plural(message);
+        if (str) {
+            rapidjson::Value value;
+            value.SetString(str, allocator);
+            res.AddMember("msgid_plural", value, allocator);
+        }
+    }
 
-    res += "M"; // "M". Cannot be NULL or empty.
-    res += wrap_string_hex(po_message_msgid(message));
+    {
+        const char* str = po_message_extracted_comments(message);
+        if (str) {
+            rapidjson::Value value;
+            value.SetString(str, allocator);
+            res.AddMember("comments", value, allocator);
+        }
+    }
 
-    res += "P"; // "P". May be NULL.
-    res += wrap_string_hex(po_message_msgid_plural(message));
+    res.AddMember("filepos", fileposEntriesAsJson(message, allocator), allocator);
 
-    if (!include_non_id)
-        return res; // short dump used by "dump-ids"
-
-    // additional fields (for calculation of "template-part hash")
-    res += "C"; // "C". Cannot be NULL, may be empty.
-    res += wrap_string_hex(po_message_extracted_comments(message));
-
-    res += "N";
-    res += wrap_string_hex(dump_filepos_entries(message).c_str());
-
-    res += "F";
-    res += wrap_string_hex(dump_format_types(message).c_str());
+    res.AddMember("formats", messageformatsAsJson(message, allocator), allocator);
 
     int minp, maxp;
     if (po_message_is_range(message, &minp, &maxp)) // I have never seen POTs with ranges, but anyway...
     {
-        char range_dump[30];
-        sprintf(range_dump, "%xr%x", minp, maxp); // not characters, but integers are encoded in HEX here
+        rapidjson::Value numeric_range;
+        numeric_range.SetObject();
+        
+        numeric_range.AddMember("min", minp, allocator);
+        numeric_range.AddMember("max", maxp, allocator);
 
-        res += "R";
-        res += range_dump;
+        res.AddMember("numeric_range", numeric_range, allocator);
     }
-
 
     return res;
 }
 
-std::string TranslationContent::dumpPoFileTemplate() const
+std::string TranslationContent::fileTemplateAsJson() const
 {
-    std::string res;
-
     po_file_t file = poFileRead(); // all checks and error reporting are done in poFileRead
-
 
     // main cycle
     po_message_iterator_t iterator = po_message_iterator(file, "messages");
@@ -249,30 +311,42 @@ std::string TranslationContent::dumpPoFileTemplate() const
 
     // processing header (header is the first message)
     message = po_next_message(iterator);
-    if (!message) // no messages in file, i.e. not a .po/.pot file
+    if (!message) { // no messages in file, i.e. not a .po/.pot file
         throw ExceptionNotPo();
-    res += wrap_template_header(po_message_msgstr(message));
+    }
+
+    rapidjson::MemoryPoolAllocator<> allocator;
+    rapidjson::Document doc(&allocator);
+    doc.SetObject();
+
+    rapidjson::Value header_value = templateHeaderAsJson(po_message_msgstr(message), allocator);
+    doc.AddMember("header", header_value, allocator);
+
+    rapidjson::Value messages_value;
+    messages_value.SetArray();
 
     // ordinary .po messages (not header)
     //
     // Assuming that PO editors do not change the order of messages.
     // Sorting messages in alphabetical order would be wrong, because for every template,
     // we store only the ID of the first message. The IDs of other messages should be deterministic.
-    while ((message = po_next_message(iterator)))
-    {
-        std::string msg_dump = wrap_template_message(message, true);
-        if (msg_dump.length() > 0) // non-obsolete
-        {
-            res += "/";
-            res += msg_dump;
+    while ((message = po_next_message(iterator))) {
+        rapidjson::Value msg_value = templateMessageAsString(message, allocator);
+        if (!msg_value.IsNull()) {
+            messages_value.PushBack(msg_value, allocator);
         }
     }
+
+    doc.AddMember("messages", messages_value, allocator);
 
     // free memory
     po_message_iterator_free(iterator);
     po_file_free(file);
 
-    return res;
+    rapidjson::StringBuffer stream;
+    rapidjson::Writer<rapidjson::StringBuffer> writer(stream);
+    doc.Accept(writer);
+    return stream.GetString();
 }
 
 void TranslationContent::readMessagesInternal(std::vector<MessageGroup*> &dest, bool &destInit)
