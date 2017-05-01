@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 
+#include <fstream>
+
 #include <gtpo/translationcontent.h>
 #include <gtpo/filecontentfs.h>
 #include <gtpo/gitoid.h>
@@ -35,6 +37,29 @@ static std::string getTpHash(const char* inputfile)
 // TranslationContent::calculateTpHash()
 TEST_P(TranslationContentTest, TpHash) {
     EXPECT_EQ(expectedTphash(), getTpHash(filename()));
+}
+
+static std::string getJson(const char* inputfile) {
+    std::string inputfile_str;
+    inputfile_str += INPUT_DATA_DIR;
+    inputfile_str += "/tp_hash/";
+    inputfile_str += inputfile;
+
+    TranslationContent *content = new TranslationContent(new FileContentFs(inputfile_str));
+    std::string res = content->fileTemplateAsJson();
+
+    delete content;
+
+    return res;
+}
+
+TEST_P(TranslationContentTest, Json) {
+    std::ifstream is((std::string(INPUT_DATA_DIR) + "/tp_hash/json/" + filename() + std::string(".json")).c_str());
+    std::string expected_json(
+        (std::istreambuf_iterator<char>(is)),
+        std::istreambuf_iterator<char>());
+
+    EXPECT_EQ(expected_json, getJson(filename()));
 }
 
 INSTANTIATE_TEST_CASE_P(
