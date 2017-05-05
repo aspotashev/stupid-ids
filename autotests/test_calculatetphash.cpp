@@ -2,6 +2,10 @@
 
 #include <fstream>
 
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/document.h>
+#include <rapidjson/writer.h>
+
 #include <gtpo/translationcontent.h>
 #include <gtpo/filecontentfs.h>
 #include <gtpo/gitoid.h>
@@ -53,13 +57,24 @@ static std::string getJson(const char* inputfile) {
     return res;
 }
 
+static std::string compactJson(const std::string& json) {
+    rapidjson::Document doc;
+    doc.Parse(json.c_str());
+
+    rapidjson::StringBuffer buffer;
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+    doc.Accept(writer);
+
+    return std::string(buffer.GetString());
+}
+
 TEST_P(TranslationContentTest, Json) {
     std::ifstream is((std::string(INPUT_DATA_DIR) + "/tp_hash/json/" + filename() + std::string(".json")).c_str());
     std::string expected_json(
         (std::istreambuf_iterator<char>(is)),
         std::istreambuf_iterator<char>());
 
-    EXPECT_EQ(expected_json, getJson(filename()));
+    EXPECT_EQ(compactJson(expected_json), getJson(filename()));
 }
 
 INSTANTIATE_TEST_CASE_P(
