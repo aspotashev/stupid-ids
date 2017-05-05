@@ -23,7 +23,7 @@ bool jsonEqual(std::string json1, std::string json2)
 // Testing here:
 // Iddiffer::loadIddiff()
 // Iddiffer::generateIddiffText()
-TEST(Iddiff, LoadSave)
+TEST(IddiffTest, LoadSave)
 {
     std::string inputfile_str;
     inputfile_str += INPUT_DATA_DIR;
@@ -39,7 +39,7 @@ TEST(Iddiff, LoadSave)
     EXPECT_TRUE(jsonEqual(input, output));
 }
 
-TEST(Iddiff, Build1)
+TEST(IddiffTest, Build1)
 {
     std::string inputfile_str;
     inputfile_str += INPUT_DATA_DIR;
@@ -83,7 +83,7 @@ TEST(Iddiff, Build1)
     EXPECT_TRUE(jsonEqual(input, output));
 }
 
-TEST(Iddiff, MergeHeaders)
+TEST(IddiffTest, MergeHeaders)
 {
     std::string inputDir(INPUT_DATA_DIR "/iddiff/");
 
@@ -100,7 +100,7 @@ TEST(Iddiff, MergeHeaders)
     EXPECT_TRUE(jsonEqual(reference, output));
 }
 
-TEST(Iddiff, DiffAgaistEmpty)
+TEST(IddiffTest, DiffAgaistEmpty)
 {
     std::string inputDir(INPUT_DATA_DIR "/iddiff/against-empty/");
 
