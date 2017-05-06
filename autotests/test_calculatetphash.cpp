@@ -59,7 +59,9 @@ static std::string getJson(const char* inputfile) {
 
 static std::string compactJson(const std::string& json) {
     rapidjson::Document doc;
-    doc.Parse(json.c_str());
+    if (doc.Parse(json.c_str()).HasParseError()) {
+        throw std::runtime_error("Failed to parse JSON: " + json);
+    }
 
     rapidjson::StringBuffer buffer;
     rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
