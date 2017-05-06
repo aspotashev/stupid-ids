@@ -1,0 +1,5851 @@
+{
+  "header": {
+    "pot_creation_date": "2011-07-06 04:15+0200"
+  },
+  "messages": [
+    {
+      "msgctxt": "@info:tooltip",
+      "msgid": "Hide Filter Bar",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "filterbar/filterbar.cpp",
+          "line": 39
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label:textbox",
+      "msgid": "Filter:",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "filterbar/filterbar.cpp",
+          "line": 43
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Cut",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "panels/folders/treeviewcontextmenu.cpp",
+          "line": 58
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Copy",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "panels/folders/treeviewcontextmenu.cpp",
+          "line": 62
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Paste",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "panels/folders/treeviewcontextmenu.cpp",
+          "line": 65
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Rename...",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "panels/folders/treeviewcontextmenu.cpp",
+          "line": 77
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Move to Trash",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "panels/folders/treeviewcontextmenu.cpp",
+          "line": 91
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Delete",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "panels/folders/treeviewcontextmenu.cpp",
+          "line": 101
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Properties",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "panels/folders/treeviewcontextmenu.cpp",
+          "line": 110
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Show Hidden Files",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "panels/folders/treeviewcontextmenu.cpp",
+          "line": 118
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Automatic Scrolling",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "panels/folders/treeviewcontextmenu.cpp",
+          "line": 124
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:window",
+      "msgid": "Configure Shown Data",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "panels/information/filemetadataconfigurationdialog.cpp",
+          "line": 33
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label::textbox",
+      "msgid": "Select which data should be shown:",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "panels/information/filemetadataconfigurationdialog.cpp",
+          "line": 39
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "play",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "panels/information/phononwidget.cpp",
+          "line": 139
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "stop",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "panels/information/phononwidget.cpp",
+          "line": 144
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info",
+      "msgid": "%1 item selected",
+      "msgid_plural": "%1 items selected",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "panels/information/informationpanelcontent.cpp",
+          "line": 226
+        }
+      ],
+      "formats": [
+        "kde-format"
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Preview",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "panels/information/informationpanelcontent.cpp",
+          "line": 267
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Configure...",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "panels/information/informationpanelcontent.cpp",
+          "line": 272
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label::textbox",
+      "msgid": "Select which data should be shown in the information panel:",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "panels/information/informationpanelcontent.cpp",
+          "line": 294
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "option:check Refers to a filter on image size",
+      "msgid": "Small",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "panels/search/searchpanel.cpp",
+          "line": 139
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "option:check Refers to a filter on image size",
+      "msgid": "Medium",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "panels/search/searchpanel.cpp",
+          "line": 141
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "option:check Refers to a filter on image size",
+      "msgid": "Large",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "panels/search/searchpanel.cpp",
+          "line": 144
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "action:button",
+      "msgid": "From Here (%1)",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "search/dolphinsearchbox.cpp",
+          "line": 107
+        }
+      ],
+      "formats": [
+        "kde-format"
+      ]
+    },
+    {
+      "msgctxt": "@info:tooltip",
+      "msgid": "Quit searching",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "search/dolphinsearchbox.cpp",
+          "line": 268
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "action:button",
+      "msgid": "Filename",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "search/dolphinsearchbox.cpp",
+          "line": 293
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "action:button",
+      "msgid": "Content",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "search/dolphinsearchbox.cpp",
+          "line": 297
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "action:button",
+      "msgid": "From Here",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "search/dolphinsearchbox.cpp",
+          "line": 310
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "action:button",
+      "msgid": "Everywhere",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "search/dolphinsearchbox.cpp",
+          "line": 314
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title UDS_DISPLAY_NAME for a KIO directory listing. %1 is the query the user entered.",
+      "msgid": "Query Results from '%1'",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "search/dolphinsearchbox.cpp",
+          "line": 396
+        }
+      ],
+      "formats": [
+        "kde-format"
+      ]
+    },
+    {
+      "msgctxt": "@label:textbox",
+      "msgid": "Find:",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "search/dolphinsearchbox.cpp",
+          "line": 412
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group",
+      "msgid": "View Properties",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/general/behaviorsettingspage.cpp",
+          "line": 56
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:radio",
+      "msgid": "Remember view properties for each folder",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/general/behaviorsettingspage.cpp",
+          "line": 59
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:radio",
+      "msgid": "Use common view properties for all folders",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/general/behaviorsettingspage.cpp",
+          "line": 61
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group",
+      "msgid": "Ask For Confirmation When",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/general/behaviorsettingspage.cpp",
+          "line": 68
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:check Ask for Confirmation When",
+      "msgid": "Moving files or folders to trash",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/general/behaviorsettingspage.cpp",
+          "line": 71
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:check Ask for Confirmation When",
+      "msgid": "Deleting files or folders",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/general/behaviorsettingspage.cpp",
+          "line": 73
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:check Ask for Confirmation When",
+      "msgid": "Closing windows with multiple tabs",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/general/behaviorsettingspage.cpp",
+          "line": 75
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:check",
+      "msgid": "Rename inline",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/general/behaviorsettingspage.cpp",
+          "line": 83
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:check",
+      "msgid": "Show tooltips",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/general/behaviorsettingspage.cpp",
+          "line": 86
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:check",
+      "msgid": "Show selection marker",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/general/behaviorsettingspage.cpp",
+          "line": 89
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "option:check",
+      "msgid": "Natural sorting of items",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/general/behaviorsettingspage.cpp",
+          "line": 92
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:check",
+      "msgid": "Show 'Delete' command",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/general/contextmenusettingspage.cpp",
+          "line": 43
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:check",
+      "msgid": "Show 'Copy To' and 'Move To' commands",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/general/contextmenusettingspage.cpp",
+          "line": 45
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:tab Behavior settings",
+      "msgid": "Behavior",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/general/generalsettingspage.cpp",
+          "line": 48
+        },
+        {
+          "file": "settings/kcm/kcmdolphingeneral.cpp",
+          "line": 56
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:tab Previews settings",
+      "msgid": "Previews",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/general/generalsettingspage.cpp",
+          "line": 53
+        },
+        {
+          "file": "settings/kcm/kcmdolphingeneral.cpp",
+          "line": 61
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:tab Context Menu settings",
+      "msgid": "Context Menu",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/general/generalsettingspage.cpp",
+          "line": 58
+        },
+        {
+          "file": "settings/kcm/kcmdolphingeneral.cpp",
+          "line": 66
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:tab Status Bar settings",
+      "msgid": "Status Bar",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/general/generalsettingspage.cpp",
+          "line": 63
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:check",
+      "msgid": "Show zoom slider",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/general/statusbarsettingspage.cpp",
+          "line": 42
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:check",
+      "msgid": "Show space information",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/general/statusbarsettingspage.cpp",
+          "line": 44
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group",
+      "msgid": "Show previews for",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/general/previewssettingspage.cpp",
+          "line": 69
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group",
+      "msgid": "Do not create previews for",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/general/previewssettingspage.cpp",
+          "line": 90
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label Don't create previews for: <Local files above:> XX MByte",
+      "msgid": "Local files above:",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/general/previewssettingspage.cpp",
+          "line": 93
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label Don't create previews for: <Remote files above:> XX MByte",
+      "msgid": "Remote files above:",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/general/previewssettingspage.cpp",
+          "line": 101
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:window",
+      "msgid": "Configure Preview for %1",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/general/configurepreviewplugindialog.cpp",
+          "line": 46
+        }
+      ],
+      "formats": [
+        "kde-format"
+      ]
+    },
+    {
+      "msgctxt": "@title:tab",
+      "msgid": "Icons",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/kcm/kcmdolphinviewmodes.cpp",
+          "line": 59
+        },
+        {
+          "file": "settings/viewmodes/viewsettingspage.cpp",
+          "line": 46
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:tab",
+      "msgid": "Details",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/kcm/kcmdolphinviewmodes.cpp",
+          "line": 64
+        },
+        {
+          "file": "settings/viewmodes/viewsettingspage.cpp",
+          "line": 51
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:tab",
+      "msgid": "Column",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/kcm/kcmdolphinviewmodes.cpp",
+          "line": 69
+        },
+        {
+          "file": "settings/viewmodes/viewsettingspage.cpp",
+          "line": 56
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group",
+      "msgid": "Mouse",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/navigation/navigationsettingspage.cpp",
+          "line": 49
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:check Mouse Settings",
+      "msgid": "Single-click to open files and folders",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/navigation/navigationsettingspage.cpp",
+          "line": 52
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:check Mouse Settings",
+      "msgid": "Double-click to open files and folders",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/navigation/navigationsettingspage.cpp",
+          "line": 54
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:check",
+      "msgid": "Open archives as folder",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/navigation/navigationsettingspage.cpp",
+          "line": 60
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "option:check",
+      "msgid": "Open folders during drag operations",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/navigation/navigationsettingspage.cpp",
+          "line": 62
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label:textbox",
+      "msgid": "Select which services should be shown in the context menu:",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/services/servicessettingspage.cpp",
+          "line": 59
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:button",
+      "msgid": "Download New Services...",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/services/servicessettingspage.cpp",
+          "line": 74
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group",
+      "msgid": "Version Control Systems",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/services/servicessettingspage.cpp",
+          "line": 79
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info",
+      "msgid": "Dolphin must be restarted to apply the updated version control systems settings.",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/services/servicessettingspage.cpp",
+          "line": 131
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:inmenu",
+      "msgid": "%1: %2",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/services/servicessettingspage.cpp",
+          "line": 183
+        }
+      ],
+      "formats": [
+        "kde-format"
+      ]
+    },
+    {
+      "msgctxt": "@title:group",
+      "msgid": "Home Folder",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/startup/startupsettingspage.cpp",
+          "line": 59
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label:textbox",
+      "msgid": "Location:",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/startup/startupsettingspage.cpp",
+          "line": 64
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:button",
+      "msgid": "Use Current Location",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/startup/startupsettingspage.cpp",
+          "line": 75
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:button",
+      "msgid": "Use Default Location",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/startup/startupsettingspage.cpp",
+          "line": 78
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:check Startup Settings",
+      "msgid": "Split view mode",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/startup/startupsettingspage.cpp",
+          "line": 87
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:check Startup Settings",
+      "msgid": "Editable location bar",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/startup/startupsettingspage.cpp",
+          "line": 88
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:check Startup Settings",
+      "msgid": "Show full path inside location bar",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/startup/startupsettingspage.cpp",
+          "line": 89
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:check Startup Settings",
+      "msgid": "Show filter bar",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/startup/startupsettingspage.cpp",
+          "line": 90
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info",
+      "msgid": "The location for the home folder is invalid or does not exist, it will not be applied.",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/startup/startupsettingspage.cpp",
+          "line": 121
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group",
+      "msgid": "Text",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewmodes/columnviewsettingspage.cpp",
+          "line": 65
+        },
+        {
+          "file": "settings/viewmodes/detailsviewsettingspage.cpp",
+          "line": 65
+        },
+        {
+          "file": "settings/viewmodes/iconsviewsettingspage.cpp",
+          "line": 72
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label:listbox",
+      "msgid": "Font:",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewmodes/columnviewsettingspage.cpp",
+          "line": 68
+        },
+        {
+          "file": "settings/viewmodes/detailsviewsettingspage.cpp",
+          "line": 68
+        },
+        {
+          "file": "settings/viewmodes/iconsviewsettingspage.cpp",
+          "line": 75
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label:listbox",
+      "msgid": "Text width:",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewmodes/columnviewsettingspage.cpp",
+          "line": 71
+        },
+        {
+          "file": "settings/viewmodes/iconsviewsettingspage.cpp",
+          "line": 83
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:inlistbox Text width",
+      "msgid": "Small",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewmodes/columnviewsettingspage.cpp",
+          "line": 73
+        },
+        {
+          "file": "settings/viewmodes/iconsviewsettingspage.cpp",
+          "line": 85
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:inlistbox Text width",
+      "msgid": "Medium",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewmodes/columnviewsettingspage.cpp",
+          "line": 74
+        },
+        {
+          "file": "settings/viewmodes/iconsviewsettingspage.cpp",
+          "line": 86
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:inlistbox Text width",
+      "msgid": "Large",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewmodes/columnviewsettingspage.cpp",
+          "line": 75
+        },
+        {
+          "file": "settings/viewmodes/iconsviewsettingspage.cpp",
+          "line": 87
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:inlistbox Text width",
+      "msgid": "Huge",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewmodes/columnviewsettingspage.cpp",
+          "line": 76
+        },
+        {
+          "file": "settings/viewmodes/iconsviewsettingspage.cpp",
+          "line": 88
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:check",
+      "msgid": "Expandable folders",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewmodes/detailsviewsettingspage.cpp",
+          "line": 76
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:inlistbox Font",
+      "msgid": "System Font",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewmodes/dolphinfontrequester.cpp",
+          "line": 40
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:inlistbox Font",
+      "msgid": "Custom Font",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewmodes/dolphinfontrequester.cpp",
+          "line": 41
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:button Choose font",
+      "msgid": "Choose...",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewmodes/dolphinfontrequester.cpp",
+          "line": 45
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group",
+      "msgid": "Icon Size",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewmodes/iconsizegroupbox.cpp",
+          "line": 35
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label:listbox",
+      "msgid": "Default:",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewmodes/iconsizegroupbox.cpp",
+          "line": 39
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label:listbox",
+      "msgid": "Preview:",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewmodes/iconsizegroupbox.cpp",
+          "line": 46
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:tooltip",
+      "msgid": "Size: 1 pixel",
+      "msgid_plural": "Size: %1 pixels",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewmodes/iconsizegroupbox.cpp",
+          "line": 109
+        },
+        {
+          "file": "statusbar/dolphinstatusbar.cpp",
+          "line": 399
+        }
+      ],
+      "formats": [
+        "kde-format"
+      ]
+    },
+    {
+      "msgctxt": "@label:textbox",
+      "msgid": "Number of lines:",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewmodes/iconsviewsettingspage.cpp",
+          "line": 78
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group",
+      "msgid": "Grid",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewmodes/iconsviewsettingspage.cpp",
+          "line": 99
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label:listbox",
+      "msgid": "Arrangement:",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewmodes/iconsviewsettingspage.cpp",
+          "line": 102
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:inlistbox Arrangement",
+      "msgid": "Columns",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewmodes/iconsviewsettingspage.cpp",
+          "line": 104
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:inlistbox Arrangement",
+      "msgid": "Rows",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewmodes/iconsviewsettingspage.cpp",
+          "line": 105
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label:listbox",
+      "msgid": "Grid spacing:",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewmodes/iconsviewsettingspage.cpp",
+          "line": 107
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:inlistbox Grid spacing",
+      "msgid": "None",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewmodes/iconsviewsettingspage.cpp",
+          "line": 109
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:inlistbox Grid spacing",
+      "msgid": "Small",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewmodes/iconsviewsettingspage.cpp",
+          "line": 110
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:inlistbox Grid spacing",
+      "msgid": "Medium",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewmodes/iconsviewsettingspage.cpp",
+          "line": 111
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:inlistbox Grid spacing",
+      "msgid": "Large",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewmodes/iconsviewsettingspage.cpp",
+          "line": 112
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:window",
+      "msgid": "Additional Information",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/additionalinfodialog.cpp",
+          "line": 36
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label",
+      "msgid": "Select which additional information should be shown:",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/additionalinfodialog.cpp",
+          "line": 46
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:window",
+      "msgid": "View Properties",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 79
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group",
+      "msgid": "Properties",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 92
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label:listbox",
+      "msgid": "View mode:",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 97
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:inlistbox",
+      "msgid": "Icons",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 99
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:inlistbox",
+      "msgid": "Details",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 100
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:inlistbox",
+      "msgid": "Column",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 101
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label:listbox",
+      "msgid": "Sorting:",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 103
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:inlistbox Sort",
+      "msgid": "Ascending",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 107
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:inlistbox Sort",
+      "msgid": "Descending",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 108
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:inlistbox Sort",
+      "msgid": "By Name",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 111
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:inlistbox Sort",
+      "msgid": "By Size",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 112
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:inlistbox Sort",
+      "msgid": "By Date",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 113
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:inlistbox Sort",
+      "msgid": "By Permissions",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 114
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:inlistbox Sort",
+      "msgid": "By Owner",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 115
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:inlistbox Sort",
+      "msgid": "By Group",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 116
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:inlistbox Sort",
+      "msgid": "By Type",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 117
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:check",
+      "msgid": "Show folders first",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 127
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:check",
+      "msgid": "Show preview",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 128
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:check",
+      "msgid": "Show in groups",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 129
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:check",
+      "msgid": "Show hidden files",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 130
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:button",
+      "msgid": "Additional Information",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 132
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group",
+      "msgid": "Apply View Properties To",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 180
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:radio Apply View Properties To",
+      "msgid": "Current folder",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 183
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:radio Apply View Properties To",
+      "msgid": "Current folder including all sub-folders",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 186
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:radio Apply View Properties To",
+      "msgid": "All folders",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 188
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:check",
+      "msgid": "Use these view properties as default",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 200
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info",
+      "msgid": "The view properties of all sub-folders will be changed. Do you want to continue?",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 337
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info",
+      "msgid": "The view properties of all folders will be changed. Do you want to continue?",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropertiesdialog.cpp",
+          "line": 370
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:window",
+      "msgid": "Applying View Properties",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropsprogressinfo.cpp",
+          "line": 49
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:progress",
+      "msgid": "Counting folders: %1",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropsprogressinfo.cpp",
+          "line": 62
+        },
+        {
+          "file": "settings/viewpropsprogressinfo.cpp",
+          "line": 109
+        }
+      ],
+      "formats": [
+        "kde-format"
+      ]
+    },
+    {
+      "msgctxt": "@info:progress",
+      "msgid": "Folders: %1",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/viewpropsprogressinfo.cpp",
+          "line": 125
+        }
+      ],
+      "formats": [
+        "kde-format"
+      ]
+    },
+    {
+      "msgctxt": "@title:window",
+      "msgid": "Dolphin Preferences",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/dolphinsettingsdialog.cpp",
+          "line": 47
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group",
+      "msgid": "Startup",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/dolphinsettingsdialog.cpp",
+          "line": 55
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group",
+      "msgid": "View Modes",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/dolphinsettingsdialog.cpp",
+          "line": 62
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group",
+      "msgid": "Navigation",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/dolphinsettingsdialog.cpp",
+          "line": 69
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group",
+      "msgid": "Services",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/dolphinsettingsdialog.cpp",
+          "line": 76
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group",
+      "msgid": "Trash",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/dolphinsettingsdialog.cpp",
+          "line": 83
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group General settings",
+      "msgid": "General",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "settings/dolphinsettingsdialog.cpp",
+          "line": 90
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:status",
+      "msgid": "Unknown size",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "statusbar/statusbarspaceinfo.cpp",
+          "line": 80
+        },
+        {
+          "file": "statusbar/statusbarspaceinfo.cpp",
+          "line": 93
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:status Free disk space",
+      "msgid": "%1 free",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "statusbar/statusbarspaceinfo.cpp",
+          "line": 104
+        }
+      ],
+      "formats": [
+        "kde-format"
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Copy Information Message",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "statusbar/dolphinstatusbar.cpp",
+          "line": 294
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Copy Error Message",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "statusbar/dolphinstatusbar.cpp",
+          "line": 297
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Show Zoom Slider",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "statusbar/dolphinstatusbar.cpp",
+          "line": 304
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Show Space Information",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "statusbar/dolphinstatusbar.cpp",
+          "line": 308
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Select Remote Charset",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinremoteencoding.cpp",
+          "line": 53
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Reload",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinremoteencoding.cpp",
+          "line": 117
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Default",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinremoteencoding.cpp",
+          "line": 118
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@option:check",
+      "msgid": "Expandable Folders",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphindetailsview.cpp",
+          "line": 143
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:menu",
+      "msgid": "Columns",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphindetailsview.cpp",
+          "line": 371
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "Items in a folder",
+      "msgid": "1 item",
+      "msgid_plural": "%1 items",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphindetailsview.cpp",
+          "line": 703
+        }
+      ],
+      "formats": [
+        "kde-format"
+      ]
+    },
+    {
+      "msgctxt": "@info:status",
+      "msgid": "A folder cannot be dropped into itself",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/draganddrophelper.cpp",
+          "line": 108
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:status",
+      "msgid": "Unknown error.",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphindirlister.cpp",
+          "line": 41
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action",
+      "msgid": "Create Folder...",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinviewactionhandler.cpp",
+          "line": 87
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu File",
+      "msgid": "Rename...",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinviewactionhandler.cpp",
+          "line": 95
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu File",
+      "msgid": "Move to Trash",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinviewactionhandler.cpp",
+          "line": 101
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu File",
+      "msgid": "Delete",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinviewactionhandler.cpp",
+          "line": 109
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action \"Move to Trash\" for non-local files, etc.",
+      "msgid": "Delete (using shortcut for Trash)",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinviewactionhandler.cpp",
+          "line": 119
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu File",
+      "msgid": "Properties",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinviewactionhandler.cpp",
+          "line": 126
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:intoolbar",
+      "msgid": "View Mode",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinviewactionhandler.cpp",
+          "line": 137
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:intoolbar",
+      "msgid": "Preview",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinviewactionhandler.cpp",
+          "line": 153
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info",
+      "msgid": "Show preview of files and folders",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinviewactionhandler.cpp",
+          "line": 154
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu Sort",
+      "msgid": "Descending",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinviewactionhandler.cpp",
+          "line": 159
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu Sort",
+      "msgid": "Folders First",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinviewactionhandler.cpp",
+          "line": 163
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu View",
+      "msgid": "Sort By",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinviewactionhandler.cpp",
+          "line": 171
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu View",
+      "msgid": "Additional Information",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinviewactionhandler.cpp",
+          "line": 186
+        },
+        {
+          "file": "views/dolphinviewactionhandler.cpp",
+          "line": 212
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu View",
+      "msgid": "Show in Groups",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinviewactionhandler.cpp",
+          "line": 193
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu View",
+      "msgid": "Show Hidden Files",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinviewactionhandler.cpp",
+          "line": 197
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu View",
+      "msgid": "Adjust View Properties...",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinviewactionhandler.cpp",
+          "line": 202
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu Sort By",
+      "msgid": "Name",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinviewactionhandler.cpp",
+          "line": 237
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu View Mode",
+      "msgid": "Icons",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinviewactionhandler.cpp",
+          "line": 440
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info",
+      "msgid": "Icons view mode",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinviewactionhandler.cpp",
+          "line": 441
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu View Mode",
+      "msgid": "Details",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinviewactionhandler.cpp",
+          "line": 451
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info",
+      "msgid": "Details view mode",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinviewactionhandler.cpp",
+          "line": 452
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu View Mode",
+      "msgid": "Columns",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinviewactionhandler.cpp",
+          "line": 462
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info",
+      "msgid": "Columns view mode",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinviewactionhandler.cpp",
+          "line": 463
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:tooltip",
+      "msgid": "Resize column",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphincolumnview.cpp",
+          "line": 89
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:status",
+      "msgid": "Update of version information failed.",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/versioncontrol/versioncontrolobserver.cpp",
+          "line": 190
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:status",
+      "msgid": "Updating version information...",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/versioncontrol/versioncontrolobserver.cpp",
+          "line": 243
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label",
+      "msgid": "Size",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/additionalinfoaccessor.cpp",
+          "line": 105
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label",
+      "msgid": "Date",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/additionalinfoaccessor.cpp",
+          "line": 106
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label",
+      "msgid": "Permissions",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/additionalinfoaccessor.cpp",
+          "line": 107
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label",
+      "msgid": "Owner",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/additionalinfoaccessor.cpp",
+          "line": 108
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label",
+      "msgid": "Group",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/additionalinfoaccessor.cpp",
+          "line": 109
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label",
+      "msgid": "Type",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/additionalinfoaccessor.cpp",
+          "line": 110
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label",
+      "msgid": "Link Destination",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/additionalinfoaccessor.cpp",
+          "line": 111
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label",
+      "msgid": "Path",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/additionalinfoaccessor.cpp",
+          "line": 112
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:window",
+      "msgid": "Rename Item",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/renamedialog.cpp",
+          "line": 54
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:window",
+      "msgid": "Rename Items",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/renamedialog.cpp",
+          "line": 55
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:button",
+      "msgid": "&Rename",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/renamedialog.cpp",
+          "line": 59
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label:textbox",
+      "msgid": "Rename the item <filename>%1</filename> to:",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/renamedialog.cpp",
+          "line": 69
+        }
+      ],
+      "formats": [
+        "kde-format"
+      ]
+    },
+    {
+      "msgctxt": "@info:status",
+      "msgid": "New name #",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/renamedialog.cpp",
+          "line": 75
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label:textbox",
+      "msgid": "Rename the %1 selected item to:",
+      "msgid_plural": "Rename the %1 selected items to:",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/renamedialog.cpp",
+          "line": 77
+        }
+      ],
+      "formats": [
+        "kde-format"
+      ]
+    },
+    {
+      "msgctxt": "@info",
+      "msgid": "(# will be replaced by ascending numbers)",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/renamedialog.cpp",
+          "line": 124
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group Name",
+      "msgid": "Others",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 43
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title::column",
+      "msgid": "Link Destination",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 127
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title::column",
+      "msgid": "Path",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 129
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group Size",
+      "msgid": "Folders",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 221
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group Size",
+      "msgid": "Small",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 223
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group Size",
+      "msgid": "Medium",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 225
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group Size",
+      "msgid": "Big",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 227
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group Date",
+      "msgid": "Today",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 262
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group Date",
+      "msgid": "Yesterday",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 263
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group The week day name: %A",
+      "msgid": "%A",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 264
+        }
+      ],
+      "formats": [
+        "c-format"
+      ]
+    },
+    {
+      "msgctxt": "@title:group Date",
+      "msgid": "Last Week",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 268
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group Date",
+      "msgid": "Two Weeks Ago",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 271
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group Date",
+      "msgid": "Three Weeks Ago",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 274
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group Date",
+      "msgid": "Earlier this Month",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 278
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group Date: %B is full month name in current locale, and %Y is full year number",
+      "msgid": "Yesterday (%B, %Y)",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 287
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group The week day name: %A, %B is full month name in current locale, and %Y is full year number",
+      "msgid": "%A (%B, %Y)",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 289
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group Date: %B is full month name in current locale, and %Y is full year number",
+      "msgid": "Last Week (%B, %Y)",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 291
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group Date: %B is full month name in current locale, and %Y is full year number",
+      "msgid": "Two Weeks Ago (%B, %Y)",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 293
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group Date: %B is full month name in current locale, and %Y is full year number",
+      "msgid": "Three Weeks Ago (%B, %Y)",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 295
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group Date: %B is full month name in current locale, and %Y is full year number",
+      "msgid": "Earlier on %B, %Y",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 297
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group The month and year: %B is full month name in current locale, and %Y is full year number",
+      "msgid": "%B, %Y",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 300
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:intext Access permission, concatenated",
+      "msgid": "Read, ",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 315
+        },
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 327
+        },
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 339
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:intext Access permission, concatenated",
+      "msgid": "Write, ",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 318
+        },
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 330
+        },
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 342
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:intext Access permission, concatenated",
+      "msgid": "Execute, ",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 321
+        },
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 333
+        },
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 345
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@item:intext Access permission, concatenated",
+      "msgid": "Forbidden",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 323
+        },
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 335
+        },
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 347
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:group Files and folders by permissions",
+      "msgid": "(User: %1) (Group: %2) (Others: %3)",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinmodel.cpp",
+          "line": 349
+        }
+      ],
+      "formats": [
+        "kde-format"
+      ]
+    },
+    {
+      "msgctxt": "@info:status",
+      "msgid": "<filename>%1</filename> selected",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinview.cpp",
+          "line": 500
+        }
+      ],
+      "formats": [
+        "kde-format"
+      ]
+    },
+    {
+      "msgctxt": "@info:status",
+      "msgid": "<filename>%1</filename> selected (%2)",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinview.cpp",
+          "line": 501
+        }
+      ],
+      "formats": [
+        "kde-format"
+      ]
+    },
+    {
+      "msgctxt": "@info:status",
+      "msgid": "1 Folder selected",
+      "msgid_plural": "%1 Folders selected",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinview.cpp",
+          "line": 505
+        }
+      ],
+      "formats": [
+        "kde-format"
+      ]
+    },
+    {
+      "msgctxt": "@info:status",
+      "msgid": "1 File selected",
+      "msgid_plural": "%1 Files selected",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinview.cpp",
+          "line": 506
+        }
+      ],
+      "formats": [
+        "kde-format"
+      ]
+    },
+    {
+      "msgctxt": "@info:status folders, files (size)",
+      "msgid": "%1, %2 (%3)",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinview.cpp",
+          "line": 508
+        }
+      ],
+      "formats": [
+        "kde-format"
+      ]
+    },
+    {
+      "msgctxt": "@info:status files (size)",
+      "msgid": "%1 (%2)",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinview.cpp",
+          "line": 511
+        }
+      ],
+      "formats": [
+        "kde-format"
+      ]
+    },
+    {
+      "msgctxt": "@info:status",
+      "msgid": "Delete operation completed.",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinview.cpp",
+          "line": 1053
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:status",
+      "msgid": "The location is empty.",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinview.cpp",
+          "line": 1155
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:status",
+      "msgid": "The location '%1' is invalid.",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/dolphinview.cpp",
+          "line": 1157
+        }
+      ],
+      "formats": [
+        "kde-format"
+      ]
+    },
+    {
+      "msgctxt": "@info:tooltip",
+      "msgid": "Deselect Item",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/selectiontoggle.cpp",
+          "line": 132
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:tooltip",
+      "msgid": "Select Item",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "views/selectiontoggle.cpp",
+          "line": 133
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:progress",
+      "msgid": "Loading folder...",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinviewcontainer.cpp",
+          "line": 344
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info",
+      "msgid": "Searching...",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinviewcontainer.cpp",
+          "line": 355
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:status",
+      "msgid": "No items found.",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinviewcontainer.cpp",
+          "line": 375
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:status",
+      "msgid": "Dolphin does not support web pages, the web browser has been launched",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinviewcontainer.cpp",
+          "line": 454
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:status",
+      "msgid": "Protocol not supported by Dolphin, Konqueror has been launched",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinviewcontainer.cpp",
+          "line": 466
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:status",
+      "msgid": "Invalid protocol",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinviewcontainer.cpp",
+          "line": 473
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:status",
+      "msgid": "Successfully copied.",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 340
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:status",
+      "msgid": "Successfully moved.",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 344
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:status",
+      "msgid": "Successfully linked.",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 348
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:status",
+      "msgid": "Successfully moved to trash.",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 352
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:status",
+      "msgid": "Successfully renamed.",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 356
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:status",
+      "msgid": "Created folder.",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 361
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info",
+      "msgid": "Go back",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 438
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info",
+      "msgid": "Go forward",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 444
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:window",
+      "msgid": "Confirmation",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 615
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "C&lose Current Tab",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 619
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "You have multiple tabs open in this window, are you sure you want to quit?",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 627
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Do not ask again",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 629
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "New Tab",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1213
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Detach Tab",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1216
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Close Other Tabs",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1218
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Close Tab",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1220
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Location Bar",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1446
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Go",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1454
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Tools",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1464
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Help",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1478
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:menu Create new folder, file, link, etc.",
+      "msgid": "Create New",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1571
+        },
+        {
+          "file": "dolphincontextmenu.cpp",
+          "line": 245
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu File",
+      "msgid": "New &Window",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1578
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu File",
+      "msgid": "New Tab",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1584
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu File",
+      "msgid": "Close Tab",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1590
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu Edit",
+      "msgid": "Paste",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1613
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu Edit",
+      "msgid": "Select All",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1618
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu Edit",
+      "msgid": "Invert Selection",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1623
+        },
+        {
+          "file": "dolphinpart.cpp",
+          "line": 168
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu View",
+      "msgid": "Reload",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1636
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu View",
+      "msgid": "Stop",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1642
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info",
+      "msgid": "Stop loading",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1643
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu Navigation Bar",
+      "msgid": "Editable Location",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1648
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu Navigation Bar",
+      "msgid": "Replace Location",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1653
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Recently Closed Tabs",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1664
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Empty Recently Closed Tabs",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1670
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu Tools",
+      "msgid": "Show Filter Bar",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1687
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu Tools",
+      "msgid": "Compare Files",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1693
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu Tools",
+      "msgid": "Open Terminal",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1699
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Activate Next Tab",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1718
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Activate Previous Tab",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1723
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Open in New Tab",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1729
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Open in New Window",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1734
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu Panels",
+      "msgid": "Unlock Panels",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1744
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu Panels",
+      "msgid": "Lock Panels",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1746
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:window",
+      "msgid": "Information",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1752
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:window",
+      "msgid": "Folders",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1775
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:window Shell terminal",
+      "msgid": "Terminal",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1796
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:window",
+      "msgid": "Search",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1820
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:window",
+      "msgid": "Places",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1851
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu View",
+      "msgid": "Panels",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1881
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:tooltip",
+      "msgid": "Configure and control Dolphin",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 1959
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:intoolbar Close right view",
+      "msgid": "Close",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 2129
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info",
+      "msgid": "Close right view",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 2130
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:intoolbar Close left view",
+      "msgid": "Close",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 2133
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info",
+      "msgid": "Close left view",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 2134
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:intoolbar Split view",
+      "msgid": "Split",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 2138
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info",
+      "msgid": "Split view",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinmainwindow.cpp",
+          "line": 2139
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu Edit",
+      "msgid": "&Edit File Type...",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinpart.cpp",
+          "line": 149
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu Edit",
+      "msgid": "Select Items Matching...",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinpart.cpp",
+          "line": 153
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu Edit",
+      "msgid": "Unselect Items Matching...",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinpart.cpp",
+          "line": 158
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu Edit",
+      "msgid": "Unselect All",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinpart.cpp",
+          "line": 164
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu Go",
+      "msgid": "App&lications",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinpart.cpp",
+          "line": 181
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu Go",
+      "msgid": "&Network Folders",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinpart.cpp",
+          "line": 184
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu Go",
+      "msgid": "Sett&ings",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinpart.cpp",
+          "line": 187
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu Go",
+      "msgid": "Trash",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinpart.cpp",
+          "line": 190
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu Go",
+      "msgid": "Autostart",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinpart.cpp",
+          "line": 193
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu Tools",
+      "msgid": "Find File...",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinpart.cpp",
+          "line": 198
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu Tools",
+      "msgid": "Open &Terminal",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinpart.cpp",
+          "line": 206
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title",
+      "msgid": "Dolphin Part",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinpart.cpp",
+          "line": 275
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:window",
+      "msgid": "Select",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinpart.cpp",
+          "line": 464
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Select all items matching this pattern:",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinpart.cpp",
+          "line": 465
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:window",
+      "msgid": "Unselect",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinpart.cpp",
+          "line": 471
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Unselect all items matching this pattern:",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphinpart.cpp",
+          "line": 472
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title",
+      "msgid": "Dolphin",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "main.cpp",
+          "line": 35
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title",
+      "msgid": "File Manager",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "main.cpp",
+          "line": 37
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:credit",
+      "msgid": "(C) 2006-2011 Peter Penz",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "main.cpp",
+          "line": 39
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:credit",
+      "msgid": "Peter Penz",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "main.cpp",
+          "line": 41
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:credit",
+      "msgid": "Maintainer and developer",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "main.cpp",
+          "line": 42
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:credit",
+      "msgid": "David Faure",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "main.cpp",
+          "line": 44
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:credit",
+      "msgid": "Developer",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "main.cpp",
+          "line": 45
+        },
+        {
+          "file": "main.cpp",
+          "line": 48
+        },
+        {
+          "file": "main.cpp",
+          "line": 51
+        },
+        {
+          "file": "main.cpp",
+          "line": 54
+        },
+        {
+          "file": "main.cpp",
+          "line": 57
+        },
+        {
+          "file": "main.cpp",
+          "line": 60
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:credit",
+      "msgid": "Aaron J. Seigo",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "main.cpp",
+          "line": 47
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:credit",
+      "msgid": "Rafael Fernández López",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "main.cpp",
+          "line": 50
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:credit",
+      "msgid": "Kevin Ottens",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "main.cpp",
+          "line": 53
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:credit",
+      "msgid": "Holger Freyther",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "main.cpp",
+          "line": 56
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:credit",
+      "msgid": "Max Blazejak",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "main.cpp",
+          "line": 59
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:credit",
+      "msgid": "Michael Austin",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "main.cpp",
+          "line": 62
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:credit",
+      "msgid": "Documentation",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "main.cpp",
+          "line": 63
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:shell",
+      "msgid": "The files and directories passed as arguments will be selected.",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "main.cpp",
+          "line": 73
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:shell",
+      "msgid": "Dolphin will get started with a split view.",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "main.cpp",
+          "line": 75
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:shell",
+      "msgid": "Document to open",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "main.cpp",
+          "line": 76
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Empty Trash",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphincontextmenu.cpp",
+          "line": 170
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu Add current folder to places",
+      "msgid": "Add to Places",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphincontextmenu.cpp",
+          "line": 176
+        },
+        {
+          "file": "dolphincontextmenu.cpp",
+          "line": 338
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label",
+      "msgid": "Trash",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphincontextmenu.cpp",
+          "line": 196
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Restore",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphincontextmenu.cpp",
+          "line": 206
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu Add selected folder to places",
+      "msgid": "Add to Places",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphincontextmenu.cpp",
+          "line": 258
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Open Path in New Window",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphincontextmenu.cpp",
+          "line": 265
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Open Path in New Tab",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphincontextmenu.cpp",
+          "line": 271
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "Paste Into Folder",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphincontextmenu.cpp",
+          "line": 437
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "&Move to Trash",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphincontextmenu.cpp",
+          "line": 549
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@action:inmenu",
+      "msgid": "&Delete",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "dolphincontextmenu.cpp",
+          "line": 552
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "NAME OF TRANSLATORS",
+      "msgid": "Your names",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 1
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "EMAIL OF TRANSLATORS",
+      "msgid": "Your emails",
+      "comments": "",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 2
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "&Edit",
+      "comments": "i18n: file: dolphinpart.rc:4\ni18n: ectx: Menu (edit)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 5
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:menu",
+      "msgid": "Selection",
+      "comments": "i18n: file: dolphinpart.rc:14\ni18n: ectx: Menu (selection)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 8
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "&View",
+      "comments": "i18n: file: dolphinpart.rc:23\ni18n: ectx: Menu (view)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 11
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "&Go",
+      "comments": "i18n: file: dolphinpart.rc:32\ni18n: ectx: Menu (go)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 14
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:menu",
+      "msgid": "Tools",
+      "comments": "i18n: file: dolphinpart.rc:40\ni18n: ectx: Menu (tools)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 17
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:menu",
+      "msgid": "Dolphin Toolbar",
+      "comments": "i18n: file: dolphinpart.rc:48\ni18n: ectx: ToolBar (mainToolBar)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 20
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Show hidden files",
+      "comments": "i18n: file: panels/folders/dolphin_folderspanelsettings.kcfg:10\ni18n: ectx: label, entry (ShowHiddenFiles), group (FoldersPanel)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 23
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Automatic scrolling",
+      "comments": "i18n: file: panels/folders/dolphin_folderspanelsettings.kcfg:14\ni18n: ectx: label, entry (AutoScrolling), group (FoldersPanel)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 26
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Show preview",
+      "comments": "i18n: file: panels/information/dolphin_informationpanelsettings.kcfg:10\ni18n: ectx: label, entry (showPreview), group (InformationPanel)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 29
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Location",
+      "comments": "i18n: file: search/dolphin_searchsettings.kcfg:10\ni18n: ectx: label, entry (Location), group (Search)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 32
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "What",
+      "comments": "i18n: file: search/dolphin_searchsettings.kcfg:14\ni18n: ectx: label, entry (What), group (Search)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 35
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Font family",
+      "comments": "i18n: file: settings/dolphin_columnmodesettings.kcfg:12\ni18n: ectx: label, entry (FontFamily), group (ColumnMode)\ni18n: file: settings/dolphin_detailsmodesettings.kcfg:12\ni18n: ectx: label, entry (FontFamily), group (DetailsMode)\ni18n: file: settings/dolphin_iconsmodesettings.kcfg:21\ni18n: ectx: label, entry (FontFamily), group (IconsMode)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 38
+        },
+        {
+          "file": "rc.cpp",
+          "line": 66
+        },
+        {
+          "file": "rc.cpp",
+          "line": 225
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Use system font",
+      "comments": "i18n: file: settings/dolphin_columnmodesettings.kcfg:16\ni18n: ectx: label, entry (UseSystemFont), group (ColumnMode)\ni18n: file: settings/dolphin_detailsmodesettings.kcfg:16\ni18n: ectx: label, entry (UseSystemFont), group (DetailsMode)\ni18n: file: settings/dolphin_iconsmodesettings.kcfg:17\ni18n: ectx: label, entry (UseSystemFont), group (IconsMode)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 41
+        },
+        {
+          "file": "rc.cpp",
+          "line": 69
+        },
+        {
+          "file": "rc.cpp",
+          "line": 222
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Font size",
+      "comments": "i18n: file: settings/dolphin_columnmodesettings.kcfg:20\ni18n: ectx: label, entry (FontSize), group (ColumnMode)\ni18n: file: settings/dolphin_detailsmodesettings.kcfg:20\ni18n: ectx: label, entry (FontSize), group (DetailsMode)\ni18n: file: settings/dolphin_iconsmodesettings.kcfg:25\ni18n: ectx: label, entry (FontSize), group (IconsMode)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 44
+        },
+        {
+          "file": "rc.cpp",
+          "line": 72
+        },
+        {
+          "file": "rc.cpp",
+          "line": 228
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Italic",
+      "comments": "i18n: file: settings/dolphin_columnmodesettings.kcfg:24\ni18n: ectx: label, entry (ItalicFont), group (ColumnMode)\ni18n: file: settings/dolphin_detailsmodesettings.kcfg:24\ni18n: ectx: label, entry (ItalicFont), group (DetailsMode)\ni18n: file: settings/dolphin_iconsmodesettings.kcfg:29\ni18n: ectx: label, entry (ItalicFont), group (IconsMode)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 47
+        },
+        {
+          "file": "rc.cpp",
+          "line": 75
+        },
+        {
+          "file": "rc.cpp",
+          "line": 231
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Font weight",
+      "comments": "i18n: file: settings/dolphin_columnmodesettings.kcfg:28\ni18n: ectx: label, entry (FontWeight), group (ColumnMode)\ni18n: file: settings/dolphin_detailsmodesettings.kcfg:28\ni18n: ectx: label, entry (FontWeight), group (DetailsMode)\ni18n: file: settings/dolphin_iconsmodesettings.kcfg:33\ni18n: ectx: label, entry (FontWeight), group (IconsMode)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 50
+        },
+        {
+          "file": "rc.cpp",
+          "line": 78
+        },
+        {
+          "file": "rc.cpp",
+          "line": 234
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Icon size",
+      "comments": "i18n: file: settings/dolphin_columnmodesettings.kcfg:32\ni18n: ectx: label, entry (IconSize), group (ColumnMode)\ni18n: file: settings/dolphin_detailsmodesettings.kcfg:32\ni18n: ectx: label, entry (IconSize), group (DetailsMode)\ni18n: file: settings/dolphin_iconsmodesettings.kcfg:57\ni18n: ectx: label, entry (IconSize), group (IconsMode)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 53
+        },
+        {
+          "file": "rc.cpp",
+          "line": 81
+        },
+        {
+          "file": "rc.cpp",
+          "line": 246
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Preview size",
+      "comments": "i18n: file: settings/dolphin_columnmodesettings.kcfg:36\ni18n: ectx: label, entry (PreviewSize), group (ColumnMode)\ni18n: file: settings/dolphin_detailsmodesettings.kcfg:36\ni18n: ectx: label, entry (PreviewSize), group (DetailsMode)\ni18n: file: settings/dolphin_iconsmodesettings.kcfg:66\ni18n: ectx: label, entry (PreviewSize), group (IconsMode)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 56
+        },
+        {
+          "file": "rc.cpp",
+          "line": 84
+        },
+        {
+          "file": "rc.cpp",
+          "line": 252
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Column width",
+      "comments": "i18n: file: settings/dolphin_columnmodesettings.kcfg:40\ni18n: ectx: label, entry (ColumnWidth), group (ColumnMode)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 59
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Expandable folders",
+      "comments": "i18n: file: settings/dolphin_detailsmodesettings.kcfg:40\ni18n: ectx: label, entry (ExpandableFolders), group (DetailsMode)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 87
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Position of columns",
+      "comments": "i18n: file: settings/dolphin_detailsmodesettings.kcfg:44\ni18n: ectx: label, entry (ColumnPositions), group (DetailsMode)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 90
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label",
+      "msgid": "Show hidden files",
+      "comments": "i18n: file: settings/dolphin_directoryviewpropertysettings.kcfg:11\ni18n: ectx: label, entry (ShowHiddenFiles), group (Settings)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 97
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:whatsthis",
+      "msgid": "When this option is enabled hidden files, such as those starting with a '.', will be shown in the file view.",
+      "comments": "i18n: file: settings/dolphin_directoryviewpropertysettings.kcfg:12\ni18n: ectx: whatsthis, entry (ShowHiddenFiles), group (Settings)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 100
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label",
+      "msgid": "Version",
+      "comments": "i18n: file: settings/dolphin_directoryviewpropertysettings.kcfg:19\ni18n: ectx: label, entry (Version), group (Dolphin)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 103
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:whatsthis",
+      "msgid": "This option defines the used version of the view properties.",
+      "comments": "i18n: file: settings/dolphin_directoryviewpropertysettings.kcfg:20\ni18n: ectx: whatsthis, entry (Version), group (Dolphin)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 106
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label",
+      "msgid": "View Mode",
+      "comments": "i18n: file: settings/dolphin_directoryviewpropertysettings.kcfg:26\ni18n: ectx: label, entry (ViewMode), group (Dolphin)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 109
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:whatsthis",
+      "msgid": "This option controls the style of the view. Currently supported values include icons (0), details (1) and column (2) views.",
+      "comments": "i18n: file: settings/dolphin_directoryviewpropertysettings.kcfg:27\ni18n: ectx: whatsthis, entry (ViewMode), group (Dolphin)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 112
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label",
+      "msgid": "Show preview",
+      "comments": "i18n: file: settings/dolphin_directoryviewpropertysettings.kcfg:34\ni18n: ectx: label, entry (ShowPreview), group (Dolphin)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 115
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:whatsthis",
+      "msgid": "When this option is enabled, a preview of the file content is shown as an icon.",
+      "comments": "i18n: file: settings/dolphin_directoryviewpropertysettings.kcfg:35\ni18n: ectx: whatsthis, entry (ShowPreview), group (Dolphin)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 118
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label",
+      "msgid": "Categorized Sorting",
+      "comments": "i18n: file: settings/dolphin_directoryviewpropertysettings.kcfg:40\ni18n: ectx: label, entry (CategorizedSorting), group (Dolphin)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 121
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:whatsthis",
+      "msgid": "When this option is enabled, the sorted items are summarized by their category.",
+      "comments": "i18n: file: settings/dolphin_directoryviewpropertysettings.kcfg:41\ni18n: ectx: whatsthis, entry (CategorizedSorting), group (Dolphin)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 124
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label",
+      "msgid": "Sort files by",
+      "comments": "i18n: file: settings/dolphin_directoryviewpropertysettings.kcfg:46\ni18n: ectx: label, entry (Sorting), group (Dolphin)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 127
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:whatsthis",
+      "msgid": "This option defines which attribute (name, size, date, etc.) sorting is performed on.",
+      "comments": "i18n: file: settings/dolphin_directoryviewpropertysettings.kcfg:47\ni18n: ectx: whatsthis, entry (Sorting), group (Dolphin)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 130
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label",
+      "msgid": "Order in which to sort files",
+      "comments": "i18n: file: settings/dolphin_directoryviewpropertysettings.kcfg:54\ni18n: ectx: label, entry (SortOrder), group (Dolphin)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 133
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label",
+      "msgid": "Show folders first when sorting files and folders",
+      "comments": "i18n: file: settings/dolphin_directoryviewpropertysettings.kcfg:61\ni18n: ectx: label, entry (SortFoldersFirst), group (Dolphin)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 136
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label",
+      "msgid": "Additional information (deprecated, use AdditionInfoV2 instead)",
+      "comments": "i18n: file: settings/dolphin_directoryviewpropertysettings.kcfg:66\ni18n: ectx: label, entry (AdditionalInfo), group (Dolphin)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 139
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label",
+      "msgid": "Additional information",
+      "comments": "i18n: file: settings/dolphin_directoryviewpropertysettings.kcfg:71\ni18n: ectx: label, entry (AdditionalInfoV2), group (Dolphin)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 142
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@label",
+      "msgid": "Properties last changed",
+      "comments": "i18n: file: settings/dolphin_directoryviewpropertysettings.kcfg:76\ni18n: ectx: label, entry (Timestamp), group (Dolphin)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 145
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@info:whatsthis",
+      "msgid": "The last time these properties were changed by the user.",
+      "comments": "i18n: file: settings/dolphin_directoryviewpropertysettings.kcfg:77\ni18n: ectx: whatsthis, entry (Timestamp), group (Dolphin)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 148
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Should the URL be editable for the user",
+      "comments": "i18n: file: settings/dolphin_generalsettings.kcfg:12\ni18n: ectx: label, entry (EditableUrl), group (General)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 157
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Text completion mode of the URL Navigator",
+      "comments": "i18n: file: settings/dolphin_generalsettings.kcfg:16\ni18n: ectx: label, entry (UrlCompletionMode), group (General)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 160
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Should the full path be shown inside the location bar",
+      "comments": "i18n: file: settings/dolphin_generalsettings.kcfg:20\ni18n: ectx: label, entry (ShowFullPath), group (General)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 163
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Is the application started the first time (internal setting not shown in the UI)",
+      "comments": "i18n: file: settings/dolphin_generalsettings.kcfg:24\ni18n: ectx: label, entry (FirstRun), group (General)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 166
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Have the startup settings been modified (internal setting not shown in the UI)",
+      "comments": "i18n: file: settings/dolphin_generalsettings.kcfg:28\ni18n: ectx: label, entry (ModifiedStartupSettings), group (General)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 169
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Home URL",
+      "comments": "i18n: file: settings/dolphin_generalsettings.kcfg:32\ni18n: ectx: label, entry (HomeUrl), group (General)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 172
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Split the view into two panes",
+      "comments": "i18n: file: settings/dolphin_generalsettings.kcfg:36\ni18n: ectx: label, entry (SplitView), group (General)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 175
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Should the filter bar be shown",
+      "comments": "i18n: file: settings/dolphin_generalsettings.kcfg:40\ni18n: ectx: label, entry (FilterBar), group (General)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 178
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Should the view properties be used for all directories",
+      "comments": "i18n: file: settings/dolphin_generalsettings.kcfg:44\ni18n: ectx: label, entry (GlobalViewProps), group (General)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 181
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Browse through archives",
+      "comments": "i18n: file: settings/dolphin_generalsettings.kcfg:48\ni18n: ectx: label, entry (BrowseThroughArchives), group (General)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 184
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Ask for confirmation when closing windows with multiple tabs.",
+      "comments": "i18n: file: settings/dolphin_generalsettings.kcfg:52\ni18n: ectx: label, entry (ConfirmClosingMultipleTabs), group (General)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 187
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Rename inline",
+      "comments": "i18n: file: settings/dolphin_generalsettings.kcfg:56\ni18n: ectx: label, entry (RenameInline), group (General)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 190
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Show selection toggle",
+      "comments": "i18n: file: settings/dolphin_generalsettings.kcfg:60\ni18n: ectx: label, entry (ShowSelectionToggle), group (General)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 193
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Show tooltips",
+      "comments": "i18n: file: settings/dolphin_generalsettings.kcfg:64\ni18n: ectx: label, entry (ShowToolTips), group (General)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 196
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Show 'Copy To' and 'Move To' commands in context menu",
+      "comments": "i18n: file: settings/dolphin_generalsettings.kcfg:68\ni18n: ectx: label, entry (ShowCopyMoveMenu), group (General)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 199
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Timestamp since when the view properties are valid",
+      "comments": "i18n: file: settings/dolphin_generalsettings.kcfg:72\ni18n: ectx: label, entry (ViewPropsTimestamp), group (General)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 202
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Use auto-expanding folders for all view types",
+      "comments": "i18n: file: settings/dolphin_generalsettings.kcfg:75\ni18n: ectx: label, entry (AutoExpandFolders), group (General)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 205
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Show zoom slider in the statusbar",
+      "comments": "i18n: file: settings/dolphin_generalsettings.kcfg:79\ni18n: ectx: label, entry (ShowZoomSlider), group (General)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 208
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Show the space information in the statusbar",
+      "comments": "i18n: file: settings/dolphin_generalsettings.kcfg:83\ni18n: ectx: label, entry (ShowSpaceInfo), group (General)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 211
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Lock the layout of the panels",
+      "comments": "i18n: file: settings/dolphin_generalsettings.kcfg:87\ni18n: ectx: label, entry (LockPanels), group (General)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 214
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Arrangement",
+      "comments": "i18n: file: settings/dolphin_iconsmodesettings.kcfg:13\ni18n: ectx: label, entry (Arrangement), group (IconsMode)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 219
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Item height",
+      "comments": "i18n: file: settings/dolphin_iconsmodesettings.kcfg:37\ni18n: ectx: label, entry (ItemHeight), group (IconsMode)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 237
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Item width",
+      "comments": "i18n: file: settings/dolphin_iconsmodesettings.kcfg:45\ni18n: ectx: label, entry (ItemWidth), group (IconsMode)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 240
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Grid spacing",
+      "comments": "i18n: file: settings/dolphin_iconsmodesettings.kcfg:53\ni18n: ectx: label, entry (GridSpacing), group (IconsMode)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 243
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Number of textlines",
+      "comments": "i18n: file: settings/dolphin_iconsmodesettings.kcfg:61\ni18n: ectx: label, entry (NumberOfTextlines), group (IconsMode)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 249
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgid": "Enabled plugins",
+      "comments": "i18n: file: settings/dolphin_versioncontrolsettings.kcfg:10\ni18n: ectx: label, entry (enabledPlugins), group (VersionControl)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 261
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:menu",
+      "msgid": "Location Bar",
+      "comments": "i18n: file: dolphinui.rc:34\ni18n: ectx: Menu (location_bar)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 264
+        }
+      ],
+      "formats": [
+
+      ]
+    },
+    {
+      "msgctxt": "@title:menu",
+      "msgid": "Main Toolbar",
+      "comments": "i18n: file: dolphinui.rc:88\ni18n: ectx: ToolBar (mainToolBar)\n",
+      "filepos": [
+        {
+          "file": "rc.cpp",
+          "line": 267
+        }
+      ],
+      "formats": [
+
+      ]
+    }
+  ]
+}
