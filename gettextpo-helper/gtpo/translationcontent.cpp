@@ -304,6 +304,11 @@ rapidjson::Value templateMessageAsString(po_message_t message, rapidjson::Memory
 std::string TranslationContent::fileTemplateAsJson() const
 {
     po_file_t file = poFileRead(); // all checks and error reporting are done in poFileRead
+    if (!file) {
+        std::stringstream ss;
+        ss << "Failed to open file, errno = " << errno;
+        throw std::runtime_error(ss.str());
+    }
 
     // main cycle
     po_message_iterator_t iterator = po_message_iterator(file, "messages");

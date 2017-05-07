@@ -20,7 +20,9 @@ FileContentFs::~FileContentFs()
 
 po_file_t FileContentFs::poFileRead() const
 {
-    assert(!m_filename.empty());
+    if (m_filename.empty()) {
+        throw std::runtime_error("filename is empty");
+    }
 
     return po_file_read(m_filename.c_str());
 }
