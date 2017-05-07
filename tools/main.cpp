@@ -4,13 +4,13 @@
 #include <iostream>
 
 std::map<std::string, int(*)(int argc, char *argv[])> tools = {
-    {"find-best-matching-translated", toolFindBestMatchingTranslated},
+//     {"find-best-matching-translated", toolFindBestMatchingTranslated},
     {"iddiff", toolIddiff},
     {"iddiff-git", toolIddiffGit},
     {"iddiff-merge", toolIddiffMerge},
     {"iddiff-merge-trcomm", toolIddiffMergeTrcomm},
     {"iddiff-minimize-ids", toolIddiffMinimizeIds},
-    {"iddiff-repo", toolIddiffRepo},
+//     {"iddiff-repo", toolIddiffRepo},
     {"iddiff-review-format-mailbox", toolIddiffReviewFormatMailbox},
     {"idpatch", toolIdpatch},
     {"lokalize-reviewfile", toolLokalizeReviewfile},

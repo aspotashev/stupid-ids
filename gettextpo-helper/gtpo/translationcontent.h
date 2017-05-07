@@ -49,11 +49,12 @@ public:
     const git_oid *gitBlobHash();
     GitOid calculateTpHash() const;
     GitOid getTpHash();
-    std::vector<MessageGroup *> readMessages();
-    const FileDateTime& date();
-    const FileDateTime& potDate();
+
+    std::vector<MessageGroup *> readMessages() const;
+    FileDateTime date() const;
+    FileDateTime potDate() const;
     std::string author() const;
-    void setAuthor(const std::string& author);
+//     void setAuthor(const std::string& author);
 
     const std::vector<int> &getMinIds();
     int getFirstId();
@@ -63,7 +64,7 @@ public:
     void writeToFile();
 
     // Does the same as "msgmerge"
-    void copyTranslationsFrom(TranslationContent *from);
+//     void copyTranslationsFrom(TranslationContent *from);
 
     // Makes all messages untranslated
     void clearTranslations();
@@ -74,11 +75,16 @@ public:
     std::string fileTemplateAsJson() const;
 
 private:
-    void readMessagesInternal(std::vector<MessageGroup *>& dest, bool& destInit);
+    struct PoMessages {
+        FileDateTime date;
+        FileDateTime potDate;
+        std::string author;
+        std::vector<MessageGroup*> messages;
+    };
+
+    TranslationContent::PoMessages readMessagesInternal() const;
 
     void initFirstIdPair();
-
-    void assertOk();
 
     MessageGroup* findMessageGroupByOrig(const MessageGroup* msg);
 
@@ -95,12 +101,12 @@ private:
 
     // We use MessageGroup which may contain more than one translation,
     // but we actually use it here to store only one translation.
-    std::vector<MessageGroup*> m_messagesNormal;
-    bool m_messagesNormalInit;
+//     std::vector<MessageGroup*> m_messagesNormal;
+//     bool m_messagesNormalInit;
 
-    FileDateTime m_date;
-    FileDateTime m_potDate;
-    std::string m_author;
+//     FileDateTime m_date;
+//     FileDateTime m_potDate;
+//     std::string m_author;
 
     int m_firstId;
     int m_idCount;

@@ -2,13 +2,13 @@ project (gtpo-multitool)
 cmake_minimum_required (VERSION 2.8.0)
 
 set (gtpo_multitool_SRCS
-    impl/findbestmatchingtranslated.cpp
+#     impl/findbestmatchingtranslated.cpp
     impl/iddiff.cpp
     impl/iddiffgit.cpp
     impl/iddiffmerge.cpp
     impl/iddiffmergetrcomm.cpp
     impl/iddiffminimizeids.cpp
-    impl/iddiffrepo.cpp
+#     impl/iddiffrepo.cpp
     impl/iddiffreviewformatmailbox.cpp
     impl/idpatch.cpp
     impl/lokalizereviewfile.cpp

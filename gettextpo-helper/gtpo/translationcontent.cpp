@@ -30,11 +30,6 @@ TranslationContent::TranslationContent(FileContentBase* fileContent)
     , m_tphash(nullptr)
     , m_minIds()
     , m_minIdsInit(false)
-    , m_messagesNormal()
-    , m_messagesNormalInit(false)
-    , m_date()
-    , m_potDate()
-    , m_author()
     , m_firstId(0) // 0 = uninitialized or undefined (undefined means that tp_hash is unknown on server)
     , m_idCount(-1)
 {
@@ -354,22 +349,20 @@ std::string TranslationContent::fileTemplateAsJson() const
     return stream.GetString();
 }
 
-void TranslationContent::readMessagesInternal(std::vector<MessageGroup*> &dest, bool &destInit)
-{
-    assert(!destInit);
-    assert(dest.size() == 0);
-
+TranslationContent::PoMessages TranslationContent::readMessagesInternal() const {
     // m_displayFilename will be used as "filename" for all messages
     assert(!m_displayFilename.empty());
 
     po_file_t file = poFileRead();
     po_message_iterator_t iterator = po_message_iterator(file, "messages");
 
+    TranslationContent::PoMessages res;
+
     // TODO: function for this
     char *date_str = po_header_field(po_file_domain_header(file, NULL), "PO-Revision-Date");
     if (date_str)
     {
-        m_date.fromString(date_str);
+        res.date.fromString(date_str);
         delete [] date_str;
     }
 
@@ -377,14 +370,14 @@ void TranslationContent::readMessagesInternal(std::vector<MessageGroup*> &dest, 
     char *pot_date_str = po_header_field(po_file_domain_header(file, NULL), "POT-Creation-Date");
     if (pot_date_str)
     {
-        m_potDate.fromString(pot_date_str);
+        res.potDate.fromString(pot_date_str);
         delete [] pot_date_str;
     }
 
     char *author_str = po_header_field(po_file_domain_header(file, NULL), "Last-Translator");
     if (author_str)
     {
-        m_author = std::string(author_str);
+        res.author = std::string(author_str);
         delete [] author_str;
     }
 
@@ -399,7 +392,7 @@ void TranslationContent::readMessagesInternal(std::vector<MessageGroup*> &dest, 
         // TODO: check that! (the old check in the line above does not work after implementing caching)
 
         if (!po_message_is_obsolete(message))
-            dest.push_back(new MessageGroup(
+            res.messages.push_back(new MessageGroup(
                 message,
                 po_message_is_obsolete(message) ? -1 : index,
                 m_displayFilename));
@@ -411,18 +404,23 @@ void TranslationContent::readMessagesInternal(std::vector<MessageGroup*> &dest, 
     po_message_iterator_free(iterator);
     po_file_free(file);
 
-    destInit = true;
+    return res;
 }
 
-std::vector<MessageGroup *> TranslationContent::readMessages()
-{
-    if (!m_messagesNormalInit)
-    {
-        readMessagesInternal(m_messagesNormal, m_messagesNormalInit);
-        assertOk();
-    }
+std::vector<MessageGroup *> TranslationContent::readMessages() const {
+    return readMessagesInternal().messages;
+}
 
-    return m_messagesNormal;
+FileDateTime TranslationContent::date() const {
+    return readMessagesInternal().date;
+}
+
+FileDateTime TranslationContent::potDate() const {
+    return readMessagesInternal().potDate;
+}
+
+std::string TranslationContent::author() const {
+    return readMessagesInternal().author;
 }
 
 const std::vector<int> &TranslationContent::getMinIds()
@@ -431,7 +429,10 @@ const std::vector<int> &TranslationContent::getMinIds()
     {
         m_minIds = stupidsClient.getMinIds(getTpHash());
         m_minIdsInit = true;
-        assertOk();
+
+        if (m_minIds.size() != readMessages().size()) {
+            throw std::runtime_error("lengths of messages and m_minIds do not match");
+        }
     }
 
     return m_minIds;
@@ -469,64 +470,63 @@ void TranslationContent::writeToFile(const std::string& destFilename, bool force
     po_file_t file = poFileRead();
 
     bool madeChanges = false;
-    if (m_messagesNormalInit)
+
+    po_message_iterator_t iterator = po_message_iterator(file, "messages");
+
+    // skipping header
+    po_message_t message = po_next_message(iterator);
+
+    for (size_t index = 0; (message = po_next_message(iterator)); )
     {
-        po_message_iterator_t iterator = po_message_iterator(file, "messages");
+        if (po_message_is_obsolete(message))
+            continue;
 
-        // skipping header
-        po_message_t message = po_next_message(iterator);
+        const auto messages = readMessages();
+        assert(index < messages.size());
+        MessageGroup *messageGroup = messages[index];
 
-        for (size_t index = 0; (message = po_next_message(iterator)); )
+        assert(messageGroup->size() == 1);
+        Message *messageObj = messageGroup->message(0);
+
+        // TODO: check that msgids have not changed
+
+        if (messageObj->isEdited())
         {
-            if (po_message_is_obsolete(message))
-                continue;
-
-            assert(index < m_messagesNormal.size());
-            MessageGroup *messageGroup = m_messagesNormal[index];
-
-            assert(messageGroup->size() == 1);
-            Message *messageObj = messageGroup->message(0);
-
-            // TODO: check that msgids have not changed
-
-            if (messageObj->isEdited())
-            {
-                po_message_set_fuzzy(message, messageObj->isFuzzy() ? 1 : 0);
-                if (po_message_msgid_plural(message))
-                { // with plural forms
-                    for (int i = 0; i < messageObj->numPlurals(); i ++)
-                    {
-                        // Check that the number of plural forms has not changed
-                        assert(po_message_msgstr_plural(message, i) != NULL);
-
-                        po_message_set_msgstr_plural(message, i, messageObj->msgstr(i).c_str());
-
-                        // TODO: Linus Torvalds says I should fix my program.
-                        // See linux-2.6/Documentation/CodingStyle
-                    }
-
+            po_message_set_fuzzy(message, messageObj->isFuzzy() ? 1 : 0);
+            if (po_message_msgid_plural(message))
+            { // with plural forms
+                for (int i = 0; i < messageObj->numPlurals(); i ++)
+                {
                     // Check that the number of plural forms has not changed
-                    assert(po_message_msgstr_plural(message, messageObj->numPlurals()) == NULL);
-                }
-                else
-                { // without plural forms
-                    assert(messageObj->numPlurals() == 1);
+                    assert(po_message_msgstr_plural(message, i) != NULL);
 
-                    OptString msg = messageObj->msgstr(0);
-                    po_message_set_msgstr(message, msg.isNull() ? "" : msg.c_str());
+                    po_message_set_msgstr_plural(message, i, messageObj->msgstr(i).c_str());
+
+                    // TODO: Linus Torvalds says I should fix my program.
+                    // See linux-2.6/Documentation/CodingStyle
                 }
 
-                OptString comments = messageObj->msgcomments();
-                po_message_set_comments(message, comments.isNull() ? "" : comments.c_str());
+                // Check that the number of plural forms has not changed
+                assert(po_message_msgstr_plural(message, messageObj->numPlurals()) == NULL);
+            }
+            else
+            { // without plural forms
+                assert(messageObj->numPlurals() == 1);
 
-                madeChanges = true;
+                OptString msg = messageObj->msgstr(0);
+                po_message_set_msgstr(message, msg.isNull() ? "" : msg.c_str());
             }
 
-            index ++;
+            OptString comments = messageObj->msgcomments();
+            po_message_set_comments(message, comments.isNull() ? "" : comments.c_str());
+
+            madeChanges = true;
         }
-        // free memory
-        po_message_iterator_free(iterator);
+
+        index ++;
     }
+    // free memory
+    po_message_iterator_free(iterator);
 
     if (force_write || madeChanges)
     {
@@ -555,98 +555,59 @@ void TranslationContent::writeBufferToFile(const std::string& filename)
     m_fileContent->writeBufferToFile(filename);
 }
 
-void TranslationContent::assertOk()
-{
-    if (m_minIdsInit && m_messagesNormalInit)
-        assert(m_minIds.size() == m_messagesNormal.size());
-}
-
-const FileDateTime& TranslationContent::date()
-{
-    if (!m_messagesNormalInit)
-    {
-        readMessagesInternal(m_messagesNormal, m_messagesNormalInit);
-        assertOk();
-    }
-
-    return m_date;
-}
-
-const FileDateTime& TranslationContent::potDate()
-{
-    if (!m_messagesNormalInit)
-    {
-        readMessagesInternal(m_messagesNormal, m_messagesNormalInit);
-        assertOk();
-    }
-
-    return m_potDate;
-}
-
-std::string TranslationContent::author() const
-{
-    return m_author;
-}
-
-void TranslationContent::setAuthor(const std::string& author)
-{
-    m_author = author;
-}
-
-MessageGroup *TranslationContent::findMessageGroupByOrig(const MessageGroup *msg)
-{
-    readMessages(); // "m_messagesNormal" should be initialized
-
-    for (size_t i = 0; i < m_messagesNormal.size(); i ++)
-        if (m_messagesNormal[i]->equalOrigText(*msg))
-            return m_messagesNormal[i];
+MessageGroup *TranslationContent::findMessageGroupByOrig(const MessageGroup *msg) {
+    const auto messages = readMessages();
+    for (size_t i = 0; i < messages.size(); i ++)
+        if (messages[i]->equalOrigText(*msg))
+            return messages[i];
 
     return NULL;
 }
 
-void TranslationContent::copyTranslationsFrom(TranslationContent *from_content)
-{
-    // Read the current list of messages now, because we won't be able
-    // read them after we set "m_type" to "TYPE_DYNAMIC".
-    readMessages();
-
-    // "m_tphash" is still valid
-    // "m_minIdsInit", "m_firstId" and "m_idCount" are still valid
-
-    // The former file content is not valid anymore
-    if (m_fileContent) {
-        delete m_fileContent;
-        m_fileContent = nullptr;
-    }
-
-    m_date = from_content->date();
-
-    std::vector<MessageGroup *> from = from_content->readMessages();
-    // TBD: optimize this loop:
-    // findMessageGroupByOrig() searches in O(log N), the whole loop
-    // therefore takes N*log(N).
-    // We can walk both catalogs in ascending order and find matches
-    // in O(N), provided the catalogs are already sorted.
-    for (size_t i = 0; i < from.size(); i ++)
-    {
-        MessageGroup *to = findMessageGroupByOrig(from[i]);
-        if (to)
-            to->updateTranslationFrom(from[i]);
-        else
-            assert(0); // not found in template, i.e. translation from "from_content" will be lost!
-    }
-}
+// void TranslationContent::copyTranslationsFrom(TranslationContent *from_content)
+// {
+//     // Read the current list of messages now, because we won't be able
+//     // read them after we set "m_type" to "TYPE_DYNAMIC".
+//     readMessages();
+// 
+//     // "m_tphash" is still valid
+//     // "m_minIdsInit", "m_firstId" and "m_idCount" are still valid
+// 
+//     // The former file content is not valid anymore
+//     if (m_fileContent) {
+//         delete m_fileContent;
+//         m_fileContent = nullptr;
+//     }
+// 
+//     m_date = from_content->date();
+// 
+//     std::vector<MessageGroup *> from = from_content->readMessages();
+//     // TBD: optimize this loop:
+//     // findMessageGroupByOrig() searches in O(log N), the whole loop
+//     // therefore takes N*log(N).
+//     // We can walk both catalogs in ascending order and find matches
+//     // in O(N), provided the catalogs are already sorted.
+//     for (size_t i = 0; i < from.size(); i ++)
+//     {
+//         MessageGroup *to = findMessageGroupByOrig(from[i]);
+//         if (to)
+//             to->updateTranslationFrom(from[i]);
+//         else
+//             assert(0); // not found in template, i.e. translation from "from_content" will be lost!
+//     }
+// }
 
 void TranslationContent::clearTranslations()
 {
-    for (MessageGroup* msg : m_messagesNormal)
+    for (MessageGroup* msg : readMessages())
         msg->clearTranslation();
 }
 
 int TranslationContent::translatedCount() const
 {
+    const auto messages = readMessages();
     return std::count_if(
-        m_messagesNormal.begin(), m_messagesNormal.end(),
+        messages.begin(), messages.end(),
         [](MessageGroup* item) {
             return item->message(0)->isTranslated();
         });
