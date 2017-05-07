@@ -12,6 +12,8 @@ require 'securerandom'
 require 'redis'
 require 'mongo'
 
+Mongo::Logger.logger.level = ::Logger::INFO
+
 class Sif
   # http://www.oreillynet.com/ruby/blog/2007/01/nubygems_dont_use_class_variab_1.html
   @object_created = false
@@ -29,7 +31,13 @@ class Sif
     mongo_client = Mongo::Client.new(['127.0.0.1:27017'], :database => 'stupids_db')
     @mongo = mongo_client[:template_parts]
 
-    #@next_id = @redis.get('next_id').to_i
+    last_item = @mongo.find({'$query': {}, '$orderby': {first_id: -1}}).limit(1).first
+    if last_item.nil?
+      @next_id = 100
+    else
+      @next_id = last_item['first_id'] + last_item['pot_len']
+    end
+
     #if @next_id.nil?
     #  @next_id = @redis.hgetall('tphash_to_idrange').map {|k,v| v.split.map(&:to_i).inject(&:+) }.max || 100
     #  @redis.set('next_id', @next_id)
