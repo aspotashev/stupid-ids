@@ -10,6 +10,7 @@ require 'check-lib.rb'
 require 'set'
 require 'securerandom'
 require 'redis'
+require 'mongo'
 
 class Sif
   # http://www.oreillynet.com/ruby/blog/2007/01/nubygems_dont_use_class_variab_1.html
@@ -25,11 +26,14 @@ class Sif
 
     @redis = Redis.new
 
-    @next_id = @redis.get('next_id').to_i
-    if @next_id.nil?
-      @next_id = @redis.hgetall('tphash_to_idrange').map {|k,v| v.split.map(&:to_i).inject(&:+) }.max || 100
-      @redis.set('next_id', @next_id)
-    end
+    mongo_client = Mongo::Client.new(['127.0.0.1:27017'], :database => 'stupids_db')
+    @mongo = mongo_client[:template_parts]
+
+    #@next_id = @redis.get('next_id').to_i
+    #if @next_id.nil?
+    #  @next_id = @redis.hgetall('tphash_to_idrange').map {|k,v| v.split.map(&:to_i).inject(&:+) }.max || 100
+    #  @redis.set('next_id', @next_id)
+    #end
 
     @known_broken_pots = load_known_broken_pots
   end
@@ -55,13 +59,18 @@ class Sif
 
       @redis.hset('pot_to_tohash', pot_hash, tphash)
 
-      if @redis.hexists('tphash_to_idrange', tphash)
+      if @mongo.count(_id: tphash) > 0
         puts "This template-part hash already exists in Couchbase"
       else
         pot_len = GettextpoHelper.get_pot_length(pot_path)
-        @redis.hset('tphash_to_idrange', tphash, "#{@next_id} #{pot_len}")
+        @mongo.insert_one({
+            _id: tphash,
+            first_id: @next_id,
+            pot_len: pot_len,
+        })
+
         @next_id += pot_len
-        @redis.set('next_id', @next_id)
+        #@redis.set('next_id', @next_id)
       end
     end
   end
