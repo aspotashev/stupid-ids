@@ -190,6 +190,14 @@ int get_pot_length(const char *filename)
     return length;
 }
 
+std::string file_template_as_json(const char *filename) {
+    TranslationContent *content = new TranslationContent(new FileContentFs(filename));
+    const std::string res = content->fileTemplateAsJson();
+    delete content;
+
+    return res;
+}
+
 //-------- Coupling IDs of equal messages in different .po/.pot files -------
 
 struct MessageGroupMsgidCompare

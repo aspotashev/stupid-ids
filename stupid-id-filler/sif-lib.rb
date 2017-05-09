@@ -71,11 +71,21 @@ class Sif
         puts "This template-part hash already exists in Couchbase"
       else
         pot_len = GettextpoHelper.get_pot_length(pot_path)
-        @mongo.insert_one({
-            _id: tphash,
-            first_id: @next_id,
-            pot_len: pot_len,
-        })
+        template_json = GettextpoHelper.file_template_as_json(pot_path)
+
+        doc = {
+          _id: tphash,
+          first_id: @next_id,
+          pot_len: pot_len,
+          template_json: template_json,
+        }
+
+        begin
+          @mongo.insert_one(doc)
+        rescue Mongo::Error::OperationFailure
+          p doc
+          raise
+        end
 
         @next_id += pot_len
         #@redis.set('next_id', @next_id)

@@ -38,6 +38,8 @@ std::string calculate_tp_hash(const char *filename);
 // Returns the number of messages in .pot (excluding the header)
 int get_pot_length(const char *filename);
 
+std::string file_template_as_json(const char *filename);
+
 //-------- Coupling IDs of equal messages in different .po/.pot files -------
 
 class MappedFileIdMapDb;
