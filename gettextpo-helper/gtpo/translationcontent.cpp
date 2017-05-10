@@ -227,7 +227,8 @@ rapidjson::Value messageformatsAsJson(po_message_t message, rapidjson::MemoryPoo
     return res;
 }
 
-rapidjson::Value templateMessageAsString(po_message_t message, rapidjson::MemoryPoolAllocator<>& allocator)
+static rapidjson::Value templateMessageAsString(
+    po_message_t message, const bool includeTranslations, rapidjson::MemoryPoolAllocator<>& allocator)
 {
     rapidjson::Value res;
     res.SetObject();
@@ -293,10 +294,68 @@ rapidjson::Value templateMessageAsString(po_message_t message, rapidjson::Memory
         res.AddMember("numeric_range", numeric_range, allocator);
     }
 
+    if (includeTranslations) {
+        {
+            // TBD: optimize - calling po_message_n_plurals() is not required
+            int n_plurals = po_message_n_plurals(message);
+
+            const bool plural = n_plurals > 0;
+
+            if (n_plurals < 1)
+                n_plurals = 1;
+
+            rapidjson::Value msgstr_value;
+            msgstr_value.SetArray();
+            for (int i = 0; i < n_plurals; ++i) {
+                const char *tmp;
+                if (plural) {
+                    tmp = po_message_msgstr_plural(message, i);
+                }
+                else {
+                    assert(i == 0); // there can be only one form if 'm_plural' is false
+
+                    tmp = po_message_msgstr(message);
+                }
+
+                rapidjson::Value value;
+                value.SetString(tmp, allocator);
+                msgstr_value.PushBack(value, allocator);
+            }
+            res.AddMember("msgstr", msgstr_value, allocator);
+        }
+
+        {
+            rapidjson::Value value;
+            const bool fuzzy = po_message_is_fuzzy(message) != 0;
+            value.SetBool(fuzzy);
+            res.AddMember("fuzzy", value, allocator);
+        }
+
+        {
+            rapidjson::Value value;
+            const bool obsolete = po_message_is_obsolete(message) != 0;
+            value.SetBool(obsolete);
+            res.AddMember("obsolete", value, allocator);
+        }
+
+        {
+            rapidjson::Value value;
+            const bool untranslated = po_message_is_untranslated(message);
+            value.SetBool(untranslated);
+            res.AddMember("untranslated", value, allocator);
+        }
+
+        {
+            rapidjson::Value value;
+            value.SetString(po_message_comments(message), allocator);
+            res.AddMember("comments", value, allocator);
+        }
+    }
+
     return res;
 }
 
-std::string TranslationContent::fileTemplateAsJson() const
+std::string TranslationContent::asJson(const bool includeTranslations) const
 {
     po_file_t file = poFileRead(); // all checks and error reporting are done in poFileRead
     if (!file) {
@@ -320,6 +379,38 @@ std::string TranslationContent::fileTemplateAsJson() const
     doc.SetObject();
 
     rapidjson::Value header_value = templateHeaderAsJson(po_message_msgstr(message), allocator);
+    
+    //=----------
+
+    if (includeTranslations) {
+        {
+            char *date_str = po_header_field(po_file_domain_header(file, NULL), "PO-Revision-Date");
+            if (date_str) {
+                rapidjson::Value value;
+                value.SetString(date_str, allocator);
+                header_value.AddMember("po_revision_date", value, allocator);
+            }
+        }
+
+    //     // TODO: function for this
+    //     char *pot_date_str = po_header_field(po_file_domain_header(file, NULL), "POT-Creation-Date");
+    //     if (pot_date_str) {
+    //         res.potDate.fromString(pot_date_str);
+    //         delete [] pot_date_str;
+    //     }
+
+        {
+            char *author_str = po_header_field(po_file_domain_header(file, NULL), "Last-Translator");
+            if (author_str) {
+                rapidjson::Value value;
+                value.SetString(author_str, allocator);
+                header_value.AddMember("last_translator", value, allocator);
+            }
+        }
+    }
+
+    //-----------
+
     doc.AddMember("header", header_value, allocator);
 
     rapidjson::Value messages_value;
@@ -331,7 +422,7 @@ std::string TranslationContent::fileTemplateAsJson() const
     // Sorting messages in alphabetical order would be wrong, because for every template,
     // we store only the ID of the first message. The IDs of other messages should be deterministic.
     while ((message = po_next_message(iterator))) {
-        rapidjson::Value msg_value = templateMessageAsString(message, allocator);
+        rapidjson::Value msg_value = templateMessageAsString(message, includeTranslations, allocator);
         if (!msg_value.IsNull()) {
             messages_value.PushBack(msg_value, allocator);
         }

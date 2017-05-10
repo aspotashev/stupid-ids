@@ -39,6 +39,7 @@ std::string calculate_tp_hash(const char *filename);
 int get_pot_length(const char *filename);
 
 std::string file_template_as_json(const char *filename);
+std::string gettext_file_as_json(const char *filename);
 
 //-------- Coupling IDs of equal messages in different .po/.pot files -------
 

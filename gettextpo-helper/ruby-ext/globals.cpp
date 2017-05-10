@@ -51,6 +51,21 @@ VALUE wrap_file_template_as_json(VALUE self, VALUE filename)
     }
 }
 
+VALUE wrap_gettext_file_as_json(VALUE self, VALUE filename) {
+    try {
+        std::string res = gettext_file_as_json(StringValuePtr(filename));
+        return rb_str_new2(res.c_str());
+    }
+    catch (TranslationContent::ExceptionNotPo& e) {
+        // TBD: throw exception instead of returning empty string
+        return rb_str_new2("");
+    }
+    catch (GettextParserException& e) {
+        // TBD: throw exception instead of returning empty string
+        return rb_str_new2("");
+    }
+}
+
 VALUE wrap_dump_equal_messages_to_mmapdb(
     VALUE self,
     VALUE file_a, VALUE first_id_a,
@@ -200,6 +215,7 @@ void init_globals()
     rb_define_singleton_method(GettextpoHelper, "calculate_tp_hash", RUBY_METHOD_FUNC(wrap_calculate_tp_hash), 1);
     rb_define_singleton_method(GettextpoHelper, "get_pot_length", RUBY_METHOD_FUNC(wrap_get_pot_length), 1);
     rb_define_singleton_method(GettextpoHelper, "file_template_as_json", RUBY_METHOD_FUNC(wrap_file_template_as_json), 1);
+    rb_define_singleton_method(GettextpoHelper, "gettext_file_as_json", RUBY_METHOD_FUNC(wrap_gettext_file_as_json), 1);
     rb_define_singleton_method(GettextpoHelper, "dump_equal_messages_to_mmapdb", RUBY_METHOD_FUNC(wrap_dump_equal_messages_to_mmapdb), 5);
 //     rb_define_singleton_method(GettextpoHelper, "get_min_ids_by_tp_hash", RUBY_METHOD_FUNC(wrap_get_min_ids_by_tp_hash), 1);
     rb_define_singleton_method(GettextpoHelper, "detect_transitions_inc", RUBY_METHOD_FUNC(wrap_detect_transitions_inc), 4);

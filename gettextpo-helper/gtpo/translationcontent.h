@@ -72,7 +72,9 @@ public:
     int translatedCount() const;
 
     // for calculateTpHash
-    std::string fileTemplateAsJson() const;
+    std::string fileTemplateAsJson() const { return asJson(false); }
+
+    std::string fileAsJson() const { return asJson(true); }
 
 private:
     struct PoMessages {
@@ -87,6 +89,8 @@ private:
     void initFirstIdPair();
 
     MessageGroup* findMessageGroupByOrig(const MessageGroup* msg);
+
+    std::string asJson(const bool includeTranslations) const;
 
 private:
     FileContentBase* m_fileContent;

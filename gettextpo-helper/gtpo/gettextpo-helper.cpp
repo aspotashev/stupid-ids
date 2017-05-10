@@ -199,6 +199,15 @@ std::string file_template_as_json(const char *filename) {
     }
 }
 
+std::string gettext_file_as_json(const char *filename) {
+    try {
+        std::unique_ptr<TranslationContent> content = std::make_unique<TranslationContent>(new FileContentFs(filename));
+        return content->fileAsJson();
+    } catch (const std::exception& e) {
+        return e.what();
+    }
+}
+
 //-------- Coupling IDs of equal messages in different .po/.pot files -------
 
 struct MessageGroupMsgidCompare
