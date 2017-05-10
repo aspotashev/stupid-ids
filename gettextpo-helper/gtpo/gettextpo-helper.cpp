@@ -191,11 +191,8 @@ int get_pot_length(const char *filename)
 }
 
 std::string file_template_as_json(const char *filename) {
-    TranslationContent *content = new TranslationContent(new FileContentFs(filename));
-    const std::string res = content->fileTemplateAsJson();
-    delete content;
-
-    return res;
+    std::unique_ptr<TranslationContent> content = std::make_unique<TranslationContent>(new FileContentFs(filename));
+    return content->fileTemplateAsJson();
 }
 
 //-------- Coupling IDs of equal messages in different .po/.pot files -------
