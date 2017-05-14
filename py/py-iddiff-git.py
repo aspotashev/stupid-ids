@@ -12,6 +12,19 @@ from helpers.git_diffstat import GitCommitDiffStat, CommitFileChangeType
 from helpers.iddiff import Iddiff, iddiff_files, iddiff_against_empty
 
 
+class CalcserverClient(object):
+    def __init__(self):
+        pass
+
+    def po_as_json(self, content):
+        r = requests.put('http://localhost:9292/v1/po_as_json', {'content': content})
+        return json.loads(json.loads(r.text)['template'])
+
+    def get_tp_hash(self, content):
+        r = requests.put('http://localhost:9292/v1/get_tp_hash', {'content': content})
+        return json.loads(r.text)['tp_hash']
+
+
 class TranslationContent(object):
     def __init__(self, git_object):
         assert type(git_object) == pygit2.Blob
@@ -27,12 +40,10 @@ class TranslationContent(object):
         print(self.messages)
 
     def __as_json(self):
-        r = requests.put('http://localhost:9292/v1/po_as_json', {'content': self.__po_content})
-        return json.loads(json.loads(r.text)['template'])
+        return CalcserverClient().po_as_json(self.__po_content)
 
     def get_tp_hash(self):
-        r = requests.put('http://localhost:9292/v1/get_tp_hash', {'content': self.__po_content})
-        return json.loads(r.text)['tp_hash']
+        return CalcserverClient().get_tp_hash(self.__po_content)
 
 
 if __name__ == "__main__":
