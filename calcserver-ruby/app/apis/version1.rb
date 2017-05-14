@@ -51,5 +51,26 @@ module MyApi
 
       res
     end
+
+    put '/get_tp_hash' do
+      content = params[:content]
+      #p content
+
+      # pot_len = GettextpoHelper.get_pot_length(pot_path)
+
+      tempfile_pot = Tempfile.new(['', '.po']).path
+      File.open(tempfile_pot, 'w') do |file|
+        file.write(content)
+      end
+
+      res = {
+          tp_hash: GettextpoHelper.calculate_tp_hash(tempfile_pot),
+      }
+      #p tempfile_pot
+
+      `rm -f "#{tempfile_pot}"`
+
+      res
+    end
   end
 end
