@@ -3,74 +3,46 @@ require 'grape'
 $:.unshift(File.join(File.dirname(__FILE__)) + "../../../../build/gettextpo-helper/ruby-ext")
 require 'stupidsruby'
 
+def with_content
+  content = params[:content]
+  #p content
+
+  tempfile_po = Tempfile.new(['', '.po']).path
+  File.open(tempfile_po, 'w') do |file|
+    file.write(content)
+  end
+
+  res = yield tempfile_po
+
+  #p tempfile_po
+
+  `rm -f "#{tempfile_po}"`
+  res
+end
+
 module MyApi
   class UserApiV1 < Grape::API
     version 'v1', :using => :path
     format :json
 
     put '/as_json' do
-      content = params[:content]
-      #p content
-
-      # tphash = GettextpoHelper.calculate_tp_hash(pot_path)
-      # pot_len = GettextpoHelper.get_pot_length(pot_path)
-
-      tempfile_pot = Tempfile.new(['', '.pot']).path
-      File.open(tempfile_pot, 'w') do |file|
-        file.write(content)
+      with_content do |tempfile_po|
+        { template: GettextpoHelper.file_template_as_json(tempfile_po) }
       end
 
-      res = {
-          template: GettextpoHelper.file_template_as_json(tempfile_pot),
-      }
-      #p tempfile_pot
-
-      `rm -f "#{tempfile_pot}"`
-
-      res
+      # pot_len = GettextpoHelper.get_pot_length(pot_path)
     end
 
     put '/po_as_json' do
-      content = params[:content]
-      #p content
-
-      # tphash = GettextpoHelper.calculate_tp_hash(pot_path)
-      # pot_len = GettextpoHelper.get_pot_length(pot_path)
-
-      tempfile_pot = Tempfile.new(['', '.po']).path
-      File.open(tempfile_pot, 'w') do |file|
-        file.write(content)
+      with_content do |tempfile_po|
+        { template: GettextpoHelper.gettext_file_as_json(tempfile_po).force_encoding(Encoding::UTF_8) }
       end
-
-      res = {
-          template: GettextpoHelper.gettext_file_as_json(tempfile_pot).force_encoding(Encoding::UTF_8),
-      }
-      #p tempfile_pot
-
-      `rm -f "#{tempfile_pot}"`
-
-      res
     end
 
     put '/get_tp_hash' do
-      content = params[:content]
-      #p content
-
-      # pot_len = GettextpoHelper.get_pot_length(pot_path)
-
-      tempfile_pot = Tempfile.new(['', '.po']).path
-      File.open(tempfile_pot, 'w') do |file|
-        file.write(content)
+      with_content do |tempfile_po|
+        { tp_hash: GettextpoHelper.calculate_tp_hash(tempfile_po) }
       end
-
-      res = {
-          tp_hash: GettextpoHelper.calculate_tp_hash(tempfile_pot),
-      }
-      #p tempfile_pot
-
-      `rm -f "#{tempfile_pot}"`
-
-      res
     end
   end
 end
