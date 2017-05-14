@@ -198,17 +198,6 @@ VALUE wrap_stupids_conf_path(VALUE self, VALUE key)
 
 //----------------------------
 
-VALUE wrap_tphash_cache(VALUE self, VALUE oid_str)
-{
-    GitOid oid(StringValuePtr(oid_str));
-    GitOid tp_hash_raw = TphashCache.getValue(oid);
-    if (tp_hash_raw.isNull()) {
-        return Qnil;
-    } else {
-        return rb_str_new2(tp_hash_raw.toString().c_str());
-    }
-}
-
 // init
 void init_globals()
 {
@@ -223,5 +212,4 @@ void init_globals()
     rb_define_singleton_method(GettextpoHelper, "read_po_file_messages", RUBY_METHOD_FUNC(wrap_read_po_file_messages), 1);
     rb_define_singleton_method(GettextpoHelper, "stupids_conf", RUBY_METHOD_FUNC(wrap_stupids_conf), 1);
     rb_define_singleton_method(GettextpoHelper, "stupids_conf_path", RUBY_METHOD_FUNC(wrap_stupids_conf_path), 1);
-    rb_define_singleton_method(GettextpoHelper, "tphash_cache", RUBY_METHOD_FUNC(wrap_tphash_cache), 1);
 }

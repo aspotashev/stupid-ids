@@ -43,5 +43,3 @@ private:
 
 //---------------------------------------------------
 
-#define TphashCache (OidMapCacheManager::instance("oid2tphash"))
-

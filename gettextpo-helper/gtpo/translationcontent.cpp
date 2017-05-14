@@ -93,32 +93,6 @@ GitOid TranslationContent::calculateTpHash() const
     return GitOid(&tphash_buf);
 }
 
-GitOid TranslationContent::getTpHash()
-{
-    if (m_tphash) {
-        return *m_tphash;
-    }
-
-    // Cache calculated tp_hashes (it takes some time to
-    // calculate a tp_hash). A singleton class is used for that.
-    const git_oid *oid = m_fileContent ? m_fileContent->gitBlobHash() : nullptr;
-    if (!oid) {
-        return GitOid::zero();
-    }
-
-    GitOid tp_hash = TphashCache.getValue(oid);
-
-    if (!tp_hash.isNull()) {
-        m_tphash = new GitOid(tp_hash);
-    } else {
-        m_tphash = new GitOid(calculateTpHash());
-
-        TphashCache.addPair(oid, *m_tphash);
-    }
-
-    return *m_tphash;
-}
-
 // static int64_t dateTimeAsUnixTimestamp(const std::string& str) {
 //     std::istringstream ss("2011-07-06 04:15+0200");
 //     ss.exceptions(std::ios_base::failbit);
