@@ -140,8 +140,6 @@ private:
     void writeMessageList(rapidjson::PrettyWriter<rapidjson::StringBuffer> &writer,
                           const std::vector<IddiffMessage*>& list);
 
-    std::pair<int, IddiffMessage*> loadMessageListEntry(const char* line);
-
     static std::vector<IddiffMessage*> loadMessageList(const ValueType& array);
 
     static IddiffMessage* findIddiffMessageList(
