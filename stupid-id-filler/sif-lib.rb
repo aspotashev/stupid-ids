@@ -8,11 +8,23 @@ require 'ruby-helpers.rb'
 require 'tempfile'
 require 'check-lib.rb'
 require 'set'
+require 'json'
 require 'securerandom'
 require 'redis'
-require 'mongo'
+require 'faraday'
 
-Mongo::Logger.logger.level = ::Logger::INFO
+class CalcserverClient
+  def initialize
+  end
+
+  def add_template(content)
+    Faraday.post do |req|
+      req.url 'http://localhost:9292/v1/add_template'
+      req.headers['Content-Type'] = 'application/json'
+      req.body = { content: content }.to_json
+    end
+  end
+end
 
 class Sif
   # http://www.oreillynet.com/ruby/blog/2007/01/nubygems_dont_use_class_variab_1.html
@@ -27,21 +39,6 @@ class Sif
     end
 
     @redis = Redis.new
-
-    mongo_client = Mongo::Client.new(['127.0.0.1:27017'], :database => 'stupids_db')
-    @mongo = mongo_client[:template_parts]
-
-    last_item = @mongo.find({'$query': {}, '$orderby': {first_id: -1}}).limit(1).first
-    if last_item.nil?
-      @next_id = 100
-    else
-      @next_id = last_item['first_id'] + last_item['pot_len']
-    end
-
-    #if @next_id.nil?
-    #  @next_id = @redis.hgetall('tphash_to_idrange').map {|k,v| v.split.map(&:to_i).inject(&:+) }.max || 100
-    #  @redis.set('next_id', @next_id)
-    #end
 
     @known_broken_pots = load_known_broken_pots
   end
@@ -65,31 +62,15 @@ class Sif
       tphash = GettextpoHelper.calculate_tp_hash(pot_path)
       raise if tphash.size != 40
 
-      @redis.hset('pot_to_tohash', pot_hash, tphash)
+      response = CalcserverClient.new.add_template(File.read(pot_path))
 
-      if @mongo.count(_id: tphash) > 0
-        puts "This template-part hash already exists in Couchbase"
+      if response.status == 201 or (response.status == 422 and JSON.parse(response.body)['error'].start_with?('This template-part hash already exists in MongoDB'))
+        @redis.hset('pot_to_tohash', pot_hash, tphash)
       else
-        pot_len = GettextpoHelper.get_pot_length(pot_path)
-        template_json = GettextpoHelper.file_template_as_json(pot_path)
-
-        doc = {
-          _id: tphash,
-          first_id: @next_id,
-          pot_len: pot_len,
-          template_json: template_json,
-        }
-
-        begin
-          @mongo.insert_one(doc)
-        rescue Mongo::Error::OperationFailure
-          p doc
-          raise
-        end
-
-        @next_id += pot_len
-        #@redis.set('next_id', @next_id)
+        raise response
       end
+    else
+      puts "This pot_hash has already been added: #{pot_hash}"
     end
   end
 
